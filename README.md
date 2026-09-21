@@ -10,19 +10,18 @@
 
 ## Project overview
 
-Retail businesses must decide how much stock to hold, when to replenish, and how to respond when demand changes over time. This project uses historical online retail transaction data to build a decision-support framework that connects:
+Retail businesses must decide how much stock to hold, when to replenish, and how to respond when demand changes over time. This project uses simulated daily supply-chain inventory data to build an integrated decision-support framework that connects:
 
-1. retail demand analysis;
-2. time-series demand forecasting;
-3. inventory-risk interpretation;
-4. visual and business interpretation; and
-5. responsible, transparent decision support.
+1. demand forecasting;
+2. inventory-risk and replenishment analysis;
+3. visual and business interpretation; and
+4. responsible, transparent decision support.
 
-The project therefore does not stop at a forecasting score. Its purpose is to translate forecasting outputs into practical inventory-risk insights and decision-support information.
+The project therefore does not stop at a forecasting score. Forecast outputs are passed into inventory analysis and then into a responsible management-facing decision-support layer.
 
 ## Research aim
 
-To investigate how historical online retail transaction data can be used to forecast product demand and translate forecasting outputs into inventory-risk insights that support retail supply-chain decision-making.
+To investigate how data-driven demand forecasting can be integrated with inventory-state information to identify inventory risks and support retail supply-chain decision-making.
 
 ## Main research question
 
@@ -30,25 +29,25 @@ To investigate how historical online retail transaction data can be used to fore
 
 ## Supporting research questions
 
-- **RQ1:** What demand patterns can be identified from historical online retail transaction data?
-- **RQ2:** Which forecasting methods are suitable for predicting product-level or category-level retail demand?
-- **RQ3:** How can forecasting outputs be translated into inventory-risk categories such as stockout, overstocking, and slow-moving product risks?
-- **RQ4:** How can ethical, legal, governance, transparency, and human-decision considerations guide the responsible use of retail demand-forecasting outputs?
+- **RQ1:** What demand patterns can be identified from historical SKU-level sales data?
+- **RQ2:** Which forecasting methods are suitable for predicting future product demand?
+- **RQ3:** How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
+- **RQ4:** How can uncertainty, transparency, governance, and human oversight guide the responsible use of the resulting decision-support outputs?
 
 ## Group architecture
 
 ```text
-UCI Online Retail transactions
+High-Dimensional Supply Chain Inventory Dataset
             |
             v
 Shared data foundation
             |
             v
-Time-series demand forecasting
+Demand forecasting
 Chathuranga
             |
             v
-Inventory-risk analytics and visual interpretation
+Inventory-risk and replenishment analysis
 Didilani
             |
             v
@@ -63,30 +62,39 @@ Integrated COMP1884 decision-support framework
 
 | Member | COMP1884 focus | Planned COMP1885 direction |
 |---|---|---|
-| Chathuranga Indrajith Sudusinghe | Time-series demand forecasting and model evaluation | Advanced time-series demand forecasting for heterogeneous retail demand |
-| Didilani Prasadika Weerawickrama Pathinayaka | Inventory-risk analytics, visual analytics, and business interpretation | Inventory-risk modelling using demand dynamics and forecast uncertainty |
+| Chathuranga Indrajith Sudusinghe | Model training, model selection, demand forecasting and evaluation | Advanced time-series demand forecasting for heterogeneous retail demand |
+| Didilani Prasadika Weerawickrama Pathinayaka | Inventory-risk analytics, replenishment analysis, visual analytics and business interpretation | Inventory-risk modelling using demand dynamics and forecast uncertainty |
 | Haputhanthrige Dewmi Pramodya | Responsible decision support, ethical/legal/governance analysis | Trustworthy and explainable retail decision support |
 
 See the separate group and individual overview files under `docs/team/`.
 
 ## Dataset
 
-The project uses the **UCI Machine Learning Repository – Online Retail** dataset.
+The selected dataset is the **High-Dimensional Supply Chain Inventory Dataset** published on Kaggle.
 
-Core source fields:
+It contains simulated daily SKU-level supply-chain data, including fields such as:
 
-- `InvoiceNo`
-- `StockCode`
-- `Description`
-- `Quantity`
-- `InvoiceDate`
-- `UnitPrice`
-- `CustomerID`
-- `Country`
+- `Date`
+- `SKU_ID`
+- `Warehouse_ID`
+- `Supplier_ID`
+- `Region`
+- `Units_Sold`
+- `Inventory_Level`
+- `Supplier_Lead_Time_Days`
+- `Reorder_Point`
+- `Order_Quantity`
+- `Unit_Cost`
+- `Unit_Price`
+- `Promotion_Flag`
+- `Stockout_Flag`
+- `Demand_Forecast`
 
-The raw forecasting target is `Quantity`, but forecasting will use **time-aggregated demand**, for example product-level daily or weekly quantity.
+The project will build and evaluate its **own demand-forecasting component** using historical `Units_Sold`. The source `Demand_Forecast` field must not be used in a way that leaks future/target information into model training.
 
-The dataset itself is intentionally **not stored in GitHub**. Raw and processed data remain local.
+The full dataset is intentionally **not stored in GitHub**. Raw and processed data remain local.
+
+See [Dataset Contract](docs/dataset.md), [Decision Record DR-001](docs/decisions/DR-001-dataset-selection.md), and [References](docs/references.md).
 
 ## Documentation map
 
@@ -97,11 +105,14 @@ The dataset itself is intentionally **not stored in GitHub**. Raw and processed 
 - [Collaboration workflow](docs/collaboration-workflow.md)
 - [Member onboarding guide](docs/member-onboarding.md)
 
+### Research and implementation
 
 - [Project overview](docs/project-overview.md)
 - [Research design](docs/research-design.md)
 - [Dataset contract](docs/dataset.md)
 - [Project boundaries](docs/project-boundaries.md)
+- [References](docs/references.md)
+- [Decision records](docs/decisions/README.md)
 - [Chathuranga — COMP1884](docs/team/chathuranga/group-project-overview.md)
 - [Chathuranga — COMP1885 overview](docs/team/chathuranga/individual-project-overview.md)
 - [Didilani — COMP1884](docs/team/didilani/group-project-overview.md)
@@ -135,4 +146,4 @@ Code is organised by **system component**, not by student name. Member ownership
 
 ## Status
 
-**Foundation stage.** Research design, dataset rules, project boundaries, and member responsibilities are being formalised before implementation begins.
+**Foundation stage.** The dataset selection and integrated component boundaries are being formalised before implementation begins.
