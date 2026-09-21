@@ -170,11 +170,12 @@ Didilani's component will consume the selected forecast outputs together with re
 - `Reorder_Point`;
 - `Supplier_Lead_Time_Days`;
 - `Order_Quantity`;
-- `Stockout_Flag`;
 - forecast error / uncertainty;
 - product and warehouse identifiers.
 
 The goal is to transform the forecast into inventory-risk and replenishment information rather than forecast demand a second time.
+
+Verified profiling shows that `Stockout_Flag` is 0 for every row, so it cannot be used as a stockout classification target or validation label. `Order_Quantity` is also sparse: only 5,027 of 91,250 rows contain a non-zero order quantity. These findings must shape the downstream method.
 
 Candidate downstream outputs include:
 
@@ -225,7 +226,8 @@ Important threats include:
 - source-generated variables may embed assumptions from the simulation;
 - `Demand_Forecast` may create leakage if incorrectly used;
 - product/warehouse aggregation choices may affect conclusions;
-- any low-variance or non-informative fields must be identified during profiling;
+- `Stockout_Flag` is zero-variance in the downloaded dataset and cannot validate stockout predictions;
+- non-zero `Order_Quantity` events are sparse and may limit direct replenishment-target modelling;
 - model and inventory thresholds may be sensitive to the chosen evaluation period;
 - performance on the simulated dataset does not establish production effectiveness in a real company.
 
