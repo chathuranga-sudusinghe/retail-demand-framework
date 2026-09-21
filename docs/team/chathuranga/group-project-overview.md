@@ -95,4 +95,4 @@ This component is complete for COMP1884 when:
 
 ## Scope boundary
 
-This COMP1884 component should be strong enough to support the group product, but it should not consume all advanced forecasting ideas reserved for the COMP1885 individual deep-dive.
+This component is limited to the forecasting work required by the integrated COMP1884 group product. It should produce a defensible, evaluated forecast output without absorbing Didilani's inventory-risk/replenishment responsibilities or Dewmi's responsible decision-support responsibilities.
