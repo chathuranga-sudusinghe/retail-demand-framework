@@ -90,6 +90,14 @@ The dataset itself is intentionally **not stored in GitHub**. Raw and processed 
 
 ## Documentation map
 
+### Collaboration and AI-agent rules
+
+- [AI agent instructions](AGENTS.md)
+- [Contributor guide](CONTRIBUTING.md)
+- [Collaboration workflow](docs/collaboration-workflow.md)
+- [Member onboarding guide](docs/member-onboarding.md)
+
+
 - [Project overview](docs/project-overview.md)
 - [Research design](docs/research-design.md)
 - [Dataset contract](docs/dataset.md)
