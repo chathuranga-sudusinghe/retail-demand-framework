@@ -192,7 +192,7 @@ AI must not silently decide:
 - inventory-risk meaning;
 - model evaluation policy;
 - scope changes;
-- COMP1884/COMP1885 boundaries.
+- member/component boundaries.
 
 These are project/research decisions.
 

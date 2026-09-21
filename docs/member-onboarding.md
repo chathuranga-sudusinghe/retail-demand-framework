@@ -47,32 +47,21 @@ Before starting a task, read your own files.
 
 ```text
 docs/team/chathuranga/group-project-overview.md
-docs/team/chathuranga/individual-project-overview.md
 ```
 
 ### Didilani
 
 ```text
 docs/team/didilani/group-project-overview.md
-docs/team/didilani/individual-project-overview.md
 ```
 
 ### Dewmi
 
 ```text
 docs/team/dewmi/group-project-overview.md
-docs/team/dewmi/individual-project-overview.md
 ```
 
-Remember:
-
-```text
-group-project-overview.md
-= work for COMP1884
-
-individual-project-overview.md
-= future COMP1885 direction only
-```
+These files define each member's responsibility inside the shared COMP1884 group project.
 
 ---
 

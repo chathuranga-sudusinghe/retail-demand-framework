@@ -43,7 +43,7 @@ Status in COMP1884:
 
 ## University / project guidance
 
-University of Greenwich COMP1884/COMP1885 guidance documents are retained in the project working context and should be cited or referenced in the final report only where academically appropriate.
+University of Greenwich COMP1884 group-project guidance and relevant project materials should be cited or referenced in the final report only where academically appropriate.
 
 ## Literature references
 
