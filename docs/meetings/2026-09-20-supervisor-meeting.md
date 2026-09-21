@@ -21,7 +21,7 @@
 
 ## Decisions / Guidance
 
-- The group should proceed with initiating the COMP1884 project.
+- The supervisor approved the group to proceed with initiating the COMP1884 project.
 - The project should be organised and developed as a coordinated group effort.
 - Further project details, member responsibilities, methodology, and implementation decisions would be refined as the work progressed.
 
@@ -39,7 +39,7 @@ No specific blocker was recorded from this meeting.
 
 ## Supervisor / Module-Leader Confirmation
 
-This meeting itself served as the initial supervisor discussion confirming that the group should proceed with project initiation.
+The supervisor confirmed approval for the group to proceed with the COMP1884 project initiation.
 
 ## Related Project Evidence
 
@@ -48,4 +48,4 @@ This meeting itself served as the initial supervisor discussion confirming that 
 
 ## Outcome
 
-The supervisor meeting established the starting point for the COMP1884 project. The group then continued with a separate project commencement meeting later the same day to organise responsibilities, collaboration, and repository setup.
+The supervisor meeting approved the project to proceed and established the starting point for the COMP1884 work. The group then held a separate project commencement meeting later the same day, from 8:30 PM to 9:30 PM, to organise responsibilities, collaboration, and repository setup.
