@@ -1,9 +1,13 @@
 # Dataset Contract
 
-## 1. Source dataset
+## 1. Selected source dataset
 
-**Dataset:** UCI Machine Learning Repository — Online Retail  
-**Type:** Historical transactional retail data  
+**Dataset:** High-Dimensional Supply Chain Inventory Dataset  
+**Publisher:** Ziya on Kaggle  
+**Source:** https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset  
+**Type:** Simulated daily SKU-level supply-chain and inventory data  
+**Dataset size:** approximately 91,250 records and 15 source columns  
+**Time coverage:** approximately one year of daily observations  
 **Repository rule:** The dataset file itself is not committed to GitHub.
 
 Local raw data should be placed under:
@@ -12,133 +16,168 @@ Local raw data should be placed under:
 data/raw/
 ```
 
+The dataset change from UCI Online Retail is recorded in:
+
+```text
+docs/decisions/DR-001-dataset-selection.md
+```
+
 ## 2. Source columns
 
-| Column | Role |
+| Column | Project role |
 |---|---|
-| `InvoiceNo` | Invoice / transaction identifier |
-| `StockCode` | Product identifier |
-| `Description` | Product description |
-| `Quantity` | Units recorded on the invoice line |
-| `InvoiceDate` | Transaction date and time |
-| `UnitPrice` | Unit price |
-| `CustomerID` | Customer identifier |
-| `Country` | Customer / transaction country |
+| `Date` | Temporal ordering |
+| `SKU_ID` | Product identifier |
+| `Warehouse_ID` | Warehouse identifier |
+| `Supplier_ID` | Supplier identifier |
+| `Region` | Regional dimension |
+| `Units_Sold` | Historical sales / primary demand source |
+| `Inventory_Level` | Simulated on-hand inventory level |
+| `Supplier_Lead_Time_Days` | Simulated supplier lead time |
+| `Reorder_Point` | Inventory-policy threshold |
+| `Order_Quantity` | Simulated replenishment quantity |
+| `Unit_Cost` | Unit cost |
+| `Unit_Price` | Selling price |
+| `Promotion_Flag` | Promotion indicator |
+| `Stockout_Flag` | Simulated stockout indicator |
+| `Demand_Forecast` | Source-provided planning forecast; not the project's forecasting target |
+
+Exact schema and datatypes must be verified from the downloaded file before implementation.
 
 ## 3. Forecasting target
 
-`Quantity` is the raw demand-related source variable.
+The forecasting component will use `Units_Sold` to construct a regular time series.
 
-The model should not normally predict an arbitrary individual invoice-line quantity. The intended forecasting target is an aggregated demand series, for example:
-
-```text
-weekly_product_demand
-= sum(Quantity)
-grouped by StockCode and week
-```
-
-The final aggregation frequency must be justified.
-
-## 4. Time variable
-
-`InvoiceDate` is the source of temporal ordering.
-
-Derived calendar variables may include:
-
-- date;
-- day of week;
-- week;
-- month;
-- quarter;
-- hour if justified.
-
-Seasonality is **not** directly stored in the dataset. It must be detected or modelled from repeated temporal demand patterns.
-
-## 5. Shared cleaning principles
-
-Cleaning decisions must be documented before model training.
-
-The shared pipeline should explicitly address:
-
-- cancelled invoices;
-- returns;
-- negative quantities;
-- zero quantities if present;
-- non-positive prices;
-- missing descriptions;
-- missing customer identifiers;
-- duplicate or suspicious transaction lines;
-- inconsistent product descriptions;
-- temporal ordering;
-- product coverage and minimum-history rules.
-
-No member should create a conflicting private cleaning rule for the same shared source without documenting the reason.
-
-## 6. Returns and cancellations
-
-Negative quantities and cancellation-style transactions may represent returns or reversed transactions rather than ordinary demand.
-
-They must not be silently converted to positive sales or dropped without a documented analytical decision.
-
-The project may need separate concepts such as:
+Candidate target:
 
 ```text
-gross demand
-returns / cancellations
-net demand
+Demand(SKU, period) = sum(Units_Sold)
 ```
 
-The selected target definition must be consistent across the group.
+The final aggregation level may be SKU-day, SKU-warehouse-day, or another justified regular unit.
 
-## 7. Shared processed dataset
+### Important leakage rule for `Demand_Forecast`
 
-The shared processed layer should provide reproducible fields needed by downstream components, such as:
+The dataset already contains a source-generated `Demand_Forecast` field. The group project must build its own forecasting models.
 
-- product identifier;
-- period start/end;
-- aggregated demand;
-- relevant price aggregates where justified;
-- calendar fields;
-- availability/history flags;
-- optional return/cancellation summaries.
+Therefore:
 
-## 8. Member-specific derived datasets
+- do not use `Demand_Forecast` as the target for Chathuranga's model;
+- do not automatically use it as a model feature;
+- do not let it leak future/target information into training;
+- it may only be used as a separately documented benchmark after the project's own evaluation design is fixed.
 
-All members use the same source and shared cleaning baseline, but they may derive different analytical tables.
+## 4. Inventory-analysis variables
+
+Didilani's component can directly use inventory-related fields that were missing from the original UCI dataset, including:
+
+```text
+Inventory_Level
+Reorder_Point
+Supplier_Lead_Time_Days
+Order_Quantity
+Stockout_Flag
+```
+
+These variables allow inventory-risk and replenishment analysis to be grounded in the simulated operating state instead of inventing a complete hypothetical inventory system.
+
+Any derived risk level or recommended replenishment quantity must still have a documented formula/rule and evaluation method.
+
+## 5. Shared data-quality checks
+
+Before model training, the shared pipeline must explicitly check:
+
+- schema and datatypes;
+- missing values;
+- duplicate rows;
+- date continuity and ordering;
+- invalid/negative quantities where applicable;
+- SKU/warehouse/supplier identifier consistency;
+- impossible inventory or price values;
+- zero-variance or near-zero-variance fields;
+- distribution and range of `Units_Sold`;
+- relationship between `Inventory_Level`, `Reorder_Point`, and `Order_Quantity`;
+- behaviour and usefulness of `Stockout_Flag`;
+- possible leakage from source-generated fields.
+
+No member should create a conflicting private cleaning rule without documenting the reason.
+
+## 6. Shared processed dataset
+
+The shared processed layer should provide reproducible fields needed by downstream components.
+
+At minimum, the forecasting view should provide:
+
+```text
+SKU_ID
+period
+demand
+```
+
+Inventory-analysis views may additionally include:
+
+```text
+Warehouse_ID
+Supplier_ID
+Region
+Inventory_Level
+Reorder_Point
+Supplier_Lead_Time_Days
+Order_Quantity
+Stockout_Flag
+```
+
+plus forecast outputs from Chathuranga's component.
+
+## 7. Member-specific derived datasets
 
 ### Chathuranga
+
 Needs:
-- regular demand series;
+
+- regular demand series from `Units_Sold`;
 - temporal/calendar features;
-- lag features;
-- rolling features;
-- model-ready train/validation/test data.
+- leakage-safe lag/rolling features where used;
+- model-ready chronological train/validation/test data;
+- model predictions and errors.
 
 ### Didilani
+
 Needs:
-- historical demand behaviour;
-- trend;
-- volatility;
-- intermittency;
-- forecast outputs;
-- forecast error/bias/uncertainty;
-- risk-analysis features.
+
+- Chathuranga's forecast outputs;
+- inventory levels;
+- reorder points;
+- supplier lead times;
+- replenishment/order quantities;
+- stockout indicators where informative;
+- forecast uncertainty/error fields where available;
+- derived risk/replenishment features.
 
 ### Dewmi
+
 Needs:
+
 - forecasts;
-- risk outputs;
+- inventory-risk/replenishment outputs;
 - uncertainty;
-- explanatory/model metadata;
-- segment-level results for transparency, robustness, or limitation analysis.
+- explanatory metadata;
+- assumptions and limitations;
+- human-review conditions.
 
-## 9. Data leakage rule
+## 8. Data leakage rule
 
-No feature used to predict period `t` may contain information that would only be known after period `t`.
+No feature used to predict period `t` may contain information that would only be known after the prediction origin.
 
-This includes careless rolling calculations, target-based aggregates, and random splitting.
+Particular care is required with:
 
-## 10. Local-data rule
+- source `Demand_Forecast`;
+- rolling statistics;
+- inventory states recorded after sales for a period;
+- replenishment information that may occur after the prediction origin;
+- random train/test splitting.
+
+## 9. Local-data rule
 
 The following remain local and are ignored by Git:
 
@@ -153,14 +192,8 @@ data/processed/*
 
 Only documentation, code, schemas, tests, and small non-sensitive fixtures should be version controlled.
 
-## 11. Critical limitation
+## 10. Dataset limitation
 
-This dataset does not provide complete observed inventory state such as:
+The selected dataset is **simulated**. It is useful because it provides the connected sales and inventory variables required by the framework, but it is not direct evidence from a real operating company.
 
-- on-hand stock;
-- reorder point;
-- safety stock;
-- replenishment orders;
-- supplier lead time.
-
-Therefore, the project must avoid presenting a derived score as a directly observed stockout or overstock event unless supported by additional data.
+Results must therefore be described as evaluation within the simulated supply-chain environment, not proof of real-company operational performance.
