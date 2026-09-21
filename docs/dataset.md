@@ -6,8 +6,8 @@
 **Publisher:** Ziya on Kaggle  
 **Source:** https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset  
 **Type:** Simulated daily SKU-level supply-chain and inventory data  
-**Dataset size:** approximately 91,250 records and 15 source columns  
-**Time coverage:** approximately one year of daily observations  
+**Dataset size:** 91,250 records and 15 source columns (verified from the downloaded CSV)  
+**Time coverage:** 2024-01-01 to 2024-12-30 (365 dates)  
 **Repository rule:** The dataset file itself is not committed to GitHub.
 
 Local raw data should be placed under:
@@ -22,29 +22,46 @@ The dataset change from UCI Online Retail is recorded in:
 docs/decisions/DR-001-dataset-selection.md
 ```
 
-## 2. Source columns
+## 2. Verified dataset profile
 
-| Column | Project role |
-|---|---|
-| `Date` | Temporal ordering |
-| `SKU_ID` | Product identifier |
-| `Warehouse_ID` | Warehouse identifier |
-| `Supplier_ID` | Supplier identifier |
-| `Region` | Regional dimension |
-| `Units_Sold` | Historical sales / primary demand source |
-| `Inventory_Level` | Simulated on-hand inventory level |
-| `Supplier_Lead_Time_Days` | Simulated supplier lead time |
-| `Reorder_Point` | Inventory-policy threshold |
-| `Order_Quantity` | Simulated replenishment quantity |
-| `Unit_Cost` | Unit cost |
-| `Unit_Price` | Selling price |
-| `Promotion_Flag` | Promotion indicator |
-| `Stockout_Flag` | Simulated stockout indicator |
-| `Demand_Forecast` | Source-provided planning forecast; not the project's forecasting target |
+The downloaded CSV was profiled before implementation. Verified characteristics:
 
-Exact schema and datatypes must be verified from the downloaded file before implementation.
+- 91,250 rows;
+- 15 columns;
+- 365 dates from 2024-01-01 to 2024-12-30;
+- 50 unique SKUs;
+- 5 warehouses;
+- 10 suppliers;
+- 4 regions;
+- no missing values in the 15 source columns;
+- `Stockout_Flag` is constant at 0 for all 91,250 rows;
+- `Order_Quantity` is 0 in 86,223 rows and greater than 0 in 5,027 rows.
 
-## 3. Forecasting target
+The constant `Stockout_Flag` means it cannot be used as a meaningful stockout classification target or validation label. The relatively sparse non-zero `Order_Quantity` values must be profiled carefully before defining replenishment logic.
+
+## 3. Source columns
+
+| Column | Observed dtype | Project role |
+|---|---|---|
+| `Date` | text/date | Temporal ordering |
+| `SKU_ID` | text | Product identifier |
+| `Warehouse_ID` | text | Warehouse identifier |
+| `Supplier_ID` | text | Supplier identifier |
+| `Region` | text | Regional dimension |
+| `Units_Sold` | integer | Historical sales / primary demand source |
+| `Inventory_Level` | integer | Simulated on-hand inventory level |
+| `Supplier_Lead_Time_Days` | integer | Simulated supplier lead time |
+| `Reorder_Point` | integer | Inventory-policy threshold |
+| `Order_Quantity` | integer | Simulated replenishment quantity; non-zero in 5,027 rows |
+| `Unit_Cost` | decimal | Unit cost |
+| `Unit_Price` | decimal | Selling price |
+| `Promotion_Flag` | integer/binary | Promotion indicator |
+| `Stockout_Flag` | integer/binary | Constant 0 in the downloaded CSV; not usable as a target/label |
+| `Demand_Forecast` | decimal | Source-provided planning forecast; not the project's forecasting target |
+
+Schema, row count, date coverage, missingness, cardinalities, and key field behaviour above have been verified from the downloaded CSV. Additional distribution and temporal checks will still be performed in the reproducible data-profiling pipeline.
+
+## 4. Forecasting target
 
 The forecasting component will use `Units_Sold` to construct a regular time series.
 
@@ -67,7 +84,7 @@ Therefore:
 - do not let it leak future/target information into training;
 - it may only be used as a separately documented benchmark after the project's own evaluation design is fixed.
 
-## 4. Inventory-analysis variables
+## 5. Inventory-analysis variables
 
 Didilani's component can directly use inventory-related fields that were missing from the original UCI dataset, including:
 
@@ -76,14 +93,15 @@ Inventory_Level
 Reorder_Point
 Supplier_Lead_Time_Days
 Order_Quantity
-Stockout_Flag
 ```
 
 These variables allow inventory-risk and replenishment analysis to be grounded in the simulated operating state instead of inventing a complete hypothetical inventory system.
 
+`Stockout_Flag` exists in the schema but is constant at 0 in the downloaded CSV, so it must not be treated as an observed stockout target or validation label. Stockout-pressure/risk must instead be derived from defensible relationships among forecast demand, inventory state, reorder point, lead time, and replenishment behaviour.
+
 Any derived risk level or recommended replenishment quantity must still have a documented formula/rule and evaluation method.
 
-## 5. Shared data-quality checks
+## 6. Shared data-quality checks
 
 Before model training, the shared pipeline must explicitly check:
 
@@ -97,12 +115,12 @@ Before model training, the shared pipeline must explicitly check:
 - zero-variance or near-zero-variance fields;
 - distribution and range of `Units_Sold`;
 - relationship between `Inventory_Level`, `Reorder_Point`, and `Order_Quantity`;
-- behaviour and usefulness of `Stockout_Flag`;
+- confirm `Stockout_Flag` remains zero-variance and exclude it from predictive/validation use;
 - possible leakage from source-generated fields.
 
 No member should create a conflicting private cleaning rule without documenting the reason.
 
-## 6. Shared processed dataset
+## 7. Shared processed dataset
 
 The shared processed layer should provide reproducible fields needed by downstream components.
 
@@ -129,7 +147,7 @@ Stockout_Flag
 
 plus forecast outputs from Chathuranga's component.
 
-## 7. Member-specific derived datasets
+## 8. Member-specific derived datasets
 
 ### Chathuranga
 
@@ -150,7 +168,7 @@ Needs:
 - reorder points;
 - supplier lead times;
 - replenishment/order quantities;
-- stockout indicators where informative;
+- the documented zero-variance limitation of `Stockout_Flag`;
 - forecast uncertainty/error fields where available;
 - derived risk/replenishment features.
 
@@ -165,7 +183,7 @@ Needs:
 - assumptions and limitations;
 - human-review conditions.
 
-## 8. Data leakage rule
+## 9. Data leakage rule
 
 No feature used to predict period `t` may contain information that would only be known after the prediction origin.
 
@@ -177,7 +195,7 @@ Particular care is required with:
 - replenishment information that may occur after the prediction origin;
 - random train/test splitting.
 
-## 9. Local-data rule
+## 10. Local-data rule
 
 The following remain local and are ignored by Git:
 
@@ -192,7 +210,7 @@ data/processed/*
 
 Only documentation, code, schemas, tests, and small non-sensitive fixtures should be version controlled.
 
-## 10. Dataset limitation
+## 11. Dataset limitation
 
 The selected dataset is **simulated**. It is useful because it provides the connected sales and inventory variables required by the framework, but it is not direct evidence from a real operating company.
 
