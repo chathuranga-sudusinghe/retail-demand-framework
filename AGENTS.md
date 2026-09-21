@@ -95,7 +95,6 @@ Examples of decisions that require explicit team or supervisor approval where ap
 - evaluation metric changes;
 - threshold definitions;
 - use of source `Demand_Forecast`;
-- changes to the group/individual project boundary;
 - replacement of the primary dataset.
 
 If such a decision is missing, stop and ask.
@@ -247,13 +246,11 @@ Members may collaborate across boundaries, but ownership changes must be explici
 
 ---
 
-## 10. COMP1884 vs COMP1885 rule
+## 10. COMP1884 repository scope rule
 
-This repository contains the COMP1884 group implementation.
+This repository contains the COMP1884 group implementation only.
 
-The COMP1885 individual-project documents in `docs/team/*/individual-project-overview.md` are planning overviews only.
-
-Do not implement the full COMP1885 projects inside this repository unless the team explicitly changes that decision.
+Keep work in this repository focused on the approved group research question, integrated group product, member COMP1884 responsibilities, shared evidence, and collaboration workflow.
 
 ---
 
