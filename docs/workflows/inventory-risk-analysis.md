@@ -45,7 +45,7 @@ Visual analytics and business interpretation
 - supplier lead time;
 - recent/available order quantity;
 - forecast error or uncertainty;
-- stockout flag where informative.
+- the known limitation that `Stockout_Flag` is constant and cannot serve as a target/label.
 
 ## Candidate outputs
 
@@ -70,6 +70,12 @@ forecast demand
 ```
 
 The actual implementation must match the dataset definitions and avoid inventing unavailable operational variables.
+
+## Verified dataset constraints
+
+- `Stockout_Flag = 0` for all 91,250 rows. It must not be used to train or validate a stockout classifier.
+- `Order_Quantity > 0` occurs in 5,027 rows, while 86,223 rows have zero order quantity. Replenishment modelling must account for this sparsity.
+- Any stockout-pressure indicator must therefore be a derived decision-support measure based on forecast demand and available inventory-policy variables, not a learned replica of `Stockout_Flag`.
 
 ## Critical limitation
 
