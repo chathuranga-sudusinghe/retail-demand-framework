@@ -74,7 +74,9 @@ No major blockers were recorded at this commencement meeting.
 
 ## Supervisor / Module-Leader Confirmation
 
-No specific supervisor/module-leader confirmation item was recorded at this meeting.
+The COMP1884 project had already been discussed with and approved to proceed by the supervisor during the supervisor meeting held earlier the same day, from 1:00 PM to 3:00 PM.
+
+This 8:30 PM group meeting was therefore used to organise the approved project into a practical team workflow, including member responsibility areas, GitHub collaboration, and initial repository setup.
 
 ## Related Project Evidence
 
@@ -83,4 +85,4 @@ No specific supervisor/module-leader confirmation item was recorded at this meet
 
 ## Outcome
 
-The group established the initial project direction, agreed to use a shared GitHub repository, identified the first responsibility areas for the three active members, and completed the initial repository setup required to begin the COMP1884 project.
+Following the supervisor's approval to proceed earlier that day, the group translated the approved project into an initial working plan, agreed to use a shared GitHub repository, identified the first responsibility areas for the three active members, and completed the initial repository setup required to begin the COMP1884 project.
