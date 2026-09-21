@@ -8,60 +8,61 @@ This document defines the current research-design baseline for the COMP1884 grou
 
 **How can data-driven demand forecasting be used to identify inventory risks and support supply-chain decision-making in retail operations?**
 
-## 3. Analytical unit
+## 3. Source and analytical unit
 
-The raw dataset is invoice-line transactional data. Forecasting requires conversion into a regular time series.
+The selected source is the **High-Dimensional Supply Chain Inventory Dataset**, a simulated daily SKU-level supply-chain dataset.
 
-Candidate analytical units include:
+The primary forecasting unit is expected to be a regular product-demand time series derived from `Units_Sold`.
 
-- product-day demand;
-- product-week demand;
-- category-day demand, if a defensible category representation is developed;
-- category-week demand.
+Candidate units include:
 
-The first implementation decision will be whether daily or weekly product demand provides the best balance between temporal detail, sparsity, and the approximately one-year dataset horizon.
+- SKU-day demand aggregated across operational dimensions;
+- SKU-warehouse-day demand if warehouse-level forecasting is justified;
+- SKU-week demand if daily series prove too noisy or sparse.
 
-## 4. Target variable
+The final analytical unit must be documented before model training.
 
-Raw source variable:
+## 4. Forecasting target
 
-```text
-Quantity
-```
-
-Forecasting target:
+Primary source variable:
 
 ```text
-Demand(product, period) = sum(Quantity)
+Units_Sold
 ```
 
-for each selected product and time period after agreed cleaning and transaction-handling rules.
+Candidate primary target:
+
+```text
+Demand(SKU, period) = sum(Units_Sold)
+```
+
+The project will build its own forecasting models. The dataset's source-provided `Demand_Forecast` field is **not the project's target** and must not be used as an ordinary predictor if doing so would leak target/future information. It may only be used later as a clearly separated external/source benchmark if methodologically justified.
 
 ## 5. Temporal characteristics to investigate
 
-The project should examine:
+The forecasting component may examine:
 
 - trend;
 - seasonality;
 - autocorrelation / lag dependence;
 - volatility;
-- intermittency / zero-demand periods;
 - changes in demand level;
-- product-to-product heterogeneity.
-
-Seasonality is not a source column. It is a temporal property inferred from demand series created from `InvoiceDate` and `Quantity`.
+- SKU-to-SKU heterogeneity;
+- promotion-related effects where leakage-safe.
 
 ## 6. Candidate feature families
 
 ### Calendar features
+
 - day of week;
 - week of year;
 - month;
-- quarter;
-- potentially hour, if intraday forecasting becomes relevant.
+- quarter.
 
 ### Lag features
+
 Examples may include:
+
 - lag 1;
 - lag 7;
 - lag 14;
@@ -70,18 +71,25 @@ Examples may include:
 Exact lags depend on the final aggregation frequency and must not be selected mechanically.
 
 ### Rolling features
+
 Examples:
+
 - rolling mean;
 - rolling median;
 - rolling standard deviation;
-- rolling minimum / maximum where useful;
 - recent growth or decline indicators.
 
-All rolling and lag features must be generated without future-data leakage.
+### Exogenous variables
+
+Variables such as `Promotion_Flag` may be considered only when they would genuinely be known at the prediction origin.
+
+Inventory fields should not automatically be inserted into the forecasting model. Their role must be justified separately from their downstream use in inventory analysis.
+
+All features must be generated without future-data leakage.
 
 ## 7. Forecasting approach
 
-The group forecasting component should compare appropriate levels of complexity, for example:
+The forecasting component should compare appropriate levels of complexity, for example:
 
 1. naive / seasonal-naive benchmark;
 2. statistical time-series method(s);
@@ -102,7 +110,7 @@ later period -> validation
 future holdout -> test
 ```
 
-Where feasible, use rolling-origin or walk-forward evaluation to test forecasting stability across time.
+Where feasible, use rolling-origin or walk-forward evaluation.
 
 ## 9. Forecasting metrics
 
@@ -114,15 +122,11 @@ Candidate metrics include:
 MAE = (1 / n) * sum(|p_i - y_i|)
 ```
 
-Primary candidate because it is easy to interpret in demand units.
-
 ### Root Mean Squared Error (RMSE)
 
 ```text
 RMSE = sqrt((1 / n) * sum((p_i - y_i)^2))
 ```
-
-Provides stronger penalty for large errors.
 
 ### Weighted Absolute Percentage Error (WAPE)
 
@@ -130,15 +134,11 @@ Provides stronger penalty for large errors.
 WAPE = sum(|p_i - y_i|) / sum(|y_i|)
 ```
 
-Useful as a scale-normalised aggregate measure when the denominator is meaningful.
-
 ### Mean Absolute Percentage Error (MAPE)
 
-MAPE is part of the original proposal but must be used carefully because zero or near-zero actual demand can make it unstable or undefined.
+MAPE may be reported with appropriate safeguards where actual demand is zero or near zero.
 
 ### Forecast Bias / Mean Forecast Error
-
-Using the project convention:
 
 ```text
 Bias = (1 / n) * sum(p_i - y_i)
@@ -150,64 +150,83 @@ Interpretation:
 - negative bias -> systematic underforecasting;
 - near zero -> little net directional error.
 
-Bias is diagnostic and should not replace an absolute-error metric.
-
-## 10. Group-level hypothesis direction
-
-A strong testable time-series hypothesis direction is:
+## 10. Group-level forecasting hypothesis direction
 
 ### H0
+
 Forecasting performance does not significantly vary across different temporal demand behaviours.
 
 ### H1
+
 Forecasting performance varies significantly across different temporal demand behaviours, and different forecasting approaches show different suitability across demand regimes.
 
-Potential regimes include:
+This remains provisional until demand-regime definitions and statistical tests are operationalised.
 
-- stable;
-- seasonal;
-- volatile;
-- intermittent;
-- low-volume.
+## 11. Inventory-risk and replenishment interpretation
 
-This hypothesis will only be locked after the regime definitions, model comparison design, and statistical test are defined.
+Didilani's component will consume the selected forecast outputs together with relevant inventory variables, potentially including:
 
-## 11. Inventory-risk interpretation
+- `Inventory_Level`;
+- `Reorder_Point`;
+- `Supplier_Lead_Time_Days`;
+- `Order_Quantity`;
+- `Stockout_Flag`;
+- forecast error / uncertainty;
+- product and warehouse identifiers.
 
-Risk analysis may use combinations of:
+The goal is to transform the forecast into inventory-risk and replenishment information rather than forecast demand a second time.
 
-- forecast demand level;
-- recent demand trend;
-- demand volatility;
-- intermittency;
-- forecast error;
-- forecast bias;
-- forecast uncertainty.
+Candidate downstream outputs include:
 
-Because true inventory state is absent, outputs must initially be described as **inventory-risk proxies**, not observed stockout/overstock events.
+- low/medium/high replenishment risk;
+- stockout-pressure indicators;
+- overstock/excess-inventory indicators;
+- reorder alerts;
+- recommended replenishment quantity where a defensible method is defined.
+
+The exact formula/rules must be operationalised and evaluated before implementation is considered final.
 
 ## 12. Responsible decision support
 
-The system should communicate:
+Dewmi's component will consume forecast and inventory-risk/replenishment outputs and should communicate:
 
 - what the model predicts;
-- how uncertain the prediction is;
-- what evidence contributes to the risk interpretation;
-- what limitations apply;
-- that final operational judgement remains with a human decision-maker.
+- inventory/risk interpretation;
+- forecast uncertainty;
+- evidence used by the rule/model;
+- assumptions and limitations;
+- management considerations;
+- whether human review is required.
 
-## 13. Threats to validity
+The framework supports decisions; it does not automatically execute replenishment actions.
+
+## 13. End-to-end framework
+
+```text
+Historical sales and supply-chain data
+        ->
+Forecasting model
+        ->
+Forecast output
+        ->
+Inventory-risk / replenishment analysis
+        ->
+Responsible decision-support logic
+        ->
+Management-facing output
+```
+
+## 14. Threats to validity
 
 Important threats include:
 
+- the dataset is simulated, not observed from a real operating retailer;
 - approximately one year of data limits long-cycle seasonal inference;
-- missing customer identifiers;
-- cancellations/returns and negative quantities;
-- no direct inventory-level fields;
-- product heterogeneity;
-- sparse/intermittent demand;
-- changes in assortment over time;
-- possible abnormal purchasing periods;
-- evaluation sensitivity to aggregation frequency.
+- source-generated variables may embed assumptions from the simulation;
+- `Demand_Forecast` may create leakage if incorrectly used;
+- product/warehouse aggregation choices may affect conclusions;
+- any low-variance or non-informative fields must be identified during profiling;
+- model and inventory thresholds may be sensitive to the chosen evaluation period;
+- performance on the simulated dataset does not establish production effectiveness in a real company.
 
 These limitations must be considered in method selection and conclusions.
