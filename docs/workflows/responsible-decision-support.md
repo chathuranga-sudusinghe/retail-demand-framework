@@ -6,57 +6,100 @@ Primary COMP1884 owner: **Dewmi**
 
 ## Goal
 
-Convert model and risk outputs into transparent decision-support information without presenting predictions as automatic managerial decisions.
+Convert forecast and inventory-risk/replenishment outputs into transparent management-facing decision-support information without presenting model recommendations as automatic managerial decisions.
 
 ## Workflow
 
 ```text
-Forecast
+Demand forecast
   +
-Risk proxy
+Inventory risk level
   +
-Uncertainty
+Recommended replenishment quantity, if available
   +
-Explanation
+Forecast uncertainty
   +
-Limitations
+Risk / replenishment explanation
+  +
+Assumptions and limitations
         |
         v
-Responsible decision-support view
+Responsible decision-support logic
+        |
+        v
+Management-facing decision-support view
         |
         v
 Human review / managerial judgement
 ```
 
+## Input boundary
+
+The main analytical inputs are produced upstream:
+
+- Chathuranga produces the demand forecast and forecast-evaluation information.
+- Didilani produces the inventory-risk and replenishment outputs.
+- Dewmi does not repeat those calculations; she converts them into a responsible decision-support presentation and human-review process.
+
 ## Required principles
 
 ### Transparency
-The user should be able to understand what is being predicted and how the risk indicator is defined.
+
+The user should be able to understand:
+
+- what demand was forecast;
+- what inventory risk was identified;
+- whether a replenishment quantity was recommended;
+- what evidence and assumptions produced those outputs.
 
 ### Uncertainty
-The framework should not hide uncertainty or present a point forecast as certain.
+
+The framework should not hide forecast uncertainty or present a point forecast, risk level, or replenishment quantity as certain.
 
 ### Limitations
-Known dataset/model limitations should be visible and documented.
+
+Known dataset, model, and decision-rule limitations should be visible and documented.
+
+The source dataset is simulated, so the final interface must not imply that the recommendation has already been validated in a real operating retailer.
 
 ### Human oversight
-The system supports human decisions; it does not replace managerial judgement.
+
+The system supports human decisions; it does not replace managerial judgement or automatically execute replenishment orders.
 
 ### Responsible data use
-Customer and transactional data should only be used to the extent required for the research question.
+
+Only project-relevant data should be used in the decision-support layer, with unnecessary identifiers excluded from management-facing outputs.
 
 ## Candidate output fields
 
 ```text
-forecast
-risk_proxy
-uncertainty
+SKU_ID
+period
+forecast_demand
+inventory_risk_level
+recommended_replenishment_quantity
+forecast_uncertainty
 evidence
+assumptions
 limitations
 management_consideration
 human_review_flag
 ```
 
+The replenishment field may be null or unavailable where Didilani's method does not produce a defensible quantity.
+
+## Human-review direction
+
+Candidate reasons to require explicit human review may include:
+
+- high inventory risk;
+- high forecast uncertainty;
+- unusually large replenishment recommendation;
+- conflict between inventory indicators;
+- known data or model limitations.
+
+Exact human-review rules must be documented before implementation.
+
 ## Evaluation direction
 
-Before claiming that the layer "improves trust" or "improves interpretability", the project must define measurable criteria for those concepts.
+Before claiming that this layer "improves trust", "improves interpretability", or improves decision quality, the project must define measurable criteria for those concepts.
