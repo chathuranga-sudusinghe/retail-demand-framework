@@ -5,6 +5,7 @@ This directory records important project decisions that affect multiple members 
 Each decision record should include:
 
 - date;
+- status;
 - decision;
 - reason;
 - alternatives considered;
@@ -12,14 +13,17 @@ Each decision record should include:
 - owner(s);
 - whether supervisor confirmation is required.
 
-Examples:
+## Current decision records
 
-- daily vs weekly demand aggregation;
-- return/cancellation treatment;
+- [DR-001 — Dataset Selection](DR-001-dataset-selection.md)
+
+Future examples:
+
+- forecasting analytical unit and aggregation;
 - final forecasting metrics;
 - demand-regime definitions;
-- inventory-risk proxy definitions;
+- inventory-risk/replenishment definitions;
 - model set;
 - final hypothesis operationalisation.
 
-Use one Markdown file per material decision when implementation begins.
+Use one Markdown file per material decision.
