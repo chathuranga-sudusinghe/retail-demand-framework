@@ -89,6 +89,19 @@ Disadvantages:
 
 - simulated rather than observed company data.
 
+## Verified downloaded-dataset findings
+
+The selected CSV was inspected after download. The following facts are now confirmed:
+
+- 91,250 rows and 15 columns;
+- 2024-01-01 to 2024-12-30 coverage;
+- 50 SKUs, 5 warehouses, 10 suppliers, and 4 regions;
+- no missing values in the source columns;
+- `Stockout_Flag` is 0 for all 91,250 rows and is therefore not usable as a stockout target/validation label;
+- `Order_Quantity` is greater than 0 in 5,027 rows and equals 0 in 86,223 rows.
+
+These limitations do not reverse the dataset-selection decision. The dataset still provides substantially better inventory-state coverage than UCI Online Retail, but the downstream inventory method must not depend on `Stockout_Flag` as ground truth and must explicitly handle sparse replenishment events.
+
 ## Implementation consequences
 
 The project documentation and code must now treat:
