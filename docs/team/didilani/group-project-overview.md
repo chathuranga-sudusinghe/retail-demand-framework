@@ -28,9 +28,14 @@ Primary inputs include:
 - `Reorder_Point`;
 - `Supplier_Lead_Time_Days`;
 - `Order_Quantity`;
-- `Stockout_Flag` where informative;
 - warehouse/product identifiers;
 - forecast error or uncertainty where available.
+
+## Verified dataset constraints
+
+- `Stockout_Flag` is 0 for all 91,250 records, so it cannot be used as a stockout target or validation label.
+- `Order_Quantity` is non-zero in 5,027 records and zero in 86,223 records, so replenishment events are sparse and require profiling before modelling.
+- Inventory-risk logic should therefore rely primarily on forecast demand together with `Inventory_Level`, `Reorder_Point`, `Supplier_Lead_Time_Days`, `Order_Quantity`, and their time alignment.
 
 ## Responsibilities
 
