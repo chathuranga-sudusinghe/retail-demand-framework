@@ -7,28 +7,29 @@
 **Module:** COMP1884 Group Project  
 **Programme:** MSc Data Science, University of Greenwich
 
-This is one integrated group project. Each active member owns a distinct data-science contribution that connects to the shared final framework.
+This is one integrated group project. Each active member owns a distinct contribution that connects to the shared final framework.
 
 ## 2. Business problem
 
-Retail demand changes over time. Underestimating demand can increase stockout pressure and lost-sales risk, while overestimating demand can contribute to excess stock, storage cost, and slow-moving inventory. Retail managers therefore need more than a forecast: they need a transparent interpretation of what the forecast means for operational decisions.
+Retail organisations need to anticipate future demand while considering available inventory, reorder thresholds, replenishment activity, supplier lead times, and operational risk. A demand forecast alone is not a complete business decision. It must be translated into inventory implications and presented with uncertainty, assumptions, and appropriate human oversight.
 
 ## 3. Research problem
 
-Demand forecasting, inventory-risk analysis, and decision-making are often treated as separate stages. This project investigates how they can be connected in one practical analytical workflow.
+Demand forecasting, inventory-risk analysis, replenishment planning, and managerial decision-making are often treated as separate stages. This project investigates how they can be connected in one practical analytical workflow.
 
 ## 4. Research aim
 
-To investigate how historical online retail transaction data can be used to forecast product demand and translate forecasting outputs into inventory-risk insights that support retail supply-chain decision-making.
+To investigate how data-driven demand forecasting can be integrated with inventory-state information to identify inventory risks and support retail supply-chain decision-making.
 
 ## 5. Research objectives
 
-1. Analyse historical demand patterns and temporal behaviour.
-2. Develop and compare suitable forecasting approaches.
-3. Translate forecast outputs and demand behaviour into defensible inventory-risk proxies.
-4. Present risk information through clear analytical and visual outputs.
-5. Incorporate uncertainty, transparency, limitations, and human oversight into decision support.
-6. Integrate the member components into one group prototype/framework.
+1. Prepare and analyse historical SKU-level sales and inventory data.
+2. Develop and compare suitable demand-forecasting approaches.
+3. Select a suitable forecasting model using time-aware evaluation.
+4. Combine forecast outputs with inventory variables to identify inventory and replenishment risks.
+5. Present risk and replenishment information through clear analytical outputs.
+6. Incorporate uncertainty, transparency, limitations, and human oversight into decision support.
+7. Integrate the three member components into one end-to-end prototype/framework.
 
 ## 6. Main research question
 
@@ -36,21 +37,21 @@ To investigate how historical online retail transaction data can be used to fore
 
 ## 7. Supporting research questions
 
-- **RQ1:** What demand patterns can be identified from historical online retail transaction data?
-- **RQ2:** Which forecasting methods are suitable for predicting product-level or category-level retail demand?
-- **RQ3:** How can forecasting outputs be translated into inventory-risk categories such as stockout, overstocking, and slow-moving product risks?
-- **RQ4:** How can ethical, legal, governance, transparency, and human-decision considerations guide responsible use of retail demand-forecasting outputs?
+- **RQ1:** What demand patterns can be identified from historical SKU-level sales data?
+- **RQ2:** Which forecasting methods are suitable for predicting future product demand?
+- **RQ3:** How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
+- **RQ4:** How can uncertainty, transparency, governance, and human oversight guide the responsible use of the resulting decision-support outputs?
 
 ## 8. Research contribution
 
 The contribution is not simply to find the forecasting model with the lowest error. The group product will connect:
 
 ```text
-Historical transactions
-    -> demand behaviour
-    -> demand forecasts
-    -> forecast error / bias / uncertainty
-    -> inventory-risk interpretation
+Historical supply-chain data
+    -> demand forecasting
+    -> forecast error / uncertainty
+    -> inventory-state and replenishment analysis
+    -> inventory-risk / replenishment output
     -> responsible decision support
 ```
 
@@ -60,52 +61,97 @@ The expected COMP1884 output is one integrated retail decision-support prototype
 
 - a reproducible shared data foundation;
 - a demand-forecasting component;
-- an inventory-risk analytics component;
+- an inventory-risk and replenishment-analysis component;
 - a visual/business interpretation layer;
 - a responsible decision-support layer;
 - documented assumptions, limitations, and evaluation.
 
+The intended end-to-end behaviour is:
+
+```text
+Forecasting output
+    -> inventory-risk/replenishment output
+    -> responsible management-facing output
+```
+
+A recommended replenishment quantity may be produced where the final method can be justified from the available inventory variables. It must not be presented as an unquestionable real-world order instruction.
+
 ## 10. Member contributions
 
 ### Chathuranga
-Owns time-series demand forecasting, temporal feature engineering, forecasting evaluation, and generation of forecast outputs for downstream use.
+
+Owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and generation of forecast outputs for downstream use.
 
 ### Didilani
-Owns inventory-risk analytics, visual analytics, and business interpretation. Her component consumes historical demand behaviour and forecasting outputs.
+
+Owns inventory-risk and replenishment analysis. Her component consumes Chathuranga's forecast outputs together with inventory variables such as inventory level, reorder point, supplier lead time, and replenishment quantity. She also owns visual/business interpretation of the resulting risk outputs.
 
 ### Dewmi
-Owns responsible decision support, transparency, limitations, ethical/legal/governance analysis, and human decision-support considerations.
+
+Owns responsible decision support, transparency, limitations, ethical/legal/governance analysis, and human oversight. Her component consumes forecast and inventory-risk/replenishment outputs and converts them into responsible management-facing decision-support information.
 
 ## 11. Integration rule
 
-The components are not three unrelated mini-projects. They must exchange defined inputs and outputs and jointly answer the overarching group research question.
+The components are not three unrelated mini-projects. They must exchange defined inputs and outputs:
 
-## 12. Scope
+```text
+Chathuranga forecast
+        ->
+Didilani inventory-risk / replenishment analysis
+        ->
+Dewmi responsible decision-support layer
+        ->
+Final integrated framework output
+```
+
+## 12. Dataset
+
+The selected source is the **High-Dimensional Supply Chain Inventory Dataset** on Kaggle. It is a simulated dataset designed to represent daily SKU-level supply-chain operations.
+
+The source contains sales, inventory levels, supplier lead times, reorder points, replenishment quantities, promotions, stockout indicators, costs/prices, and a source-provided demand-forecast field.
+
+The project will build its own forecast from historical sales. The source-provided `Demand_Forecast` must not be used in a way that causes target leakage.
+
+See:
+
+- `docs/dataset.md`
+- `docs/decisions/DR-001-dataset-selection.md`
+- `docs/references.md`
+
+## 13. Scope
 
 In scope:
 
-- historical retail transaction analysis;
-- time-based demand aggregation;
-- trend, seasonality, autocorrelation, volatility, and intermittency analysis;
-- baseline, statistical, regression-based, and/or machine-learning forecasting where justified;
-- time-aware evaluation;
-- inventory-risk proxy design;
+- SKU-level historical sales analysis;
+- time-aware demand forecasting;
+- model comparison and forecast evaluation;
+- inventory-level and reorder-point analysis;
+- supplier lead-time and replenishment analysis;
+- inventory-risk identification;
+- replenishment recommendation logic where methodologically justified;
 - visual interpretation;
 - uncertainty and responsible decision support.
 
 Out of scope unless later justified:
 
-- live retailer inventory integration;
+- live retailer system integration;
 - real-time production deployment;
-- claims of observed stockouts or true on-hand inventory where the dataset does not contain inventory-level data;
+- treating simulated data as observed data from a real operating company;
+- automatic execution of purchase/replenishment orders;
 - full COMP1885 individual-project implementations.
 
-## 13. Critical dataset limitation
+## 14. Critical dataset limitation
 
-The UCI Online Retail dataset records transactions, not complete inventory state. It does not directly provide variables such as on-hand stock, reorder points, safety stock, supplier lead time, or replenishment orders.
+The selected dataset is **simulated rather than observed data from a real company**. This improves coverage of the variables required by the framework, but limits claims about direct real-world operational effectiveness.
 
-Therefore, stockout, overstock, and similar outputs must be described as **inventory-risk proxies or decision-support indicators** unless additional defensible data or assumptions are introduced.
+All final conclusions must distinguish:
 
-## 14. Relationship to COMP1885
+```text
+performance within the simulated dataset
+!=
+proven performance in a real retailer
+```
+
+## 15. Relationship to COMP1885
 
 The group project provides a common analytical foundation. Each member's COMP1885 project can build on that foundation but must become a separate individual research project with its own question, literature review, methodology, experiments, product, results, and discussion.

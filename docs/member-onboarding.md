@@ -14,9 +14,16 @@ You need:
 
 - access to the private GitHub repository;
 - Git installed;
+- Python 3.12.x for this project;
 - a local clone of the repository;
 - access to ChatGPT / Codex if you plan to use them;
-- the UCI Online Retail dataset stored locally under `data/raw/`.
+- the **High-Dimensional Supply Chain Inventory Dataset** stored locally under `data/raw/`.
+
+Dataset source:
+
+https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset
+
+Do not upload the dataset file to GitHub.
 
 ---
 
@@ -199,9 +206,10 @@ Do not:
 
 - type the GitHub URL by itself in a terminal and expect it to clone;
 - work directly on `main`;
-- upload the Excel dataset to GitHub;
+- upload the dataset to GitHub;
 - reuse one branch for many different tasks;
 - let AI change research decisions without approval;
+- use the source `Demand_Forecast` as the project's forecast without an approved method;
 - ignore failing tests;
 - copy code you cannot explain.
 

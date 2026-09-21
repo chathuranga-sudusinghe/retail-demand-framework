@@ -7,61 +7,62 @@
 
 ## Role
 
-**Time-Series Demand Forecasting and Model Evaluation**
+**Model Training, Model Selection, Demand Forecasting, and Forecast Evaluation**
 
 ## Purpose in the group system
 
-This component creates the forecasting foundation required by the downstream inventory-risk and decision-support components.
+This component produces the future-demand forecast that becomes the input to Didilani's inventory-risk and replenishment analysis.
 
 ## Component research question
 
-**How do temporal characteristics of retail demand affect the performance and suitability of different forecasting approaches?**
+**How do temporal characteristics of SKU demand affect the performance and suitability of different forecasting approaches?**
 
 ## Working hypothesis
 
 ### H0
+
 Forecasting performance does not significantly vary across different temporal demand behaviours.
 
 ### H1
+
 Forecasting performance varies significantly across different temporal demand behaviours, and different forecasting approaches show different suitability across demand regimes.
 
-This is a working hypothesis until demand-regime definitions and statistical testing are formally specified.
+This remains a working hypothesis until demand-regime definitions and statistical testing are formally specified.
 
 ## Inputs
 
-- cleaned transaction data;
-- `InvoiceDate`;
-- `StockCode`;
-- `Quantity`;
-- selected supporting variables where justified.
+Primary inputs:
+
+- `Date`;
+- `SKU_ID`;
+- `Units_Sold`;
+- selected leakage-safe supporting variables where justified.
+
+The source `Demand_Forecast` field is not the project's forecasting target and must not be used in a way that leaks target/future information.
 
 ## Responsibilities
 
-1. Define the forecasting target and time aggregation with the group.
-2. Analyse demand trend, seasonality, autocorrelation, volatility, and intermittency.
-3. Develop leakage-safe temporal, lag, and rolling features.
-4. Implement and compare appropriate forecasting baselines/methods.
-5. Use time-aware train/validation/test procedures.
-6. Evaluate forecasts using agreed metrics.
-7. Measure directional forecast bias.
-8. Produce forecast outputs required by inventory-risk analysis.
-9. Document assumptions and model limitations.
-10. Support integration and reproducibility.
+1. Define the forecasting target and aggregation level with the group.
+2. Build chronological training, validation, and test datasets.
+3. Train appropriate forecasting models and benchmarks.
+4. Compare model performance using agreed metrics.
+5. Select a suitable model based on out-of-sample evidence rather than complexity alone.
+6. Generate future demand forecasts for each selected SKU/analytical unit.
+7. Measure forecast error, bias, and uncertainty where feasible.
+8. Produce a stable forecast-output contract for Didilani's component.
+9. Document assumptions and limitations.
 
 ## Candidate outputs
 
-A standard forecast-output contract may contain:
-
 ```text
-StockCode
+SKU_ID
 period
 actual_demand
 forecast_demand
 forecast_error
 absolute_error
-bias_direction
 model_id
-uncertainty fields, if available
+forecast uncertainty / interval fields, if available
 ```
 
 ## Evaluation
@@ -76,19 +77,20 @@ Candidate metrics:
 
 ## Downstream dependency
 
-Didilani's component depends on reproducible historical demand and forecast outputs. Dewmi's component may consume model uncertainty, limitations, and explanatory information.
+Didilani's component receives the selected forecast output and combines it with inventory-state and replenishment variables such as `Inventory_Level`, `Reorder_Point`, `Supplier_Lead_Time_Days`, and `Order_Quantity`.
 
 ## Definition of done
 
 This component is complete for COMP1884 when:
 
-- the group target and aggregation are documented;
+- the target and aggregation are documented;
 - at least one benchmark and justified forecasting alternatives are evaluated;
 - validation is time-aware;
-- metrics are reproducibly calculated;
+- a suitable model is selected using reproducible evidence;
+- future demand forecasts are generated;
 - forecast outputs follow an agreed schema;
 - error/bias analysis is available;
-- results can be consumed by the inventory-risk component;
+- outputs can be consumed by the inventory-risk component;
 - limitations are documented.
 
 ## Scope boundary

@@ -7,7 +7,7 @@ Create one reproducible, documented data foundation used by all COMP1884 compone
 ## Workflow
 
 ```text
-Local raw UCI Online Retail file
+Local High-Dimensional Supply Chain Inventory file
         |
         v
 Schema validation
@@ -16,53 +16,68 @@ Schema validation
 Data-quality profiling
         |
         v
-Cancellation / return handling
+Date / identifier validation
         |
         v
-Missing / invalid value handling
+Leakage and source-variable review
         |
         v
-Temporal standardisation
+Demand time-series preparation
         |
         v
-Demand aggregation
+Inventory-state preparation
         |
         v
-Shared processed dataset
+Shared processed datasets
         |
         +--> Forecasting
-        +--> Inventory-risk analytics
+        +--> Inventory-risk / replenishment analytics
         +--> Responsible decision support
 ```
 
 ## Required decisions before implementation
 
-1. Define cancellation detection.
-2. Define treatment of returns and negative quantities.
-3. Define treatment of non-positive prices.
-4. Define handling of missing product descriptions.
-5. Define whether `CustomerID` is required for each analysis.
-6. Select daily or weekly primary aggregation.
-7. Define product-history eligibility.
-8. Define zero-demand periods in the regular time grid.
-9. Define how net demand versus gross demand is represented.
-10. Define train/validation/test cut points.
+1. Confirm exact downloaded filename, schema, row count, and datatypes.
+2. Confirm the primary forecasting unit: SKU-day, SKU-warehouse-day, or another justified unit.
+3. Define handling of duplicate or invalid records.
+4. Define date continuity and missing-period handling.
+5. Define product/history eligibility.
+6. Define chronological train/validation/test cut points.
+7. Define whether `Promotion_Flag` is available at prediction time.
+8. Explicitly exclude or isolate source `Demand_Forecast` to prevent leakage.
+9. Profile `Stockout_Flag` and other fields for zero/low variance.
+10. Define how inventory variables are aligned in time with forecast periods.
+11. Define the handoff contract from forecasting to inventory analysis.
+12. Define the handoff contract from inventory analysis to responsible decision support.
 
 ## Reproducibility rule
 
-All shared cleaning and aggregation logic must live in code under `src/data/` rather than only inside notebooks.
+All shared cleaning, validation, alignment, and aggregation logic must live in code under `src/data/` rather than only inside notebooks.
 
-## Output contract
+## Output contracts
 
-The first shared analytical table should include, at minimum:
+Forecasting view, at minimum:
 
 ```text
-StockCode
+SKU_ID
 period
 demand
 ```
 
-plus additional documented columns needed by downstream work.
+Inventory-analysis view may additionally include:
+
+```text
+Warehouse_ID
+Supplier_ID
+Region
+Inventory_Level
+Reorder_Point
+Supplier_Lead_Time_Days
+Order_Quantity
+Stockout_Flag
+```
+
+The final schemas must be documented before cross-component integration.
 
 ## Data ownership
 

@@ -1,4 +1,4 @@
-# Inventory-Risk Analysis Workflow
+# Inventory-Risk and Replenishment Analysis Workflow
 
 ## Owner
 
@@ -6,25 +6,31 @@ Primary COMP1884 owner: **Didilani**
 
 ## Goal
 
-Translate demand behaviour and forecasting evidence into transparent inventory-risk proxies.
+Translate Chathuranga's demand forecast into transparent inventory-risk and replenishment information using the inventory variables available in the selected dataset.
 
 ## Workflow
 
 ```text
-Historical demand behaviour
+Forecast demand
         +
-Forecast outputs
+Inventory level
         +
-Forecast error / bias / uncertainty
+Reorder point
+        +
+Supplier lead time
+        +
+Replenishment / order quantity
+        +
+Forecast uncertainty, where available
         |
         v
-Risk features
+Inventory-risk and replenishment features
         |
         v
-Risk scoring / segmentation / classification method
+Rules / scoring / justified analytical method
         |
         v
-Risk proxy
+Risk level + replenishment recommendation
         |
         v
 Visual analytics and business interpretation
@@ -32,35 +38,57 @@ Visual analytics and business interpretation
 
 ## Candidate evidence
 
-- demand level;
-- recent trend;
-- volatility;
-- intermittency;
-- forecast error;
-- forecast bias;
-- forecast uncertainty.
+- forecast demand;
+- inventory level;
+- gap between inventory and forecast demand;
+- reorder point;
+- supplier lead time;
+- recent/available order quantity;
+- forecast error or uncertainty;
+- the known limitation that `Stockout_Flag` is constant and cannot serve as a target/label.
 
-## Candidate proxy states
+## Candidate outputs
 
-- stockout-pressure / high-demand risk;
-- overstock-pressure / declining-demand risk;
-- slow-moving risk;
-- stable-demand state.
+- replenishment alert;
+- stockout-pressure / shortage risk;
+- overstock / excess-inventory pressure;
+- low/medium/high risk level;
+- recommended replenishment quantity where justified;
+- explanation of the rule/evidence producing the result.
 
-Final names and definitions must be justified.
+## Replenishment logic
+
+The exact formula must be defined and evaluated before implementation is final.
+
+A simplified conceptual form is:
+
+```text
+forecast demand
++ inventory policy / lead-time requirement
+- usable inventory position
+= replenishment need
+```
+
+The actual implementation must match the dataset definitions and avoid inventing unavailable operational variables.
+
+## Verified dataset constraints
+
+- `Stockout_Flag = 0` for all 91,250 rows. It must not be used to train or validate a stockout classifier.
+- `Order_Quantity > 0` occurs in 5,027 rows, while 86,223 rows have zero order quantity. Replenishment modelling must account for this sparsity.
+- Any stockout-pressure indicator must therefore be a derived decision-support measure based on forecast demand and available inventory-policy variables, not a learned replica of `Stockout_Flag`.
 
 ## Critical limitation
 
-No true inventory-on-hand series exists in the source dataset. Risk outputs are analytical proxies unless additional valid inventory data are introduced.
+The dataset is simulated. Its inventory fields provide a useful controlled environment for testing the framework, but the resulting rules/recommendations are not automatically validated for a real company.
 
 ## Evaluation
 
-Potential evaluation approaches:
+Potential evaluation approaches include:
 
-- stability across time;
-- sensitivity to thresholds;
-- consistency with observed demand behaviour;
-- comparison of alternative risk definitions;
+- comparison with simulated reorder/replenishment behaviour;
+- threshold sensitivity;
+- risk consistency across time;
+- performance around low-inventory/reorder-point conditions;
 - scenario analysis;
 - downstream interpretability.
 
