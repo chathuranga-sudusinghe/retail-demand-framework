@@ -138,7 +138,6 @@ Out of scope unless later justified:
 - real-time production deployment;
 - treating simulated data as observed data from a real operating company;
 - automatic execution of purchase/replenishment orders;
-- full COMP1885 individual-project implementations.
 
 ## 14. Critical dataset limitation
 
@@ -151,7 +150,3 @@ performance within the simulated dataset
 !=
 proven performance in a real retailer
 ```
-
-## 15. Relationship to COMP1885
-
-The group project provides a common analytical foundation. Each member's COMP1885 project can build on that foundation but must become a separate individual research project with its own question, literature review, methodology, experiments, product, results, and discussion.
