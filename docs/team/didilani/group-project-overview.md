@@ -7,83 +7,77 @@
 
 ## Role
 
-**Inventory-Risk Analytics, Visual Analytics, and Business Interpretation**
+**Inventory-Risk Analytics, Replenishment Analysis, Visual Analytics, and Business Interpretation**
 
 ## Purpose in the group system
 
-This component translates demand behaviour and forecast outputs into interpretable inventory-risk indicators and managerial visualisations.
+This component receives Chathuranga's demand forecast and translates it into inventory-risk and replenishment information using the inventory variables available in the selected dataset.
+
+Didilani does **not** forecast demand a second time.
 
 ## Component research question
 
-**How can historical demand behaviour and forecasting outputs be transformed into meaningful indicators of stockout pressure, overstock pressure, slow-moving demand, and stable demand?**
-
-## Working hypothesis
-
-### H0
-Demand variability, intermittency, trend, and forecast error are not significantly associated with the resulting inventory-risk proxy classifications.
-
-### H1
-Demand variability, intermittency, trend, and forecast error are significantly associated with different inventory-risk proxy classifications.
-
-The variables, risk definitions, and statistical test must be operationalised before this hypothesis is locked.
+**How can demand forecasts and inventory-state variables be combined to identify inventory risk and support replenishment decisions?**
 
 ## Inputs
 
-- historical aggregated demand;
-- temporal demand characteristics;
-- forecasts;
-- forecast error;
-- forecast bias;
-- uncertainty where available;
-- product identifiers.
+Primary inputs include:
+
+- Chathuranga's forecast demand;
+- `Inventory_Level`;
+- `Reorder_Point`;
+- `Supplier_Lead_Time_Days`;
+- `Order_Quantity`;
+- `Stockout_Flag` where informative;
+- warehouse/product identifiers;
+- forecast error or uncertainty where available.
 
 ## Responsibilities
 
-1. Define inventory-risk proxy concepts with explicit assumptions.
-2. Analyse demand volatility and intermittency.
-3. Analyse rising/falling/stable demand behaviour.
-4. Consume forecast outputs from the forecasting component.
-5. Develop a defensible risk-scoring, segmentation, classification, or rules-based method.
-6. Investigate threshold sensitivity.
-7. Create visual analytics that explain the risk outputs.
-8. Translate analytical results into business interpretation.
-9. Avoid claiming observed inventory states not present in the data.
-10. Produce outputs usable by the responsible decision-support component.
+1. Define the inventory-risk and replenishment logic.
+2. Compare forecast demand with relevant inventory state and policy variables.
+3. Identify conditions indicating stockout/replenishment pressure.
+4. Identify conditions indicating excess/overstock pressure where defensible.
+5. Develop a reproducible rules-based, scoring, or other justified analytical method.
+6. Define and test thresholds rather than choosing them arbitrarily.
+7. Produce replenishment recommendations where a defensible method can be implemented.
+8. Create visual analytics that explain the risk/replenishment outputs.
+9. Translate analytical outputs into business interpretation.
+10. Produce outputs usable by Dewmi's responsible decision-support component.
 
 ## Candidate outputs
 
 ```text
-StockCode
+SKU_ID
 period
-demand_level
-trend_indicator
-volatility_indicator
-intermittency_indicator
-forecast_error
-forecast_bias
-risk_proxy
-risk_score / confidence, if justified
+forecast_demand
+inventory_level
+reorder_point
+supplier_lead_time
+current/recent replenishment quantity
+risk_level
+risk_reason
+recommended_replenishment_quantity, if justified
 supporting_explanation
 ```
 
 ## Important boundary
 
-The source dataset does not contain actual on-hand inventory. Therefore:
+The source dataset is simulated. Therefore, inventory levels and policy fields can be used as dataset variables, but conclusions must not be presented as validated operating rules for a real retailer.
 
-- "stockout risk" means a defensible risk proxy/pressure signal;
-- "overstock risk" means a defensible risk proxy/pressure signal;
-- derived labels must not be presented as observed historical stockout/overstock events.
+A recommended replenishment quantity is a **decision-support recommendation**, not an automatically executable purchase order.
 
 ## Definition of done
 
-- risk definitions are documented;
-- features are reproducibly derived;
-- mapping logic/model is implemented;
-- thresholds/assumptions are justified;
+- risk/replenishment rules or model are documented;
+- required inventory variables are reproducibly derived;
+- mapping/calculation logic is implemented;
+- thresholds are justified and sensitivity is considered;
+- replenishment recommendation logic is evaluated where used;
 - visual outputs are understandable;
-- sensitivity/limitations are reported;
-- outputs can be consumed by the decision-support layer.
+- limitations are reported;
+- outputs can be consumed by the responsible decision-support layer.
 
 ## Scope boundary
 
-This is not a dashboard-only contribution. The visual layer communicates a substantive inventory-risk analytical method.
+This is not a dashboard-only contribution. The visual layer communicates a substantive inventory-risk and replenishment-analysis method.
