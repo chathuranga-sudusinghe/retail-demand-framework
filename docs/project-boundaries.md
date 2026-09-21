@@ -2,11 +2,9 @@
 
 ## 1. Why this document exists
 
-The programme contains both a **COMP1884 group project** and **COMP1885 individual projects**. They are related, but they are not the same assessment or the same product.
+This document defines the boundaries of the **COMP1884 group project** so the three member contributions remain distinct while still forming one integrated product.
 
-This document prevents the two levels of work from becoming mixed.
-
-## 2. What this repository contains
+## 2. Repository scope
 
 ```text
 retail-demand-framework
@@ -19,39 +17,12 @@ This repository contains:
 - shared data-processing code;
 - the integrated group prototype;
 - member-specific COMP1884 responsibilities;
-- high-level COMP1885 plans for context and future continuity.
+- meeting, decision, issue, and Pull Request evidence;
+- testing, evaluation, and report-support material for the group project.
 
-## 3. What this repository does not contain
+## 3. Integrated group structure
 
-It does **not** contain the full implementation of any COMP1885 individual project.
-
-The individual projects should later have separate implementation spaces/repositories.
-
-## 4. Four-project view
-
-Conceptually, the programme work is organised as:
-
-```text
-PROJECT 1
-COMP1884 Group Project
-Retail Demand Decision-Support Framework
-
-PROJECT 2
-COMP1885 — Chathuranga
-Advanced Time-Series Demand Forecasting
-
-PROJECT 3
-COMP1885 — Didilani
-Inventory Risk Modelling
-
-PROJECT 4
-COMP1885 — Dewmi
-Trustworthy and Explainable Decision Support
-```
-
-## 5. COMP1884 integration
-
-The group project is still **one project**, not three disconnected projects.
+The project is one integrated system, not three disconnected mini-projects.
 
 ```text
 Shared supply-chain data
@@ -78,9 +49,9 @@ Responsible decision support and human oversight
 Shared integrated COMP1884 product
 ```
 
-### Member boundaries
+## 4. Member boundaries
 
-**Chathuranga**
+### Chathuranga
 
 ```text
 Train forecasting models
@@ -89,7 +60,9 @@ Train forecasting models
 -> forecast future demand
 ```
 
-**Didilani**
+Primary boundary: Chathuranga produces the forecasting output required by the downstream inventory component.
+
+### Didilani
 
 ```text
 Forecast
@@ -99,7 +72,9 @@ Forecast
 -> visual/business interpretation
 ```
 
-**Dewmi**
+Primary boundary: Didilani consumes the forecast and does not retrain the forecasting models.
+
+### Dewmi
 
 ```text
 Forecast
@@ -109,51 +84,30 @@ Forecast
 -> human review / managerial judgement
 ```
 
-Dewmi does not recalculate the primary forecast or replenishment recommendation. Didilani does not retrain the demand-forecasting models.
+Primary boundary: Dewmi does not recalculate the primary forecast or replenishment recommendation.
 
-Shared tasks such as data cleaning, testing, integration, documentation, and final reporting remain group responsibilities.
+## 5. Shared responsibilities
 
-## 6. COMP1885 independence
+The following remain group responsibilities:
 
-Each COMP1885 project must have its own:
+- shared data-quality and preprocessing decisions;
+- integration contracts between components;
+- testing and validation;
+- research and methodology decisions that affect multiple components;
+- repository governance and collaboration;
+- meeting and decision records;
+- final integration;
+- group report preparation;
+- presentation preparation.
 
-- individual research question;
-- research aim/objectives;
-- distinct or appropriately extended literature review;
-- methodology;
-- experiment design;
-- product/prototype;
-- results;
-- critical discussion;
-- conclusions.
+## 6. Scope control
 
-Using the same source dataset does not make the projects identical.
+Changes that materially affect the group research question, dataset, analytical unit, forecasting target, inventory-risk meaning, replenishment logic, evaluation policy, or member ownership must be documented and reviewed before implementation.
 
-## 7. Reuse rule
-
-Allowed:
-
-- same source dataset;
-- shared understanding of the domain;
-- group-developed foundations;
-- appropriately cited prior group work;
-- extension of a COMP1884 component.
-
-Not acceptable:
-
-- treating COMP1884 and COMP1885 as the same submission;
-- copying the same experiment and claiming it as a separate research contribution;
-- duplicating text/results without appropriate academic handling;
-- allowing an individual project to depend on undocumented work that cannot be independently explained.
-
-## 8. Simple member rule
-
-For every member:
+## 7. Simple member rule
 
 ```text
-COMP1884
-= contribution to the shared group product
-
-COMP1885
-= separate, deeper individual research project
+Each member owns a distinct COMP1884 component
++
+all components must integrate into one shared group product.
 ```
