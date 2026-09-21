@@ -11,11 +11,13 @@
 
 ## Purpose in the group system
 
-This component ensures the final framework does not present model outputs as unquestionable decisions. It should communicate uncertainty, evidence, assumptions, limitations, and appropriate human oversight.
+This component receives the demand forecast and Didilani's inventory-risk/replenishment outputs and converts them into transparent, responsible management-facing decision-support information.
+
+It ensures that forecasts, risk levels, and replenishment recommendations are not presented as unquestionable automated decisions. The layer should communicate uncertainty, evidence, assumptions, limitations, and appropriate human oversight.
 
 ## Component research question
 
-**How can forecast uncertainty, transparency, risk information, and governance considerations be incorporated into responsible retail decision support?**
+**How can forecast uncertainty, inventory-risk/replenishment information, transparency, and governance considerations be incorporated into responsible retail decision support?**
 
 ## Hypothesis status
 
@@ -25,49 +27,57 @@ Terms such as "interpretability", "trustworthiness", and "robustness" must first
 
 ## Inputs
 
-- demand forecasts;
+- Chathuranga's demand forecasts;
 - model-error information;
 - forecast uncertainty where available;
-- inventory-risk proxy outputs;
+- Didilani's inventory-risk level/output;
+- recommended replenishment quantity where available and justified;
+- risk/replenishment explanation or evidence;
 - explanatory metadata;
 - assumptions and limitations.
 
 ## Responsibilities
 
-1. Define how the system communicates forecast and risk uncertainty.
-2. Document data and model limitations.
-3. Analyse transparency and explainability requirements.
-4. Examine potential bias or uneven behaviour across relevant segments where methodologically justified.
-5. Define appropriate human-in-the-loop decision points.
-6. Develop responsible decision-support rules/presentation.
-7. Address ethical, legal, and governance considerations.
-8. Ensure the framework supports rather than replaces managerial judgement.
-9. Contribute to robustness/sensitivity evaluation where feasible.
+1. Define how the system communicates forecast and inventory-risk uncertainty.
+2. Present replenishment recommendations with their evidence, assumptions, and limitations.
+3. Document data and model limitations, including the simulated nature of the source dataset.
+4. Analyse transparency and explainability requirements.
+5. Examine potential bias or uneven behaviour across relevant segments where methodologically justified.
+6. Define appropriate human-in-the-loop decision points.
+7. Develop responsible decision-support rules and presentation logic.
+8. Address ethical, legal, and governance considerations.
+9. Ensure the framework supports rather than replaces managerial judgement.
+10. Contribute to robustness/sensitivity evaluation where feasible.
 
 ## Candidate decision-support output
 
 ```text
-Product / period
-Forecast
-Risk proxy
-Uncertainty / confidence information
+SKU_ID / period
+Forecast demand
+Inventory risk level
+Recommended replenishment quantity, if available
+Forecast uncertainty / confidence information
 Evidence / main drivers
+Assumptions
 Limitations / warnings
 Suggested management consideration
 Human review required
 ```
 
-"Suggested management consideration" must not be presented as an automated authoritative business decision.
+"Suggested management consideration" and any replenishment recommendation must not be presented as an automatically authoritative business decision or executable purchase order.
 
 ## Definition of done
 
 - responsible-use principles are operationalised in the prototype;
+- forecast, risk, and replenishment outputs are presented transparently;
 - uncertainty and limitations are visible to the user;
-- risk outputs are explainable at an appropriate level;
+- risk/replenishment outputs are explainable at an appropriate level;
 - human oversight points are defined;
 - ethical/legal/governance issues are documented;
 - evaluation criteria for transparency/robustness are reported.
 
 ## Scope boundary
 
-This contribution is not an ethics essay attached after modelling. It is the responsible-use and decision-support layer of the integrated data-science product.
+Dewmi does not calculate the primary demand forecast or the inventory replenishment recommendation.
+
+Her component consumes the outputs of Chathuranga and Didilani and implements the responsible-use and decision-support layer of the integrated data-science product. This contribution is therefore not an ethics essay attached after modelling.
