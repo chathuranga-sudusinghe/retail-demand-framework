@@ -21,9 +21,11 @@ Before modifying files, the AI agent must read:
 3. `docs/project-boundaries.md`
 4. `docs/research-design.md`
 5. `docs/dataset.md`
-6. the relevant member overview under `docs/team/`
-7. the relevant workflow under `docs/workflows/`
-8. the assigned GitHub Issue or task description
+6. `docs/references.md`
+7. the relevant decision record under `docs/decisions/`
+8. the relevant member overview under `docs/team/`
+9. the relevant workflow under `docs/workflows/`
+10. the assigned GitHub Issue or task description
 
 If any instruction conflicts, stop and ask the user for clarification.
 
@@ -42,15 +44,6 @@ feature/<short-task-name>
 fix/<short-fix-name>
 docs/<short-doc-name>
 test/<short-test-name>
-```
-
-Examples:
-
-```text
-feature/data-cleaning-baseline
-feature/inventory-risk-baseline
-docs/update-research-design
-test/data-validation
 ```
 
 ---
@@ -89,19 +82,21 @@ GitHub Issue
 
 The AI agent may implement approved research decisions, but it must not silently create new research decisions.
 
-Examples of decisions that require explicit team or supervisor approval:
+Examples of decisions that require explicit team or supervisor approval where appropriate:
 
-- daily vs weekly demand aggregation;
-- treatment of returns and cancellations;
-- target definition;
-- product eligibility rules;
+- analytical unit and aggregation frequency;
+- forecasting target definition;
+- product/SKU eligibility rules;
 - model family selection when not already approved;
 - final hypothesis wording;
 - demand-regime definitions;
-- inventory-risk proxy definitions;
+- inventory-risk definitions;
+- replenishment formula/rules;
 - evaluation metric changes;
 - threshold definitions;
-- changes to the group/individual project boundary.
+- use of source `Demand_Forecast`;
+- changes to the group/individual project boundary;
+- replacement of the primary dataset.
 
 If such a decision is missing, stop and ask.
 
@@ -109,7 +104,7 @@ If such a decision is missing, stop and ask.
 
 ## 5. Dataset rule
 
-The UCI Online Retail dataset must remain local.
+The selected **High-Dimensional Supply Chain Inventory Dataset** must remain local.
 
 Never commit:
 
@@ -126,9 +121,11 @@ except approved small test fixtures.
 
 Do not remove the dataset-protection rules from `.gitignore`.
 
-Do not invent values for missing data.
+The dataset is simulated. Do not describe it as observed data from a real operating company.
 
-Do not silently convert returns or negative quantities into normal sales.
+The project must build its own demand-forecasting models from historical `Units_Sold`.
+
+The source `Demand_Forecast` field must not be used as a normal model target or feature unless an approved, leakage-safe research decision explicitly defines its use.
 
 ---
 
@@ -147,7 +144,7 @@ src/decision_support/
 tests/
 ```
 
-Notebooks may be used for exploration, but important production logic must be moved into reusable modules.
+Notebooks may be used for exploration, but important implementation logic must be moved into reusable modules.
 
 ---
 
@@ -160,38 +157,48 @@ For forecasting tasks:
 - avoid future-data leakage;
 - generate lag and rolling features using only information available before the prediction point;
 - document train/validation/test periods;
-- compare advanced models with a simple baseline.
+- compare advanced models with a simple baseline;
+- ensure inventory states or source-generated forecasts are not accidentally used from the future.
 
 ---
 
-## 8. Inventory-risk rule
+## 8. Inventory-risk and replenishment rule
 
-The source dataset does not contain true inventory state such as on-hand stock, safety stock, reorder points, or supplier lead time.
-
-Therefore, do not describe derived outputs as observed historical stockouts or overstock events unless additional valid data are introduced.
-
-Use terms such as:
+Didilani's component receives Chathuranga's forecast output and combines it with relevant inventory variables such as:
 
 ```text
-inventory-risk proxy
-stockout-pressure indicator
-overstock-pressure indicator
-slow-moving-risk indicator
+Inventory_Level
+Reorder_Point
+Supplier_Lead_Time_Days
+Order_Quantity
+Stockout_Flag
 ```
 
-when appropriate.
+Do not invent a replenishment rule silently.
+
+Any risk level, threshold, or recommended replenishment quantity must have:
+
+- a documented definition;
+- a justified calculation/rule;
+- leakage-safe temporal alignment;
+- an evaluation or sensitivity check;
+- clear limitations.
+
+A recommendation is decision support, not an automatically executable purchase order.
 
 ---
 
 ## 9. Member boundaries
 
 ### Chathuranga
+
 Primary COMP1884 area:
 
 ```text
-Time-series demand forecasting
-Model evaluation
-Forecast error / bias / uncertainty
+Model training
+Model comparison / selection
+Demand forecasting
+Forecast evaluation
 ```
 
 Relevant docs:
@@ -202,10 +209,12 @@ docs/workflows/demand-forecasting.md
 ```
 
 ### Didilani
+
 Primary COMP1884 area:
 
 ```text
 Inventory-risk analytics
+Replenishment analysis
 Visual analytics
 Business interpretation
 ```
@@ -218,6 +227,7 @@ docs/workflows/inventory-risk-analysis.md
 ```
 
 ### Dewmi
+
 Primary COMP1884 area:
 
 ```text
@@ -266,11 +276,11 @@ Use clear commit messages.
 Recommended forms:
 
 ```text
-feat: add weekly demand aggregation
+feat: add demand forecasting baseline
+feat: add replenishment risk rules
 fix: correct lag feature leakage
-docs: clarify inventory risk proxy rules
+docs: record research decision
 test: add data validation tests
-refactor: separate cleaning and aggregation logic
 ```
 
 Keep commits focused on one logical change where practical.
