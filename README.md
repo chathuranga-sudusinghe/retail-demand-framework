@@ -6,7 +6,7 @@
 **Module:** COMP1884 Group Project  
 **Repository purpose:** Shared implementation and documentation for the COMP1884 group project.
 
-> **Important boundary:** This repository contains the COMP1884 group project. It also documents the planned COMP1885 individual-project directions for each member so the relationship is clear, but the full COMP1885 implementations will be developed separately.
+> **Repository scope:** This repository is dedicated to the COMP1884 group project and its shared research, implementation, collaboration, and evidence.
 
 ## Project overview
 
@@ -60,13 +60,13 @@ Integrated COMP1884 decision-support framework
 
 ## Team
 
-| Member | COMP1884 focus | Planned COMP1885 direction |
-|---|---|---|
-| Chathuranga Indrajith Sudusinghe | Model training, model selection, demand forecasting and evaluation | Advanced time-series demand forecasting for heterogeneous retail demand |
-| Didilani Prasadika Weerawickrama Pathinayaka | Inventory-risk analytics, replenishment analysis, visual analytics and business interpretation | Inventory-risk modelling using demand dynamics and forecast uncertainty |
-| Haputhanthrige Dewmi Pramodya | Responsible decision support, ethical/legal/governance analysis | Trustworthy and explainable retail decision support |
+| Member | COMP1884 focus |
+|---|---|
+| Chathuranga Indrajith Sudusinghe | Model training, model selection, demand forecasting and evaluation |
+| Didilani Prasadika Weerawickrama Pathinayaka | Inventory-risk analytics, replenishment analysis, visual analytics and business interpretation |
+| Haputhanthrige Dewmi Pramodya | Responsible decision support, ethical/legal/governance analysis |
 
-See the separate group and individual overview files under `docs/team/`.
+See the group contribution files under `docs/team/`.
 
 ## Dataset
 
@@ -114,11 +114,8 @@ See [Dataset Contract](docs/dataset.md), [Decision Record DR-001](docs/decisions
 - [References](docs/references.md)
 - [Decision records](docs/decisions/README.md)
 - [Chathuranga — COMP1884](docs/team/chathuranga/group-project-overview.md)
-- [Chathuranga — COMP1885 overview](docs/team/chathuranga/individual-project-overview.md)
 - [Didilani — COMP1884](docs/team/didilani/group-project-overview.md)
-- [Didilani — COMP1885 overview](docs/team/didilani/individual-project-overview.md)
 - [Dewmi — COMP1884](docs/team/dewmi/group-project-overview.md)
-- [Dewmi — COMP1885 overview](docs/team/dewmi/individual-project-overview.md)
 - [Shared data workflow](docs/workflows/shared-data-foundation.md)
 - [Forecasting workflow](docs/workflows/demand-forecasting.md)
 - [Inventory-risk workflow](docs/workflows/inventory-risk-analysis.md)
