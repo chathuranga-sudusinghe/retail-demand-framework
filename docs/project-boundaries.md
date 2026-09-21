@@ -54,17 +54,62 @@ Trustworthy and Explainable Decision Support
 The group project is still **one project**, not three disconnected projects.
 
 ```text
-Chathuranga forecasting output
+Shared supply-chain data
             |
             v
-Didilani inventory-risk analytics
+Chathuranga
+Model training, model selection, and demand forecasting
             |
             v
-Dewmi responsible decision support
+Forecast output
+            |
+            v
+Didilani
+Inventory-risk and replenishment analysis
+            |
+            v
+Risk / replenishment output
+            |
+            v
+Dewmi
+Responsible decision support and human oversight
             |
             v
 Shared integrated COMP1884 product
 ```
+
+### Member boundaries
+
+**Chathuranga**
+
+```text
+Train forecasting models
+-> compare/evaluate models
+-> select a suitable model
+-> forecast future demand
+```
+
+**Didilani**
+
+```text
+Forecast
++ inventory state / policy variables
+-> inventory-risk analysis
+-> replenishment recommendation where justified
+-> visual/business interpretation
+```
+
+**Dewmi**
+
+```text
+Forecast
++ inventory-risk / replenishment output
++ uncertainty / assumptions / limitations
+-> responsible management-facing decision support
+-> human review / managerial judgement
+```
+
+Dewmi does not recalculate the primary forecast or replenishment recommendation. Didilani does not retrain the demand-forecasting models.
 
 Shared tasks such as data cleaning, testing, integration, documentation, and final reporting remain group responsibilities.
 
