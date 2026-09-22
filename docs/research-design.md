@@ -12,15 +12,19 @@ This document defines the current research-design baseline for the COMP1884 grou
 
 The selected source is the **High-Dimensional Supply Chain Inventory Dataset**, a simulated daily SKU-level supply-chain dataset.
 
-The primary forecasting unit is expected to be a regular product-demand time series derived from `Units_Sold`.
+The primary forecasting unit is a regular **SKU-warehouse-day** demand time series derived from `Units_Sold`.
 
-Candidate units include:
+This decision is recorded in `docs/decisions/DR-002-forecasting-analytical-unit.md` and is supported by the temporal and inventory-alignment profiling in `reports/temporal-demand-profile.md`.
 
-- SKU-day demand aggregated across operational dimensions;
-- SKU-warehouse-day demand if warehouse-level forecasting is justified;
-- SKU-week demand if daily series prove too noisy or sparse.
+The selected grain is:
 
-The final analytical unit must be documented before model training.
+```text
+SKU_ID + Warehouse_ID + Date
+```
+
+Profiling showed that each SKU-warehouse series has 365 observations with complete temporal coverage and very low median zero-demand frequency. It also showed that `Inventory_Level`, `Reorder_Point`, and `Supplier_Lead_Time_Days` vary across warehouses for every SKU-day, so aggregating demand across warehouses would discard operational context needed by the downstream inventory-risk component.
+
+SKU-day and SKU-week may still be used for descriptive comparison, visualisation, or sensitivity analysis, but they are not the primary modelling grain.
 
 ## 4. Forecasting target
 
@@ -30,11 +34,13 @@ Primary source variable:
 Units_Sold
 ```
 
-Candidate primary target:
+Primary target at the selected analytical unit:
 
 ```text
-Demand(SKU, period) = sum(Units_Sold)
+Demand(SKU_ID, Warehouse_ID, Date) = Units_Sold
 ```
+
+Because the verified native source grain is one unique row per `Date + SKU_ID + Warehouse_ID`, no additional demand aggregation is required for the primary forecasting view.
 
 The project will build its own forecasting models. The dataset's source-provided `Demand_Forecast` field is **not the project's target** and must not be used as an ordinary predictor if doing so would leak target/future information. It may only be used later as a clearly separated external/source benchmark if methodologically justified.
 
@@ -81,7 +87,7 @@ Examples:
 
 ### Exogenous variables
 
-Variables such as `Promotion_Flag` may be considered only when they would genuinely be known at the prediction origin.
+`Promotion_Flag` may be considered only when it would genuinely be known at the prediction origin. Profiling found that promotion status conflicts across warehouses in approximately 41.6% of SKU-day groups, which further supports retaining the warehouse dimension rather than collapsing to one SKU-day promotion value.
 
 Inventory fields should not automatically be inserted into the forecasting model. Their role must be justified separately from their downstream use in inventory analysis.
 
