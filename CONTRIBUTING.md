@@ -169,6 +169,10 @@ git push
 
 ## 9. Open a Pull Request
 
+> **Every Pull Request that completes a GitHub Issue must include `Closes #<issue-number>` in the PR description.**
+
+This is the repository's standard issue-completion rule. When that Pull Request is merged to `main`, GitHub should automatically close the linked Issue.
+
 On GitHub:
 
 1. open the repository;
