@@ -17,17 +17,19 @@ This component produces the future-demand forecast that becomes the input to Did
 
 **How do temporal characteristics of SKU demand affect the performance and suitability of different forecasting approaches?**
 
-## Working hypothesis
+## Secondary forecasting hypothesis
+
+This component uses a secondary hypothesis under the project's primary group-level hypothesis.
 
 ### H0
 
-Forecasting performance does not significantly vary across different temporal demand behaviours.
+Forecasting performance does not significantly differ across temporal demand conditions.
 
 ### H1
 
-Forecasting performance varies significantly across different temporal demand behaviours, and different forecasting approaches show different suitability across demand regimes.
+Forecasting performance significantly differs across temporal demand conditions.
 
-This remains a working hypothesis until demand-regime definitions and statistical testing are formally specified.
+This remains provisional until temporal demand conditions and the statistical testing procedure are operationally defined.
 
 ## Inputs
 
