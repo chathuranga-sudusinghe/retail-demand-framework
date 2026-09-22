@@ -21,9 +21,9 @@ It ensures that forecasts, risk levels, and replenishment recommendations are no
 
 ## Hypothesis status
 
-A statistical hypothesis is **not yet locked** for this group component.
+A separate statistical H0/H1 is **not required for this component under the current research design**.
 
-Terms such as "interpretability", "trustworthiness", and "robustness" must first be converted into measurable evaluation criteria. Until that is done, the component is better guided by the research question and explicit evaluation criteria than by an artificial H0/H1 statement.
+The full project is guided by the primary group-level hypothesis, while this component is evaluated through its research question and explicit criteria for transparency, governance, robustness, and human oversight. A separate component hypothesis should only be introduced later if a justified measurable statistical relationship is formally defined.
 
 ## Inputs
 
