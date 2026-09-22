@@ -44,18 +44,18 @@ The following foundation decisions/checks are complete:
 3. the verified native grain is one row per `Date + SKU_ID + Warehouse_ID`;
 4. `Stockout_Flag` is zero-variance and excluded from predictive/validation use as a stockout label;
 5. source `Demand_Forecast` is leakage-sensitive and excluded from ordinary forecasting use;
-6. warehouse-level inventory alignment has been profiled.
+6. warehouse-level inventory alignment has been profiled;
+7. [DR-005](../decisions/DR-005-forecast-validation-design.md) fixes the expanding-window validation schedule and separate final holdout.
 
 ## Decisions still required before later modelling/integration stages
 
 1. define handling of any invalid records discovered by the reproducible pipeline;
 2. define missing-period handling if future processed views introduce gaps;
 3. define product/history eligibility if any exclusion is required;
-4. define chronological train/validation/test cut points;
-5. define whether and how `Promotion_Flag` is available at prediction time;
-6. define exact temporal alignment between forecast periods and inventory state;
-7. finalise the forecasting-to-inventory output contract;
-8. finalise the inventory-to-decision-support output contract.
+4. define whether and how `Promotion_Flag` is available at prediction time;
+5. define exact temporal alignment between forecast periods and inventory state;
+6. finalise the forecasting-to-inventory output contract;
+7. finalise the inventory-to-decision-support output contract.
 
 ## Reproducibility rule
 
