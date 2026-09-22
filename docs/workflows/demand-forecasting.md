@@ -17,7 +17,7 @@ Shared demand series
 Temporal behaviour analysis
         |
         v
-Feature engineering
+Leakage-safe feature engineering
         |
         v
 Benchmark model
@@ -70,11 +70,63 @@ The first profiling stage has already established complete 365-day SKU-warehouse
 - demand sparsity;
 - SKU heterogeneity.
 
+## Feature-engineering baseline
+
+The current feature-engineering baseline is documented in `docs/research-design.md` and DR-003.
+
+### Calendar
+
+Primary candidate calendar features:
+
+- `day_of_week`;
+- `month`;
+- `quarter`.
+
+`week_of_year` is excluded from the primary feature set because the dataset contains only one year of observations and therefore does not provide repeated year-over-year evidence for numbered-week effects.
+
+### Lagged demand
+
+Candidate lag features include:
+
+- `lag_1`;
+- `lag_7`;
+- `lag_14`;
+- `lag_28`.
+
+The final lag set remains open until modelling evidence supports it.
+
+### Rolling demand
+
+Initial approved rolling windows:
+
+- 7 days;
+- 14 days.
+
+Candidate statistics for each window:
+
+- rolling mean;
+- rolling median;
+- rolling standard deviation.
+
+The current target value must never be included in its own rolling feature.
+
+### Other candidates
+
+- recent growth / decline indicator — calculation still open;
+- `Promotion_Flag` — treatment still open and must be known at prediction origin if used.
+
+No additional composite forecasting feature formed from inventory, cost, price, or replenishment variables is currently approved.
+
 ## Leakage control
 
-Features at time `t` may only use information that would be available at or before the prediction origin.
+Features at time `t` may only use information that would be available before the prediction being made.
 
-The source-provided `Demand_Forecast` field must not be used in a way that leaks future or target information into the project's own forecasting models.
+In particular:
+
+- lagged demand must use earlier observations only;
+- rolling calculations must exclude the current target value and all future values;
+- source `Demand_Forecast` must not be used as a normal model feature;
+- inventory or source-generated variables must not be aligned from a future state.
 
 ## Evaluation outputs
 
