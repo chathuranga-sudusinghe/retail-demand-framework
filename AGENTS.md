@@ -41,6 +41,7 @@ Recommended naming:
 
 ```text
 feature/<short-task-name>
+research/<short-research-task>
 fix/<short-fix-name>
 docs/<short-doc-name>
 test/<short-test-name>
@@ -65,16 +66,19 @@ The normal flow is:
 
 ```text
 GitHub Issue
-    -> feature branch
-    -> implementation
+    -> task branch
+    -> implementation / research work
     -> tests / validation
     -> commit
     -> push branch
-    -> Pull Request
+    -> Pull Request with "Closes #<issue-number>"
     -> review
     -> approval
     -> merge to main
+    -> linked Issue auto-closes
 ```
+
+If GitHub does not auto-close the linked Issue after merge, verify the Issue state and close it manually as completed.
 
 ---
 
@@ -84,8 +88,8 @@ The AI agent may implement approved research decisions, but it must not silently
 
 Examples of decisions that require explicit team or supervisor approval where appropriate:
 
-- analytical unit and aggregation frequency;
-- forecasting target definition;
+- changes to the approved analytical unit or aggregation frequency;
+- changes to the approved forecasting target definition;
 - product/SKU eligibility rules;
 - model family selection when not already approved;
 - final hypothesis wording;
@@ -123,6 +127,20 @@ Do not remove the dataset-protection rules from `.gitignore`.
 The dataset is simulated. Do not describe it as observed data from a real operating company.
 
 The project must build its own demand-forecasting models from historical `Units_Sold`.
+
+Current approved forecasting grain from DR-002:
+
+```text
+SKU_ID + Warehouse_ID + Date
+```
+
+Current forecasting target:
+
+```text
+Units_Sold
+```
+
+`Stockout_Flag` is zero-variance in the verified dataset and must not be used as a stockout target or validation label.
 
 The source `Demand_Forecast` field must not be used as a normal model target or feature unless an approved, leakage-safe research decision explicitly defines its use.
 
@@ -163,15 +181,17 @@ For forecasting tasks:
 
 ## 8. Inventory-risk and replenishment rule
 
-Didilani's component receives Chathuranga's forecast output and combines it with relevant inventory variables such as:
+Didilani's component receives Chathuranga's forecast output at SKU-warehouse level and combines it with relevant inventory variables such as:
 
 ```text
+Warehouse_ID
 Inventory_Level
 Reorder_Point
 Supplier_Lead_Time_Days
 Order_Quantity
-Stockout_Flag
 ```
+
+`Stockout_Flag` may be retained only as a documented dataset field/limitation; it must not be treated as an observed stockout target or validation label.
 
 Do not invent a replenishment rule silently.
 
@@ -293,6 +313,7 @@ Before opening a Pull Request, the agent should provide:
 - tests run;
 - known limitations;
 - related GitHub Issue;
+- `Closes #<issue-number>` in the PR body;
 - any research decision that still needs approval.
 
 The agent must not claim work is complete when required validation has not been run.
