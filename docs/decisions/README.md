@@ -21,14 +21,15 @@ Each decision record should include:
 - [DR-004 — Forecast Horizons for Decision Support](DR-004-forecast-horizons.md)
 - [DR-005 — Forecast Validation Design](DR-005-forecast-validation-design.md)
 - [DR-006 — Forecasting Metrics and Model-Selection Policy](DR-006-forecasting-metrics-and-model-selection.md)
+- [DR-007 — Forecasting Model Set](DR-007-forecasting-model-set.md)
+- [DR-008 — Multi-Step Forecasting Strategy](DR-008-multi-step-forecasting-strategy.md)
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
 Examples include:
 
-- exact forecasting model set;
 - final lag set;
-- recursive versus direct multi-step forecasting and any within-window update protocol;
+- LightGBM versus XGBoost for the gradient-boosting candidate;
 - `Promotion_Flag` treatment;
 - growth/decline feature definition;
 - hyperparameter search strategy;

@@ -120,6 +120,20 @@ The current target value must never be included in its own rolling feature.
 
 No additional composite forecasting feature formed from inventory, cost, price, or replenishment variables is currently approved.
 
+## Approved candidate model set
+
+[DR-007](../decisions/DR-007-forecasting-model-set.md) approves five candidate roles for comparison:
+
+| Role | Model | Purpose |
+| --- | --- | --- |
+| Simple baseline | Naive | Recent-demand benchmark. |
+| Seasonal baseline | Seasonal Naive using lag 7 | Weekly-repeat benchmark. |
+| Linear ML baseline | Ridge Regression | Regularised linear feature-demand relationships. |
+| Tree-based ML | Random Forest | Non-linear relationships and feature interactions. |
+| Gradient-boosting ML | LightGBM or XGBoost | Boosted-tree comparison with simpler candidates. |
+
+LightGBM versus XGBoost remains an open implementation choice. No candidate is assumed to outperform another because it is more complex. All candidates must use the same DR-005 folds, DR-008 horizon targets, and DR-006 metrics.
+
 ## Forecast horizons
 
 The approved decision-support horizons are:
@@ -128,14 +142,16 @@ The approved decision-support horizons are:
 - **7 days** — cumulative demand over the next week;
 - **14 days** — cumulative demand over the next two weeks.
 
-These horizons do not change the daily analytical grain. Forecast rows remain aligned to `SKU_ID + Warehouse_ID + Date`; 7-day and 14-day demand views are horizon-level summaries or multi-step outputs derived from daily forecasting.
+These horizons do not change the daily analytical grain. Forecast outputs retain `SKU_ID` and `Warehouse_ID`; the 7-day and 14-day outputs are cumulative-demand targets aligned to their forecast origin.
 
 The 7-day and 14-day forecast horizons are also distinct from the 7-day and 14-day rolling **feature windows**:
 
 - rolling window = how much historical demand is summarised as an input feature;
 - forecast horizon = how far into the future demand is predicted.
 
-The horizon choice is supported by periodic-review inventory literature and by the project dataset's verified 2-14 day supplier lead-time range. The exact multi-step forecasting strategy remains open.
+The horizon choice is supported by periodic-review inventory literature and by the project dataset's verified 2-14 day supplier lead-time range.
+
+[DR-008](../decisions/DR-008-multi-step-forecasting-strategy.md) selects **direct horizon-specific forecasting** as the primary multi-step strategy. Separate models or horizon-specific outputs predict next-day demand, 7-day cumulative demand, and 14-day cumulative demand directly from information available at the forecast origin. Earlier predictions are not fed into later horizon predictions.
 
 ## Approved validation workflow
 
@@ -154,7 +170,7 @@ All dates are inclusive. Training begins on 2024-01-01 in every fold, and the ca
 
 For each fold, use its training history for fitting and its 14-day validation window to evaluate the approved 1-, 7- and 14-day horizons. Training-day counts precede any approved lag/feature-history loss. Earlier validation observations become historical inputs for later folds only as permitted by the later cutoff; they cannot be used retrospectively in an earlier fold.
 
-The training window is the fitting history; the validation window is the future comparison interval; the forecast horizon is how far ahead a prediction extends; the final test is reserved for evaluation after selection. The 14-day validation-window length is distinct from the 14-day cumulative-demand horizon. At each fold cutoff, the next 1, 7 and 14 days fit inside its validation interval. Multi-step strategy and detailed scoring/update policies remain open and must respect those boundaries.
+The training window is the fitting history; the validation window is the future comparison interval; the forecast horizon is how far ahead a prediction extends; the final test is reserved for evaluation after selection. The 14-day validation-window length is distinct from the 14-day cumulative-demand horizon. At each fold cutoff, the next 1, 7 and 14 days fit inside its validation interval. Direct horizon-specific targets and predictions must remain inside those boundaries and use only information available at the fold's forecast origin.
 
 Fit any learned preprocessing only on the fold's training data, apply the leakage rules below at each prediction origin, and compare candidates using the common schedule. The approved metric and model-selection policy is defined in [DR-006](../decisions/DR-006-forecasting-metrics-and-model-selection.md) and summarised below. Once selection is complete, evaluate the final holdout without using it for model fitting, feature/model selection, hyperparameter tuning or validation decisions. Do not revise choices in response to final-test forecasting results.
 

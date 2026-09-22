@@ -191,20 +191,29 @@ analytical grain = one SKU + one warehouse + one day
 forecast horizon = how far ahead demand is predicted
 ```
 
-A 7-day or 14-day demand view may be produced from daily forecasts while preserving daily SKU-warehouse predictions.
+A 7-day or 14-day demand view must preserve the SKU-warehouse identity and the cumulative-demand meaning approved in DR-004.
 
-This horizon decision does **not** yet determine the multi-step forecasting strategy (for example, recursive versus direct multi-horizon forecasting). That implementation choice remains open and must be evaluated without future-data leakage.
+[DR-008 — Multi-Step Forecasting Strategy](decisions/DR-008-multi-step-forecasting-strategy.md) selects **direct horizon-specific forecasting** as the primary strategy. Separate horizon targets are predicted directly from information available at the forecast origin:
+
+- 1-day next-day demand;
+- 7-day cumulative demand; and
+- 14-day cumulative demand.
+
+Earlier predictions are not fed into later horizon predictions. This alignment between training target, evaluation horizon, and downstream cumulative demand avoids recursive error propagation, but it is a project-specific choice rather than a claim that direct forecasting is universally superior.
 
 ## 8. Forecasting approach
 
-The forecasting component should compare appropriate levels of complexity, for example:
+[DR-007 — Forecasting Model Set](decisions/DR-007-forecasting-model-set.md) approves the following candidates to compare increasing levels of modelling complexity:
 
-1. naive / seasonal-naive benchmark;
-2. statistical time-series method(s);
-3. regression-based forecasting;
-4. machine-learning forecasting.
+| Role | Model | Purpose |
+| --- | --- | --- |
+| Simple baseline | Naive | Test whether more complex models improve on a simple recent-demand benchmark. |
+| Seasonal baseline | Seasonal Naive using lag 7 | Test whether repeating weekly demand provides a useful benchmark. |
+| Linear ML baseline | Ridge Regression | Provide a regularised linear baseline for relationships between engineered features and demand. |
+| Tree-based ML | Random Forest | Capture non-linear relationships and feature interactions. |
+| Gradient-boosting ML | LightGBM or XGBoost | Provide a stronger boosted-tree candidate for comparison with simpler models. |
 
-The exact model set will be justified by literature, data behaviour, time available, and the research question.
+The exact choice between LightGBM and XGBoost remains open and must be documented before that candidate is implemented. Model complexity does not imply better performance. Every candidate must use the same DR-005 validation folds, DR-008 direct targets, and DR-006 evaluation policy.
 
 ## 9. Validation design
 
@@ -241,7 +250,7 @@ The final holdout must not be used for model fitting, feature/model selection, h
 
 Full-year descriptive EDA has already inspected the complete dataset, including the dates later assigned to this holdout. **Untouched final test** describes its exclusion from fitting and selection/tuning decisions and the protection of its forecasting results; it does not claim the dates were never descriptively inspected. Disclose that prior exposure. The 14-day late-December holdout is also a limited evaluation period, and expanding folds share history rather than being independent replicates.
 
-Exact model families, recursive versus direct multi-step forecasting, final lags, `Promotion_Flag` usage, hyperparameter search strategy, uncertainty method and demand-regime definitions remain open. The forecasting metric and model-selection policy is now defined in [DR-006 — Forecasting Metrics and Model-Selection Policy](decisions/DR-006-forecasting-metrics-and-model-selection.md). This documentation decision introduces no split-generation or modelling implementation.
+The candidate model set is defined in [DR-007](decisions/DR-007-forecasting-model-set.md), and direct horizon-specific forecasting is defined in [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md). The final lag set, `Promotion_Flag` usage, LightGBM-versus-XGBoost choice, hyperparameter search strategy, uncertainty method, and demand-regime definitions remain open. The forecasting metric and model-selection policy is defined in [DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md). These documentation decisions introduce no model training or modelling results.
 
 ## 10. Approved forecasting metrics and model-selection policy
 
