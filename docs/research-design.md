@@ -196,17 +196,40 @@ The exact model set will be justified by literature, data behaviour, time availa
 
 ## 9. Validation design
 
-Random train/test splitting is inappropriate for the main time-series evaluation because it can leak future information into training.
+[DR-005 — Forecast Validation Design](decisions/DR-005-forecast-validation-design.md), approved through [Issue #31](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31), selects **expanding-window time-series validation**: rolling-origin / walk-forward evaluation with an expanding training window. Random train/test splitting must not be used.
 
-Preferred design:
+All candidate models use the same four folds at the approved `SKU_ID + Warehouse_ID + Date` grain and evaluate `Units_Sold` over the 1-day, 7-day and 14-day horizons. Training begins on 2024-01-01 in every fold. All dates below are inclusive; training-day counts are per series before any approved feature-history requirements.
 
-```text
-past -> train
-later period -> validation
-future holdout -> test
-```
+| Fold | Training start | Training end / origin cutoff | Training days | Validation start | Validation end | Validation days |
+| --- | --- | --- | ---: | --- | --- | ---: |
+| 1 | 2024-01-01 | 2024-03-31 | 91 | 2024-04-01 | 2024-04-14 | 14 |
+| 2 | 2024-01-01 | 2024-06-30 | 182 | 2024-07-01 | 2024-07-14 | 14 |
+| 3 | 2024-01-01 | 2024-09-30 | 274 | 2024-10-01 | 2024-10-14 | 14 |
+| 4 | 2024-01-01 | 2024-12-02 | 337 | 2024-12-03 | 2024-12-16 | 14 |
 
-Where feasible, use rolling-origin or walk-forward evaluation.
+**Final model-evaluation holdout:** 2024-12-17 to 2024-12-30 inclusive, exactly **14 calendar days**.
+
+Fold 4 validation ends on 2024-12-16, immediately before the holdout, without overlap. Earlier validation observations enter later training histories only once they are historical relative to the later cutoff.
+
+### Evidence and fold-count rationale
+
+The [completed EDA](../reports/demand-eda.md) reports monthly means of approximately 29.883 in March and 10.174 in September, with Q1/Q2 means around 26.6 and Q3/Q4 means around 13.5–13.6. These are means per native SKU-warehouse-day observation. They support placing validation origins across different observed demand periods, without claiming recurring annual seasonality or defining final seasonal regimes.
+
+Four folds balance temporal coverage, a 91-day initial history, the maximum 14-day forecast horizon, consistent 14-day validation windows, repeated out-of-sample evaluation and a separate 14-day final holdout. They also avoid unnecessarily dense or similar origins. Four is a project-specific choice, not a universal optimum. Two folds are technically valid but less informative; three are methodologically reasonable, while four adds coverage without sacrificing the initial history or holdout. Five or more folds may, depending on their placement, require shorter early histories or create closer, more similar, or overlapping evaluation periods and additional opportunities for validation over-tuning. They do not automatically cause model overfitting. DR-005 records the full comparison.
+
+### Windows, horizons and leakage
+
+A **training window** contains historical observations used to fit the model. A **validation window** contains future observations used to compare models and settings. A **forecast horizon** is the look-ahead from a prediction origin: next-day demand or cumulative demand over the next 7 or 14 days, as defined in DR-004. A **final test holdout** is evaluated only after model selection is complete. A 14-day validation window accommodates the maximum horizon but is not the same concept as a 14-day forecast horizon.
+
+Fit learned preprocessing and models within each fold's training window. Construct features only from information available at the prediction origin; current targets and later actual demand must not enter their own forecasts. Source `Demand_Forecast` remains excluded from ordinary forecasting features. Any eventual promotion or inventory input must satisfy its approved availability rules. Require complete horizon outcomes inside the assigned evaluation interval; validation scoring must not extend into the final holdout.
+
+### Final holdout and disclosure
+
+The final holdout must not be used for model fitting, feature/model selection, hyperparameter tuning or validation decisions. Final-test forecasting results are examined only after model selection is complete and must not inform subsequent model-selection choices.
+
+Full-year descriptive EDA has already inspected the complete dataset, including the dates later assigned to this holdout. **Untouched final test** describes its exclusion from fitting and selection/tuning decisions and the protection of its forecasting results; it does not claim the dates were never descriptively inspected. Disclose that prior exposure. The 14-day late-December holdout is also a limited evaluation period, and expanding folds share history rather than being independent replicates.
+
+Exact model families, recursive versus direct multi-step forecasting, final lags, `Promotion_Flag` usage, final model-selection metric policy, hyperparameter search strategy, uncertainty method and demand-regime definitions remain open. This documentation decision introduces no split-generation or modelling implementation.
 
 ## 10. Forecasting metrics
 

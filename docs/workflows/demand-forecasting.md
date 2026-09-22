@@ -26,13 +26,16 @@ Benchmark model
 Statistical / regression / ML alternatives
         |
         v
-Time-aware validation
+Expanding-window validation (DR-005)
         |
         v
 Forecast metrics
         |
         v
 Model comparison and selection
+        |
+        v
+Final holdout evaluation (after selection)
         |
         v
 Future demand forecast
@@ -134,6 +137,31 @@ The 7-day and 14-day forecast horizons are also distinct from the 7-day and 14-d
 
 The horizon choice is supported by periodic-review inventory literature and by the project dataset's verified 2-14 day supplier lead-time range. The exact multi-step forecasting strategy remains open.
 
+## Approved validation workflow
+
+[DR-005](../decisions/DR-005-forecast-validation-design.md), governed by [Issue #31](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31), requires expanding-window time-series validation (rolling-origin / walk-forward evaluation with expanding history). Random train/test splitting must not be used. **All candidate models must be evaluated on the same fold schedule**, retaining the approved native grain and target.
+
+All dates are inclusive. Training begins on 2024-01-01 in every fold, and the calendar history expands as follows:
+
+| Fold | Training start | Training end / origin cutoff | Training days | Validation start | Validation end | Validation days |
+| --- | --- | --- | ---: | --- | --- | ---: |
+| 1 | 2024-01-01 | 2024-03-31 | 91 | 2024-04-01 | 2024-04-14 | 14 |
+| 2 | 2024-01-01 | 2024-06-30 | 182 | 2024-07-01 | 2024-07-14 | 14 |
+| 3 | 2024-01-01 | 2024-09-30 | 274 | 2024-10-01 | 2024-10-14 | 14 |
+| 4 | 2024-01-01 | 2024-12-02 | 337 | 2024-12-03 | 2024-12-16 | 14 |
+
+**Final model-evaluation holdout:** 2024-12-17 to 2024-12-30 inclusive, exactly **14 calendar days**.
+
+For each fold, use its training history for fitting and its 14-day validation window to evaluate the approved 1-, 7- and 14-day horizons. Training-day counts precede any approved lag/feature-history loss. Earlier validation observations become historical inputs for later folds only as permitted by the later cutoff; they cannot be used retrospectively in an earlier fold.
+
+The training window is the fitting history; the validation window is the future comparison interval; the forecast horizon is how far ahead a prediction extends; the final test is reserved for evaluation after selection. The 14-day validation-window length is distinct from the 14-day cumulative-demand horizon. At each fold cutoff, the next 1, 7 and 14 days fit inside its validation interval. Multi-step strategy and detailed scoring/update policies remain open and must respect those boundaries.
+
+Fit any learned preprocessing only on the fold's training data, apply the leakage rules below at each prediction origin, and compare candidates using the common schedule. Final metrics and model-selection policy remain to be approved. Once selection is complete, evaluate the final holdout without using it for model fitting, feature/model selection, hyperparameter tuning or validation decisions. Do not revise choices in response to final-test forecasting results.
+
+**EDA disclosure:** full-year descriptive EDA already inspected all dates, including the final holdout. “Untouched” refers to its exclusion from fitting/selection/tuning and the protection of final-test forecasting results, not to absence of prior descriptive inspection. Fold 4 validation ends on December 16; final testing begins on December 17, so there is no overlap.
+
+The EDA's March/September and first-/second-half demand-level differences support temporally separated origins; they do not establish recurring annual seasonality. Four folds provide the approved balance of temporal coverage, initial history and holdout preservation. DR-005 explains why two folds are less informative, three remain reasonable, and five or more add complexity and potential validation over-tuning rather than automatically causing model overfitting.
+
 ## Leakage control
 
 Features at time `t` may only use information that would be available before the prediction being made.
@@ -143,7 +171,9 @@ In particular:
 - lagged demand must use earlier observations only;
 - rolling calculations must exclude the current target value and all future values;
 - source `Demand_Forecast` must not be used as a normal model feature;
-- inventory or source-generated variables must not be aligned from a future state.
+- inventory or source-generated variables must not be aligned from a future state;
+- realised validation/test demand must not be used as an unavailable future input for an earlier-origin multi-step forecast;
+- complete horizon outcomes must remain inside the assigned evaluation window; validation scoring must not borrow final-holdout outcomes.
 
 ## Evaluation outputs
 

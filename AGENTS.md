@@ -37,6 +37,20 @@ Never implement work directly on `main`.
 
 Every implementation task must be completed on a feature branch.
 
+### Permanent local workspace rule
+
+All work must happen inside the existing `retail-demand-framework` repository root. Do not create another Git worktree or a sibling copy/folder for the same repository. Never make changes directly on `main`; for each task, create or switch to a dedicated branch inside the same repository.
+
+Preserve unrelated local modifications. Do not reset, stash, overwrite or discard unrelated local changes without explicit user permission.
+
+Follow the normal flow:
+
+```text
+updated main -> dedicated branch -> changes -> review -> commit -> push -> Pull Request -> merge after review
+```
+
+This sequence does not grant standing authorization for Git operations: follow the user's explicit approvals and any requested review/stop point, including instructions not to commit or push yet. The Pull Request protections below continue to apply.
+
 Recommended naming:
 
 ```text
