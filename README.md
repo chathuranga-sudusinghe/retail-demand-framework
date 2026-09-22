@@ -34,6 +34,14 @@ To investigate how data-driven demand forecasting can be integrated with invento
 - **RQ3:** How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
 - **RQ4:** How can uncertainty, transparency, governance, and human oversight guide the responsible use of the resulting decision-support outputs?
 
+## Primary group-level hypothesis
+
+**H0:** Demand forecasting does not significantly improve inventory-risk identification and supply-chain decision support.
+
+**H1:** Demand forecasting significantly improves inventory-risk identification and supply-chain decision support.
+
+The detailed baseline, measurable outcomes, and statistical testing needed to operationalise this hypothesis remain part of the research methodology.
+
 ## Group architecture
 
 ```text
