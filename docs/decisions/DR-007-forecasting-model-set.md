@@ -23,9 +23,9 @@ The approved candidate model set is:
 | Seasonal baseline | Seasonal Naive using lag 7 | Test whether repeating weekly demand provides a useful benchmark. |
 | Linear ML baseline | Ridge Regression | Provide a regularised linear baseline for relationships between engineered features and demand. |
 | Tree-based ML | Random Forest | Capture non-linear relationships and feature interactions. |
-| Gradient-boosting ML | LightGBM or XGBoost | Provide a stronger boosted-tree candidate for comparison with simpler models. |
+| Gradient-boosting ML | LightGBM | Provide a stronger boosted-tree candidate for comparison with simpler models. |
 
-The gradient-boosting role is approved, but the specific choice between LightGBM and XGBoost remains open. That choice must be documented before implementation rather than inferred silently during training.
+[DR-009](DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single implementation for the approved gradient-boosting role. This is a project-specific methodology and scope decision, not a claim that LightGBM is universally better than XGBoost or evidence that it will outperform another candidate.
 
 ## Rationale
 
@@ -35,7 +35,7 @@ The set creates an interpretable progression of modelling complexity:
 2. Seasonal Naive using lag 7 tests whether weekly repetition alone is competitive.
 3. Ridge Regression tests regularised linear relationships between approved engineered features and demand.
 4. Random Forest tests whether non-linear relationships and feature interactions improve forecasting.
-5. LightGBM or XGBoost provides one gradient-boosting candidate for comparison with the simpler approaches.
+5. LightGBM provides one gradient-boosting candidate for comparison with the simpler approaches.
 
 No model is expected to perform better merely because it is more complex. Suitability will be determined from common out-of-sample evidence.
 
@@ -89,7 +89,7 @@ Using only machine-learning models would remove the simple benchmarks needed to 
 
 ### Both LightGBM and XGBoost
 
-Including both would broaden the boosted-tree comparison but add implementation and tuning scope. The approved model set requires one gradient-boosting candidate; the specific library remains open until feasibility and dependency considerations are documented.
+Including both would broaden the boosted-tree comparison but add overlapping dependency, implementation, and tuning scope without a clear research need for this MSc project. DR-009 selects LightGBM as the single candidate while retaining XGBoost as a mature and capable alternative for the same general tabular-regression role.
 
 ### Assuming the most complex model will be selected
 
@@ -97,7 +97,7 @@ Rejected. Model selection must follow DR-006 evidence, not an assumption that mo
 
 ## Limitations
 
-- The exact LightGBM-versus-XGBoost choice remains open.
+- LightGBM still requires a separately approved dependency addition and implementation; neither is introduced by this decision record.
 - Model hyperparameters and search strategy remain open.
 - The final lag set and `Promotion_Flag` treatment remain open.
 - The dataset contains one simulated year, which limits the evidence available to every candidate.
@@ -107,6 +107,7 @@ Rejected. Model selection must follow DR-006 evidence, not an assumption that mo
 ## Impact
 
 - `docs/research-design.md` and `docs/workflows/demand-forecasting.md` now use this fixed candidate set.
+- DR-009 resolves the gradient-boosting implementation as LightGBM while keeping the approved model roles unchanged.
 - Naive and Seasonal Naive now have exact, leakage-safe calculations for every approved horizon.
 - Model training must compare all approved roles under the same validation and metric policies.
 - No candidate may be called best before out-of-sample results exist.

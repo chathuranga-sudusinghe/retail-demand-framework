@@ -211,9 +211,9 @@ Earlier predictions are not fed into later horizon predictions. This alignment b
 | Seasonal baseline | Seasonal Naive using lag 7 | Test whether repeating weekly demand provides a useful benchmark. |
 | Linear ML baseline | Ridge Regression | Provide a regularised linear baseline for relationships between engineered features and demand. |
 | Tree-based ML | Random Forest | Capture non-linear relationships and feature interactions. |
-| Gradient-boosting ML | LightGBM or XGBoost | Provide a stronger boosted-tree candidate for comparison with simpler models. |
+| Gradient-boosting ML | LightGBM | Provide a stronger boosted-tree candidate for comparison with simpler models. |
 
-The exact choice between LightGBM and XGBoost remains open and must be documented before that candidate is implemented. Model complexity does not imply better performance. Every candidate must use the same DR-005 validation folds, DR-008 direct targets, and DR-006 evaluation policy.
+[DR-009 — Gradient-Boosting Model Choice](decisions/DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single gradient-boosting implementation. The choice controls overlapping dependency and tuning scope for this project; it does not claim that LightGBM is universally better than XGBoost or that it will outperform another candidate. Every candidate must use the same DR-005 validation folds, DR-008 direct targets, and DR-006 evaluation policy.
 
 ## 9. Validation design
 
@@ -250,7 +250,7 @@ The final holdout must not be used for model fitting, feature/model selection, h
 
 Full-year descriptive EDA has already inspected the complete dataset, including the dates later assigned to this holdout. **Untouched final test** describes its exclusion from fitting and selection/tuning decisions and the protection of its forecasting results; it does not claim the dates were never descriptively inspected. Disclose that prior exposure. The 14-day late-December holdout is also a limited evaluation period, and expanding folds share history rather than being independent replicates.
 
-The candidate model set is defined in [DR-007](decisions/DR-007-forecasting-model-set.md), and direct horizon-specific forecasting is defined in [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md). The final lag set, `Promotion_Flag` usage, LightGBM-versus-XGBoost choice, hyperparameter search strategy, uncertainty method, and demand-regime definitions remain open. The forecasting metric and model-selection policy is defined in [DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md). These documentation decisions introduce no model training or modelling results.
+The candidate model set is defined in [DR-007](decisions/DR-007-forecasting-model-set.md), LightGBM is selected as its gradient-boosting implementation in [DR-009](decisions/DR-009-gradient-boosting-model-choice.md), and direct horizon-specific forecasting is defined in [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md). The final lag set, `Promotion_Flag` usage, hyperparameter search strategy, uncertainty method, and demand-regime definitions remain open. The forecasting metric and model-selection policy is defined in [DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md). These documentation decisions introduce no dependency change, model training, or modelling results.
 
 ## 10. Approved forecasting metrics and model-selection policy
 

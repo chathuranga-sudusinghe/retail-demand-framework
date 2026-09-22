@@ -130,9 +130,9 @@ No additional composite forecasting feature formed from inventory, cost, price, 
 | Seasonal baseline | Seasonal Naive using lag 7 | Weekly-repeat benchmark. |
 | Linear ML baseline | Ridge Regression | Regularised linear feature-demand relationships. |
 | Tree-based ML | Random Forest | Non-linear relationships and feature interactions. |
-| Gradient-boosting ML | LightGBM or XGBoost | Boosted-tree comparison with simpler candidates. |
+| Gradient-boosting ML | LightGBM | Boosted-tree comparison with simpler candidates. |
 
-LightGBM versus XGBoost remains an open implementation choice. No candidate is assumed to outperform another because it is more complex. All candidates must use the same DR-005 folds, DR-008 horizon targets, and DR-006 metrics.
+[DR-009](../decisions/DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single gradient-boosting implementation to keep dependency and tuning scope controlled. This project-specific choice does not claim universal superiority over XGBoost or forecast performance before evaluation. No candidate is assumed to outperform another because it is more complex. All candidates must use the same DR-005 folds, DR-008 horizon targets, and DR-006 metrics.
 
 ## Forecast horizons
 
