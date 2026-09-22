@@ -160,7 +160,30 @@ Such variables may belong more naturally to downstream inventory-risk analysis a
 
 All forecasting features must be generated without future-data leakage.
 
-## 7. Forecasting approach
+## 7. Forecast horizon
+
+The project will evaluate three decision-support forecast horizons while retaining the approved daily SKU-warehouse analytical grain:
+
+- **1-day horizon** — immediate next-day demand for each SKU-warehouse series;
+- **7-day horizon** — cumulative demand over the next 7 days;
+- **14-day horizon** — cumulative demand over the next 14 days.
+
+These horizons are selected as project-specific planning horizons rather than universal retail replenishment rules.
+
+The external inventory literature supports periodic-review inventory systems in which stock is reviewed and replenishment decisions are made at defined review intervals, and it shows that review-period choice interacts with demand, supply variability, and lead time (Silver and Robb, 2008; Lee and Schwarz, 2009). In the verified project dataset, `Supplier_Lead_Time_Days` ranges from 2 to 14 days. The 1-, 7-, and 14-day horizons therefore provide an interpretable set of immediate, weekly, and lead-time-scale demand views for downstream inventory-risk and replenishment analysis.
+
+The daily analytical grain and the forecast horizon are different concepts:
+
+```text
+analytical grain = one SKU + one warehouse + one day
+forecast horizon = how far ahead demand is predicted
+```
+
+A 7-day or 14-day demand view may be produced from daily forecasts while preserving daily SKU-warehouse predictions.
+
+This horizon decision does **not** yet determine the multi-step forecasting strategy (for example, recursive versus direct multi-horizon forecasting). That implementation choice remains open and must be evaluated without future-data leakage.
+
+## 8. Forecasting approach
 
 The forecasting component should compare appropriate levels of complexity, for example:
 
@@ -171,7 +194,7 @@ The forecasting component should compare appropriate levels of complexity, for e
 
 The exact model set will be justified by literature, data behaviour, time available, and the research question.
 
-## 8. Validation design
+## 9. Validation design
 
 Random train/test splitting is inappropriate for the main time-series evaluation because it can leak future information into training.
 
@@ -185,7 +208,7 @@ future holdout -> test
 
 Where feasible, use rolling-origin or walk-forward evaluation.
 
-## 9. Forecasting metrics
+## 10. Forecasting metrics
 
 Candidate metrics include:
 
@@ -223,7 +246,7 @@ Interpretation:
 - negative bias -> systematic underforecasting;
 - near zero -> little net directional error.
 
-## 10. Group-level forecasting hypothesis direction
+## 11. Group-level forecasting hypothesis direction
 
 ### H0
 
@@ -235,7 +258,7 @@ Forecasting performance varies significantly across different temporal demand be
 
 This remains provisional until demand-regime definitions and statistical tests are operationalised.
 
-## 11. Inventory-risk and replenishment interpretation
+## 12. Inventory-risk and replenishment interpretation
 
 Didilani's component will consume the selected forecast outputs together with relevant inventory variables, potentially including:
 
@@ -260,7 +283,7 @@ Candidate downstream outputs include:
 
 The exact formula/rules must be operationalised and evaluated before implementation is considered final.
 
-## 12. Responsible decision support
+## 13. Responsible decision support
 
 Dewmi's component will consume forecast and inventory-risk/replenishment outputs and should communicate:
 
@@ -274,7 +297,7 @@ Dewmi's component will consume forecast and inventory-risk/replenishment outputs
 
 The framework supports decisions; it does not automatically execute replenishment actions.
 
-## 13. End-to-end framework
+## 14. End-to-end framework
 
 ```text
 Historical sales and supply-chain data
@@ -290,7 +313,7 @@ Responsible decision-support logic
 Management-facing output
 ```
 
-## 14. Threats to validity
+## 15. Threats to validity
 
 Important threats include:
 

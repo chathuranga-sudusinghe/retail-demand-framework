@@ -90,7 +90,6 @@ This decision does **not** finalise:
 - the exact growth/decline indicator;
 - `Promotion_Flag` treatment;
 - exact forecasting model set;
-- forecast horizon;
 - train/validation/test dates;
 - final metric set;
 - uncertainty method;

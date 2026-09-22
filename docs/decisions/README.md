@@ -18,13 +18,13 @@ Each decision record should include:
 - [DR-001 — Dataset Selection](DR-001-dataset-selection.md)
 - [DR-002 — Forecasting Analytical Unit](DR-002-forecasting-analytical-unit.md)
 - [DR-003 — Initial Forecasting Feature-Engineering Baseline](DR-003-forecasting-feature-engineering-baseline.md)
+- [DR-004 — Forecast Horizons for Decision Support](DR-004-forecast-horizons.md)
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
 Examples include:
 
 - exact forecasting model set;
-- forecast horizon;
 - exact train/validation/test dates and rolling-origin design;
 - final forecasting metrics and model-selection policy;
 - final lag set;

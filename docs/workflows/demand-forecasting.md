@@ -117,6 +117,23 @@ The current target value must never be included in its own rolling feature.
 
 No additional composite forecasting feature formed from inventory, cost, price, or replenishment variables is currently approved.
 
+## Forecast horizons
+
+The approved decision-support horizons are:
+
+- **1 day** — next-day demand;
+- **7 days** — cumulative demand over the next week;
+- **14 days** — cumulative demand over the next two weeks.
+
+These horizons do not change the daily analytical grain. Forecast rows remain aligned to `SKU_ID + Warehouse_ID + Date`; 7-day and 14-day demand views are horizon-level summaries or multi-step outputs derived from daily forecasting.
+
+The 7-day and 14-day forecast horizons are also distinct from the 7-day and 14-day rolling **feature windows**:
+
+- rolling window = how much historical demand is summarised as an input feature;
+- forecast horizon = how far into the future demand is predicted.
+
+The horizon choice is supported by periodic-review inventory literature and by the project dataset's verified 2-14 day supplier lead-time range. The exact multi-step forecasting strategy remains open.
+
 ## Leakage control
 
 Features at time `t` may only use information that would be available before the prediction being made.
