@@ -23,13 +23,13 @@ Each decision record should include:
 - [DR-006 — Forecasting Metrics and Model-Selection Policy](DR-006-forecasting-metrics-and-model-selection.md)
 - [DR-007 — Forecasting Model Set](DR-007-forecasting-model-set.md)
 - [DR-008 — Multi-Step Forecasting Strategy](DR-008-multi-step-forecasting-strategy.md)
+- [DR-009 — Gradient-Boosting Model Choice](DR-009-gradient-boosting-model-choice.md)
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
 Examples include:
 
 - final lag set;
-- LightGBM versus XGBoost for the gradient-boosting candidate;
 - `Promotion_Flag` treatment;
 - growth/decline feature definition;
 - hyperparameter search strategy;
