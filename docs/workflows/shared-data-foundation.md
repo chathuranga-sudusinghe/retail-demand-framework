@@ -35,20 +35,27 @@ Shared processed datasets
         +--> Responsible decision support
 ```
 
-## Required decisions before implementation
+## Current foundation decisions
 
-1. Confirm exact downloaded filename, schema, row count, and datatypes.
-2. Confirm the primary forecasting unit: SKU-day, SKU-warehouse-day, or another justified unit.
-3. Define handling of duplicate or invalid records.
-4. Define date continuity and missing-period handling.
-5. Define product/history eligibility.
-6. Define chronological train/validation/test cut points.
-7. Define whether `Promotion_Flag` is available at prediction time.
-8. Explicitly exclude or isolate source `Demand_Forecast` to prevent leakage.
-9. Profile `Stockout_Flag` and other fields for zero/low variance.
-10. Define how inventory variables are aligned in time with forecast periods.
-11. Define the handoff contract from forecasting to inventory analysis.
-12. Define the handoff contract from inventory analysis to responsible decision support.
+The following foundation decisions/checks are complete:
+
+1. downloaded schema, row count, date coverage, and key field behaviour have been verified;
+2. DR-002 selects **SKU-warehouse-day** as the primary forecasting analytical unit;
+3. the verified native grain is one row per `Date + SKU_ID + Warehouse_ID`;
+4. `Stockout_Flag` is zero-variance and excluded from predictive/validation use as a stockout label;
+5. source `Demand_Forecast` is leakage-sensitive and excluded from ordinary forecasting use;
+6. warehouse-level inventory alignment has been profiled.
+
+## Decisions still required before later modelling/integration stages
+
+1. define handling of any invalid records discovered by the reproducible pipeline;
+2. define missing-period handling if future processed views introduce gaps;
+3. define product/history eligibility if any exclusion is required;
+4. define chronological train/validation/test cut points;
+5. define whether and how `Promotion_Flag` is available at prediction time;
+6. define exact temporal alignment between forecast periods and inventory state;
+7. finalise the forecasting-to-inventory output contract;
+8. finalise the inventory-to-decision-support output contract.
 
 ## Reproducibility rule
 
@@ -60,6 +67,7 @@ Forecasting view, at minimum:
 
 ```text
 SKU_ID
+Warehouse_ID
 period
 demand
 ```
@@ -67,7 +75,6 @@ demand
 Inventory-analysis view may additionally include:
 
 ```text
-Warehouse_ID
 Supplier_ID
 Region
 Inventory_Level
@@ -77,7 +84,9 @@ Order_Quantity
 Stockout_Flag
 ```
 
-The final schemas must be documented before cross-component integration.
+`Stockout_Flag` is retained only as a documented source field/limitation and must not be used as stockout ground truth.
+
+The final cross-component schemas must be documented before integration.
 
 ## Data ownership
 
