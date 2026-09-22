@@ -56,42 +56,109 @@ The forecasting component may examine:
 - SKU-to-SKU heterogeneity;
 - promotion-related effects where leakage-safe.
 
-## 6. Candidate feature families
+## 6. Forecasting feature engineering
 
-### Calendar features
+Feature engineering converts the approved SKU-warehouse-day demand history into model inputs that represent recent demand memory, short-term demand behaviour, and calendar effects without exposing the model to future information.
 
-- day of week;
-- week of year;
-- month;
-- quarter.
+### 6.1 Calendar features
 
-### Lag features
+#### `day_of_week`
 
-Examples may include:
+**Definition:** day of the week associated with the forecast date.
 
-- lag 1;
-- lag 7;
-- lag 14;
-- lag 28.
+**Why considered:** daily retail demand may differ between weekdays and weekends or show repeating weekly behaviour.
 
-Exact lags depend on the final aggregation frequency and must not be selected mechanically.
+**Leakage rule:** it is derived only from the known calendar date.
 
-### Rolling features
+#### `month`
 
-Examples:
+**Definition:** calendar month associated with the forecast date.
 
-- rolling mean;
-- rolling median;
-- rolling standard deviation;
-- recent growth or decline indicators.
+**Why considered:** it may capture broad within-year demand differences.
 
-### Exogenous variables
+**Caution:** the dataset contains only approximately one year of data, so month effects must not be interpreted as robust multi-year seasonality.
+
+#### `quarter`
+
+**Definition:** calendar quarter associated with the forecast date.
+
+**Why considered:** it may provide a coarse within-year temporal grouping.
+
+**Caution:** as with month, the one-year dataset limits claims about repeated annual seasonal behaviour.
+
+#### `week_of_year` — excluded from the primary feature set
+
+`week_of_year` is not included in the primary forecasting feature set. The dataset contains only one year of observations, so each numbered week occurs only once. The project therefore lacks repeated year-over-year evidence from which a model could learn a stable week-number effect.
+
+This does not mean that weekly behaviour is ignored. Weekly demand structure can instead be represented through features such as `day_of_week`, lagged demand, and 7-day rolling statistics.
+
+### 6.2 Lag features
+
+Lag features represent demand observed at an earlier point in the same SKU-warehouse series.
+
+Candidate lags currently include:
+
+- `lag_1` — `Units_Sold` one day earlier;
+- `lag_7` — `Units_Sold` seven days earlier;
+- `lag_14` — `Units_Sold` fourteen days earlier;
+- `lag_28` — `Units_Sold` twenty-eight days earlier.
+
+**Why considered:** lag features provide the model with direct information about recent demand and possible repeating short-cycle behaviour.
+
+**Leakage rule:** for a forecast at time `t`, the lagged value must come only from observations strictly before `t`.
+
+The exact final lag set remains open and must be justified through modelling evidence rather than selected mechanically.
+
+### 6.3 Rolling features
+
+Rolling features summarise recent historical demand over a fixed look-back window for the same SKU-warehouse series.
+
+The initial approved rolling windows are:
+
+- **7 days** — represents recent weekly demand behaviour;
+- **14 days** — provides a smoother two-week view of recent demand.
+
+Candidate rolling statistics are:
+
+- `rolling_mean_7` and `rolling_mean_14` — average historical demand in the previous 7 or 14 days;
+- `rolling_median_7` and `rolling_median_14` — typical recent demand with reduced sensitivity to unusual spikes;
+- `rolling_std_7` and `rolling_std_14` — recent demand variability / volatility.
+
+A 30-day rolling window is not part of the initial primary feature set. It may be examined later as a sensitivity or alternative feature only if evidence justifies it.
+
+**Leakage rule:** the current target value must never be included in its own rolling calculation. Rolling statistics for time `t` must be calculated from observations before `t` only.
+
+### 6.4 Recent growth / decline indicators
+
+A recent growth or decline feature would summarise whether recent demand is increasing, decreasing, or broadly stable.
+
+**Why considered:** it may help represent short-term direction that is not fully captured by one individual lag.
+
+**Status:** candidate only. The exact calculation has not yet been approved and must not be invented during implementation.
+
+### 6.5 Exogenous variables
 
 `Promotion_Flag` may be considered only when it would genuinely be known at the prediction origin. Profiling found that promotion status conflicts across warehouses in approximately 41.6% of SKU-day groups, which further supports retaining the warehouse dimension rather than collapsing to one SKU-day promotion value.
 
+The final treatment of `Promotion_Flag` remains an open methodology decision.
+
 Inventory fields should not automatically be inserted into the forecasting model. Their role must be justified separately from their downstream use in inventory analysis.
 
-All features must be generated without future-data leakage.
+### 6.6 Features not yet defined
+
+The project has not approved additional composite forecasting features created by summing, subtracting, multiplying, or dividing multiple raw columns.
+
+Examples that are **not currently approved forecasting features** include:
+
+- `Inventory_Level - Reorder_Point`;
+- `Unit_Price - Unit_Cost`;
+- `Unit_Price / Unit_Cost`;
+- lead-time-demand combinations;
+- other inventory-policy-derived variables.
+
+Such variables may belong more naturally to downstream inventory-risk analysis and must not be added to the forecasting model without separate evidence and approval.
+
+All forecasting features must be generated without future-data leakage.
 
 ## 7. Forecasting approach
 
