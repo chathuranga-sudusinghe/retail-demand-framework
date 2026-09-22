@@ -215,6 +215,12 @@ Earlier predictions are not fed into later horizon predictions. This alignment b
 
 [DR-009 — Gradient-Boosting Model Choice](decisions/DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single gradient-boosting implementation. The choice controls overlapping dependency and tuning scope for this project; it does not claim that LightGBM is universally better than XGBoost or that it will outperform another candidate. Every candidate must use the same DR-005 validation folds, DR-008 direct targets, and DR-006 evaluation policy.
 
+### 8.1 Hyperparameter-search strategy
+
+[DR-010 — Forecasting Hyperparameter-Search Strategy](decisions/DR-010-hyperparameter-search-strategy.md) defines small, predefined search spaces for Ridge Regression, Random Forest, and LightGBM. Naive and Seasonal Naive remain untuned baselines. Each learned model is tuned separately for the 1-day, 7-day, and 14-day horizons by evaluating every approved parameter combination on the same four DR-005 expanding-window folds. Mean WAPE across folds is the primary tuning statistic under DR-006; fold-level stability, MAE, RMSE, and Bias must also be reviewed.
+
+Search spaces must not be changed ad hoc in response to disappointing validation results. Any revision requires a documented reason and approval before rerunning. Selected settings are frozen before final-holdout evaluation, and final-holdout results must never inform tuning or search-space changes. Ordinary random K-fold cross-validation is not permitted because it would break temporal order.
+
 ## 9. Validation design
 
 [DR-005 — Forecast Validation Design](decisions/DR-005-forecast-validation-design.md), approved through [Issue #31](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31), selects **expanding-window time-series validation**: rolling-origin / walk-forward evaluation with an expanding training window. Random train/test splitting must not be used.
@@ -250,7 +256,7 @@ The final holdout must not be used for model fitting, feature/model selection, h
 
 Full-year descriptive EDA has already inspected the complete dataset, including the dates later assigned to this holdout. **Untouched final test** describes its exclusion from fitting and selection/tuning decisions and the protection of its forecasting results; it does not claim the dates were never descriptively inspected. Disclose that prior exposure. The 14-day late-December holdout is also a limited evaluation period, and expanding folds share history rather than being independent replicates.
 
-The candidate model set is defined in [DR-007](decisions/DR-007-forecasting-model-set.md), LightGBM is selected as its gradient-boosting implementation in [DR-009](decisions/DR-009-gradient-boosting-model-choice.md), and direct horizon-specific forecasting is defined in [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md). The final lag set, `Promotion_Flag` usage, hyperparameter search strategy, uncertainty method, and demand-regime definitions remain open. The forecasting metric and model-selection policy is defined in [DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md). These documentation decisions introduce no dependency change, model training, or modelling results.
+The candidate model set is defined in [DR-007](decisions/DR-007-forecasting-model-set.md), LightGBM is selected as its gradient-boosting implementation in [DR-009](decisions/DR-009-gradient-boosting-model-choice.md), the bounded tuning strategy is defined in [DR-010](decisions/DR-010-hyperparameter-search-strategy.md), and direct horizon-specific forecasting is defined in [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md). The final lag set, `Promotion_Flag` usage, uncertainty method, and demand-regime definitions remain open. The forecasting metric and model-selection policy is defined in [DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md). These documentation decisions introduce no dependency change, model training, or modelling results.
 
 ## 10. Approved forecasting metrics and model-selection policy
 

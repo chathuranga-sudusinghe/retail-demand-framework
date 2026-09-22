@@ -134,6 +134,22 @@ No additional composite forecasting feature formed from inventory, cost, price, 
 
 [DR-009](../decisions/DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single gradient-boosting implementation to keep dependency and tuning scope controlled. This project-specific choice does not claim universal superiority over XGBoost or forecast performance before evaluation. No candidate is assumed to outperform another because it is more complex. All candidates must use the same DR-005 folds, DR-008 horizon targets, and DR-006 metrics.
 
+## Approved hyperparameter-search workflow
+
+[DR-010](../decisions/DR-010-hyperparameter-search-strategy.md) defines small, predefined search spaces for Ridge Regression, Random Forest, and LightGBM. Naive and Seasonal Naive are fixed baselines and must not be tuned.
+
+For each learned model and each approved horizon:
+
+1. generate only the DR-010 parameter combinations;
+2. evaluate every combination on the same four DR-005 expanding-window folds;
+3. calculate WAPE, MAE, RMSE, and Bias for every fold and their arithmetic means across folds;
+4. use mean WAPE as the primary tuning statistic;
+5. review fold-level stability and supporting metrics;
+6. select one configuration for that model and horizon; and
+7. freeze the configuration before final-holdout evaluation.
+
+Do not average the three horizons into one tuning score. Ordinary random K-fold cross-validation is not permitted. Search spaces must not be expanded ad hoc in response to validation results, and the final holdout must not be used for tuning, search-space revision, or model selection. The implementation must record seeds, versions, feature order, fold definitions, candidate grids, selected settings, horizons, and the metric evidence used for selection.
+
 ## Forecast horizons
 
 The approved decision-support horizons are:

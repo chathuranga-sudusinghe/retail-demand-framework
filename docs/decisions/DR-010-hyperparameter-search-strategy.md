@@ -1,0 +1,143 @@
+# DR-010 — Forecasting Hyperparameter-Search Strategy
+
+**Date:** 2026-09-23
+**Status:** Accepted for the current forecasting-methodology baseline
+**Owner:** Chathuranga
+**Decision owners:** COMP1884 group
+**Related issue:** [#44 — Research: define forecasting hyperparameter-search strategy](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/44)
+**Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
+
+## Context
+
+[DR-007](DR-007-forecasting-model-set.md) approves Naive, Seasonal Naive, Ridge Regression, Random Forest, and one gradient-boosting candidate. [DR-009](DR-009-gradient-boosting-model-choice.md) selects LightGBM for that gradient-boosting role. Before implementation begins, the project needs a bounded and reproducible method for selecting settings for the three learned models without adapting the search repeatedly to disappointing validation results.
+
+[DR-005](DR-005-forecast-validation-design.md) defines four expanding-window validation folds that preserve temporal order. [DR-006](DR-006-forecasting-metrics-and-model-selection.md) defines mean WAPE across those folds as the primary selection statistic, with MAE, RMSE, Bias, fold-level results, and fold-to-fold stability retained for review. [DR-008](DR-008-multi-step-forecasting-strategy.md) requires separate direct models or outputs for the 1-day, 7-day cumulative, and 14-day cumulative targets.
+
+## Decision
+
+Use a small, predefined, bounded exhaustive search for each learned model and each approved forecast horizon. Generate every combination from the grids below, evaluate every combination on the same four DR-005 expanding-window folds, and select one configuration per model and horizon before final-holdout evaluation.
+
+Naive and Seasonal Naive are fixed baselines under DR-007. They have no hyperparameter search.
+
+Ordinary random K-fold cross-validation must not be used because it would break the temporal ordering required by DR-005. The final holdout must never be used for hyperparameter tuning, search-space revision, or model selection.
+
+## Approved bounded search spaces
+
+### Ridge Regression
+
+Tune only the regularisation strength:
+
+```text
+alpha = [0.01, 0.1, 1.0, 10.0, 100.0]
+```
+
+This produces five candidate configurations per horizon. All other Ridge Regression settings must remain fixed and be recorded. Changing another setting requires a separate approved decision.
+
+### Random Forest
+
+Use the Cartesian product of:
+
+```text
+n_estimators = [100, 300]
+max_depth = [None, 10, 20]
+min_samples_leaf = [1, 5]
+```
+
+This produces 12 candidate configurations per horizon. Use `random_state = 42` for every candidate, fold, and horizon. All other settings must remain fixed and be recorded. No additional search dimension is approved.
+
+### LightGBM
+
+Use the Cartesian product of:
+
+```text
+learning_rate = [0.03, 0.05, 0.1]
+num_leaves = [15, 31]
+n_estimators = [100, 300]
+max_depth = [-1, 10]
+```
+
+This produces 24 candidate configurations per horizon. Use `random_state = 42`, or the equivalent supported seed value of 42, consistently across candidates, folds, and horizons. All other settings must remain fixed and be recorded. No additional search dimension is approved.
+
+These deliberately modest spaces bound the initial search to 41 learned-model configurations per horizon. Their purpose is controlled comparison within the MSc project, not exhaustive optimisation of every setting exposed by each library.
+
+## Search procedure
+
+For each learned model and each approved horizon:
+
+1. Generate only the predefined candidate parameter combinations.
+2. Evaluate every candidate using the same four DR-005 expanding-window validation folds.
+3. Fit all learned preprocessing and the model only on the relevant fold's training data.
+4. Calculate WAPE, MAE, RMSE, and Bias separately for every fold.
+5. Calculate the arithmetic mean of each metric across the four folds.
+6. Use mean WAPE as the primary hyperparameter-selection statistic under DR-006.
+7. Review fold-level stability and the supporting MAE, RMSE, and Bias results before finalising the setting; do not select from one favourable fold alone.
+8. Choose and document one hyperparameter configuration for that model and horizon.
+9. Freeze the selected configuration before final-holdout evaluation.
+
+The 1-day, 7-day, and 14-day horizons remain separate tuning tasks. Their metrics must not be averaged or weighted into one tuning score unless a later approved decision explicitly introduces that policy.
+
+If two or more settings are not meaningfully distinguishable from the recorded validation evidence, the selected setting and rationale must be documented without expanding the grid or consulting the final holdout. This decision does not invent an automatic numerical stability or tie threshold beyond DR-006.
+
+## Reproducibility requirements
+
+The implementation must record, in machine-readable outputs where practical:
+
+- random seeds;
+- Python and library versions;
+- feature names and feature order;
+- the exact DR-005 fold definitions;
+- the complete candidate parameter grids and generated combinations;
+- model name and forecast horizon;
+- WAPE, MAE, RMSE, and Bias for every candidate and fold;
+- arithmetic mean metrics across folds;
+- the selected parameter configuration; and
+- the selection rationale, including any fold-stability or supporting-metric concern.
+
+The same preprocessing, feature availability, target construction, metric implementation, and fold boundaries must be used consistently when comparing settings for a model and horizon.
+
+## Search-space changes
+
+If an approved search value is technically invalid for the implemented library version or the bounded space is clearly inadequate:
+
+1. stop rather than silently changing or extending the grid;
+2. document the technical or methodological reason;
+3. approve a revised bounded space before rerunning the search; and
+4. preserve the earlier search definition and results as part of the decision trail where applicable.
+
+Final-holdout performance must never be used to justify expanding, narrowing, or rerunning a hyperparameter search. Validation results may identify a limitation, but repeated ad-hoc boundary expansion in response to disappointing results is not approved.
+
+## Alternatives considered
+
+### Ad-hoc manual tuning
+
+Repeatedly changing individual parameters after inspecting validation results is not selected because it is difficult to reproduce and increases the risk of tuning decisions becoming tailored to the four validation periods. Manual tuning is not universally invalid, but it does not provide the controlled decision trail required here.
+
+### Unrestricted GridSearch
+
+A large combinatorial grid could examine more settings but would increase runtime, tuning complexity, and opportunities for validation over-tuning. The selected approach still evaluates a grid exhaustively, but the grid is small and fixed before results are inspected.
+
+### RandomizedSearchCV with ordinary cross-validation
+
+Random search can be useful for larger spaces. It is not selected for the initial scope because the approved spaces are already small enough to enumerate, and ordinary cross-validation defaults are not an acceptable substitute for the chronological DR-005 folds. Any future randomised method would still need explicit temporal folds and reproducible sampling.
+
+### Bayesian optimisation or Optuna-style tuning
+
+Adaptive optimisation can search complex spaces efficiently, but it adds tooling, tuning policy, and stopping-rule complexity. That scope is unnecessary for the current dataset and three deliberately small grids, and repeated adaptive feedback can increase validation over-tuning risk. These methods are not considered universally inferior; they are outside the initial COMP1884 scope.
+
+## Limitations
+
+- The bounded grids may omit a stronger configuration outside their approved values.
+- Reusing four validation folds across configurations creates validation over-tuning risk even with a bounded search; limiting and predeclaring the spaces reduces but does not remove that risk.
+- Mean WAPE can hide fold-level variation, so fold results and supporting metrics remain mandatory.
+- A fixed random seed improves reproducibility but does not establish robustness across all possible random seeds.
+- Separate tuning by horizon increases the number of fits but preserves DR-006's horizon-specific comparison policy.
+- This decision defines the search method only; it introduces no training results or claim about which configuration or model will perform best.
+
+## Impact
+
+- Ridge Regression, Random Forest, and LightGBM now have fixed initial search spaces and a common temporal tuning procedure.
+- Naive and Seasonal Naive remain untuned baselines.
+- `docs/research-design.md` and `docs/workflows/demand-forecasting.md` summarise the approved strategy.
+- The hyperparameter-search strategy is removed from the open-decision list.
+- DR-004 horizons, DR-005 fold dates, DR-006 metric policy, DR-007 model set, DR-008 direct strategy, and DR-009 LightGBM choice remain unchanged.
+- No dependency, modelling code, training run, forecast result, or final-holdout use is introduced by this decision.
