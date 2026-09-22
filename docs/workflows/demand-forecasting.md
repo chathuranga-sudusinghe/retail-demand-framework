@@ -156,7 +156,7 @@ For each fold, use its training history for fitting and its 14-day validation wi
 
 The training window is the fitting history; the validation window is the future comparison interval; the forecast horizon is how far ahead a prediction extends; the final test is reserved for evaluation after selection. The 14-day validation-window length is distinct from the 14-day cumulative-demand horizon. At each fold cutoff, the next 1, 7 and 14 days fit inside its validation interval. Multi-step strategy and detailed scoring/update policies remain open and must respect those boundaries.
 
-Fit any learned preprocessing only on the fold's training data, apply the leakage rules below at each prediction origin, and compare candidates using the common schedule. Final metrics and model-selection policy remain to be approved. Once selection is complete, evaluate the final holdout without using it for model fitting, feature/model selection, hyperparameter tuning or validation decisions. Do not revise choices in response to final-test forecasting results.
+Fit any learned preprocessing only on the fold's training data, apply the leakage rules below at each prediction origin, and compare candidates using the common schedule. The approved metric and model-selection policy is defined in [DR-006](../decisions/DR-006-forecasting-metrics-and-model-selection.md) and summarised below. Once selection is complete, evaluate the final holdout without using it for model fitting, feature/model selection, hyperparameter tuning or validation decisions. Do not revise choices in response to final-test forecasting results.
 
 **EDA disclosure:** full-year descriptive EDA already inspected all dates, including the final holdout. “Untouched” refers to its exclusion from fitting/selection/tuning and the protection of final-test forecasting results, not to absence of prior descriptive inspection. Fold 4 validation ends on December 16; final testing begins on December 17, so there is no overlap.
 
@@ -192,9 +192,24 @@ model_id
 
 Where possible, also include forecast uncertainty or prediction-interval fields.
 
+## Approved metric and model-selection policy
+
+**WAPE (Weighted Absolute Percentage Error) is the primary model-selection metric.** MAE (Mean Absolute Error), RMSE (Root Mean Squared Error), and Forecast Bias / Mean Forecast Error are supporting metrics.
+
+Every candidate model must use the same DR-005 folds and the approved 1-day, 7-day, and 14-day horizons. For each model and horizon:
+
+1. calculate WAPE, MAE, RMSE, and Bias separately for each of the four folds;
+2. calculate the arithmetic mean of each metric across those folds;
+3. compare candidates primarily using mean WAPE across folds; and
+4. review the individual fold results and supporting mean MAE, RMSE, and Bias before selection.
+
+Comparisons are horizon-specific; this workflow does not silently average or weight results across the three horizons. The selected model will be the candidate with the lowest mean WAPE across the approved validation folds for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review.
+
+A low mean WAPE from unstable fold results is not sufficient evidence of robustness and must be discussed. Selection must never rely on one fold alone. WAPE has no universal project quality band, and candidates must be judged relative to the same baselines, folds, horizons, and evaluation design. Final-holdout results must not be used to revise model-selection decisions.
+
 ## Model-selection principle
 
-Do not select a model only because it is more complex. Compare candidate models with a simple benchmark and select a suitable model using reproducible out-of-sample evidence, agreed metrics, and research relevance.
+Do not select a model only because it is more complex. Compare every candidate with the same simple baseline and shared evaluation protocol. Use mean validation-fold WAPE as the primary statistic, then confirm that fold-to-fold behaviour and supporting MAE, RMSE, and Bias do not reveal material weaknesses that the mean WAPE alone would hide.
 
 ## Downstream handoff
 
