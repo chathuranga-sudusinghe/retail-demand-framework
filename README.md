@@ -145,6 +145,14 @@ reports/            Project/report support material
 
 Code is organised by **system component**, not by student name. Member ownership is documented in `docs/team/`, while the implementation remains an integrated group product.
 
+## Usage and permissions
+
+This repository is provided publicly for **academic and educational review**.
+
+No open-source licence is granted for the original project materials in this repository. Unless explicit written permission is obtained from the project authors, the repository content must not be copied, modified, redistributed, commercially reused, or incorporated into another project beyond what is otherwise permitted by applicable law.
+
+Third-party datasets, software libraries, frameworks, and other external materials referenced by this project remain subject to their own licences, terms, and conditions. The project dataset is not distributed in this repository and is not covered by this repository notice.
+
 ## Status
 
 **Research foundation completed; component work is starting.** Dataset selection, the literature-review baseline, temporal/inventory profiling, the primary forecasting analytical unit, and the dataset data dictionary are documented. The next stage is component-specific methodology and implementation, while still-open decisions such as model set, validation cut points, final metrics, inventory-risk formulas, replenishment logic, uncertainty representation, and human-review rules must be resolved through evidence and decision records.
