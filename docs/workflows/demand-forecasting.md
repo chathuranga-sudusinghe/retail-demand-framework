@@ -6,7 +6,7 @@ Primary COMP1884 owner: **Chathuranga**
 
 ## Goal
 
-Train and compare forecasting approaches, select a suitable model using time-aware evaluation, generate future SKU-level demand forecasts, and provide a reproducible forecast-output contract for Didilani's downstream inventory-risk and replenishment analysis.
+Train and compare forecasting approaches, select a suitable model using time-aware evaluation, generate future SKU-warehouse-day demand forecasts, and provide a reproducible forecast-output contract for Didilani's downstream inventory-risk and replenishment analysis.
 
 ## Workflow
 
@@ -47,9 +47,20 @@ Forecast-output contract
 Didilani inventory-risk / replenishment analysis
 ```
 
+## Approved analytical unit and target
+
+DR-002 selects:
+
+```text
+analytical unit = SKU_ID + Warehouse_ID + Date
+target = Units_Sold
+```
+
+This grain must be retained in forecast outputs so downstream inventory analysis can align each prediction with warehouse-specific inventory state.
+
 ## Temporal analysis
 
-Investigate:
+The first profiling stage has already established complete 365-day SKU-warehouse series with very low median zero-demand frequency. Further modelling-stage analysis may investigate:
 
 - trend;
 - seasonality;
@@ -71,6 +82,7 @@ At minimum:
 
 ```text
 SKU_ID
+Warehouse_ID
 period
 actual_demand
 forecast_demand
@@ -87,6 +99,6 @@ Do not select a model only because it is more complex. Compare candidate models 
 
 ## Downstream handoff
 
-The selected forecast output is the primary analytical input to Didilani's component.
+The selected forecast output is the primary analytical input to Didilani's component. `Warehouse_ID` must be preserved in the handoff.
 
 Didilani does not retrain or repeat the demand-forecasting task. Her component combines the forecast with inventory-state and replenishment variables.
