@@ -26,9 +26,10 @@ Issue
 -> work
 -> commit
 -> push
--> Pull Request
+-> Pull Request with "Closes #<issue-number>"
 -> review
 -> merge
+-> Issue auto-closes
 ```
 
 ---
@@ -70,6 +71,7 @@ Recommended branch prefixes:
 
 ```text
 feature/
+research/
 fix/
 docs/
 test/
@@ -82,6 +84,7 @@ Examples:
 feature/data-cleaning-baseline
 feature/time-series-features
 feature/inventory-risk-baseline
+research/temporal-demand-profile
 docs/update-research-design
 fix/cancellation-filter
 ```
@@ -174,7 +177,7 @@ On GitHub:
 4. set base branch to `main`;
 5. select your feature branch as the compare branch;
 6. complete the Pull Request template;
-7. link the relevant Issue;
+7. link and auto-close the relevant Issue by adding `Closes #<issue-number>` to the PR description;
 8. request review;
 9. do not merge until review requirements are satisfied.
 
@@ -217,6 +220,8 @@ Delete the old local branch when it is no longer needed:
 ```bash
 git branch -d feature/inventory-risk-baseline
 ```
+
+Verify that the PR's linked Issue was automatically closed. If it was not, close it manually as completed.
 
 Then start the next Issue from the updated `main`.
 
@@ -263,8 +268,8 @@ Do not let an AI tool silently decide important research methodology.
 
 Examples requiring explicit discussion:
 
-- target definition;
-- aggregation frequency;
+- changes to the approved target definition;
+- changes to the approved analytical unit / aggregation frequency;
 - return/cancellation treatment;
 - demand-regime definition;
 - risk-proxy definition;

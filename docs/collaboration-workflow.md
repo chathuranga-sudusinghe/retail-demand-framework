@@ -23,7 +23,7 @@ Assigned contributor
 Update local main
         |
         v
-Create feature branch
+Create task branch
         |
         v
 Work with ChatGPT / Codex if needed
@@ -38,7 +38,7 @@ Commit
 Push feature branch
         |
         v
-Open Pull Request
+Open Pull Request with "Closes #<issue-number>"
         |
         v
 Review and required approval
@@ -47,7 +47,10 @@ Review and required approval
 Merge to main
         |
         v
-Pull latest main locally
+Linked Issue auto-closes
+        |
+        v
+Verify Issue state and pull latest main locally
 ```
 
 ---
@@ -62,18 +65,30 @@ Normal contributors must not use `main` as a development branch.
 
 ---
 
-## 3. Feature branches
+## 3. Task branches
 
 Every Issue gets its own branch.
+
+Recommended prefixes include:
+
+```text
+feature/
+research/
+docs/
+fix/
+test/
+refactor/
+```
 
 Examples:
 
 ```text
 feature/shared-data-validation
-feature/weekly-demand-aggregation
+research/temporal-demand-profile
 feature/forecasting-baseline
 feature/inventory-risk-baseline
 feature/responsible-decision-view
+docs/update-research-design
 ```
 
 Do not reuse one long-lived branch for unrelated Issues.
@@ -104,7 +119,7 @@ Every implementation branch must be reviewed through a Pull Request.
 
 The Pull Request should include:
 
-- linked Issue;
+- `Closes #<issue-number>` so the linked Issue auto-closes when merged to `main`;
 - summary;
 - files changed;
 - tests/validation;
@@ -186,9 +201,9 @@ AI may:
 AI must not silently decide:
 
 - research hypotheses;
-- target variable definition;
+- changes to the approved target variable definition;
 - data cleaning policy;
-- aggregation frequency;
+- changes to the approved analytical unit / aggregation frequency;
 - inventory-risk meaning;
 - model evaluation policy;
 - scope changes;
@@ -216,7 +231,13 @@ git commit -m "feat: add inventory risk baseline"
 git push -u origin feature/inventory-risk-baseline
 ```
 
-Then she opens a Pull Request to `main`.
+Then she opens a Pull Request to `main` and includes:
+
+```text
+Closes #<issue-number>
+```
+
+When the PR is merged to `main`, GitHub should automatically close the linked Issue. The Issue state must still be verified after merge.
 
 The same process applies to all members.
 

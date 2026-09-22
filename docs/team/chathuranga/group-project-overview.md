@@ -35,19 +35,22 @@ Primary inputs:
 
 - `Date`;
 - `SKU_ID`;
+- `Warehouse_ID`;
 - `Units_Sold`;
 - selected leakage-safe supporting variables where justified.
+
+DR-002 has fixed the primary forecasting analytical unit as `SKU_ID + Warehouse_ID + Date`. The target at this grain is `Units_Sold`.
 
 The source `Demand_Forecast` field is not the project's forecasting target and must not be used in a way that leaks target/future information.
 
 ## Responsibilities
 
-1. Define the forecasting target and aggregation level with the group.
+1. Implement the approved forecasting target and analytical grain defined by DR-002.
 2. Build chronological training, validation, and test datasets.
 3. Train appropriate forecasting models and benchmarks.
 4. Compare model performance using agreed metrics.
 5. Select a suitable model based on out-of-sample evidence rather than complexity alone.
-6. Generate future demand forecasts for each selected SKU/analytical unit.
+6. Generate future demand forecasts for each selected SKU-warehouse series.
 7. Measure forecast error, bias, and uncertainty where feasible.
 8. Produce a stable forecast-output contract for Didilani's component.
 9. Document assumptions and limitations.
@@ -56,6 +59,7 @@ The source `Demand_Forecast` field is not the project's forecasting target and m
 
 ```text
 SKU_ID
+Warehouse_ID
 period
 actual_demand
 forecast_demand
@@ -83,7 +87,7 @@ Didilani's component receives the selected forecast output and combines it with 
 
 This component is complete for COMP1884 when:
 
-- the target and aggregation are documented;
+- the approved target and SKU-warehouse-day analytical grain are preserved;
 - at least one benchmark and justified forecasting alternatives are evaluated;
 - validation is time-aware;
 - a suitable model is selected using reproducible evidence;

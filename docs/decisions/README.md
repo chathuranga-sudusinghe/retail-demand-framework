@@ -16,11 +16,14 @@ Each decision record should include:
 ## Current decision records
 
 - [DR-001 — Dataset Selection](DR-001-dataset-selection.md)
+- [DR-002 — Forecasting Analytical Unit](DR-002-forecasting-analytical-unit.md)
 
-Future examples:
+## Decisions still to be formalised as evidence becomes sufficient
 
-- forecasting analytical unit and aggregation;
-- final forecasting metrics;
+Examples include:
+
+- final forecasting model set;
+- final forecasting metrics and model-selection policy;
 - demand-regime definitions;
 - inventory-risk/replenishment definitions;
 - model set;

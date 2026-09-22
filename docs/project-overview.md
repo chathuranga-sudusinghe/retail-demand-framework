@@ -23,7 +23,7 @@ To investigate how data-driven demand forecasting can be integrated with invento
 
 ## 5. Research objectives
 
-1. Prepare and analyse historical SKU-level sales and inventory data.
+1. Prepare and analyse historical SKU-warehouse-level sales and inventory data at the approved daily analytical grain.
 2. Develop and compare suitable demand-forecasting approaches.
 3. Select a suitable forecasting model using time-aware evaluation.
 4. Combine forecast outputs with inventory variables to identify inventory and replenishment risks.
@@ -44,7 +44,7 @@ To investigate how data-driven demand forecasting can be integrated with invento
 
 ## 8. Research contribution
 
-The contribution is not simply to find the forecasting model with the lowest error. The group product will connect:
+The contribution is not simply to find the forecasting model with the lowest error. The primary forecasting grain has been fixed by DR-002 as `SKU_ID + Warehouse_ID + Date`, preserving the warehouse-specific context required by downstream inventory analysis. The group product will connect:
 
 ```text
 Historical supply-chain data
@@ -80,11 +80,11 @@ A recommended replenishment quantity may be produced where the final method can 
 
 ### Chathuranga
 
-Owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and generation of forecast outputs for downstream use.
+Owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and generation of SKU-warehouse-day forecast outputs for downstream use.
 
 ### Didilani
 
-Owns inventory-risk and replenishment analysis. Her component consumes Chathuranga's forecast outputs together with inventory variables such as inventory level, reorder point, supplier lead time, and replenishment quantity. She also owns visual/business interpretation of the resulting risk outputs.
+Owns inventory-risk and replenishment analysis. Her component consumes Chathuranga's forecast outputs while retaining `Warehouse_ID`, then combines them with warehouse-specific inventory variables such as inventory level, reorder point, supplier lead time, and replenishment quantity. She also owns visual/business interpretation of the resulting risk outputs.
 
 ### Dewmi
 
@@ -110,19 +110,22 @@ The selected source is the **High-Dimensional Supply Chain Inventory Dataset** o
 
 The source contains sales, inventory levels, supplier lead times, reorder points, replenishment quantities, promotions, stockout indicators, costs/prices, and a source-provided demand-forecast field.
 
-The project will build its own forecast from historical sales. The source-provided `Demand_Forecast` must not be used in a way that causes target leakage.
+The project will build its own forecast from historical sales using `Units_Sold` as the target at the approved `SKU_ID + Warehouse_ID + Date` grain. The source-provided `Demand_Forecast` must not be used in a way that causes target leakage. `Stockout_Flag` is zero-variance and cannot be used as a stockout target or validation label.
 
 See:
 
 - `docs/dataset.md`
 - `docs/decisions/DR-001-dataset-selection.md`
+- `docs/decisions/DR-002-forecasting-analytical-unit.md`
+- `reports/temporal-demand-profile.md`
+- `docs/literature/literature-review.md`
 - `docs/references.md`
 
 ## 13. Scope
 
 In scope:
 
-- SKU-level historical sales analysis;
+- SKU-warehouse-day historical sales analysis;
 - time-aware demand forecasting;
 - model comparison and forecast evaluation;
 - inventory-level and reorder-point analysis;

@@ -16,7 +16,7 @@ historical demand
     -> responsible management-facing decision support
 ```
 
-The review is not intended to justify a pre-selected model. Instead, it identifies evidence that can guide later methodological decisions, while preserving the project's current rule that analytical unit, exact model set, inventory-risk formula, replenishment logic, uncertainty treatment, and human-review rules must be operationally justified before they are fixed.
+The review is not intended to justify a pre-selected model. Instead, it identifies evidence that can guide methodological decisions. Since this baseline review was created, dataset profiling and DR-002 have fixed the primary analytical unit as SKU-warehouse-day. The exact model set, inventory-risk formula, replenishment logic, uncertainty treatment, and human-review rules remain open and must be operationally justified before they are fixed.
 
 The review concentrates on five connected areas:
 
@@ -164,7 +164,7 @@ Third, recent supply-chain decision-support research increasingly recognises tha
 
 On this basis, the provisional research gap for COMP1884 is not that demand forecasting, inventory control, or explainable decision support are individually new. The opportunity is at their **application-level integration** under the constraints of the selected dataset:
 
-> There is scope to evaluate how SKU-level demand forecasts can be transformed, using available inventory-state and lead-time information, into transparent inventory-risk and replenishment evidence, and then communicated through a responsible management-facing decision-support layer that retains uncertainty and human oversight.
+> There is scope to evaluate how SKU-warehouse-level demand forecasts can be transformed, using available warehouse-specific inventory-state and lead-time information, into transparent inventory-risk and replenishment evidence, and then communicated through a responsible management-facing decision-support layer that retains uncertainty and human oversight.
 
 This is an MSc-level applied contribution rather than a claim of new forecasting theory. The contribution will need to be demonstrated through the reproducible integration and evaluation of the three components.
 
@@ -172,7 +172,7 @@ This is an MSc-level applied contribution rather than a claim of new forecasting
 
 ### RQ1 — What demand patterns can be identified from historical SKU-level sales data?
 
-Supported by literature on retail-demand heterogeneity, temporal behaviour, promotion effects, and SKU-level forecasting. The project should profile `Units_Sold` before finalising aggregation level, lag structure, or demand-regime definitions.
+Supported by literature on retail-demand heterogeneity, temporal behaviour, promotion effects, and SKU-level forecasting. Temporal and inventory-alignment profiling has now been completed, and DR-002 selects SKU-warehouse-day as the primary analytical unit. Lag structure and any demand-regime definitions remain open.
 
 ### RQ2 — Which forecasting methods are suitable for predicting future product demand?
 
@@ -186,11 +186,16 @@ Supported by integrated forecasting-inventory literature. Because `Stockout_Flag
 
 Supported by XAI and human-centred decision-support literature. The project should expose evidence, uncertainty, assumptions, limitations, and human-review conditions without presenting recommendations as automatic managerial actions.
 
-## 10. Methodological decisions that remain open
+## 10. Methodological decisions: resolved and still open
 
-The literature reviewed here informs but does not yet settle the following decisions:
+### Resolved after literature review and dataset profiling
 
-- final analytical unit: SKU-day, SKU-warehouse-day, SKU-week, or another justified unit;
+- **Primary analytical unit:** SKU-warehouse-day, recorded in DR-002.
+- **Primary forecasting target:** `Units_Sold` at `SKU_ID + Warehouse_ID + Date` grain.
+- **Stockout label limitation:** `Stockout_Flag` is zero-variance and cannot support supervised stockout classification or validation.
+
+### Still open
+
 - exact forecasting model set;
 - exact lag and rolling-window definitions;
 - whether and how `Promotion_Flag` is used;
@@ -204,7 +209,7 @@ The literature reviewed here informs but does not yet settle the following decis
 - human-review rules and evaluation criteria;
 - whether the source `Demand_Forecast` is used later as a separately documented benchmark.
 
-These should be converted into explicit decision records only after literature evidence and reproducible dataset profiling are considered together.
+These remaining items should be converted into explicit decision records only after literature evidence and reproducible dataset evidence are considered together.
 
 ## 11. References
 
@@ -240,4 +245,4 @@ Theodorou, E., Spiliotis, E. and Assimakopoulos, V. (2025) 'Forecast accuracy an
 
 ## Review note
 
-This file is a working research artifact for COMP1884. It should be refined as the group completes data profiling and makes explicit methodology decisions. References should be re-checked against the final University-required reference style before inclusion in the submitted report.
+This file is a working research artifact for COMP1884. The first data-profiling stage and analytical-unit decision are now complete; the review should continue to be refined as later methodology decisions are made. References should be re-checked against the final University-required reference style before inclusion in the submitted report.

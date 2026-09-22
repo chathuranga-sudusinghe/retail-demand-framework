@@ -90,11 +90,13 @@ It contains simulated daily SKU-level supply-chain data, including fields such a
 - `Stockout_Flag`
 - `Demand_Forecast`
 
-The project will build and evaluate its **own demand-forecasting component** using historical `Units_Sold`. The source `Demand_Forecast` field must not be used in a way that leaks future/target information into model training.
+The project will build and evaluate its **own demand-forecasting component** using historical `Units_Sold`. DR-002 has selected the primary forecasting grain as `SKU_ID + Warehouse_ID + Date`, so forecasts must retain warehouse identity for downstream inventory analysis. The source `Demand_Forecast` field must not be used in a way that leaks future/target information into model training.
+
+Verified profiling also shows that `Stockout_Flag` is 0 for all 91,250 rows, so it cannot be used as a stockout target or validation label.
 
 The full dataset is intentionally **not stored in GitHub**. Raw and processed data remain local.
 
-See [Dataset Contract](docs/dataset.md), [Decision Record DR-001](docs/decisions/DR-001-dataset-selection.md), and [References](docs/references.md).
+See [Dataset Contract](docs/dataset.md), [DR-001 — Dataset Selection](docs/decisions/DR-001-dataset-selection.md), [DR-002 — Forecasting Analytical Unit](docs/decisions/DR-002-forecasting-analytical-unit.md), [Literature Review](docs/literature/literature-review.md), [Temporal Demand Profile](reports/temporal-demand-profile.md), and [References](docs/references.md).
 
 ## Documentation map
 
@@ -111,8 +113,10 @@ See [Dataset Contract](docs/dataset.md), [Decision Record DR-001](docs/decisions
 - [Research design](docs/research-design.md)
 - [Dataset contract](docs/dataset.md)
 - [Project boundaries](docs/project-boundaries.md)
+- [Literature review](docs/literature/literature-review.md)
 - [References](docs/references.md)
 - [Decision records](docs/decisions/README.md)
+- [Temporal demand and inventory-alignment profile](reports/temporal-demand-profile.md)
 - [Chathuranga — COMP1884](docs/team/chathuranga/group-project-overview.md)
 - [Didilani — COMP1884](docs/team/didilani/group-project-overview.md)
 - [Dewmi — COMP1884](docs/team/dewmi/group-project-overview.md)
@@ -143,4 +147,4 @@ Code is organised by **system component**, not by student name. Member ownership
 
 ## Status
 
-**Foundation stage.** The dataset selection and integrated component boundaries are being formalised before implementation begins.
+**Research foundation completed; component work is starting.** Dataset selection, the literature-review baseline, temporal/inventory profiling, the primary forecasting analytical unit, and the dataset data dictionary are documented. The next stage is component-specific methodology and implementation, while still-open decisions such as model set, validation cut points, final metrics, inventory-risk formulas, replenishment logic, uncertainty representation, and human-review rules must be resolved through evidence and decision records.
