@@ -33,6 +33,6 @@ Examples include:
 - demand-regime definitions;
 - uncertainty representation;
 - inventory-risk/replenishment definitions;
-- final hypothesis operationalisation.
+- final operationalisation of the primary group-level and secondary forecasting hypotheses.
 
 Use one Markdown file per material decision.
