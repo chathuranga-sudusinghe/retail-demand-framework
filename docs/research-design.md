@@ -8,6 +8,18 @@ This document defines the current research-design baseline for the COMP1884 grou
 
 **How can data-driven demand forecasting be used to identify inventory risks and support supply-chain decision-making in retail operations?**
 
+## 2.1 Primary group-level hypothesis
+
+### H0
+
+Demand forecasting does not significantly improve inventory-risk identification and supply-chain decision support.
+
+### H1
+
+Demand forecasting significantly improves inventory-risk identification and supply-chain decision support.
+
+This is the primary hypothesis for the integrated group research. Its baseline, measurable inventory-risk outcome(s), decision-support outcome(s), and statistical testing must be operationally defined before final hypothesis testing.
+
 ## 3. Source and analytical unit
 
 The selected source is the **High-Dimensional Supply Chain Inventory Dataset**, a simulated daily SKU-level supply-chain dataset.
@@ -269,17 +281,19 @@ Interpretation:
 - negative bias -> systematic underforecasting;
 - near zero -> little net directional error.
 
-## 11. Group-level forecasting hypothesis direction
+## 11. Secondary forecasting hypothesis
+
+This secondary hypothesis applies to Chathuranga's forecasting / machine-learning component and supports the primary group-level hypothesis.
 
 ### H0
 
-Forecasting performance does not significantly vary across different temporal demand behaviours.
+Forecasting performance does not significantly differ across temporal demand conditions.
 
 ### H1
 
-Forecasting performance varies significantly across different temporal demand behaviours, and different forecasting approaches show different suitability across demand regimes.
+Forecasting performance significantly differs across temporal demand conditions.
 
-This remains provisional until demand-regime definitions and statistical tests are operationalised.
+This remains provisional until temporal demand conditions and the statistical testing procedure are operationally defined.
 
 ## 12. Inventory-risk and replenishment interpretation
 
