@@ -24,6 +24,7 @@ Each decision record should include:
 - [DR-007 — Forecasting Model Set](DR-007-forecasting-model-set.md)
 - [DR-008 — Multi-Step Forecasting Strategy](DR-008-multi-step-forecasting-strategy.md)
 - [DR-009 — Gradient-Boosting Model Choice](DR-009-gradient-boosting-model-choice.md)
+- [DR-010 — Forecasting Hyperparameter-Search Strategy](DR-010-hyperparameter-search-strategy.md)
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
@@ -32,7 +33,6 @@ Examples include:
 - final lag set;
 - `Promotion_Flag` treatment;
 - growth/decline feature definition;
-- hyperparameter search strategy;
 - demand-regime definitions;
 - uncertainty representation;
 - inventory-risk/replenishment definitions;
