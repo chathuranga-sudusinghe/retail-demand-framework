@@ -241,45 +241,95 @@ The final holdout must not be used for model fitting, feature/model selection, h
 
 Full-year descriptive EDA has already inspected the complete dataset, including the dates later assigned to this holdout. **Untouched final test** describes its exclusion from fitting and selection/tuning decisions and the protection of its forecasting results; it does not claim the dates were never descriptively inspected. Disclose that prior exposure. The 14-day late-December holdout is also a limited evaluation period, and expanding folds share history rather than being independent replicates.
 
-Exact model families, recursive versus direct multi-step forecasting, final lags, `Promotion_Flag` usage, final model-selection metric policy, hyperparameter search strategy, uncertainty method and demand-regime definitions remain open. This documentation decision introduces no split-generation or modelling implementation.
+Exact model families, recursive versus direct multi-step forecasting, final lags, `Promotion_Flag` usage, hyperparameter search strategy, uncertainty method and demand-regime definitions remain open. The forecasting metric and model-selection policy is now defined in [DR-006 — Forecasting Metrics and Model-Selection Policy](decisions/DR-006-forecasting-metrics-and-model-selection.md). This documentation decision introduces no split-generation or modelling implementation.
 
-## 10. Forecasting metrics
+## 10. Approved forecasting metrics and model-selection policy
 
-Candidate metrics include:
+[DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md) selects **Weighted Absolute Percentage Error (WAPE)** as the primary forecasting model-selection metric. Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and Forecast Bias / Mean Forecast Error are supporting metrics that must be reviewed before final selection.
+
+For the equations below:
+
+- $y_i$ is actual demand;
+- $\hat{y}_i$ is forecast demand; and
+- $n$ is the number of observations.
 
 ### Mean Absolute Error (MAE)
 
-```text
-MAE = (1 / n) * sum(|p_i - y_i|)
-```
+$$
+\mathrm{MAE} =
+\frac{1}{n}
+\sum_{i=1}^{n}
+\left|y_i-\hat{y}_i\right|
+$$
 
 ### Root Mean Squared Error (RMSE)
 
-```text
-RMSE = sqrt((1 / n) * sum((p_i - y_i)^2))
-```
+$$
+\mathrm{RMSE} =
+\sqrt{
+\frac{1}{n}
+\sum_{i=1}^{n}
+\left(y_i-\hat{y}_i\right)^2
+}
+$$
 
 ### Weighted Absolute Percentage Error (WAPE)
 
-```text
-WAPE = sum(|p_i - y_i|) / sum(|y_i|)
-```
-
-### Mean Absolute Percentage Error (MAPE)
-
-MAPE may be reported with appropriate safeguards where actual demand is zero or near zero.
+$$
+\mathrm{WAPE} =
+\frac{
+\sum_{i=1}^{n}
+\left|y_i-\hat{y}_i\right|
+}{
+\sum_{i=1}^{n}
+\left|y_i\right|
+}
+$$
 
 ### Forecast Bias / Mean Forecast Error
 
-```text
-Bias = (1 / n) * sum(p_i - y_i)
-```
+$$
+\mathrm{Bias} =
+\frac{1}{n}
+\sum_{i=1}^{n}
+\left(\hat{y}_i-y_i\right)
+$$
 
-Interpretation:
+### Metric roles and interpretation
 
-- positive bias -> systematic overforecasting;
-- negative bias -> systematic underforecasting;
-- near zero -> little net directional error.
+| Metric | What it measures | Ideal / best value | Better direction | Role in this research |
+| --- | --- | ---: | --- | --- |
+| MAE | Average absolute forecast error in demand units. | 0 | Lower is better. | Supporting measure of typical error magnitude. |
+| RMSE | Square-root of the average squared error; larger errors receive more weight because errors are squared. | 0 | Lower is better. | Supporting measure that highlights relatively large errors. |
+| WAPE | Total absolute error relative to total absolute actual demand. | 0 or 0% | Lower is better. | Primary model-comparison and selection metric. |
+| Bias | Average signed error, calculated as forecast minus actual demand. | 0 | Closer to 0 is better. | Supporting measure of systematic overforecasting or underforecasting. |
+
+Positive bias indicates systematic overforecasting, while negative bias indicates systematic underforecasting. A value near zero indicates little net directional error, but positive and negative errors can cancel, so bias must not be interpreted alone.
+
+### Why WAPE is primary
+
+MAE and RMSE are scale-dependent and remain expressed in demand units. Because SKU-warehouse series may operate at different demand scales, WAPE provides a clearer main relative comparison by normalising total absolute error against total actual demand.
+
+This choice is specific to the approved project design. It does not establish that WAPE is universally superior for every forecasting problem, and no universal quality bands such as “WAPE below 10% is good” are adopted. Model quality must be judged relative to the same baseline models, folds, horizons, and evaluation design. WAPE is undefined when the sum of absolute actual demand is zero; any such case must be reported explicitly rather than silently divided by zero.
+
+### Fold and horizon evaluation policy
+
+Every candidate model must be evaluated on the same four DR-005 validation folds and the approved 1-day, 7-day, and 14-day horizons. For each model and horizon:
+
+1. calculate MAE, RMSE, WAPE, and Bias separately for every fold;
+2. calculate the arithmetic mean of each metric across the four folds;
+3. use mean WAPE across folds as the primary model-selection statistic; and
+4. review supporting mean MAE, RMSE, and Bias together with the individual fold results.
+
+Comparisons are made separately for each approved horizon. This policy does not introduce an additional weighting or averaging rule across the 1-day, 7-day, and 14-day horizons.
+
+The selected model will be the candidate with the lowest mean WAPE across the approved validation folds for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review. Selection must not be based on one fold alone. A candidate with low mean WAPE but highly unstable fold results must be discussed rather than automatically described as robust. No arbitrary numerical stability threshold is introduced by this decision.
+
+Final-holdout results are used only after model selection and must not be used to revise the selected model, features, hyperparameters, metric policy, or other selection decisions.
+
+### Mean Absolute Percentage Error (MAPE)
+
+MAPE is not part of the primary approved model-selection policy. It may be reported only as an optional supplementary metric with appropriate safeguards where actual demand is zero or near zero.
 
 ## 11. Secondary forecasting hypothesis
 

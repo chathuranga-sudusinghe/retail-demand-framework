@@ -20,16 +20,18 @@ Each decision record should include:
 - [DR-003 — Initial Forecasting Feature-Engineering Baseline](DR-003-forecasting-feature-engineering-baseline.md)
 - [DR-004 — Forecast Horizons for Decision Support](DR-004-forecast-horizons.md)
 - [DR-005 — Forecast Validation Design](DR-005-forecast-validation-design.md)
+- [DR-006 — Forecasting Metrics and Model-Selection Policy](DR-006-forecasting-metrics-and-model-selection.md)
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
 Examples include:
 
 - exact forecasting model set;
-- final forecasting metrics and model-selection policy;
 - final lag set;
+- recursive versus direct multi-step forecasting and any within-window update protocol;
 - `Promotion_Flag` treatment;
 - growth/decline feature definition;
+- hyperparameter search strategy;
 - demand-regime definitions;
 - uncertainty representation;
 - inventory-risk/replenishment definitions;
