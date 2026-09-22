@@ -39,39 +39,71 @@ The downloaded CSV was profiled before implementation. Verified characteristics:
 
 The constant `Stockout_Flag` means it cannot be used as a meaningful stockout classification target or validation label. The relatively sparse non-zero `Order_Quantity` values must be profiled carefully before defining replenishment logic.
 
-## 3. Source columns
+## 3. Source-column data dictionary
 
-| Column | Observed dtype | Project role |
-|---|---|---|
-| `Date` | text/date | Temporal ordering |
-| `SKU_ID` | text | Product identifier |
-| `Warehouse_ID` | text | Warehouse identifier |
-| `Supplier_ID` | text | Supplier identifier |
-| `Region` | text | Regional dimension |
-| `Units_Sold` | integer | Historical sales / primary demand source |
-| `Inventory_Level` | integer | Simulated on-hand inventory level |
-| `Supplier_Lead_Time_Days` | integer | Simulated supplier lead time |
-| `Reorder_Point` | integer | Inventory-policy threshold |
-| `Order_Quantity` | integer | Simulated replenishment quantity; non-zero in 5,027 rows |
-| `Unit_Cost` | decimal | Unit cost |
-| `Unit_Price` | decimal | Selling price |
-| `Promotion_Flag` | integer/binary | Promotion indicator |
-| `Stockout_Flag` | integer/binary | Constant 0 in the downloaded CSV; not usable as a target/label |
-| `Demand_Forecast` | decimal | Source-provided planning forecast; not the project's forecasting target |
+The table below explains each source field in plain language so that a reader can understand the dataset without inferring meaning from the column name alone.
 
-Schema, row count, date coverage, missingness, cardinalities, and key field behaviour above have been verified from the downloaded CSV. Additional distribution and temporal checks will still be performed in the reproducible data-profiling pipeline.
+| Column | Observed dtype | Plain-language definition | Project use / caution |
+|---|---|---|---|
+| `Date` | text/date | Calendar date for the recorded observation. | Defines temporal order. Forecasting and validation must preserve this order. |
+| `SKU_ID` | text | Identifier for the product / stock-keeping unit (SKU). | Used to distinguish product-level demand series. |
+| `Warehouse_ID` | text | Identifier for the warehouse in which the observation is recorded. | Required in the primary forecasting grain selected in DR-002. It preserves warehouse-specific inventory context. |
+| `Supplier_ID` | text | Identifier for the supplier associated with the recorded product / supply relationship. | May support descriptive analysis or downstream operational interpretation. It is not automatically a forecasting feature. |
+| `Region` | text | Geographic region associated with the operational record. | May support descriptive segmentation. It is not automatically included in the forecasting model. |
+| `Units_Sold` | integer | Number of units sold for the given SKU, warehouse, and date. | **Primary forecasting target / demand source.** At the selected analytical grain, the model aims to predict future `Units_Sold` for each SKU-warehouse series. |
+| `Inventory_Level` | integer | Simulated quantity of stock available on hand for the given warehouse record. | Core downstream variable for inventory-risk analysis. It should not be assumed to be known at a future prediction point unless timing is explicitly defined. |
+| `Supplier_Lead_Time_Days` | integer | Simulated number of days expected between placing a replenishment order and receiving supply from the supplier. | Core downstream variable because longer lead time increases exposure to demand while waiting for replenishment. |
+| `Reorder_Point` | integer | Simulated inventory threshold at which replenishment should be considered under the source inventory policy. | Used as inventory-policy evidence in the downstream risk / replenishment component. It is not itself a stockout label. |
+| `Order_Quantity` | integer | Simulated quantity ordered for replenishment on the recorded row. A value of 0 indicates no recorded replenishment quantity for that row. | Sparse: non-zero in 5,027 of 91,250 rows. It must not be treated as a normal dense target without additional justification. |
+| `Unit_Cost` | decimal | Simulated cost to the business for one unit of the product. | Potentially useful for later business interpretation or cost-aware analysis, but no cost-optimisation claim is made unless a method is explicitly defined. |
+| `Unit_Price` | decimal | Simulated selling price of one unit of the product. | Potentially useful for descriptive or business interpretation. It is not automatically a forecasting feature. |
+| `Promotion_Flag` | integer/binary | Indicator showing whether a promotion is active for the recorded SKU-warehouse-date observation. | Potential exogenous forecasting feature only if known at the prediction origin. Profiling showed warehouse-level promotion states can differ within the same SKU-day. |
+| `Stockout_Flag` | integer/binary | Indicator intended to represent whether a stockout occurred. | **Not usable as a target or validation label in this dataset** because it is 0 for all 91,250 rows. Stockout / shortage pressure must be derived from other evidence. |
+| `Demand_Forecast` | decimal | Demand forecast supplied by the dataset creator / simulation. | **Not the project's forecasting target.** It is leakage-sensitive and must not be used as an ordinary model feature. It may only be considered later as a separately documented benchmark if methodologically justified. |
+
+Schema, row count, date coverage, missingness, cardinalities, and key field behaviour above have been verified from the downloaded CSV.
+
+### 3.1 Primary modelling identifiers and target
+
+Following DR-002, the primary forecasting analytical unit is:
+
+```text
+Date + SKU_ID + Warehouse_ID
+```
+
+The target at that grain is:
+
+```text
+target = Units_Sold
+```
+
+In practical terms, the forecasting component asks:
+
+> For a given SKU in a given warehouse, how many units are expected to be sold in a future date / forecast period?
+
+This distinction is important because `Demand_Forecast` is a source-provided value, while `Units_Sold` is the observed demand variable that the project uses to train and evaluate its own forecasting models.
 
 ## 4. Forecasting target
 
-The forecasting component will use `Units_Sold` to construct a regular time series.
+The forecasting component uses `Units_Sold` as the observed demand target.
 
-Candidate target:
+DR-002 selected **SKU-warehouse-day** as the primary analytical unit after temporal-demand and inventory-alignment profiling.
+
+Therefore, the primary modelling grain is:
 
 ```text
-Demand(SKU, period) = sum(Units_Sold)
+SKU_ID + Warehouse_ID + Date
 ```
 
-The final aggregation level may be SKU-day, SKU-warehouse-day, or another justified regular unit.
+and the target is:
+
+```text
+Demand(SKU_ID, Warehouse_ID, Date) = Units_Sold
+```
+
+The verified source data already contains one unique row per `Date + SKU_ID + Warehouse_ID`, so no additional demand aggregation is required for the primary forecasting view.
+
+SKU-day and SKU-week views may still be used for descriptive analysis, visualisation, or sensitivity checks, but they are not the primary modelling grain.
 
 ### Important leakage rule for `Demand_Forecast`
 
@@ -128,9 +160,12 @@ At minimum, the forecasting view should provide:
 
 ```text
 SKU_ID
+Warehouse_ID
 period
 demand
 ```
+
+where `period` represents the date / forecast period and `demand` is derived from `Units_Sold` at the selected SKU-warehouse-day grain.
 
 Inventory-analysis views may additionally include:
 
