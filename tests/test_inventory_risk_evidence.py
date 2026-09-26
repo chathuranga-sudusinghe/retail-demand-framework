@@ -83,6 +83,33 @@ def test_order_quantity_availability_reports_zero_and_nonzero_rows(inventory_pan
     assert availability.nonzero_quantity_share == 0.5
 
 
+def test_reorder_point_evidence_is_summarized_by_sku_and_warehouse(inventory_panel):
+    additional_observation = inventory_panel.iloc[[1]].copy()
+    additional_observation["Date"] = "2024-01-03"
+    additional_observation["Inventory_Level"] = 20
+    additional_observation["Reorder_Point"] = 25
+    inventory_panel = pd.concat(
+        [inventory_panel, additional_observation], ignore_index=True
+    )
+
+    summary = analyze_inventory_evidence(inventory_panel)[
+        "sku_warehouse_reorder_point_summary"
+    ].set_index(["SKU_ID", "Warehouse_ID"])
+
+    sku_summary = summary.loc[("A", "W1")]
+    assert sku_summary.observation_count == 2
+    assert sku_summary.first_observation_date == pd.Timestamp("2024-01-01")
+    assert sku_summary.last_observation_date == pd.Timestamp("2024-01-03")
+    assert sku_summary.mean_inventory_minus_reorder_point == 20
+    assert sku_summary.median_inventory_minus_reorder_point == 20
+    assert sku_summary.min_inventory_minus_reorder_point == -5
+    assert sku_summary.max_inventory_minus_reorder_point == 45
+
+    other_summary = summary.loc[("B", "W2")]
+    assert other_summary.observation_count == 1
+    assert other_summary.mean_inventory_minus_reorder_point == 50
+
+
 def test_input_validation_rejects_duplicate_keys_and_invalid_values(inventory_panel):
     duplicated = pd.concat([inventory_panel, inventory_panel.iloc[[0]]], ignore_index=True)
     with pytest.raises(ValueError, match="Duplicate Date"):

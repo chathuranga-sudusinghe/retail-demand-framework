@@ -32,6 +32,9 @@ def analyze_inventory_evidence(data: pd.DataFrame) -> dict[str, pd.DataFrame]:
       difference only (not a risk score or classification);
     - ``descriptive_summary``: count, mean, median, sample standard deviation,
       minimum, and maximum for each listed source field and the difference;
+    - ``sku_warehouse_reorder_point_summary``: descriptive statistics for the
+      same-record inventory-to-reorder-point difference within each SKU and
+      warehouse, with the observed date span retained;
     - ``order_quantity_availability``: zero/nonzero counts and shares, using
       the dataset contract's meaning that zero indicates no recorded order
       quantity for that row.
@@ -55,6 +58,20 @@ def analyze_inventory_evidence(data: pd.DataFrame) -> dict[str, pd.DataFrame]:
         .reset_index()
     )
 
+    sku_warehouse_reorder_point_summary = (
+        observations.groupby(["SKU_ID", "Warehouse_ID"], as_index=False, sort=True)
+        .agg(
+            observation_count=("Date", "size"),
+            first_observation_date=("Date", "min"),
+            last_observation_date=("Date", "max"),
+            mean_inventory_minus_reorder_point=(DESCRIPTIVE_DIFFERENCE, "mean"),
+            median_inventory_minus_reorder_point=(DESCRIPTIVE_DIFFERENCE, "median"),
+            std_inventory_minus_reorder_point=(DESCRIPTIVE_DIFFERENCE, "std"),
+            min_inventory_minus_reorder_point=(DESCRIPTIVE_DIFFERENCE, "min"),
+            max_inventory_minus_reorder_point=(DESCRIPTIVE_DIFFERENCE, "max"),
+        )
+    )
+
     order_quantity = observations["Order_Quantity"]
     row_count = len(observations)
     zero_count = int(order_quantity.eq(0).sum())
@@ -74,5 +91,6 @@ def analyze_inventory_evidence(data: pd.DataFrame) -> dict[str, pd.DataFrame]:
     return {
         "observations": observations,
         "descriptive_summary": descriptive_summary,
+        "sku_warehouse_reorder_point_summary": sku_warehouse_reorder_point_summary,
         "order_quantity_availability": order_quantity_availability,
     }
