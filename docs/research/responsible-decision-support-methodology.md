@@ -86,3 +86,51 @@ The following criteria are proposed for the prototype:
 These criteria can initially be assessed using a structured checklist against prototype outputs. The project can report how many required elements are present and whether each element is understandable and traceable to the available analytical evidence.
 
 This evaluation would demonstrate whether the prototype meets its defined transparency requirements. It would not, by itself, prove improved user trust, better managerial decisions, or improved business performance. Claims about those outcomes would require separate evaluation with appropriate users and measurable evidence.
+
+## 6. Assumptions
+
+The proposed decision-support approach depends on several assumptions that should be made clear before it is used. First, the forecasting and inventory-risk outputs are assumed to have been produced using the agreed analytical unit and the methods documented elsewhere in the project. This section does not independently validate those models or redefine their calculations.
+
+The framework also assumes that the information presented to a manager can be traced back to the available analytical evidence. A recommendation should therefore not appear on its own. Where possible, it should be shown together with the relevant forecast, inventory-risk information, uncertainty, and the reason for the recommendation.
+
+Another assumption is that the system is intended to support rather than replace managerial judgement. The proposed human-review conditions are therefore treated as safeguards for cases where uncertainty, limited evidence, or potentially important consequences make automatic interpretation inappropriate.
+
+Finally, the project uses simulated supply-chain data rather than observed data from a real retail organisation. The methodology can demonstrate how responsible decision support could be structured, but its effectiveness in a real operational setting would require further evaluation with appropriate users and real-world evidence.
+
+## 7. Ethical, Legal, and Governance Considerations
+
+The decision-support framework should be used in a way that supports responsible managerial decision-making. Forecasts, inventory-risk indicators, and replenishment recommendations may influence operational decisions, so managers should be able to understand the evidence behind an output before acting on it. The framework should therefore avoid presenting analytical outputs as automatic decisions and should preserve appropriate human oversight, particularly when uncertainty is high or the available evidence is limited.
+
+Governance is also important because the analytical output needs to remain traceable. Where a recommendation is presented, the relevant forecast, inventory information, assumptions, and limitations should be available for review. This helps managers understand how the recommendation was reached and avoids treating the system as a black-box decision maker. Responsibility for the final operational decision should remain with the appropriate human decision maker rather than being transferred to the analytical system.
+
+From an ethical perspective, the system should avoid giving managers a false sense of certainty. Forecasts and inventory-risk outputs are based on models and assumptions, and their limitations should remain visible when they are used for decision support. The current dataset does not contain the type of personal customer or employee information needed for a detailed assessment of privacy, discrimination, or individual rights. These issues can therefore be recognised as wider responsible-AI concerns, but the project should not claim that it has empirically tested them.
+
+The use of project data and analytical outputs should also follow clear governance practices. Important assumptions, changes to the methodology, and any future decision thresholds should be documented so that the group can review how the framework develops. Replenishment recommendations should remain advisory rather than triggering automatic actions. This keeps responsibility with the human decision maker and allows unusual or uncertain cases to be reviewed before action is taken.
+
+## 8. Limitations
+
+This methodology has several limitations that should be considered when interpreting the decision-support outputs. The project is based on simulated supply-chain data rather than data collected from a real retail organisation. As a result, the framework can be used to demonstrate how forecasting and inventory-risk information could support decisions, but it cannot show how well the approach would perform under real operational conditions.
+
+Another limitation is that the quality of the decision-support output depends on the quality of the forecasting and inventory information provided by the earlier analytical stages. If these inputs are incomplete or inaccurate, the resulting risk information and replenishment recommendation may also be affected. For this reason, the framework should present these outputs as decision-support evidence rather than as guaranteed outcomes.
+
+A further limitation is that the project does not yet have evidence from real managers using the proposed decision-support output. The transparency criteria can be used to check whether important information is visible and traceable, but they cannot demonstrate that the framework improves trust, decision quality, or business performance. Claims about these outcomes would require separate evaluation with appropriate users and measurable evidence.
+
+## 9. Recommended Methodology Direction
+
+The recommended direction is to develop the decision-support component as a transparent layer between the analytical outputs and the final managerial decision. Rather than producing a replenishment recommendation alone, the framework should bring together the demand forecast, relevant inventory-risk information, available uncertainty information, and the reason behind the recommendation. This gives the manager enough context to review the evidence before deciding what action to take.
+
+At this stage, the methodology should remain flexible rather than introducing fixed decision thresholds that have not yet been validated. Human-review conditions can be refined later using evidence from the forecasting and inventory-risk components. Any thresholds or decision rules introduced at that stage should be documented clearly and agreed by the group before they are treated as part of the final framework.
+
+## 10. Decisions Still Requiring Group Approval
+
+Some parts of the decision-support methodology still require agreement from the group before they can be treated as final. This is particularly important where the decision-support component depends on outputs from the forecasting and inventory-risk components. The following decisions should therefore remain open until the relevant evidence and group discussion are available.
+
+- The final set of fields that will appear in the management-facing decision-support output.
+- The method used to represent forecast uncertainty and how it should be communicated to managers.
+- The conditions or thresholds that should trigger human review.
+- How inventory-risk evidence should be combined with the demand forecast when producing a replenishment recommendation.
+- The final wording and level of detail used to explain the reason behind each recommendation.
+
+## 11. Recommendation for the Next Decision Record
+
+The next Decision Record should define the agreed structure of the management-facing decision-support output. It should confirm which forecasting, inventory-risk, uncertainty, and recommendation fields will be presented, how the reason for a recommendation will be communicated, and where human review should be required. This decision should be made with input from the forecasting and inventory-risk components so that the final design reflects outputs that can actually be produced by the project. Any thresholds that are not yet supported by evidence should remain open rather than being fixed at this stage.
