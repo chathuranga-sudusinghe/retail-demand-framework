@@ -103,3 +103,18 @@ Exact human-review rules must be documented before implementation.
 ## Evaluation direction
 
 Before claiming that this layer "improves trust", "improves interpretability", or improves decision quality, the project must define measurable criteria for those concepts.
+
+
+## Forecast identity and time alignment
+
+The decision-support output should keep the forecasting context clear. Each forecast should be linked to its `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon.
+
+The approved horizons are:
+
+- 1-day next-day demand;
+- 7-day cumulative demand;
+- 14-day cumulative demand.
+
+The 7-day and 14-day values represent cumulative demand across their respective horizons, rather than demand for a single future day. Keeping the forecast origin and horizon visible helps avoid confusion when forecast information is combined with inventory-risk and replenishment outputs.
+
+The overall output structure follows DR-011, while fields that depend on inventory-risk, replenishment, uncertainty, or human-review rules remain provisional until the related project decisions are approved.

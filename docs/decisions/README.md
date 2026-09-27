@@ -25,6 +25,7 @@ Each decision record should include:
 - [DR-008 — Multi-Step Forecasting Strategy](DR-008-multi-step-forecasting-strategy.md)
 - [DR-009 — Gradient-Boosting Model Choice](DR-009-gradient-boosting-model-choice.md)
 - [DR-010 — Forecasting Hyperparameter-Search Strategy](DR-010-hyperparameter-search-strategy.md)
+- [DR-011 — Responsible Decision-Support Output Structure](DR-011-decision-support-output-structure.md)
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
