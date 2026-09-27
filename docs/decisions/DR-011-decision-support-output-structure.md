@@ -1,14 +1,50 @@
 # DR-011 — Responsible Decision-Support Output Structure
 
-## Status
+# DR-011 – Responsible Decision-Support Output Structure
 
-Accepted for structure only; upstream-dependent field contents remain provisional.
+**Date:** 2026-09-27
+**Status:** Accepted for structure only; upstream-dependent field contents remain provisional.
+**Owner:** Dewmi Pramodya
+**Decision owners:** COMP1884 group
+**Related issue:** #48 – Decision: define responsible decision-support output structure (DR-011)
+**Supervisor confirmation:** Not required to record the current group methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
+
 
 ## Context
 
 The project requires a management-facing decision-support output that brings together forecasting, inventory-risk, replenishment, uncertainty, evidence, assumptions, limitations, management consideration, and human-review information.
 
 This Decision Record defines the structure of that output without prematurely fixing upstream-dependent methods, thresholds, formulas, or final column names.
+
+
+## Reason / Rationale
+
+The decision-support output needs a consistent structure so that forecasting, inventory-risk, replenishment, and responsible decision-support information can be brought together without hiding where each item comes from. A structured output also helps managers see the forecast context, supporting evidence, uncertainty where available, assumptions, limitations, and any need for human review.
+
+This decision defines the structure only. It deliberately leaves upstream-dependent methods, thresholds, formulas, and final field names open until the relevant forecasting and inventory-risk decisions are approved.
+
+
+## Alternatives Considered
+
+Three approaches were considered:
+
+1. **Use a single fixed output schema immediately.**
+   This was not selected because several upstream elements, including forecast uncertainty, inventory-risk logic, replenishment logic, and human-review thresholds, are still pending formal decisions.
+
+2. **Keep forecasting, inventory-risk, and replenishment outputs completely separate.**
+   This was not selected because managers would have to interpret disconnected outputs, making the source and relationship between the information less clear.
+
+3. **Define field groups and their responsibilities while leaving unresolved contents provisional.**
+   This approach was selected because it provides a common structure for future implementation without prematurely fixing methods, thresholds, formulas, or final column names.
+
+
+   ## Impact
+
+This decision gives the project a shared structure for presenting management-facing decision-support information. Future implementation can use the agreed field groups while keeping the source of forecasting, inventory-risk, replenishment, and responsible decision-support information clear.
+
+The decision does not approve any inventory-risk formula, replenishment rule, uncertainty method, or numerical human-review threshold. These remain dependent on their respective upstream decisions.
+
+The output remains advisory. It is intended to support managerial judgement rather than automatically approve replenishment actions or create executable purchase orders.
 
 
 ## Decision
