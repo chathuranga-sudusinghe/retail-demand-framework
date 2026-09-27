@@ -74,7 +74,9 @@ Only project-relevant data should be used in the decision-support layer, with un
 
 ```text
 SKU_ID
-period
+Warehouse_ID
+forecast_origin
+forecast_horizon
 forecast_demand
 inventory_risk_level
 recommended_replenishment_quantity

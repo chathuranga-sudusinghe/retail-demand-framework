@@ -52,7 +52,10 @@ The full project is guided by the primary group-level hypothesis, while this com
 ## Candidate decision-support output
 
 ```text
-SKU_ID / period
+SKU_ID
+Warehouse_ID
+Forecast origin
+Forecast horizon: 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand
 Forecast demand
 Inventory risk level
 Recommended replenishment quantity, if available

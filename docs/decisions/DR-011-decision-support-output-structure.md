@@ -127,8 +127,8 @@ Some parts of the output structure are already supported by approved project dec
 | Identity and forecast horizon | Forecasting | Approved |
 | Forecast output | Forecasting | Approved in principle, subject to implementation |
 | Forecast-error / uncertainty context | Forecasting | Pending further forecasting decision |
-| Inventory-risk information | Inventory-risk / replenishment | Pending Issue #22 |
-| Replenishment information | Inventory-risk / replenishment | Pending Issue #22 |
+| Inventory-risk information | Inventory-risk / replenishment | Pending Issue #51 / DR-012 |
+| Replenishment information | Inventory-risk / replenishment | Pending Issue #51 / DR-012 |
 | Evidence and explanation | Responsible decision support | Structure approved; content remains provisional |
 | Assumptions and limitations | Responsible decision support | Approved for inclusion |
 | Management consideration | Responsible decision support | Structure approved; wording remains provisional |
