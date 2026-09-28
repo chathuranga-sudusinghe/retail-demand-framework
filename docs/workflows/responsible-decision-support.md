@@ -1,5 +1,7 @@
 # Responsible Decision-Support Workflow
 
+> **Workflow revision — 2026-09-28:** The DR-011 output structure remains accepted for structure only. The revised forecasting interface is intended to include 1/7/14/28-day outputs; the 28-day forecasting revision remains under human review. Downstream 28-day interpretation, inventory use and human-review triggers remain separately pending. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+
 ## Owner
 
 Primary COMP1884 owner: **Dewmi**
@@ -74,7 +76,9 @@ Only project-relevant data should be used in the decision-support layer, with un
 
 ```text
 SKU_ID
-period
+Warehouse_ID
+forecast_origin
+forecast_horizon
 forecast_demand
 inventory_risk_level
 recommended_replenishment_quantity
@@ -103,3 +107,32 @@ Exact human-review rules must be documented before implementation.
 ## Evaluation direction
 
 Before claiming that this layer "improves trust", "improves interpretability", or improves decision quality, the project must define measurable criteria for those concepts.
+
+
+## Forecast identity and time alignment
+
+The decision-support output should keep the forecasting context clear. Each forecast should be linked to its `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon.
+
+Under the revised forecasting direction currently under human review, the forecast interface includes:
+
+- 1-day next-day demand;
+- 7-day cumulative demand;
+- 14-day cumulative demand;
+- 28-day cumulative demand (four-week / approximately monthly planning).
+
+The 7-day, 14-day and 28-day values represent cumulative demand across their respective horizons, rather than demand for a single future day. Keeping the forecast origin and horizon visible helps avoid confusion when forecast information is combined with inventory-risk and replenishment outputs.
+
+The overall output structure follows DR-011, while fields that depend on inventory-risk, replenishment, uncertainty, or human-review rules remain provisional until the related project decisions are approved.
+
+## Revised forecasting interface and owner review
+
+Under the revised forecasting direction, the forecast interface is intended to
+support 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
+Cumulative quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is
+four weeks / approximately monthly planning, not an exact calendar month.
+**28-day downstream use requires component-owner/human approval.** Do not populate
+28-day inventory states, replenishment recommendations or human-review triggers
+by silently extending another component's proposed method. Unavailable/unapproved
+outputs need an explicit reason. No uncertainty method, threshold or decision rule
+is approved by this interface update. Ownership and existing responsible-use
+principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.

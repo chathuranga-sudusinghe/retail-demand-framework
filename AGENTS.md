@@ -381,3 +381,99 @@ Use this priority order:
 ```
 
 When two sources conflict, do not guess. Ask the user.
+
+---
+
+## 17. Experiment execution responsibility
+
+Codex is used for:
+
+- creating and editing source code;
+- creating and updating project documentation;
+- creating and updating tests;
+- implementing experiment runners and reproducible pipelines;
+- static validation and lightweight test execution;
+- reviewing code and repository consistency.
+
+Codex must **not independently execute or authorise**:
+
+- model training runs;
+- hyperparameter-search experiments;
+- full validation experiments;
+- final-holdout evaluation;
+- long-running data-analysis jobs;
+- computationally expensive research experiments.
+
+Those experiment commands must be run manually by the project owner from the terminal after the methodology, features, experiment protocol and code have been reviewed and approved.
+
+Codex may prepare the exact terminal command and explain what it will run, but must stop before executing it unless the user explicitly authorises that specific run. Approval to implement code or review methodology does not authorise experiment execution.
+
+These execution rules do not replace the research decision rule in Section 4: research decisions must not be invented, and missing decisions still require explicit approval.
+
+---
+
+## 18. Forecasting experiment ordering
+
+For forecasting research, do not train or compare candidate models until the feature-engineering methodology and exact experimental feature set have been reviewed and explicitly frozen.
+
+Required order:
+
+1. Inspect and understand dataset variables.
+2. Research/design feature engineering.
+3. Define the exact feature set and calculation rules.
+4. Review leakage and prediction-time availability.
+5. Document/freeze the experiment protocol.
+6. Implement and test the feature pipeline.
+7. Obtain explicit approval.
+8. The project owner manually runs model training/tuning/validation, subject to the specific-run authorisation exception in Section 17.
+9. Review results.
+10. Only later perform final-holdout evaluation after model-selection decisions are frozen, following Section 17's execution rule.
+
+An existing provisional or candidate feature set must not be treated as the final experimental feature set without explicit approval.
+
+Do not label results produced before the approved feature set is frozen as final model-comparison evidence or as an official research baseline unless the project methodology explicitly defines them as such.
+
+## 19. Human review and approval authority
+
+This project uses AI assistants such as ChatGPT and Codex only as supporting tools.
+
+AI assistants do not have authority to make final research, methodological, experimental, implementation, interpretation, or repository-governance decisions.
+
+All material work must remain subject to human review and approval.
+
+This includes, but is not limited to:
+
+- research questions and hypotheses;
+- methodology and analytical design;
+- feature-engineering decisions;
+- model and algorithm choices;
+- evaluation protocols and metrics;
+- statistical procedures;
+- inventory-risk and decision-support rules;
+- uncertainty and human-review logic;
+- interpretation of experimental results;
+- changes to Decision Records;
+- acceptance of source-code changes;
+- experiment execution;
+- final-holdout evaluation;
+- commits, pushes, pull requests, merges, and release decisions.
+
+ChatGPT may support planning, research synthesis, review, explanation, and drafting.
+
+Codex may support code implementation, documentation, tests, and repository inspection.
+
+Neither ChatGPT nor Codex may treat its own proposal, generated output, analysis, or implementation as approved simply because it created it.
+
+A proposal becomes a project decision only after explicit human review and approval.
+
+AI assistants must not:
+- create new research decisions without approval;
+- reinterpret an unresolved decision as settled;
+- silently expand project scope;
+- execute consequential experiments without explicit authorisation;
+- commit, push, merge, or otherwise finalise repository changes without explicit authorisation;
+- treat AI-generated results or text as authoritative project evidence without human review.
+
+When approval is unclear, stop and ask the user rather than continuing based on assumption.
+
+Human review remains the final control point for all project work.

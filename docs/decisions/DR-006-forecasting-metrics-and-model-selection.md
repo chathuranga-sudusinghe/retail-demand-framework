@@ -1,16 +1,19 @@
 # DR-006 — Forecasting Metrics and Model-Selection Policy
 
-**Date:** 2026-09-22
-**Status:** Accepted for the current forecasting-methodology baseline
+> **DR-006 revision — 2026-09-28:** The existing metric/model-selection policy is being extended to the revised 1/7/14/28-day horizon set; metric equations and the existing selection policy are unchanged. The horizon revision remains under repository-wide human review; see the [central methodology-revision record](../forecasting-methodology-revision.md). [DR-005](DR-005-forecast-validation-design.md) owns validation and final-evaluation boundaries and provenance.
+
+**Original decision date:** 2026-09-22
+**Original decision status:** Accepted for the earlier 1/7/14-day baseline
+**Revision date:** 2026-09-28
+**Revision status:** Under human review
 **Owner:** Chathuranga
-**Decision owners:** COMP1884 group
 **Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
 
 ## Context
 
-DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. DR-004 approves the 1-day, 7-day, and 14-day forecast horizons. DR-005 requires every candidate model to use the same four expanding-window validation folds and reserves the final holdout for evaluation after model selection.
+DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting direction currently under repository-wide human review. DR-005 defines the common four expanding-window validation folds and reserves the revised final evaluation interval for evaluation after model selection; see DR-005 for the December 3–16 prior-validation-exposure limitation.
 
-Those decisions establish what is forecast and where it is evaluated, but they do not define the primary metric or how fold-level results determine model selection. A common policy is required so candidate models are compared consistently without selecting from one favourable fold or using final-holdout results to revise earlier choices.
+Those decisions establish what is forecast and where it is evaluated, but they do not define the primary metric or how fold-level results determine model selection. A common policy is required so candidate models are compared consistently without selecting from one favourable fold or using results from the revised final evaluation interval to revise earlier choices.
 
 ## Decision
 
@@ -98,20 +101,20 @@ MAPE was not selected because zero or near-zero actual demand requires special h
 
 ## Evaluation policy
 
-Every candidate model must be evaluated using the same four DR-005 validation folds and the approved 1-day, 7-day, and 14-day horizons from DR-004.
+Under the revised direction currently under human review, every candidate model must be evaluated using the same four DR-005 validation folds and the human-selected 1-day, 7-day, 14-day, and 28-day horizons recorded in revised DR-004.
 
-For each model and horizon:
+For each model and each horizon independently:
 
 1. calculate MAE, RMSE, WAPE, and Bias separately for every fold;
 2. calculate the arithmetic mean of each metric across the four folds;
 3. use mean WAPE across folds as the primary model-selection statistic; and
 4. review mean MAE, RMSE, and Bias together with the individual fold results before final selection.
 
-Comparisons are made separately for each approved horizon. This decision does not introduce an additional averaging or weighting rule across horizons.
+Comparisons are made separately for each horizon. The 1-, 7-, 14-, and 28-day metrics must not be silently averaged into one cross-horizon overall score. This decision introduces no horizon weights or composite metric.
 
 The selected model will be the candidate with the lowest mean WAPE across the approved validation folds for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review. A candidate must not be selected using one fold only. A low mean WAPE with highly unstable fold performance must be discussed rather than automatically treated as robust. This decision does not create an arbitrary numerical stability threshold.
 
-Final-holdout results must not be used for model fitting, feature or model selection, hyperparameter tuning, metric-policy decisions, or revision of the selected model. They are examined only after model selection is complete.
+Results from the revised final evaluation interval must not be used for model fitting, feature or model selection, hyperparameter tuning, metric-policy decisions, or revision of the selected model. They are examined only after model selection is complete.
 
 ## Limitations
 
@@ -124,8 +127,8 @@ Final-holdout results must not be used for model fitting, feature or model selec
 
 ## Impact
 
-- `docs/research-design.md` defines WAPE as primary and documents the equations, metric roles, fold averaging, stability review, and holdout protection.
+- `docs/research-design.md` defines WAPE as primary and documents the equations, metric roles, fold averaging, stability review, and protection of the revised final evaluation interval.
 - `docs/workflows/demand-forecasting.md` applies the same policy to the modelling workflow.
 - `docs/decisions/README.md` records this policy as formalised rather than open.
-- Future model evaluation must retain fold-level metrics and their four-fold arithmetic means for every approved horizon.
-- No model training, metric result, quality band, validation-date change, or forecast-horizon change is introduced by this decision.
+- Future model evaluation must retain fold-level metrics and their four-fold arithmetic means for each horizon included in the current methodology at execution time.
+- The original metric decision introduced no training or results. This revision under human review extends its applicability to 28 days and the revised common schedule; metric equations and horizon-specific selection remain unchanged.

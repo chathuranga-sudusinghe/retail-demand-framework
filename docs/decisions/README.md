@@ -1,5 +1,7 @@
 # Decision Records
 
+> Forecasting methodology revisions dated 2026-09-28 are currently under human review. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md) for scope, provenance, and remaining approvals.
+
 This directory records important project decisions that affect multiple members or components.
 
 Each decision record should include:
@@ -25,6 +27,8 @@ Each decision record should include:
 - [DR-008 — Multi-Step Forecasting Strategy](DR-008-multi-step-forecasting-strategy.md)
 - [DR-009 — Gradient-Boosting Model Choice](DR-009-gradient-boosting-model-choice.md)
 - [DR-010 — Forecasting Hyperparameter-Search Strategy](DR-010-hyperparameter-search-strategy.md)
+- [DR-011 — Responsible Decision-Support Output Structure](DR-011-decision-support-output-structure.md)
+- [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Proposed for group approval.
 
 ## Decisions still to be formalised as evidence becomes sufficient
 
@@ -35,7 +39,8 @@ Examples include:
 - growth/decline feature definition;
 - demand-regime definitions;
 - uncertainty representation;
-- inventory-risk/replenishment definitions;
+- remaining inventory input-contract details, overstock/excess-stock evaluation and numerical replenishment quantities beyond DR-012's proposed origin reorder-threshold exposure method;
+- cross-component forecast-to-decision evaluation and human-review rules;
 - final operationalisation of the primary group-level and secondary forecasting hypotheses.
 
 Use one Markdown file per material decision.

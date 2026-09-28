@@ -53,3 +53,6 @@ data/processed/*
 artifacts/
 outputs/
 models/
+
+# Local university and research reference materials
+research-materials/
