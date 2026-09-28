@@ -415,6 +415,9 @@ Responsible decision-support logic
 Management-facing output
 ```
 
+
+The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. The 7-day and 14-day forecasts represent cumulative demand over their respective horizons. Fields that depend on uncertainty, inventory-risk, replenishment, or human-review rules remain provisional until the related project decisions are approved.
+
 ## 15. Threats to validity
 
 Important threats include:

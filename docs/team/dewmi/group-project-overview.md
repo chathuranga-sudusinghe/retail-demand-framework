@@ -52,7 +52,10 @@ The full project is guided by the primary group-level hypothesis, while this com
 ## Candidate decision-support output
 
 ```text
-SKU_ID / period
+SKU_ID
+Warehouse_ID
+Forecast origin
+Forecast horizon: 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand
 Forecast demand
 Inventory risk level
 Recommended replenishment quantity, if available
@@ -81,3 +84,18 @@ Human review required
 Dewmi does not calculate the primary demand forecast or the inventory replenishment recommendation.
 
 Her component consumes the outputs of Chathuranga and Didilani and implements the responsible-use and decision-support layer of the integrated data-science product. This contribution is therefore not an ethics essay attached after modelling.
+
+
+## Decision-support output alignment
+
+The responsible decision-support layer will keep the forecasting identity and timing information visible when it combines outputs from the different project components. This includes `SKU_ID`, `Warehouse_ID`, the forecast origin, and the forecast horizon.
+
+The forecasting horizons used by the project are:
+
+- 1-day next-day demand;
+- 7-day cumulative demand;
+- 14-day cumulative demand.
+
+The 7-day and 14-day forecasts represent cumulative demand over those periods. This information should remain clear when forecasts are combined with inventory-risk and replenishment information.
+
+DR-011 defines the overall structure for this management-facing output. Details that depend on forecasting uncertainty, inventory-risk methods, replenishment rules, or human-review thresholds will remain provisional until the relevant group decisions are approved.
