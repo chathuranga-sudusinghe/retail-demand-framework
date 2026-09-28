@@ -149,6 +149,19 @@ retrospective_margin = B_t - Y_t,h
 
 Near-zero margins indicate sensitivity to small demand changes. No numerical near-boundary tolerance is approved here. The retrospective margin is evaluation evidence and must not become a prospective review input.
 
+### Evaluation checks
+
+In addition to the retrospective proxy counts and metrics above, evaluate the method using the following checks. These checks describe the evidence to examine; they do not set numerical cut-points or final experiment protocols.
+
+1. **Sensitivity analysis:** Examine whether reported exposure counts, proxy metrics and interpretations change under documented, evidence-supported variations in the evaluation inputs or assumptions. Record the variation and its effect. The specific sensitivity cases and reporting protocol remain open for later approval.
+2. **Scenario consistency:** Confirm that each forecast comparison uses the same SKU-warehouse identity, forecast origin, horizon, origin inventory snapshot, fixed reorder point and no-receipt assumptions for the forecast and retrospective sides. Keep different horizons and their cumulative target windows distinguishable; do not interpret cumulative forecasts as daily paths.
+3. **Threshold stability, if thresholds are introduced later:** No additional numerical threshold is approved by this record. If a later approved method introduces thresholds, examine whether the resulting conclusions are stable to justified threshold variation and document the evidence and limitations. The threshold choices and stability protocol require a separate decision.
+4. **Low-inventory and reorder-point behaviour:** Report origin cases already at/below the reorder point separately from initially above-threshold cases. Examine forecast and retrospective crossing behaviour alongside the existing conceptual margins, including cases near the boundary. Do not introduce a numerical near-boundary band or treat not crossing as evidence of overstock.
+5. **Temporal consistency:** Preserve chronological origins and the exact `t+1` through `t+h` outcome window. Check and report the method across the approved temporal evaluation periods without using future inventory or realised demand as origin-time inputs. Apply DR-005's temporal boundaries and disclose prior exposure where required; the final aggregation and comparison protocol remain open.
+6. **Interpretability and traceability:** For each reported result, retain the SKU, warehouse, forecast origin and horizon, forecast provenance, origin inventory and reorder-point evidence, exposure state or unavailability reason, relevant assumptions and limitations. Keep retrospective evidence distinguishable from forecast-time inputs so that a reviewer can trace how the reported evidence was formed.
+
+These checks do not establish actual stockout prediction accuracy, optimal inventory performance, or a replenishment policy. Numerical replenishment quantities and overstock evaluation remain provisional. Use of a 28-day forecast for downstream inventory analysis remains subject to separate component-owner/human approval.
+
 ### 8. Downstream handoff
 
 The handoff to Dewmi should preserve identity, forecast origin and horizon, model/source provenance, origin inventory and policy evidence, buffer, exposure state and reason, conceptual margin where available, contextual lead time, assumptions, limitations and availability reasons. Replenishment quantity and uncertainty information remain explicitly provisional/unavailable where no approved method produces them.
