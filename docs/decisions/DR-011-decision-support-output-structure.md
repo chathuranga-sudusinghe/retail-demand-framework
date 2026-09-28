@@ -1,7 +1,5 @@
 # DR-011 — Responsible Decision-Support Output Structure
 
-# DR-011 – Responsible Decision-Support Output Structure
-
 **Date:** 2026-09-27
 **Status:** Accepted for structure only; upstream-dependent field contents remain provisional.
 **Owner:** Dewmi Pramodya
