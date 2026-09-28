@@ -1,5 +1,7 @@
 # DR-011 — Responsible Decision-Support Output Structure
 
+> **DR-011 interface revision — 2026-09-28:** The output structure remains accepted for structure only. The forecasting interface is being revised to include a proposed 28-day cumulative horizon; the forecasting revision remains under repository-wide human review. Downstream interpretation/use of 28-day forecasts remains separately subject to component-owner/human approval. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+
 **Date:** 2026-09-27
 **Status:** Accepted for structure only; upstream-dependent field contents remain provisional.
 **Owner:** Dewmi Pramodya
@@ -72,11 +74,12 @@ The output structure will preserve the following identity and time concepts:
 - forecast-origin date;
 - forecast horizon.
 
-The approved forecasting horizons are:
+Under the revised forecasting direction currently under human review, the forecasting interface includes:
 
 - 1-day next-day demand;
 - 7-day cumulative demand;
-- 14-day cumulative demand.
+- 14-day cumulative demand;
+- 28-day cumulative demand (four-week / approximately monthly planning).
 
 Forecast origin and forecast horizon should be represented separately. An ambiguous single `period` field should not be used as the only temporal descriptor.
 
@@ -158,7 +161,7 @@ Some parts of the output structure are already supported by approved project dec
 
 | Field group | Source / owner | Current status |
 |---|---|---|
-| Identity and forecast horizon | Forecasting | Approved |
+| Identity and forecast horizon | Forecasting | Structure approved; proposed 28-day horizon revision remains under human review |
 | Forecast output | Forecasting | Approved in principle, subject to implementation |
 | Forecast-error / uncertainty context | Forecasting | Pending further forecasting decision |
 | Inventory-risk information | Inventory-risk / replenishment | Pending Issue #51 / DR-012 |
@@ -198,3 +201,16 @@ This decision gives the group a common structure that can later be used when the
 It also keeps the output transparent by showing where information comes from, what is still uncertain, and when human judgement is required. At the same time, some parts of the output cannot be finalised yet because they depend on decisions and results from other parts of the project.
 
 Future implementation should follow this structure, but the provisional areas identified in this Decision Record may be updated when the relevant upstream decisions are approved.
+## Revised forecasting interface and owner review
+
+Under the revised forecasting direction, the forecast interface is intended to
+support 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
+Cumulative quantities do not imply a daily forecast path. Preserve origin and
+horizon in explanations; 28 days is
+four weeks / approximately monthly planning, not an exact calendar month.
+**28-day downstream use requires component-owner/human approval.** Do not populate
+28-day inventory states, replenishment recommendations or human-review triggers
+by silently extending another component's proposed method. Unavailable/unapproved
+outputs need an explicit reason. No uncertainty method, threshold or decision rule
+is approved by this interface update. Ownership and existing responsible-use
+principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.

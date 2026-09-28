@@ -1,5 +1,7 @@
 # Decision Records
 
+> Forecasting methodology revisions dated 2026-09-28 are currently under human review. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md) for scope, provenance, and remaining approvals.
+
 This directory records important project decisions that affect multiple members or components.
 
 Each decision record should include:

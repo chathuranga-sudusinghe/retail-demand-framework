@@ -1,5 +1,7 @@
 # DR-012 — Inventory-Risk and Replenishment Methodology
 
+> **DR-012 compatibility review — 2026-09-28:** DR-012 remains Proposed for group approval. Its original proposed inventory methodology covers 1/7/14-day forecast inputs. The revised forecasting methodology under human review introduces a proposed 28-day cumulative input; 28-day inventory/replenishment use remains separately pending component-owner/human approval. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+
 **Date:** 2026-09-28
 **Status:** Proposed for group approval; implementation and the open decisions below remain pending.
 **Owner:** Didilani
@@ -83,7 +85,7 @@ Missing or invalid information required for an output makes that output unavaila
 
 ### 4. Horizons and supplier lead time
 
-Apply the same interpretation separately to DR-004 / DR-008's 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand. Do not combine horizons into one score or treat the cumulative totals as daily forecast paths.
+The original proposed inventory scope covers 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand. Revised forecasting DR-004 / DR-008 introduces a proposed 28-day cumulative input under human review; that inventory extension is not approved by this record. Do not combine horizons into one score or treat the cumulative totals as daily forecast paths.
 
 Retain origin-available `Supplier_Lead_Time_Days` as contextual evidence only. Describe each horizon as shorter than, equal to, or longer than that lead time. Do not round lead time to a horizon, interpolate a daily path, or claim an exact lead-time-demand forecast. Unavailable lead-time context must be marked explicitly; it is not a term in the exposure formula.
 
@@ -134,7 +136,7 @@ Let `N = TP + TN + FN + FP` be the number of evaluable paired cases in the repor
 
 Report a metric as unavailable when its denominator is zero; balanced accuracy is unavailable when either class-specific rate is undefined. State the reporting population and denominators explicitly. Check prevalence and counts before strong interpretation, and do not artificially rebalance the historical population. No single rate establishes a universally best downstream model or a justified cost trade-off.
 
-These definitions establish the proxy-evaluation direction. The final cross-component experiment protocol, aggregation across origins/folds, inference procedure and uncertainty/robustness design remain separate decisions. DR-005's temporal boundaries and final-holdout protection continue to apply; DR-006's forecasting scores and selection are unchanged.
+These definitions establish the proxy-evaluation direction. The final cross-component experiment protocol, aggregation across origins/folds, inference procedure and uncertainty/robustness design remain separate decisions. DR-005's temporal boundaries and protection of the revised final evaluation interval continue to apply; its prior-exposure disclosure applies if/when the relevant 28-day downstream evaluation is approved and executed. DR-006's forecasting scores and selection are unchanged.
 
 ### 7. Boundary behaviour
 
@@ -178,3 +180,19 @@ No new low/medium/high categories, lead-time interpolation, model-selection obje
 If approved, this record will provide the group with a common, explicit inventory-pressure interpretation for later implementation and evaluation. The primary comparison separates forecast-added crossing evidence from states already known at the origin. The fixed-reference, no-receipt assumptions make the calculation inspectable but restrict its operational meaning, particularly over longer horizons where real receipts or policy changes could matter.
 
 Results may describe agreement with the constructed retrospective proxy, missed crossings, false alerts and boundary behaviour within the simulated dataset. They cannot establish actual stockout accuracy, optimal purchasing, reduced cost, improved service level or improved managerial decisions. Event rarity, the one-year history and dependent time-series observations limit stronger inference. Shared implementation must be separately authorised after its remaining input-contract decisions are resolved and must be tested without treating this documentation change as an empirical result.
+
+## 28-day compatibility review — downstream approval pending
+
+The revised forecasting methodology under human review introduces a proposed
+direct cumulative 28-day quantity. Algebraically, the
+proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
+h=28 when the same origin and complete outcome interval are retained. This does
+not validate the longer no-receipt scenario or approve its use. The extended
+scenario may be more sensitive to omitted receipts and other adjustments.
+**28-day downstream use requires component-owner/human approval.** DR-012 remains
+proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+lead-time context, formulas and metric denominators remain unchanged. Lead times
+are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
+or invent replenishment quantities or review thresholds. Cross-component
+retrospective evaluation must disclose the revised final window's prior exposure
+if/when the relevant 28-day downstream evaluation is approved and executed.

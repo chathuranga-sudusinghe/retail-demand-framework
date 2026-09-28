@@ -1,5 +1,7 @@
 # Shared Data Foundation Workflow
 
+> **Shared-data revision — 2026-09-28:** The human-selected revised forecasting direction remains under repository-wide human review. The shared-data contract is being prepared to represent 1/7/14/28-day forecast outputs; interface support does not approve downstream use. Final feature freeze and proposed 28-day baseline definitions remain pending. Downstream 28-day inventory/decision-support use requires separate component-owner/human approval. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+
 ## Goal
 
 Create one reproducible, documented data foundation used by all COMP1884 components.
@@ -67,7 +69,9 @@ All shared cleaning, validation, alignment, and aggregation logic must live in c
 
 ### Forecast-to-inventory timing
 
-Under the proposed DR-012 timing contract, subject to group approval, retain `SKU_ID`, `Warehouse_ID`, forecast origin `t` and horizon `h` separately. The target window is `t+1` through `t+h`, inclusive: next-day demand, 7-day cumulative demand or 14-day cumulative demand. A target-start date must not be mistaken for the origin date.
+The shared forecast interface is intended to represent next-day and cumulative 7-, 14- and proposed 28-day forecast quantities under the revised forecasting direction. Retain `SKU_ID`, `Warehouse_ID`, forecast origin `t` and horizon `h` separately, with the explicit target interval `t+1` through `t+h`, inclusive. A target-start date must not be mistaken for the origin date.
+
+DR-012 remains Proposed for group approval; its original downstream scope covers 1/7/14-day forecast inputs. Carrying an `h=28` record through the shared-data schema does not approve 28-day inventory interpretation or the longer no-receipt scenario. **28-day downstream use requires separate component-owner/human approval.** The following inventory timing and scenario requirements remain subject to DR-012 group approval.
 
 Join the same SKU-warehouse's `Inventory_Level` and `Reorder_Point` available at that origin, retain the snapshot date and availability assumption, and keep the threshold fixed within the scenario. Same-date availability does not establish before/after-sales semantics; document that interpretation before integration. Do not use future inventory or silently substitute a different snapshot when origin evidence is unavailable.
 

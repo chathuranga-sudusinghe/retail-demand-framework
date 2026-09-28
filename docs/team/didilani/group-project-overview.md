@@ -1,5 +1,7 @@
 # Didilani — COMP1884 Group Project Contribution
 
+> **Component revision — 2026-09-28:** DR-012 remains Proposed for group approval. The original downstream scope covers 1/7/14-day inputs; the revised forecasting methodology under human review introduces a proposed 28-day cumulative input. Downstream 28-day inventory/replenishment interpretation still requires separate component-owner/human approval. See the [central methodology-revision record](../../forecasting-methodology-revision.md).
+
 ## Member details
 
 **Name:** Didilani Prasadika Weerawickrama Pathinayaka  
@@ -59,7 +61,8 @@ Primary inputs include:
 SKU_ID
 Warehouse_ID
 forecast origin
-forecast horizon (1-day / 7-day cumulative / 14-day cumulative)
+forecast input horizon (1-day / 7-day cumulative / 14-day cumulative / 28-day cumulative)
+28-day inventory interpretation: component-owner/human approval pending
 forecast_demand
 origin inventory level
 origin reorder point
@@ -101,3 +104,19 @@ If a numerical replenishment method is later justified and approved, any quantit
 ## Scope boundary
 
 This is not a dashboard-only contribution. The visual layer communicates a substantive inventory-risk and replenishment-analysis method.
+
+## 28-day compatibility review — downstream approval pending
+
+The revised forecasting direction under human review introduces a proposed
+direct cumulative 28-day quantity. Algebraically, the
+proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
+h=28 when the same origin and complete outcome interval are retained. This does
+not validate the longer no-receipt scenario or approve its use. The extended
+scenario may be more sensitive to omitted receipts and other adjustments.
+**28-day downstream use requires component-owner/human approval.** DR-012 remains
+proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+lead-time context, formulas and metric denominators remain unchanged. Lead times
+are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
+or invent replenishment quantities or review thresholds. If/when the relevant
+28-day downstream retrospective evaluation is approved and executed, disclose the
+revised final-evaluation interval's prior validation exposure in accordance with DR-005.
