@@ -362,12 +362,26 @@ This remains provisional until temporal demand conditions and the statistical te
 
 ## 12. Inventory-risk and replenishment interpretation
 
-Didilani's component will consume the selected forecast outputs together with relevant inventory variables, potentially including:
+Subject to group approval, Didilani's component would apply [DR-012 — Inventory-Risk and Replenishment Methodology](decisions/DR-012-inventory-risk-replenishment-methodology.md) to project model forecasts and origin-available inventory evidence. The proposed initial interpretation in DR-012 is **origin reorder-threshold exposure**.
+
+For the same SKU-warehouse at forecast origin `t`, define `I_t = Inventory_Level_at_origin`, `R_t = Reorder_Point_at_origin`, and `B_t = I_t - R_t`. For forecast cumulative demand `F_t,h`:
+
+| Condition | Interpretation |
+|---|---|
+| `B_t <= 0` | Already at/below the origin reorder threshold |
+| `B_t > 0` and `F_t,h >= B_t` | Forecast threshold crossing within the horizon |
+| `B_t > 0` and `F_t,h < B_t` | No forecast threshold crossing within the horizon |
+
+Use origin-available snapshots, keep the origin threshold fixed, and assume no receipts, transfers, returns, losses or other adjustments during the scenario. Apply the rule separately to next-day, 7-day cumulative and 14-day cumulative demand over `t+1` through `t+h`. Equality counts as reaching the threshold. Missing/invalid required evidence produces unavailable/not assessed, not `FALSE`. Within-day snapshot semantics and handling of problematic forecasts remain explicit input-contract decisions; no forecast clipping is introduced here.
+
+The primary retrospective comparison replaces `F_t,h` with realised cumulative `Units_Sold` over the exact same horizon and uses `B_t > 0` cases. Report origin-known already-at/below-threshold cases separately to avoid inflating agreement. DR-012 defines event prevalence, counts, missed-crossing rate, false-alert rate, agreement, precision, recall and balanced accuracy, with explicit denominators and unavailable results for undefined metrics. Check prevalence and do not artificially rebalance the historical population. The conceptual margins are `B_t - F_t,h` and `B_t - realised_demand`; no numeric near-boundary band is approved.
+
+Relevant evidence includes:
 
 - `Inventory_Level`;
 - `Reorder_Point`;
-- `Supplier_Lead_Time_Days`;
-- `Order_Quantity`;
+- `Supplier_Lead_Time_Days` as context only: horizon shorter than, equal to, or longer than lead time, without rounding or interpolation;
+- `Order_Quantity` as contextual activity, not receipts or optimal-policy ground truth;
 - forecast error / uncertainty;
 - product and warehouse identifiers.
 
@@ -375,15 +389,9 @@ The goal is to transform the forecast into inventory-risk and replenishment info
 
 Verified profiling shows that `Stockout_Flag` is 0 for every row, so it cannot be used as a stockout classification target or validation label. `Order_Quantity` is also sparse: only 5,027 of 91,250 rows contain a non-zero order quantity. These findings must shape the downstream method.
 
-Candidate downstream outputs include:
+The output is constructed threshold-exposure evidence, not actual stockout prediction or actual shortage ground truth. Negative arithmetic projected balances do not establish physical negative inventory. Source `Demand_Forecast` is not the project model forecast, and future inventory values cannot be origin-time inputs.
 
-- low/medium/high replenishment risk;
-- stockout-pressure indicators;
-- overstock/excess-inventory indicators;
-- reorder alerts;
-- recommended replenishment quantity where a defensible method is defined.
-
-The exact formula/rules must be operationalised and evaluated before implementation is considered final.
+Overstock/excess-stock evaluation and final numerical replenishment quantities remain provisional. Not reaching the threshold is not evidence of overstock. The common method supports the primary forecast-to-decision study, while the cross-component evaluation protocol, uncertainty method, human-review thresholds and final hypothesis operationalisation remain later decisions. DR-006 WAPE-based forecasting selection is unchanged.
 
 ## 13. Responsible decision support
 
@@ -416,7 +424,7 @@ Management-facing output
 ```
 
 
-The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. The 7-day and 14-day forecasts represent cumulative demand over their respective horizons. Fields that depend on uncertainty, inventory-risk, replenishment, or human-review rules remain provisional until the related project decisions are approved.
+The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. The 7-day and 14-day forecasts represent cumulative demand over their respective horizons. DR-012 proposes the initial inventory exposure method; group approval, implementation and the final schema remain pending. Uncertainty, overstock, numerical replenishment and human-review rules remain provisional until their related decisions are approved.
 
 ## 15. Threats to validity
 
