@@ -1,5 +1,7 @@
 # Research Design
 
+> **Research-design revision — 2026-09-28:** The research design is being revised to a human-selected 1/7/14/28-day forecasting direction and remains under repository-wide human review. No new experiment result or separate supervisor approval is claimed. Detailed provenance is recorded in the [forecasting-methodology revision record](forecasting-methodology-revision.md).
+
 ## 1. Purpose
 
 This document defines the current research-design baseline for the COMP1884 group project. Hypotheses are treated as testable statements and will only be finalised when their variables and evaluation methods are operationally defined.
@@ -73,6 +75,8 @@ The forecasting component may examine:
 Feature engineering converts the approved SKU-warehouse-day demand history into model inputs that represent recent demand memory, short-term demand behaviour, and calendar effects without exposing the model to future information.
 
 ### 6.1 Calendar features
+
+**Human review direction, 2026-09-28:** integer `day_of_week` is proposed for replacement; paired `dow_sin`/`dow_cos` is the current direction for the 1-day case; month and quarter are excluded from the initial revised set; month sine/cosine and weekday dummies remain deferred. The descriptions below document the implemented historical candidates, not the final revised feature list. The final ordered feature set and horizon-specific feature policy are not frozen. These calendar directions must not be silently extended to the 28-day horizon. See [feature review](forecasting-feature-engineering.md).
 
 #### `day_of_week`
 
@@ -174,15 +178,16 @@ All forecasting features must be generated without future-data leakage.
 
 ## 7. Forecast horizon
 
-The project will evaluate three decision-support forecast horizons while retaining the approved daily SKU-warehouse analytical grain:
+Under the revised forecasting direction currently under human review, the project is intended to evaluate four decision-support forecast horizons while retaining the approved daily SKU-warehouse analytical grain:
 
 - **1-day horizon** — immediate next-day demand for each SKU-warehouse series;
 - **7-day horizon** — cumulative demand over the next 7 days;
-- **14-day horizon** — cumulative demand over the next 14 days.
+- **14-day horizon** — cumulative demand over the next 14 days;
+- **28-day horizon** — cumulative demand over the next four weeks / approximately monthly planning, not an exact calendar month.
 
 These horizons are selected as project-specific planning horizons rather than universal retail replenishment rules.
 
-The external inventory literature supports periodic-review inventory systems in which stock is reviewed and replenishment decisions are made at defined review intervals, and it shows that review-period choice interacts with demand, supply variability, and lead time (Silver and Robb, 2008; Lee and Schwarz, 2009). In the verified project dataset, `Supplier_Lead_Time_Days` ranges from 2 to 14 days. The 1-, 7-, and 14-day horizons therefore provide an interpretable set of immediate, weekly, and lead-time-scale demand views for downstream inventory-risk and replenishment analysis.
+The external inventory literature supports periodic-review inventory systems in which stock is reviewed and replenishment decisions are made at defined review intervals, and it shows that review-period choice interacts with demand, supply variability, and lead time (Silver and Robb, 2008; Lee and Schwarz, 2009). In the verified project dataset, `Supplier_Lead_Time_Days` ranges from 2 to 14 days. The 1-, 7- and 14-day views cover immediate, weekly and lead-time-scale forecasting. Human review adds 28 days for four-week / approximately monthly planning, not an exact calendar month. Supplier lead time alone does not justify this addition. Downstream 28-day use remains subject to component-owner approval.
 
 The daily analytical grain and the forecast horizon are different concepts:
 
@@ -191,15 +196,16 @@ analytical grain = one SKU + one warehouse + one day
 forecast horizon = how far ahead demand is predicted
 ```
 
-A 7-day or 14-day demand view must preserve the SKU-warehouse identity and the cumulative-demand meaning approved in DR-004.
+A 7-day, 14-day or 28-day demand view must preserve the SKU-warehouse identity and the cumulative-demand meaning recorded in revised DR-004.
 
 [DR-008 — Multi-Step Forecasting Strategy](decisions/DR-008-multi-step-forecasting-strategy.md) selects **direct horizon-specific forecasting** as the primary strategy. Separate horizon targets are predicted directly from information available at the forecast origin:
 
 - 1-day next-day demand;
-- 7-day cumulative demand; and
-- 14-day cumulative demand.
+- 7-day cumulative demand;
+- 14-day cumulative demand; and
+- 28-day cumulative demand.
 
-Earlier predictions are not fed into later horizon predictions. This alignment between training target, evaluation horizon, and downstream cumulative demand avoids recursive error propagation, but it is a project-specific choice rather than a claim that direct forecasting is universally superior.
+Earlier predictions are not fed into later horizon predictions. The 7-, 14- and 28-day cumulative outputs do not imply a daily forecast path. This alignment between training target, evaluation horizon, and downstream cumulative demand avoids recursive error propagation, but it is a project-specific choice rather than a claim that direct forecasting is universally superior.
 
 ## 8. Forecasting approach
 
@@ -217,46 +223,82 @@ Earlier predictions are not fed into later horizon predictions. This alignment b
 
 ### 8.1 Hyperparameter-search strategy
 
-[DR-010 — Forecasting Hyperparameter-Search Strategy](decisions/DR-010-hyperparameter-search-strategy.md) defines small, predefined search spaces for Ridge Regression, Random Forest, and LightGBM. Naive and Seasonal Naive remain untuned baselines. Each learned model is tuned separately for the 1-day, 7-day, and 14-day horizons by evaluating every approved parameter combination on the same four DR-005 expanding-window folds. Mean WAPE across folds is the primary tuning statistic under DR-006; fold-level stability, MAE, RMSE, and Bias must also be reviewed.
+[DR-010 — Forecasting Hyperparameter-Search Strategy](decisions/DR-010-hyperparameter-search-strategy.md) defines small, predefined search spaces for Ridge Regression, Random Forest, and LightGBM. Naive and Seasonal Naive remain untuned baselines. Each learned model is tuned separately for the 1-day, 7-day, 14-day, and 28-day horizons by evaluating every approved parameter combination on the same four DR-005 expanding-window folds. Mean WAPE across folds is the primary tuning statistic under DR-006; fold-level stability, MAE, RMSE, and Bias must also be reviewed.
 
-Search spaces must not be changed ad hoc in response to disappointing validation results. Any revision requires a documented reason and approval before rerunning. Selected settings are frozen before final-holdout evaluation, and final-holdout results must never inform tuning or search-space changes. Ordinary random K-fold cross-validation is not permitted because it would break temporal order.
+Search spaces must not be changed ad hoc in response to disappointing validation results. Any revision requires a documented reason and approval before rerunning. Selected settings are frozen before evaluation on the revised final evaluation interval, and results from that interval must never inform tuning or search-space changes. DR-005 records its boundaries and prior-validation-exposure provenance. Ordinary random K-fold cross-validation is not permitted because it would break temporal order.
 
 ## 9. Validation design
 
-[DR-005 — Forecast Validation Design](decisions/DR-005-forecast-validation-design.md), approved through [Issue #31](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31), selects **expanding-window time-series validation**: rolling-origin / walk-forward evaluation with an expanding training window. Random train/test splitting must not be used.
+Use four expanding-window chronological folds, with one fixed forecast origin
+at the training cutoff for every SKU–warehouse and horizon. There is no updating
+with realised demand inside a validation window. All dates are inclusive and
+calendar-day counts precede feature warm-up and complete-target exclusions.
 
-All candidate models use the same four folds at the approved `SKU_ID + Warehouse_ID + Date` grain and evaluate `Units_Sold` over the 1-day, 7-day and 14-day horizons. Training begins on 2024-01-01 in every fold. All dates below are inclusive; training-day counts are per series before any approved feature-history requirements.
+| Fold | Training start | Training end / origin | Training days | Validation start | Validation end | Validation days |
+|---|---|---|---:|---|---|---:|
+| 1 | 2024-01-01 | 2024-03-31 | 91 | 2024-04-01 | 2024-04-28 | 28 |
+| 2 | 2024-01-01 | 2024-06-30 | 182 | 2024-07-01 | 2024-07-28 | 28 |
+| 3 | 2024-01-01 | 2024-09-30 | 274 | 2024-10-01 | 2024-10-28 | 28 |
+| 4 | 2024-01-01 | 2024-11-04 | 309 | 2024-11-05 | 2024-12-02 | 28 |
 
-| Fold | Training start | Training end / origin cutoff | Training days | Validation start | Validation end | Validation days |
-| --- | --- | --- | ---: | --- | --- | ---: |
-| 1 | 2024-01-01 | 2024-03-31 | 91 | 2024-04-01 | 2024-04-14 | 14 |
-| 2 | 2024-01-01 | 2024-06-30 | 182 | 2024-07-01 | 2024-07-14 | 14 |
-| 3 | 2024-01-01 | 2024-09-30 | 274 | 2024-10-01 | 2024-10-14 | 14 |
-| 4 | 2024-01-01 | 2024-12-02 | 337 | 2024-12-03 | 2024-12-16 | 14 |
+**Revised final evaluation:** 2024-12-03 to 2024-12-30 inclusive, 28 days;
+forecast origin 2024-12-02. No December 31 observation is invented.
 
-**Final model-evaluation holdout:** 2024-12-17 to 2024-12-30 inclusive, exactly **14 calendar days**.
+### Evidence and the three-fold alternative
 
-Fold 4 validation ends on 2024-12-16, immediately before the holdout, without overlap. Earlier validation observations enter later training histories only once they are historical relative to the later cutoff.
+Historical EDA reports March/April means of 29.8834/29.8391, July 17.4084,
+September/October 10.1739/10.2708 and November 13.0807 units per native observation.
+The saved notebook's monthly/quarterly tables and retrospective daily chart
+support high levels, decline, low demand and recovery within this simulated year;
+they do not establish recurring annual seasonality or formal demand regimes.
 
-### Evidence and fold-count rationale
+Three folds were considered and remain methodologically feasible: April high
+demand, July decline and October low demand. They omit separate recovery validation.
+**Four folds provide broader validation evidence across distinct observed temporal
+demand conditions while preserving expanding-window chronological evaluation.**
+The recovery-period evidence in November–early December was considered useful
+for this one-year dataset. November 5 is the latest complete 28-day placement
+before the revised final interval, not an EDA-established change point.
 
-The [completed EDA](../reports/demand-eda.md) reports monthly means of approximately 29.883 in March and 10.174 in September, with Q1/Q2 means around 26.6 and Q3/Q4 means around 13.5–13.6. These are means per native SKU-warehouse-day observation. They support placing validation origins across different observed demand periods, without claiming recurring annual seasonality or defining final seasonal regimes.
+Four is a project-specific human choice, not statistically optimal. Expanding
+folds share training history and are not independent replicates. More folds
+increase computational workload and validation-selection exposure; validation
+folds do not make models learn more patterns. Training length and evaluation
+conditions change together, so differences cannot automatically be attributed
+to demand conditions alone. Fold 3/4 origins are only 35 days apart, with seven
+unscored days between their validation windows.
 
-Four folds balance temporal coverage, a 91-day initial history, the maximum 14-day forecast horizon, consistent 14-day validation windows, repeated out-of-sample evaluation and a separate 14-day final holdout. They also avoid unnecessarily dense or similar origins. Four is a project-specific choice, not a universal optimum. Two folds are technically valid but less informative; three are methodologically reasonable, while four adds coverage without sacrificing the initial history or holdout. Five or more folds may, depending on their placement, require shorter early histories or create closer, more similar, or overlapping evaluation periods and additional opportunities for validation over-tuning. They do not automatically cause model overfitting. DR-005 records the full comparison.
+### Target completeness, warm-up and non-overlap
 
-### Windows, horizons and leakage
+At each cutoff, next-day and cumulative 7-, 14- and 28-day targets fit completely
+inside its 28-day evaluation window. In this project's selected fixed-origin
+protocol, a 28-day validation window is not treated as 28 forecast origins;
+one origin and one target per series/horizon are used.
+All training labels must end by their training cutoff. Features use only history
+available at the row's own origin; scalers/learned transformations fit only training
+rows. Never use realised future demand or target labels as predictors.
 
-A **training window** contains historical observations used to fit the model. A **validation window** contains future observations used to compare models and settings. A **forecast horizon** is the look-ahead from a prediction origin: next-day demand or cumulative demand over the next 7 or 14 days, as defined in DR-004. A **final test holdout** is evaluated only after model selection is complete. A 14-day validation window accommodates the maximum horizon but is not the same concept as a 14-day forecast horizon.
+The four validation windows do not overlap each other or the revised final interval.
+Earlier validation outcomes may enter later training only once historical to the
+later cutoff. Unscored gaps may enter later training; no final-evaluation observations
+may enter fitting or subsequent selection. Missing/incomplete outcomes remain
+unavailable, not zero, shortened labels or reasons to borrow later dates.
 
-Fit learned preprocessing and models within each fold's training window. Construct features only from information available at the prediction origin; current targets and later actual demand must not enter their own forecasts. Source `Demand_Forecast` remains excluded from ordinary forecasting features. Any eventual promotion or inventory input must satisfy its approved availability rules. Require complete horizon outcomes inside the assigned evaluation interval; validation scoring must not extend into the final holdout.
+A 28-day feature warm-up is feasible even in the initial 91-day history. With a
+complete 28-day look-back and horizon h, eligibility is N − 28 − h + 1 rows per
+series before other exclusions: 63/57/50/36 for h=1/7/14/28 in fold 1. This is
+feasibility, not a guarantee of model adequacy; the final feature set remains open.
 
-### Final holdout and disclosure
+### Final-evaluation provenance and protection
 
-The final holdout must not be used for model fitting, feature/model selection, hyperparameter tuning or validation decisions. Final-test forecasting results are examined only after model selection is complete and must not inform subsequent model-selection choices.
+The revised 28-day final evaluation window is reserved from all subsequent
+feature, model and hyperparameter decisions and fitting. However, December 3–16
+had prior validation exposure under the earlier 14-day methodology, so the revised
+window is not fully unseen from the historical research process. Full-year
+historical EDA also inspected those dates. Final forecasting results must not feed
+back into selection, and this prior exposure must be disclosed in reporting.
 
-Full-year descriptive EDA has already inspected the complete dataset, including the dates later assigned to this holdout. **Untouched final test** describes its exclusion from fitting and selection/tuning decisions and the protection of its forecasting results; it does not claim the dates were never descriptively inspected. Disclose that prior exposure. The 14-day late-December holdout is also a limited evaluation period, and expanding folds share history rather than being independent replicates.
-
-The candidate model set is defined in [DR-007](decisions/DR-007-forecasting-model-set.md), LightGBM is selected as its gradient-boosting implementation in [DR-009](decisions/DR-009-gradient-boosting-model-choice.md), the bounded tuning strategy is defined in [DR-010](decisions/DR-010-hyperparameter-search-strategy.md), and direct horizon-specific forecasting is defined in [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md). The final lag set, `Promotion_Flag` usage, uncertainty method, and demand-regime definitions remain open. The forecasting metric and model-selection policy is defined in [DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md). These documentation decisions introduce no dependency change, model training, or modelling results.
+The September 22 boundaries are retained as historical provenance in DR-005; the earlier Issue #52 protocol and results are not the revised study baseline.
 
 ## 10. Approved forecasting metrics and model-selection policy
 
@@ -329,18 +371,18 @@ This choice is specific to the approved project design. It does not establish th
 
 ### Fold and horizon evaluation policy
 
-Every candidate model must be evaluated on the same four DR-005 validation folds and the approved 1-day, 7-day, and 14-day horizons. For each model and horizon:
+Every candidate model must be evaluated on the same four DR-005 validation folds for each horizon included in the current methodology at execution time. For each model and each horizon independently:
 
 1. calculate MAE, RMSE, WAPE, and Bias separately for every fold;
 2. calculate the arithmetic mean of each metric across the four folds;
 3. use mean WAPE across folds as the primary model-selection statistic; and
 4. review supporting mean MAE, RMSE, and Bias together with the individual fold results.
 
-Comparisons are made separately for each approved horizon. This policy does not introduce an additional weighting or averaging rule across the 1-day, 7-day, and 14-day horizons.
+Comparisons are made separately for each horizon included in the current methodology at execution time. Metrics must not be averaged or weighted across the 1-day, 7-day, 14-day, and 28-day horizons into one overall score.
 
-The selected model will be the candidate with the lowest mean WAPE across the approved validation folds for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review. Selection must not be based on one fold alone. A candidate with low mean WAPE but highly unstable fold results must be discussed rather than automatically described as robust. No arbitrary numerical stability threshold is introduced by this decision.
+The selected model will be the candidate with the lowest mean WAPE across the validation folds included in the current methodology at execution time for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review. Selection must not be based on one fold alone. A candidate with low mean WAPE but highly unstable fold results must be discussed rather than automatically described as robust. No arbitrary numerical stability threshold is introduced by this decision.
 
-Final-holdout results are used only after model selection and must not be used to revise the selected model, features, hyperparameters, metric policy, or other selection decisions.
+Results from the revised final evaluation interval are used only after model selection and must not be used to revise the selected model, features, hyperparameters, metric policy, or other selection decisions.
 
 ### Mean Absolute Percentage Error (MAPE)
 
@@ -372,7 +414,7 @@ For the same SKU-warehouse at forecast origin `t`, define `I_t = Inventory_Level
 | `B_t > 0` and `F_t,h >= B_t` | Forecast threshold crossing within the horizon |
 | `B_t > 0` and `F_t,h < B_t` | No forecast threshold crossing within the horizon |
 
-Use origin-available snapshots, keep the origin threshold fixed, and assume no receipts, transfers, returns, losses or other adjustments during the scenario. Apply the rule separately to next-day, 7-day cumulative and 14-day cumulative demand over `t+1` through `t+h`. Equality counts as reaching the threshold. Missing/invalid required evidence produces unavailable/not assessed, not `FALSE`. Within-day snapshot semantics and handling of problematic forecasts remain explicit input-contract decisions; no forecast clipping is introduced here.
+Use origin-available snapshots, keep the origin threshold fixed, and assume no receipts, transfers, returns, losses or other adjustments during the scenario. The original proposed downstream scope applies separately to next-day, 7-day cumulative and 14-day cumulative demand over `t+1` through `t+h`. The new 28-day forecast is mathematically compatible with the generic formula, but **28-day downstream use requires component-owner/human approval**; the longer no-receipt interpretation is not approved here. Equality counts as reaching the threshold. Missing/invalid required evidence produces unavailable/not assessed, not `FALSE`. Within-day snapshot semantics and handling of problematic forecasts remain explicit input-contract decisions; no forecast clipping is introduced here.
 
 The primary retrospective comparison replaces `F_t,h` with realised cumulative `Units_Sold` over the exact same horizon and uses `B_t > 0` cases. Report origin-known already-at/below-threshold cases separately to avoid inflating agreement. DR-012 defines event prevalence, counts, missed-crossing rate, false-alert rate, agreement, precision, recall and balanced accuracy, with explicit denominators and unavailable results for undefined metrics. Check prevalence and do not artificially rebalance the historical population. The conceptual margins are `B_t - F_t,h` and `B_t - realised_demand`; no numeric near-boundary band is approved.
 
@@ -424,7 +466,7 @@ Management-facing output
 ```
 
 
-The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. The 7-day and 14-day forecasts represent cumulative demand over their respective horizons. DR-012 proposes the initial inventory exposure method; group approval, implementation and the final schema remain pending. Uncertainty, overstock, numerical replenishment and human-review rules remain provisional until their related decisions are approved.
+The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. Under the revised direction, the 7-day, 14-day and proposed 28-day forecasts represent cumulative demand over their respective horizons, without implying a daily forecast path. Representing a 28-day cumulative forecasting output does not itself approve downstream 28-day inventory/replenishment use; that remains subject to component-owner/human approval. DR-012 proposes the initial inventory exposure method; group approval, implementation and the final schema remain pending. Uncertainty, overstock, numerical replenishment and human-review rules remain provisional until their related decisions are approved.
 
 ## 15. Threats to validity
 

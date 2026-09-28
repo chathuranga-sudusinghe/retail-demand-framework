@@ -1,5 +1,7 @@
 # Inventory-Risk and Replenishment Methodology — Research Brief
 
+> **Research revision — 2026-09-28:** The human-selected revised forecasting direction remains under repository-wide human review. DR-012 remains Proposed for group approval; the original downstream inventory scope covers 1/7/14-day forecast inputs. A proposed 28-day cumulative forecasting input is being reviewed separately for downstream use. No experiment or downstream 28-day use is authorised by this note. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+
 **Status:** Working research brief for team review; not an approved methodology decision.
 **Owner:** Didilani
 **Related work:** Issue #22; [inventory-risk workflow](../workflows/inventory-risk-analysis.md); [dataset contract](../dataset.md); [research design](../research-design.md); [project boundaries](../project-boundaries.md).
@@ -36,10 +38,10 @@ The selected source is simulated daily supply-chain data. The verified profile i
 | Variable | Documented meaning / potential role | Status or caution |
 |---|---|---|
 | `Date`, `SKU_ID`, `Warehouse_ID` | Identify the daily SKU-warehouse record and preserve the join grain. | **Approved grain** under DR-002. A forecast join must preserve warehouse identity. |
-| Chathuranga's forecast output | Future demand evidence at the forecast origin and SKU-warehouse grain. Approved project horizons are next-day demand and cumulative demand over the next 7 and 14 days. | **Forecasting decisions approved** in DR-004 and DR-008; the cross-component schema and exact period-date alignment remain open in the shared-data workflow. |
+| Chathuranga's forecast output | Future demand evidence at the forecast origin and SKU–warehouse grain. The original downstream scope is next-day and cumulative 7- and 14-day demand; the revised forecasting direction under human review introduces a proposed 28-day cumulative input. | Forecasting decisions under DR-004 and DR-008 and the cross-component contract remain separate; schema and exact period-date alignment remain open in the shared-data workflow. Downstream 28-day use requires separate component-owner/human approval. |
 | `Inventory_Level` | Simulated stock on hand for the recorded warehouse observation. | Candidate inventory-state input. Do not assume a future value is available at the forecast origin. |
 | `Reorder_Point` | Simulated policy threshold at which replenishment should be considered. | Candidate policy evidence; not a stockout label and not yet a project risk threshold. |
-| `Supplier_Lead_Time_Days` | Simulated expected days between ordering and receipt; verified range is 2–14 days. | Candidate supply-exposure evidence. How this range maps to the 1/7/14-day forecast views is not approved. |
+| `Supplier_Lead_Time_Days` | Simulated expected days between ordering and receipt; verified range is 2–14 days. | Candidate supply-exposure evidence. How this range maps to the revised 1/7/14/28-day forecast inputs is not approved; 28 days exceeds the verified lead-time range and requires separate downstream review. |
 | `Order_Quantity` | Recorded replenishment quantity; non-zero in 5,027 of 91,250 records. | Sparse historical activity. Its meaning relative to forecast origin and whether it is on-order, placed, or received inventory is not defined sufficiently for direct target use. |
 | `Units_Sold` | Historical observed demand; the approved forecasting target. | Use as demand history through the forecasting output contract, not as a future known value. |
 | `Demand_Forecast` | Dataset creator/simulation-provided reference forecast. | **Not** Chathuranga's model output or a required input to Didilani's component. Any benchmark use would need separate justification and leakage review. |
@@ -119,3 +121,19 @@ This direction is consistent with the project's stated need for transparent fore
 - Lee, J.-Y. and Schwarz, L.B. (2009). “Leadtime management in a periodic-review inventory system: A state-dependent base-stock policy.” *European Journal of Operational Research*, 199(1), 122–129. https://doi.org/10.1016/j.ejor.2008.10.024
 - Silver, E.A. and Robb, D.J. (2008). “Some insights regarding the optimal reorder period in periodic review inventory systems.” *International Journal of Production Economics*, 112(1), 354–366. https://doi.org/10.1016/j.ijpe.2007.03.014
 - Theodorou, E., Spiliotis, E. and Assimakopoulos, V. (2025). “Forecast accuracy and inventory performance: Insights on their relationship from the M5 competition data.” *European Journal of Operational Research*, 322(2), 414–426. https://doi.org/10.1016/j.ejor.2024.12.033
+
+## 28-day compatibility review — downstream approval pending
+
+The revised forecasting direction under human review introduces a proposed
+direct cumulative 28-day quantity. Algebraically, the
+proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
+h=28 when the same origin and complete outcome interval are retained. This does
+not validate the longer no-receipt scenario or approve its use. The extended
+scenario may be more sensitive to omitted receipts and other adjustments.
+**28-day downstream use requires component-owner/human approval.** DR-012 remains
+proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+lead-time context, formulas and metric denominators remain unchanged. Lead times
+are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
+or invent replenishment quantities or review thresholds. If/when the relevant
+28-day downstream retrospective evaluation is approved and executed, disclose the
+revised final-evaluation interval's prior validation exposure in accordance with DR-005.

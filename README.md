@@ -1,5 +1,7 @@
 # Retail Demand Framework
 
+> **Forecasting methodology revision — 2026-09-28:** A revised 1/7/14/28-day forecasting direction is currently under human review. See the [forecasting-methodology revision record](docs/forecasting-methodology-revision.md) for scope, provenance and remaining approvals.
+
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
 **Programme:** MSc Data Science, University of Greenwich  

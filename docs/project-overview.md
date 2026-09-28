@@ -1,5 +1,7 @@
 # COMP1884 Group Project Overview
 
+> **Forecasting methodology revision — 2026-09-28:** The forecasting methodology is being revised from 1/7/14 to 1/7/14/28 days and remains under repository-wide human review. Detailed validation boundaries, provenance and remaining approvals are recorded in the [forecasting-methodology revision record](forecasting-methodology-revision.md).
+
 ## 1. Project identity
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis

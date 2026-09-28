@@ -1,5 +1,7 @@
 # Responsible Decision-Support Methodology
 
+> **Research revision — 2026-09-28:** DR-011 is accepted for structure only. The revised forecast interface is intended to include 1/7/14/28-day outputs; the 28-day forecasting revision remains under human review. Downstream 28-day interpretation, inventory use, uncertainty and human-review criteria remain separately pending. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+
 ## 1. Problem Definition
 
 This project combines demand forecasting with inventory-risk and replenishment analysis to support retail decision-making. However, a forecast or replenishment recommendation should not be presented to a manager as an automatic or unquestionable decision. Forecasts can contain errors and uncertainty, while inventory-risk outputs also depend on the available data, assumptions, and methods used in the project.
@@ -131,6 +133,19 @@ Some parts of the decision-support methodology still require agreement from the 
 - How inventory-risk evidence should be combined with the demand forecast when producing a replenishment recommendation.
 - The final wording and level of detail used to explain the reason behind each recommendation.
 
-## 11. Recommendation for the Next Decision Record
+## 11. Current Decision Record and Provisional Contents
 
-The next Decision Record should define the agreed structure of the management-facing decision-support output. It should confirm which forecasting, inventory-risk, uncertainty, and recommendation fields will be presented, how the reason for a recommendation will be communicated, and where human review should be required. This decision should be made with input from the forecasting and inventory-risk components so that the final design reflects outputs that can actually be produced by the project. Any thresholds that are not yet supported by evidence should remain open rather than being fixed at this stage.
+[DR-011](../decisions/DR-011-decision-support-output-structure.md) defines the management-facing output structure and is accepted for structure only. Fields depending on inventory-risk, replenishment, forecasting uncertainty, recommendation rules or human-review thresholds remain provisional until their related methodology decisions are approved. This structural acceptance does not approve substantive downstream logic. No thresholds should be invented; unresolved thresholds remain open.
+
+## Revised forecasting interface and owner review
+
+Under the revised forecasting direction, the forecast interface is intended to
+support 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
+Cumulative quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is
+four weeks / approximately monthly planning, not an exact calendar month.
+**28-day downstream use requires component-owner/human approval.** Do not populate
+28-day inventory states, replenishment recommendations or human-review triggers
+by silently extending another component's proposed method. Unavailable/unapproved
+outputs need an explicit reason. No uncertainty method, threshold or decision rule
+is approved by this interface update. Ownership and existing responsible-use
+principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.

@@ -1,9 +1,12 @@
 # DR-010 — Forecasting Hyperparameter-Search Strategy
 
-**Date:** 2026-09-23
-**Status:** Accepted for the current forecasting-methodology baseline
+> **DR-010 revision — 2026-09-28:** The bounded hyperparameter grids remain unchanged. The human-selected revised direction extends their application to four horizons; the revised methodology remains under human review. This documentation revision authorises no hyperparameter search or training. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+
+**Original decision date:** 2026-09-23
+**Original decision status:** Accepted for the earlier 1/7/14-day baseline
+**Revision date:** 2026-09-28
+**Revision status:** Under human review
 **Owner:** Chathuranga
-**Decision owners:** COMP1884 group
 **Related issue:** [#44 — Research: define forecasting hyperparameter-search strategy](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/44)
 **Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
 
@@ -11,15 +14,15 @@
 
 [DR-007](DR-007-forecasting-model-set.md) approves Naive, Seasonal Naive, Ridge Regression, Random Forest, and one gradient-boosting candidate. [DR-009](DR-009-gradient-boosting-model-choice.md) selects LightGBM for that gradient-boosting role. Before implementation begins, the project needs a bounded and reproducible method for selecting settings for the three learned models without adapting the search repeatedly to disappointing validation results.
 
-[DR-005](DR-005-forecast-validation-design.md) defines four expanding-window validation folds that preserve temporal order. [DR-006](DR-006-forecasting-metrics-and-model-selection.md) defines mean WAPE across those folds as the primary selection statistic, with MAE, RMSE, Bias, fold-level results, and fold-to-fold stability retained for review. [DR-008](DR-008-multi-step-forecasting-strategy.md) requires separate direct models or outputs for the 1-day, 7-day cumulative, and 14-day cumulative targets.
+[DR-005](DR-005-forecast-validation-design.md) defines four expanding-window validation folds that preserve temporal order. [DR-006](DR-006-forecasting-metrics-and-model-selection.md) defines mean WAPE across those folds as the primary selection statistic, with MAE, RMSE, Bias, fold-level results, and fold-to-fold stability retained for review. [DR-008](DR-008-multi-step-forecasting-strategy.md) requires separate direct models or outputs for the 1-day, 7-day cumulative, 14-day cumulative, and 28-day cumulative targets.
 
 ## Decision
 
-Use a small, predefined, bounded exhaustive search for each learned model and each approved forecast horizon. Generate every combination from the grids below, evaluate every combination on the same four DR-005 expanding-window folds, and select one configuration per model and horizon before final-holdout evaluation.
+Use a small, predefined, bounded exhaustive search for each learned model and each horizon included in the current methodology at execution time. Generate every combination from the grids below, evaluate every combination on the same four DR-005 expanding-window folds, and select one configuration per model and horizon before evaluation on the revised final evaluation interval.
 
 Naive and Seasonal Naive are fixed baselines under DR-007. They have no hyperparameter search.
 
-Ordinary random K-fold cross-validation must not be used because it would break the temporal ordering required by DR-005. The final holdout must never be used for hyperparameter tuning, search-space revision, or model selection.
+Ordinary random K-fold cross-validation must not be used because it would break the temporal ordering required by DR-005. The revised final evaluation interval must never be used for hyperparameter tuning, search-space revision, or model selection.
 
 ## Approved bounded search spaces
 
@@ -60,9 +63,13 @@ This produces 24 candidate configurations per horizon. Use `random_state = 42`, 
 
 These deliberately modest spaces bound the initial search to 41 learned-model configurations per horizon. Their purpose is controlled comparison within the MSc project, not exhaustive optimisation of every setting exposed by each library.
 
+## Revised workload and provenance
+
+The earlier three-horizon/four-fold protocol planned 492 learned fits and 24 baseline evaluations. The revised direction plans 4 horizons × 4 folds × 41 configurations = 656 learned fits. The planned 2 baseline roles × 4 horizons × 4 folds = 32 baseline evaluations apply only if/after both proposed 28-day baseline definitions receive explicit human approval. These are planned workload counts, not executed experiment results. The 41 configurations per horizon and all grids remain unchanged. No training or hyperparameter search may be executed until the final feature set and revised executable forecasting protocol have completed human review and approval. No experiment is authorised by this documentation revision.
+
 ## Search procedure
 
-For each learned model and each approved horizon:
+For each learned model and each horizon included in the current methodology at execution time:
 
 1. Generate only the predefined candidate parameter combinations.
 2. Evaluate every candidate using the same four DR-005 expanding-window validation folds.
@@ -72,11 +79,11 @@ For each learned model and each approved horizon:
 6. Use mean WAPE as the primary hyperparameter-selection statistic under DR-006.
 7. Review fold-level stability and the supporting MAE, RMSE, and Bias results before finalising the setting; do not select from one favourable fold alone.
 8. Choose and document one hyperparameter configuration for that model and horizon.
-9. Freeze the selected configuration before final-holdout evaluation.
+9. Freeze the selected configuration before evaluation on the revised final evaluation interval.
 
-The 1-day, 7-day, and 14-day horizons remain separate tuning tasks. Their metrics must not be averaged or weighted into one tuning score unless a later approved decision explicitly introduces that policy.
+The 1-day, 7-day, 14-day, and 28-day horizons remain separate tuning tasks. Their metrics must not be averaged or weighted into one tuning score unless a later approved decision explicitly introduces that policy.
 
-If two or more settings are not meaningfully distinguishable from the recorded validation evidence, the selected setting and rationale must be documented without expanding the grid or consulting the final holdout. This decision does not invent an automatic numerical stability or tie threshold beyond DR-006.
+If two or more settings are not meaningfully distinguishable from the recorded validation evidence, the selected setting and rationale must be documented without expanding the grid or consulting results from the revised final evaluation interval. This decision does not invent an automatic numerical stability or tie threshold beyond DR-006.
 
 ## Reproducibility requirements
 
@@ -104,7 +111,7 @@ If an approved search value is technically invalid for the implemented library v
 3. approve a revised bounded space before rerunning the search; and
 4. preserve the earlier search definition and results as part of the decision trail where applicable.
 
-Final-holdout performance must never be used to justify expanding, narrowing, or rerunning a hyperparameter search. Validation results may identify a limitation, but repeated ad-hoc boundary expansion in response to disappointing results is not approved.
+Performance on the revised final evaluation interval must never be used to justify expanding, narrowing, or rerunning a hyperparameter search. Validation results may identify a limitation, but repeated ad-hoc boundary expansion in response to disappointing results is not approved.
 
 ## Alternatives considered
 
@@ -139,5 +146,5 @@ Adaptive optimisation can search complex spaces efficiently, but it adds tooling
 - Naive and Seasonal Naive remain untuned baselines.
 - `docs/research-design.md` and `docs/workflows/demand-forecasting.md` summarise the approved strategy.
 - The hyperparameter-search strategy is removed from the open-decision list.
-- DR-004 horizons, DR-005 fold dates, DR-006 metric policy, DR-007 model set, DR-008 direct strategy, and DR-009 LightGBM choice remain unchanged.
-- No dependency, modelling code, training run, forecast result, or final-holdout use is introduced by this decision.
+- The original search decision did not change the other DRs. The September 28 human-selected revision under review extends application of the unchanged grids to four horizons and the revised DR-005 schedule; metric policy, model families and direct strategy remain.
+- No dependency, modelling code, training run, forecast result, or use of the revised final evaluation interval is introduced by this decision.

@@ -1,5 +1,7 @@
 # Inventory-Risk and Replenishment Analysis Workflow
 
+> **Workflow revision — 2026-09-28:** DR-012 remains Proposed for group approval. The original proposed inventory scope covers 1/7/14-day forecast inputs; the revised forecasting methodology under human review introduces a proposed 28-day cumulative input. Downstream 28-day inventory/replenishment use remains pending separate component-owner/human approval. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+
 ## Owner
 
 Primary COMP1884 owner: **Didilani**
@@ -38,7 +40,7 @@ For the same SKU-warehouse, `I_t` and `R_t` are inventory and reorder-point valu
 | `B_t > 0` and forecast cumulative demand `>= B_t` | Forecast threshold crossing within the horizon |
 | `B_t > 0` and forecast cumulative demand `< B_t` | No forecast threshold crossing within the horizon |
 
-Apply the same rule separately to 1-day, 7-day cumulative and 14-day cumulative forecasts. Equality counts as reaching the threshold. Keep the origin threshold fixed and assume no receipts, transfers, returns, losses or other adjustments. Future inventory values must not be joined as origin inputs. Document snapshot availability and within-day interpretation before integration.
+The original proposed inventory scope applies separately to 1-day, 7-day cumulative and 14-day cumulative forecasts; the proposed 28-day forecasting input under the revised methodology currently under human review has not yet been approved for this downstream rule. Equality counts as reaching the threshold. Keep the origin threshold fixed and assume no receipts, transfers, returns, losses or other adjustments. Future inventory values must not be joined as origin inputs. Document snapshot availability and within-day interpretation before integration.
 
 Missing/invalid required evidence produces unavailable/not assessed with a reason, not `FALSE`. DR-012 leaves problematic-forecast handling open and does not approve clipping. Negative arithmetic projected balances are not verified physical negative inventory.
 
@@ -75,3 +77,19 @@ Use DR-012's explicitly defined counts, event prevalence, missed-crossing rate, 
 The retrospective margin is `B_t - realised_demand`. Near-zero predicted or retrospective margins indicate sensitivity, but no numeric tolerance is approved. Retrospective evidence must not enter forecast-time inputs or review triggers.
 
 Subject to group approval, DR-012 would supply the method for later forecast-to-decision evaluation. The A/C/D cross-component protocol, uncertainty method, human-review rules and implementation remain separate work. DR-006 forecasting selection remains WAPE-based.
+
+## 28-day compatibility review — downstream approval pending
+
+The revised forecasting methodology under human review introduces a proposed
+direct cumulative 28-day quantity. Algebraically, the
+proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
+h=28 when the same origin and complete outcome interval are retained. This does
+not validate the longer no-receipt scenario or approve its use. The extended
+scenario may be more sensitive to omitted receipts and other adjustments.
+**28-day downstream use requires component-owner/human approval.** DR-012 remains
+proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+lead-time context, formulas and metric denominators remain unchanged. Lead times
+are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
+or invent replenishment quantities or review thresholds. If/when the relevant
+28-day downstream retrospective evaluation is approved and executed, disclose the
+revised final-evaluation interval's prior validation exposure in accordance with DR-005.
