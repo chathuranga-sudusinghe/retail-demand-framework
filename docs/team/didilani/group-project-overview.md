@@ -13,6 +13,8 @@
 
 This component receives Chathuranga's demand forecast and translates it into inventory-risk and replenishment information using the inventory variables available in the selected dataset.
 
+[DR-012](../../decisions/DR-012-inventory-risk-replenishment-methodology.md) proposes the initial method as **origin reorder-threshold exposure** under a fixed-origin, no-receipt scenario. Group approval is pending; implementation remains separate work.
+
 Didilani does **not** forecast demand a second time.
 
 ## Component research question
@@ -24,10 +26,10 @@ Didilani does **not** forecast demand a second time.
 Primary inputs include:
 
 - Chathuranga's forecast demand;
-- `Inventory_Level`;
-- `Reorder_Point`;
-- `Supplier_Lead_Time_Days`;
-- `Order_Quantity`;
+- origin-available `Inventory_Level`;
+- origin-available `Reorder_Point`, held fixed within the scenario;
+- origin-available `Supplier_Lead_Time_Days` as context only;
+- `Order_Quantity` as contextual activity only after its availability at the forecast origin is established, not receipts or optimal-policy ground truth;
 - `SKU_ID` and `Warehouse_ID` so forecasts can be aligned with warehouse-specific inventory state;
 - forecast error or uncertainty where available.
 
@@ -36,17 +38,17 @@ Primary inputs include:
 - `Stockout_Flag` is 0 for all 91,250 records, so it cannot be used as a stockout target or validation label.
 - `Order_Quantity` is non-zero in 5,027 records and zero in 86,223 records, so replenishment events are sparse and require profiling before modelling.
 - DR-002 fixes the upstream forecasting grain at SKU-warehouse-day. Inventory-risk logic must preserve `Warehouse_ID` so each forecast is aligned with the correct warehouse-specific inventory state.
-- Inventory-risk logic should therefore rely primarily on forecast demand together with `Inventory_Level`, `Reorder_Point`, `Supplier_Lead_Time_Days`, `Order_Quantity`, and their time alignment.
+- The exposure calculation uses project forecast demand, origin inventory and the origin reorder point. Lead time and order quantity remain contextual; future inventory and source `Demand_Forecast` are not substituted as origin inputs.
 
 ## Responsibilities
 
-1. Define the inventory-risk and replenishment logic.
+1. Following group approval, implement and evaluate DR-012's documented origin reorder-threshold exposure method in separately authorised work.
 2. Compare forecast demand with relevant inventory state and policy variables.
-3. Identify conditions indicating stockout/replenishment pressure.
-4. Identify conditions indicating excess/overstock pressure where defensible.
-5. Develop a reproducible rules-based, scoring, or other justified analytical method.
-6. Define and test thresholds rather than choosing them arbitrarily.
-7. Produce replenishment recommendations where a defensible method can be implemented.
+3. Distinguish already-at/below-threshold states from forecast threshold crossings and no forecast crossings.
+4. Keep excess/overstock evaluation provisional until a defensible method is separately approved.
+5. Preserve origin timing, horizon meaning and the no-receipt assumptions in reusable logic.
+6. Evaluate retrospective crossings and boundary margins without inventing a numeric near-boundary tolerance.
+7. Keep numerical replenishment quantity provisional until a defensible method is separately approved.
 8. Create visual analytics that explain the risk/replenishment outputs.
 9. Translate analytical outputs into business interpretation.
 10. Produce outputs usable by Dewmi's responsible decision-support component.
@@ -56,23 +58,34 @@ Primary inputs include:
 ```text
 SKU_ID
 Warehouse_ID
-period
+forecast origin
+forecast horizon (1-day / 7-day cumulative / 14-day cumulative)
 forecast_demand
-inventory_level
-reorder_point
-supplier_lead_time
-current/recent replenishment quantity
-risk_level
-risk_reason
-recommended_replenishment_quantity, if justified
+origin inventory level
+origin reorder point
+origin buffer B_t = I_t - R_t
+origin reorder-threshold exposure state and reason
+predicted margin B_t - forecast_demand
+origin supplier lead time (context only)
+order quantity (context only, after availability at the forecast origin is established)
+assumptions, limitations and unavailable-information reasons
+forecast provenance / available uncertainty context
 supporting_explanation
 ```
 
+These are output concepts, not a final schema. Follow DR-011's structure. Numerical replenishment quantity remains provisional. Retrospective state and `B_t - realised_demand` belong to separately identified evaluation evidence.
+
+## Evaluation direction
+
+For `B_t = I_t - R_t`, report `B_t <= 0` cases separately. On `B_t > 0` cases, compare forecast cumulative demand `>= B_t` with realised cumulative `Units_Sold >= B_t` over the same horizon. Equality counts as reaching the threshold. Report DR-012's counts and denominator-defined proxy metrics separately by horizon, with undefined metrics unavailable and event prevalence visible.
+
+Missing/invalid required evidence must not become a negative result. Not reaching the threshold is not evidence of overstock. The method supplies the downstream interpretation for the primary forecast-to-decision study; the final cross-component protocol, uncertainty method and human-review rules remain separate decisions. Chathuranga's DR-006 WAPE-based selection is unchanged.
+
 ## Important boundary
 
-The source dataset is simulated. Therefore, inventory levels and policy fields can be used as dataset variables, but conclusions must not be presented as validated operating rules for a real retailer.
+The source dataset is simulated. The no-receipt scenario assumes no transfers, returns, losses or other adjustments and does not reconstruct actual inventory evolution. Negative projected balances are arithmetic scenario values, not verified physical negative inventory. Conclusions must not be presented as actual stockout prediction, actual shortage ground truth or validated operating rules for a real retailer.
 
-A recommended replenishment quantity is a **decision-support recommendation**, not an automatically executable purchase order.
+If a numerical replenishment method is later justified and approved, any quantity it recommends would be a **decision-support recommendation**, not an automatically executable purchase order.
 
 ## Definition of done
 
