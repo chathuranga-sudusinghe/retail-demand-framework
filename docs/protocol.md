@@ -1,26 +1,32 @@
 # Revised forecasting experiment protocol — Issue #65
 
-**Status:** VALIDATION PROTOCOL READY FOR GATE 1 HUMAN APPROVAL/FREEZE — EXECUTION NOT AUTHORISED
+**Status:** GATE 1 HUMAN-APPROVED / FROZEN — EXECUTION NOT AUTHORISED
 
 **Prepared:** 2026-09-29
 
 **Owner:** Chathuranga
 
-**Protocol version:** `issue-65-matched-draft-3`
+**Protocol version:** `issue-65-matched-frozen-1`
 
 **Human decisions recorded:** 2026-09-29, on the project owner's explicit Issue #65
 instruction: exact-tie handling, single-thread runtime, 28-day simple baselines
-and deferral of final refit/preprocessing to Gate 6. These decisions are approved;
-full Gate 1 protocol approval/freeze remains a separate human confirmation.
+and deferral of final refit/preprocessing to Gate 6. These decisions remain
+unchanged.
+
+**Gate 1 approval/freeze:** 2026-09-29, explicitly approved by the project owner
+after reviewing the complete protocol. Approval reference: the project owner's
+Issue #65 instruction, "I have reviewed and approved `docs/protocol.md` for
+Issue #65. Record Gate 1 as human-approved/frozen." This approves the validation
+protocol only; experiment execution remains **NOT AUTHORISED**.
 
 **Issue:** [#65 — Research: define and freeze revised forecasting experiment protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65)
 
 ## 1. Authority, scope and current implementation
 
-`docs/protocol.md` is the consolidated current forecasting experiment protocol
-draft. It specifies the future executable procedure; human protocol approval,
-accepted runner implementation and specific run authorisation remain required.
-Writing or recovering this document does not grant execution approval.
+`docs/protocol.md` is the consolidated, human-approved and frozen forecasting
+validation experiment protocol. Gate 1 is complete on the explicit project-owner
+approval recorded above. Accepted runner implementation and specific run
+authorisation remain required; protocol approval does not grant execution approval.
 
 The current research authority is
 [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md): XGBoost,
@@ -582,7 +588,7 @@ and whether category vocabularies/Ridge scaling state are newly fitted or which
 identified fitted states are reused. The chosen policy must comply with Section 4,
 use no outcome after December 2, and preserve common primary representation,
 unknown-ID rejection and exact requested iterations without a new search.
-Do not choose a policy in this draft.
+Do not choose a final refit/preprocessing policy without separate Gate 6 approval.
 
 Only after that decision and separate final-run authorisation may the runner
 construct the common December 2-origin vector (first target day December 3),
@@ -597,9 +603,9 @@ fully unseen. Final evidence must not feed back into accepted decisions.
 
 ## 13. Machine-readable reproducibility metadata
 
-`run_metadata.json` uses proposed schema version `issue-65-v2` after Gate 1
-approval. Preserve a manifest before computation and record completion/failure
-without overwriting another run. The following keys/groups are required:
+`run_metadata.json` uses the Gate 1-approved schema version `issue-65-v2`.
+Preserve a manifest before computation and record completion/failure without
+overwriting another run. The following keys/groups are required:
 
 | Group | Required machine-readable keys |
 |---|---|
@@ -672,8 +678,9 @@ no full source row or future operational predictor is included.
 ## 15. Stable output artifacts
 
 Use a new local ignored `outputs/revised-forecasting/<run_id>/` directory. Never
-overwrite historical outputs or another run. These are proposed schema-version-2
-requirements for a future accepted runner, not artifacts produced by Issue #65.
+overwrite historical outputs or another run. These are Gate 1-approved
+schema-version-2 requirements for a future accepted runner, not artifacts
+produced by Issue #65.
 No full raw/processed dataset or unnecessary model binary is saved.
 
 | Artifact | Required purpose |
@@ -754,7 +761,7 @@ replacement results. Outputs remain local; copying a condensed report to
 
 | Gate | Required explicit human control | Authority granted |
 |---|---|---|
-| 1 | Human review/approval and freeze of this aligned validation protocol; tie handling, numeric runtime and all baseline formulas are resolved | Validation-protocol freeze; no experiment execution; final refit deferred to Gate 6 |
+| 1 | **Complete:** project owner reviewed and explicitly approved/froze the full validation protocol on 2026-09-29; approval reference is recorded above | Validation-protocol freeze only; experiment execution NOT AUTHORISED; final refit deferred to Gate 6 |
 | 2 | Separately authorise remaining estimator/metrics/baseline/runner implementation against this protocol | Implementation work; no fitting/tuning/scoring |
 | 3 | Review relevant test evidence and accept the complete runner/pipeline | Full implementation acceptance; no experiment execution |
 | 4 | Specifically authorise the validation run and primary/supportive/baseline scope manifest; verify the frozen single-thread policy and complete runtime recipe | Only that validation run; no final evaluation |
@@ -767,9 +774,10 @@ an estimator/metrics/baseline runner or complete Gates 2–4 for that remaining
 pipeline. Gates apply to the outstanding components, not retroactive permission
 to rerun or rewrite accepted work. Each gate must have a recorded human reference.
 
-The project owner's recorded decisions resolve the validation-protocol gaps;
-Gate 1 is ready for explicit human approval/freeze without deciding final refit.
-Full Gate 1 approval is not inferred solely from recording those decisions.
+Gate 1 is human-approved/frozen on the explicit approval recorded above.
+Final refit/preprocessing remains deferred to Gate 6. Gates 2–6 retain their
+separate implementation, review and specific-run approval requirements;
+Gate 1 approval authorises no experiment.
 Nothing automatically authorises the next gate, and past experiment approval
 does not transfer. No runnable experiment command exists in the inspected
 current source; do not cite
@@ -787,7 +795,7 @@ experiment. Neither archived first-grid tie handling nor single-thread/SVD Ridge
 choices transfer into this protocol. Current supportive Ridge uses the approved
 `solver="auto"` configuration in DR-013.
 
-Future experiment work is controlled by this current protocol after its approval,
+Future experiment work is controlled by this human-approved/frozen protocol,
 DR-013, the explicit human decisions recorded here and separate implementation/run
 gates, regardless of which GitHub issue
 tracks that work. The historical reproduction command references absent source;
@@ -803,8 +811,8 @@ records, and authorises no experiment.
 ## 18. Human decision record and validation-protocol finalisation
 
 The project owner explicitly approved the following decisions on 2026-09-29 in
-the current Issue #65 instruction. This record resolves the corresponding pending
-items in the reviewed repository; older pending wording in DR-007/DR-013 does not
+the earlier Issue #65 decision instruction. This record resolves the corresponding
+pending items in the reviewed repository; older pending wording in DR-007/DR-013 does not
 override these newer explicit human decisions. Those files remain unchanged.
 
 | Decision | Approved policy | Protocol section / status |
@@ -815,8 +823,9 @@ override these newer explicit human decisions. Those files remain unchanged.
 | 28-day simple baselines | Naive = `28 * y_o`; Seasonal Naive = `4 * S_o`, using the latest complete seven-day sum. Untuned and contextual only. | Section 10; resolved |
 | Final estimator refit/preprocessing timing | Explicitly defer the final fitting population and estimator/category/scaler reuse-versus-refit decision to Gate 6. It does not block validation-protocol freeze. | Section 12; deferral approved, final policy undecided |
 
-**No unresolved methodological decision blocks Gate 1 validation-protocol
-approval/freeze.** The sole deferred policy is final estimator refit/preprocessing:
+**Gate 1 validation-protocol review, approval and freeze are complete.** The
+project owner's explicit full-protocol approval is recorded at the start of this
+document. The sole deferred policy is final estimator refit/preprocessing:
 human approval must specify final training dates/eligible populations by horizon
 and estimator/category/scaler reuse versus refit, using no outcome after
 December 2. This blocks only Gate 6 final fitting/evaluation.
@@ -833,14 +842,15 @@ training-row eligibility, fixed origins, current preprocessing, matched search,
 metric formulas/aggregation, horizon-specific selection and approved exact-tie
 handling, all baseline formulas, reproducibility and artifact schemas, final
 protection, execution gates and historical provenance. **The validation protocol
-is ready for human Gate 1 approval/freeze.** Formal completion of Issue #65's
-human-reviewed/frozen acceptance criterion still requires an explicit human
-approval reference for the full protocol; this instruction approves the decisions
-listed above and does not silently certify that final control point.
+is human-approved/frozen at Gate 1.** The project owner's explicit review and
+approval satisfy Issue #65's human-reviewed/frozen protocol acceptance criterion.
+Recording this approval changes no substantive research decision and does not
+approve downstream implementation, model selection or experiment execution.
 
 Final refit/preprocessing remains explicitly deferred to Gate 6 and does not
-prevent Gate 1 freeze. Experiment execution remains **NOT AUTHORISED** after
-these decisions and would also remain unauthorised by Gate 1 approval alone.
+affect the completed Gate 1 freeze. Experiment execution remains
+**NOT AUTHORISED** despite protocol approval; validation and final evaluation
+retain their separate specific-run gates.
 
 Full estimator/metrics/baseline/runner implementation and its test acceptance,
 validation-run authorisation, selection freeze and final-run authorisation remain
