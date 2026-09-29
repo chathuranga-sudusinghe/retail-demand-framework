@@ -1,5 +1,7 @@
 # Demand Forecasting Workflow
 
+> **Issue #66 revision — 2026-09-29:** [DR-013](../decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. The protocol remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**; Gate 1 is incomplete.
+
 > **Documentation alignment — 2026-09-29:** The current 1/7/14/28-day forecasting design and [fourteen-predictor contract](../forecasting-feature-engineering.md) are human-approved. Implementation acceptance, proposed 28-day baselines and the revised executable protocol remain separate. Experiments are NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 ## Owner
@@ -81,39 +83,31 @@ Follow the [authoritative ordered contract](../forecasting-feature-engineering.m
 
 Require 28 complete consecutive demand observations per SKU–warehouse, ending at the forecast origin. Calendar features refer to origin + 1. Fit learned preprocessing only on eligible training rows; complete training targets must end by the fitting cutoff. At evaluation, reuse one origin's vector across horizons without realised-demand updates.
 
-Ridge scales only the twelve numerical features and fully one-hot encodes both identities; Random Forest uses the same unscaled one-hot representation. Each has 67 physical columns with all 50 SKU and five warehouse categories present. LightGBM uses explicit native categorical handling and twelve unscaled numerical features, totalling 14 inputs. All have fourteen conceptual predictors and equivalent underlying information; comparison also shares origins, eligible observations, targets and folds.
+Primary XGBoost, LightGBM and CatBoost share full one-hot identities (all eligible-training levels retained) followed by the same twelve unscaled numerical predictors: 67 physical columns under full coverage. Native categorical handling is excluded from the primary comparison. Supportive Ridge/Random Forest may reuse this representation; only Ridge scales numerical inputs. Primary mappings, order, origins, eligible rows, targets and folds are identical within each comparison.
 
 `Date` and `Units_Sold` serve construction/alignment/target roles. All other raw fields are excluded forecasting inputs, while retaining appropriate descriptive/downstream roles. The contract lists excluded calendar, lag, median and composite alternatives. DR-003 and Issue #52 describe superseded historical catalogues, not active candidates.
 
-## Approved candidate model set
+## Revised model roles — Issue #66
 
-[DR-007](../decisions/DR-007-forecasting-model-set.md) approves five candidate roles for comparison:
+[DR-013](../decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved direction:
 
-| Role | Model | Purpose |
-| --- | --- | --- |
-| Simple baseline | Naive | Recent-demand benchmark. |
-| Seasonal baseline | Seasonal Naive using lag 7 | Weekly-repeat benchmark. |
-| Linear ML baseline | Ridge Regression | Regularised linear feature-demand relationships. |
-| Tree-based ML | Random Forest | Non-linear relationships and feature interactions. |
-| Gradient-boosting ML | LightGBM | Boosted-tree comparison with simpler candidates. |
+| Evidence role | Models | Boundary |
+|---|---|---|
+| Primary controlled RQ2 comparison | XGBoost Regressor, LightGBM Regressor, CatBoost Regressor | Shared external representation/grid and evaluation controls; only these models answer RQ2. |
+| Supportive benchmarks | Ridge Regression, Random Forest Regressor | Contextual linear/non-linear evidence, labelled separately. |
+| Simple baselines | Naive, Seasonal Naive (period 7) | DR-007's 1/7/14 formulas retained; proposed 28-day formulas still require approval. |
 
-[DR-009](../decisions/DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single gradient-boosting implementation to keep dependency and tuning scope controlled. This project-specific choice does not claim universal superiority over XGBoost or forecast performance before evaluation. No candidate is assumed to outperform another because it is more complex. All candidates must use the same DR-005 folds, DR-008 horizon targets, and DR-006 metrics.
+No candidate is presumed superior. DR-007/009/010 retain their earlier bodies as provenance, with explicit supersession notices for the learned roles, single-boosting choice and primary search. Internal algorithms and parameter effects are not identical despite matched external settings.
 
-## Approved hyperparameter-search workflow
+## Matched primary search workflow
 
-[DR-010](../decisions/DR-010-hyperparameter-search-strategy.md) defines small, predefined search spaces for Ridge Regression, Random Forest, and LightGBM. Naive and Seasonal Naive are fixed baselines and must not be tuned.
+Use the canonical Cartesian product in order: learning_rate [0.03, 0.05, 0.10], boosting_iterations [100, 300], max_depth [4, 8], subsample [0.8, 1.0], with subsample varying fastest. Map iterations to n_estimators for XGBoost/LightGBM and iterations for CatBoost; map depth to max_depth/max_depth/depth. Seed 42 is fixed (random_state/random_state/random_seed), never searched. Each primary model receives **24 configurations per horizon** and the same four DR-005 folds: **1,152 planned primary validation fits**, not executed evidence.
 
-For each learned model and each horizon included in the current methodology at execution time:
+For later authorised execution, evaluate each canonical configuration across all four folds, fit preprocessing only on complete eligible training rows, calculate fold WAPE/MAE/RMSE/Bias and arithmetic fold means, then review horizon-specific mean WAPE and supporting/stability evidence. Record both canonical identity and effective library parameters. Do not add search dimensions, adapt grids to results, use random K-fold validation, average across horizons or use final-evaluation outcomes for selection.
 
-1. generate only the DR-010 parameter combinations;
-2. evaluate every combination on the same four DR-005 expanding-window folds;
-3. calculate WAPE, MAE, RMSE, and Bias for every fold and their arithmetic means across folds;
-4. use mean WAPE as the primary tuning statistic;
-5. review fold-level stability and supporting metrics;
-6. select one configuration for that model and horizon; and
-7. freeze the configuration before evaluation on the revised final evaluation interval.
+DR-013 documents official API verification and proposed subsampling-enabling controls. Exact dependency pins, complete fixed runtime recipe and supportive configuration policy remain human decisions. RQ2 interpretation follows the approved descriptive and comparative policy in DR-013, separately for each horizon. The supportive Ridge Regression / Random Forest configuration policy remains unresolved and requires separate human approval. Historical 5/12 configuration grids are not automatically reused. Naive/Seasonal Naive remain untuned.
 
-Do not average results across horizons into one tuning score. Ordinary random K-fold cross-validation is not permitted. Search spaces must not be expanded ad hoc in response to validation results, and the revised final evaluation interval must not be used for tuning, search-space revision, or model selection. The implementation must record seeds, versions, feature order, fold definitions, candidate grids, selected settings, horizons, and the metric evidence used for selection.
+The accepted Issue #62 source reflects the earlier preprocessing contract; a separate implementation-alignment task must follow design approval. [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains pending alignment with the revised Issue #66 research design. The protocol remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**; Gate 1 is incomplete. Its prior draft and unresolved items require later review.
 
 ## Forecast horizons
 
@@ -255,9 +249,11 @@ Every candidate model must use the same validation folds included in the current
 3. compare candidates primarily using mean WAPE across folds; and
 4. review the individual fold results and supporting mean MAE, RMSE, and Bias before selection.
 
-Comparisons are horizon-specific; this workflow does not silently average or weight results across the four horizons. The selected model will be the candidate with the lowest mean WAPE across the validation folds included in the current methodology at execution time for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review.
+Comparisons are horizon-specific; this workflow does not silently average or weight results across the four horizons. For the primary RQ2 comparison, the selected model will be the primary boosting candidate with the lowest mean WAPE across the validation folds for the relevant horizon, subject to fold-to-fold stability and supporting-metric review. Supportive benchmarks and simple baselines contextualise performance but cannot determine the RQ2 answer. This does not approve an additional downstream deployment-selection policy.
 
 A low mean WAPE from unstable fold results is not sufficient evidence of robustness and must be discussed. Selection must never rely on one fold alone. WAPE has no universal project quality band, and candidates must be judged relative to the same baselines, folds, horizons, and evaluation design. Results from the revised final evaluation interval must not be used to revise model-selection decisions.
+
+For RQ2, report the magnitude and direction of differences in arithmetic mean WAPE and inspect all four fold-level WAPE results for reasonable consistency, supported by MAE, RMSE and Bias. Relative differences may also be reported when clearly defined. The subordinate RQ2 hypotheses are comparative research hypotheses; no statistical-significance procedure or universal numerical decision threshold is approved, and the folds are not independent experimental replicates. A small aggregate difference driven mainly by one fold must not be presented as strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold. Report model ordering separately by horizon rather than collapsing it into an overall winner.
 
 ## Model-selection principle
 
@@ -273,4 +269,4 @@ Didilani does not retrain or repeat the demand-forecasting task. Her component c
 
 The earlier [Issue #52 protocol](../issue-52-forecasting-protocol.md) and ignored local artifacts retain their original 1/7/14-day, fourteen-day-window and thirteen-feature provenance. They are not the revised research baseline; [the central record](../forecasting-methodology-revision.md) documents artifact locations and the absent historical runner.
 
-The final feature contract is frozen. Proposed 28-day baselines, implementation/test acceptance and the revised executable protocol remain separately gated. There is no current experiment runner source. No further experiment command is authorised; the owner must approve any later run under AGENTS.md after code/protocol review.
+The conceptual feature contract is frozen and Issue #62 is accepted for its earlier representation. Proposed 28-day baselines, revised primary implementation/test acceptance and the Issue #65 protocol remain separately gated. There is no current experiment runner source. No further experiment command is authorised; the owner must approve any later run under AGENTS.md after code/protocol review.

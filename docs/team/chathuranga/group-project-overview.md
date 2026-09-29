@@ -1,5 +1,7 @@
 # Chathuranga — COMP1884 Group Project Contribution
 
+> **Issue #66 revision — 2026-09-29:** [DR-013](../../decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. The revised protocol remains subject to separate human review and approval; Gate 1 is incomplete and experiment execution is not authorised.
+
 > **Documentation alignment — 2026-09-29:** The human-approved component uses direct 1/7/14/28-day targets and the [frozen fourteen-predictor contract](../../forecasting-feature-engineering.md). Implementation acceptance, proposed 28-day baselines and the revised executable protocol remain separate. No experiment is authorised; see [approval and provenance](../../forecasting-methodology-revision.md).
 
 ## Member details
@@ -18,6 +20,16 @@ This component produces the future-demand forecast that becomes the input to Did
 ## Component research question
 
 **How do temporal characteristics of SKU demand affect the performance and suitability of different forecasting approaches?**
+
+## Primary controlled RQ2 responsibility
+
+**Under the same forecasting inputs, temporal validation design, evaluation metrics, and matched hyperparameter settings, how do XGBoost, LightGBM, and CatBoost compare in forecasting future retail demand?**
+
+**H0_RQ2:** Under the matched experimental conditions, XGBoost, LightGBM, and CatBoost show comparable demand-forecasting performance across the evaluated horizons.
+
+**H1_RQ2:** Under the matched experimental conditions, demand-forecasting performance differs among XGBoost, LightGBM, and CatBoost across the evaluated horizons.
+
+[DR-013](../../decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner-approved direction. Only XGBoost/LightGBM/CatBoost determine RQ2; Ridge/Random Forest provide contextual evidence, and Naive/Seasonal Naive retain their separate baseline rules. These are comparative research hypotheses, not statistical-significance hypotheses. Interpret RQ2 descriptively and comparatively for each horizon: compare arithmetic mean WAPE across the four temporal folds, inspect all four fold-level results, and discuss magnitude, direction, fold consistency and supporting MAE, RMSE and Bias. Clearly defined relative differences may also be reported. No significance procedure or universal numerical decision threshold is approved; the folds are not independent experimental replicates. A small aggregate difference driven mainly by one fold is not strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold or create a cross-horizon composite/overall winner; report any horizon-dependent model ordering. The existing temporal-condition hypothesis below remains provisional and separate.
 
 ## Secondary forecasting hypothesis
 
@@ -45,7 +57,7 @@ Primary inputs:
 
 DR-002 has fixed the primary forecasting analytical unit as `SKU_ID + Warehouse_ID + Date`. The target at this grain is `Units_Sold`.
 
-The frozen contract contains **two categorical context + twelve numerical engineered = fourteen conceptual predictors** in the same order for all learned models/horizons, with 28 complete consecutive history days. Ridge and Random Forest use 67 full one-hot/numerical columns; LightGBM uses 14 native categorical/numerical inputs. Equivalent information, origins, eligible observations and targets make the comparison fair despite different matrix widths.
+The frozen contract contains **two categorical context + twelve numerical engineered = fourteen conceptual predictors** in the same order for all learned models/horizons, with 28 complete consecutive history days. Primary XGBoost, LightGBM and CatBoost share 67 full one-hot/numerical columns under full eligible-training category coverage, with unscaled numerical inputs. Ridge/Random Forest are supportive benchmarks only; Ridge scales numerical predictors. The primary comparison also shares origins, eligible rows, targets, folds, metrics and the matched 24-configuration grid.
 
 `Date` and `Units_Sold` are construction/alignment/target sources; the eleven other raw fields, including source `Demand_Forecast`, promotion and inventory, are excluded predictors. They may remain useful to other components.
 
@@ -108,4 +120,4 @@ This component is limited to the forecasting work required by the integrated COM
 
 The human-approved design uses direct 1/7/14/28-day targets and four expanding 28-day validation windows.
 
-The frozen feature/preprocessing pipeline and its tests still require implementation and human acceptance. Proposed 28-day baseline formulas and the executable protocol remain separate approvals. Final evaluation covers December 3–30 at origin December 2, reserved from subsequent selection/fitting but not fully unseen historically: December 3–16 had prior validation exposure and full-year EDA inspected the interval. Didilani and Dewmi retain independent downstream decisions. No 28-day inventory or human-review rule, or experiment execution, is approved here.
+Issue #62 accepted the earlier frozen feature/preprocessing implementation and tests. After this revised design is approved, a separate alignment task must provide the common primary representation and XGBoost/CatBoost interfaces/tests. Issue #65 remains pending alignment with the revised Issue #66 research design. The revised protocol remains subject to separate human review and approval; Gate 1 is incomplete and experiment execution is not authorised. Proposed 28-day baseline formulas and the executable protocol remain separate approvals. Final evaluation covers December 3–30 at origin December 2, reserved from subsequent selection/fitting but not fully unseen historically: December 3–16 had prior validation exposure and full-year EDA inspected the interval. Didilani and Dewmi retain independent downstream decisions. No 28-day inventory or human-review rule, or experiment execution, is approved here.

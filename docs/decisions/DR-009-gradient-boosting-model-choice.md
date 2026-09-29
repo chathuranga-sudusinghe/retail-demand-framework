@@ -1,5 +1,26 @@
 # DR-009 — Gradient-Boosting Model Choice
 
+**Status:** SUPERSEDED BY DR-013
+
+## Current status and effect
+
+[DR-013](DR-013-matched-gradient-boosting-comparison.md) is the current authority for the primary matched gradient-boosting comparison. Its primary implementations are:
+
+- XGBoost Regressor;
+- LightGBM Regressor; and
+- CatBoost Regressor.
+
+DR-009 no longer selects the current boosting implementation. Its earlier selection and rationale are preserved only in the historical block below. The current comparison and its controls are defined by DR-013; this record authorises no experiment execution.
+
+## Historical original decision body
+
+> The content below is retained verbatim as historical provenance and is non-operative where superseded by DR-013.
+
+<details>
+<summary>Show superseded historical DR-009 body</summary>
+
+# DR-009 — Gradient-Boosting Model Choice
+
 > **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
@@ -82,3 +103,5 @@ It is not selected because including both LightGBM and XGBoost would add overlap
 - The LightGBM-versus-XGBoost choice is removed from the open-decision list.
 - DR-004 horizons, DR-005 validation dates, DR-006 metrics, and DR-008 direct forecasting strategy remain unchanged.
 - No dependency, modelling code, training run, forecast score, or use of the revised final evaluation interval is introduced by this decision.
+
+</details>

@@ -102,6 +102,8 @@ MAPE was not selected because zero or near-zero actual demand requires special h
 
 ## Evaluation policy
 
+**Issue #66 role clarification:** DR-013 limits the primary RQ2 answer to XGBoost/LightGBM/CatBoost. Ridge/Random Forest are supportive evidence and Naive/Seasonal Naive are simple baselines. The equations, arithmetic fold means and horizon-specific WAPE-led policy below are unchanged; RQ2 hypotheses are comparative and interpreted descriptively by horizon, using magnitude, direction, all four fold-level results and supporting metrics as recorded in DR-013. No statistical-significance procedure or universal numerical decision threshold is approved; the folds are not independent experimental replicates. A small aggregate difference driven primarily by one fold is not strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold or collapse horizon-dependent model ordering into an overall winner.
+
 Under the current human-approved forecasting design, every candidate model must be evaluated using the same four DR-005 validation folds and the human-selected 1-day, 7-day, 14-day, and 28-day horizons recorded in revised DR-004.
 
 For each model and each horizon independently:
@@ -124,7 +126,7 @@ Results from the revised final evaluation interval must not be used for model fi
 - Mean values can hide fold-to-fold variation, so individual fold results must also be reviewed.
 - The policy does not define a universal WAPE quality band or guarantee performance in a real retailer.
 - The dataset is simulated and covers one observed year; the four folds cannot represent every future demand condition.
-- The original metric decision did not resolve models, features, strategy or search. DR-007/008/009/010 and the frozen feature contract now settle those choices, including promotion exclusion. Uncertainty and formal demand-regime definitions remain separate.
+- The original metric decision did not resolve models, features, strategy or search. DR-008, [DR-013](DR-013-matched-gradient-boosting-comparison.md) and the frozen feature contract define the direct strategy, revised primary models/grid and predictor membership, including promotion exclusion; complete runtime controls and supportive configuration policy remain pending. Uncertainty and formal demand-regime definitions remain separate.
 
 ## Impact
 

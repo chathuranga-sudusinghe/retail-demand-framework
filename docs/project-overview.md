@@ -1,5 +1,7 @@
 # COMP1884 Group Project Overview
 
+> **Issue #66 revision — 2026-09-29:** [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Gate 1 is incomplete; execution is not authorised.
+
 > **Documentation alignment — 2026-09-29:** The current human-approved forecasting design uses 1/7/14/28-day outputs and the [frozen feature contract](forecasting-feature-engineering.md). [Revision and provenance](forecasting-methodology-revision.md) distinguishes implementation/protocol acceptance and pending baseline/downstream decisions. No experiment execution or separate supervisor approval is asserted.
 
 ## 1. Project identity
@@ -40,9 +42,17 @@ To investigate how data-driven demand forecasting can be integrated with invento
 ## 7. Supporting research questions
 
 - **RQ1:** What demand patterns can be identified from historical SKU-level sales data?
-- **RQ2:** Which forecasting methods are suitable for predicting future product demand?
+- **RQ2:** Under the same forecasting inputs, temporal validation design, evaluation metrics, and matched hyperparameter settings, how do XGBoost, LightGBM, and CatBoost compare in forecasting future retail demand?
 - **RQ3:** How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
 - **RQ4:** How can uncertainty, transparency, governance, and human oversight guide the responsible use of the resulting decision-support outputs?
+
+### RQ2-specific hypothesis
+
+**H0_RQ2:** Under the matched experimental conditions, XGBoost, LightGBM, and CatBoost show comparable demand-forecasting performance across the evaluated horizons.
+
+**H1_RQ2:** Under the matched experimental conditions, demand-forecasting performance differs among XGBoost, LightGBM, and CatBoost across the evaluated horizons.
+
+These are comparative research hypotheses, not statistical-significance hypotheses. Interpret RQ2 descriptively and comparatively for each horizon: compare arithmetic mean WAPE across the four temporal folds, inspect all four fold-level results, and discuss magnitude, direction, fold consistency and supporting MAE, RMSE and Bias. Clearly defined relative differences may also be reported. No significance procedure or universal numerical decision threshold is approved; the folds are not independent experimental replicates. A small aggregate difference driven mainly by one fold is not strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold or create a cross-horizon composite/overall winner; report any horizon-dependent model ordering. See [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md).
 
 ## 8. Research contribution
 
