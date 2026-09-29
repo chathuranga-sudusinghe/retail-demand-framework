@@ -1,5 +1,102 @@
 # DR-007 — Forecasting Model Set
 
+**Status:** PARTIALLY SUPERSEDED BY DR-013
+
+## Current status and effect
+
+[DR-013](DR-013-matched-gradient-boosting-comparison.md) is the current authority for the learned-model comparison. DR-007 no longer defines the current learned-model set.
+
+| Current evidence role | Models |
+|---|---|
+| PRIMARY RQ2 comparison | XGBoost Regressor, LightGBM Regressor, CatBoost Regressor |
+| SUPPORTIVE benchmarks | Ridge Regression, Random Forest Regressor |
+| Separate simple forecasting baselines | Naive, Seasonal Naive (weekly period 7) |
+
+Only the three primary implementations determine the matched RQ2 answer. Ridge and Random Forest provide supportive/contextual evidence. Their configuration policy remains pending separate human approval under DR-013.
+
+## Retained provisions still in force
+
+- **Naive baseline role:** provide a simple recent-demand benchmark by extending the latest origin-observed demand level.
+- **Seasonal Naive baseline role:** provide a weekly-repeat benchmark using the latest complete observed seven-day pattern.
+- The approved leakage-safe 1-day, 7-day and 14-day formulas below remain unchanged.
+- Both proposed 28-day baseline formulas remain approval-pending; a learned-model 28-day horizon does not approve baseline execution.
+
+### Approved leakage-safe 1-day, 7-day and 14-day baseline formulas
+
+All baseline calculations operate independently within the same `SKU_ID + Warehouse_ID` series. The forecast origin is the last date whose `Units_Sold` value is observed and available to the forecaster.
+
+#### Naive baseline
+
+Let the latest observed `Units_Sold` value at the forecast origin be the recent-demand level. The direct horizon forecasts are:
+
+- **1-day forecast:** the latest observed `Units_Sold` value;
+- **7-day cumulative forecast:** 7 multiplied by the latest observed `Units_Sold` value; and
+- **14-day cumulative forecast:** 14 multiplied by the latest observed `Units_Sold` value.
+
+This baseline holds the latest observed demand level constant across the requested horizon.
+
+#### Seasonal Naive baseline with weekly period 7
+
+Use only the most recent complete observed 7-day demand pattern available at the forecast origin. The pattern consists of seven consecutive observed daily values from the same SKU-warehouse series; no future or partially observed week may be used.
+
+The direct horizon forecasts are:
+
+- **1-day forecast:** the value for the corresponding weekday from that previous weekly pattern;
+- **7-day cumulative forecast:** the sum of the most recent complete observed 7-day pattern; and
+- **14-day cumulative forecast:** repeat that same observed 7-day pattern twice and sum the resulting 14 values, which is twice the 7-day pattern sum.
+
+These definitions keep the two baselines distinct: Naive extends the latest observed demand level, while Seasonal Naive repeats the most recent weekly pattern. Both use only information available at the forecast origin and produce the approved targets directly without feeding predictions into later steps, so they remain compatible with DR-008 direct horizon-specific evaluation.
+
+### Proposed 28-day baseline extensions — approval pending
+
+The approved exact baseline definitions
+covered only 1/7/14 days. Extending the forecasting horizon does not silently
+approve these additional baseline definitions:
+
+**Naive 28-day — APPROVAL PENDING:**
+
+$$
+\widehat{Y}^{\text{Naive}}_{o,28}=28y_o
+$$
+
+**Seasonal Naive 28-day — APPROVAL PENDING:**
+
+$$
+\widehat{Y}^{\text{Seasonal Naive}}_{o,28}=4\sum_{j=0}^{6}y_{o-j}
+$$
+
+The proposed Naive baseline holds the latest observed demand level constant for
+28 days. The proposed Seasonal Naive baseline conceptually repeats the most recent
+complete historical seven-day observed demand pattern across four future weeks;
+its 28-day cumulative forecast is four times that observed weekly total. Neither
+proposal uses realised future demand or claims predictive skill.
+
+Implementation must continue to block execution of the proposed 28-day baseline
+definitions until explicit human approval. Earlier 1/7/14 definitions remain
+operational and unchanged.
+
+### Common evaluation requirements
+
+For any separately authorised baseline evaluation:
+
+- retain the SKU_ID + Warehouse_ID identity and Units_Sold demand source under DR-002;
+- use the four chronological expanding-window folds in [DR-005](DR-005-forecast-validation-design.md), with fixed origins and no updates from realised demand inside the forecast window;
+- produce direct next-day or cumulative targets under [DR-008](DR-008-multi-step-forecasting-strategy.md), with complete outcomes inside the assigned interval;
+- apply [DR-006](DR-006-forecasting-metrics-and-model-selection.md): mean WAPE across the four folds separately by horizon, supporting MAE/RMSE/Bias and fold-level evidence, with no cross-horizon composite;
+- keep final-evaluation outcomes out of fitting and all subsequent selection decisions; and
+- retain DR-013's separate primary, supportive and simple-baseline evidence roles. Naive and Seasonal Naive remain untuned; 28-day baseline execution still requires explicit approval of the proposed formulas.
+
+This record authorises no experiment execution. Protocol approval, implementation acceptance and specific run authorisation remain separate human gates.
+
+## Historical original decision body
+
+> The content below is retained verbatim as historical provenance and is non-operative where superseded by DR-013.
+
+<details>
+<summary>Show superseded historical DR-007 body</summary>
+
+# DR-007 — Forecasting Model Set
+
 > **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
@@ -146,3 +243,5 @@ Rejected. Model selection must follow DR-006 evidence, not an assumption that mo
 - Model training must compare all approved roles under the same validation and metric policies.
 - No candidate may be called best before out-of-sample results exist.
 - No model training, hyperparameter choice, dependency addition, or metric result is introduced by this decision.
+
+</details>

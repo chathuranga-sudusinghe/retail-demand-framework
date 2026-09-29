@@ -19,8 +19,7 @@ No previous model scores were used to choose or justify this revision.
 - Training starts January 1, 2024 in every fold. See revised DR-005 for dates.
 - Existing horizon-specific WAPE selection and supporting MAE, RMSE and Bias;
   arithmetic means across four folds, with no averaging across horizons.
-- Existing model families and bounded hyperparameter grids remain unchanged.
-  The [authoritative feature contract](forecasting-feature-engineering.md) freezes two categorical context and twelve numerical engineered predictors, fourteen conceptual predictors in the same order for all models/horizons, with 28 complete consecutive history days. Ridge/Random Forest use 67 physical columns; LightGBM uses 14 inputs, preserving equivalent underlying information. No search dimension or extra feature is approved.
+- Issue #66 records the owner-approved primary controlled comparison of XGBoost, LightGBM and CatBoost in [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md); Ridge/Random Forest are supportive references only. The [feature contract](forecasting-feature-engineering.md) retains its fourteen conceptual predictors, numerical definitions/order and complete 28-day history. Primary models share full one-hot SKU/warehouse inputs plus the twelve unscaled numerical predictors (67 columns under full training coverage). The matched primary grid searches learning rate, boosting iterations, maximum depth and row fraction; no extra feature or model-specific search dimension is approved.
 
 Three folds were feasible: April high demand, July decline and October low demand.
 Four folds were preferred because November–early December adds recovery evidence:
@@ -60,15 +59,17 @@ The following remain separate:
 - DR-012 group approval and **component-owner/human approval for 28-day downstream use**;
 - uncertainty, human-review rules, numerical replenishment and final integration contracts.
 
-Current source still implements the historical feature catalogue; no current model/experiment/evaluation/metrics source modules are present. Their replacement is future implementation work, not authorised experiment execution. Model fitting, tuning, validation scoring, ablation and final evaluation remain **NOT authorised**. Every later run requires specific human authorisation under AGENTS.md. No experiment or test was run for this documentation alignment.
+Issue #62 is merged through PR #64 and implements the frozen features, targets, revised fold utilities and earlier preprocessing contract. Model/metrics/runner modules remain absent. The preprocessor supports only Ridge/Random Forest/native-categorical LightGBM; Issue #66 requires later common primary encoding and XGBoost/CatBoost interfaces/tests after design approval. No source/tests/dependencies change here. Model fitting, tuning, validation scoring, ablation and final evaluation remain **NOT authorised**. Every later run requires specific human authorisation under AGENTS.md.
+
+[Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains pending alignment with the revised Issue #66 research design. Its protocol remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**. Protocol approval and experiment execution remain separately gated; Gate 1 is incomplete. Its prior draft must later be aligned, including artifact schemas and the runtime recipe, and its previous four unresolved items reassessed.
 
 ## Computational scope
 
-Unchanged grids contain 41 learned configurations per horizon: 5 Ridge, 12 Random
-Forest and 24 LightGBM. Four horizons × four folds gives **656 learned fits**;
-fixed baselines would add **32 evaluations** after 28-day baseline approval.
-These are planned counts, not executed results. Three folds × four horizons would
-require 492 learned fits and 24 baseline evaluations but omit recovery validation.
+The primary matched grid has 24 configurations per model × horizon. **24 × 3 primary models × 4 horizons × 4 folds = 1,152 planned primary validation fits**. These are planned workload counts, not executed results. The supportive Ridge Regression / Random Forest configuration policy remains unresolved and requires separate human approval. Historical 5/12 configuration grids are not automatically reused. Supportive fits and later final refits are excluded from 1,152.
+
+Simple baselines remain untuned: 2 baseline roles × 3 currently defined horizons × 4 folds = 24 evaluations. Both 28-day definitions need explicit approval before a fourth horizon adds 8, giving 32 baseline evaluations. No baseline is silently removed or redefined.
+
+**Earlier planning provenance:** the former Ridge/Random Forest/LightGBM search had 5/12/24 configurations, 41 configurations per horizon and 656 planned fits over four horizons/folds (492 for three horizons). DR-010 retains that superseded planning unchanged; those counts are not the current primary workload.
 
 ## Audit classification of intentionally retained references
 
@@ -82,6 +83,8 @@ require 492 learned fits and 24 baseline evaluations but omit recovery validatio
   where labelled as provenance. DR-007's 1/7/14 baseline definitions remain valid.
 - The archived [Issue #52 protocol](issue-52-forecasting-protocol.md) and ignored local `outputs/issue-52-validation/comparison.md` preserve their original bodies beneath historical notices. Its metadata, candidate metrics, selected configurations/predictions, eligibility records and artifact audit belong to that earlier run, not the revised study. No historical score selects the current feature contract or model.
 - There is no tracked Issue #52 comparison report under `reports/`, and the historical reproduction command references absent `src/forecasting/experiment.py`. The run metadata records Git HEAD `ec1296ecebeae359222036c93b4dd482fe977e23` and source fingerprints; reproducing it would require the matching historical source snapshot and separate authorisation. Compiled caches are not that source archive.
-- Feature-review Options A/B/C are superseded historical proposals. The old thirteen-column source catalogue remains an implementation gap until the frozen feature pipeline is implemented; it is not an active research alternative.
+- Feature-review Options A/B/C and the earlier thirteen-column catalogue are superseded historical proposals. Issue #62 implemented the frozen conceptual features; its native LightGBM preprocessing is now an alignment gap for Issue #66, not an active primary representation alternative.
+- DR-007/009/010 bodies retain earlier learned roles, single-boosting selection, unequal grids, representation and workload beneath explicit DR-013 supersession notices. Retained Naive/Seasonal Naive definitions and 28-day approval boundaries are still in force.
+- Issue #62 source/tests preserve the accepted earlier model/representation contract; their native categorical references are intentional implementation evidence awaiting a separate alignment task.
 - DR-001/002 and DR-003's explicitly historical body retain independent decision meanings; active data dictionaries, literature applicability and workflow summaries now link the frozen contract. Git/workflow governance remains unchanged. A 14-day supplier
   limit or rolling window is not an obsolete 14-day maximum forecast horizon.

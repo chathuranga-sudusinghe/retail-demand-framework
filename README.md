@@ -1,5 +1,7 @@
 # Retail Demand Framework
 
+> **Issue #66 revision — 2026-09-29:** [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Gate 1 is incomplete; execution is not authorised.
+
 > **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). Implementation acceptance, the revised executable protocol, proposed 28-day baselines and downstream methods remain separately gated. Experiment execution is NOT authorised. See [revision and provenance](docs/forecasting-methodology-revision.md).
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
@@ -32,9 +34,17 @@ To investigate how data-driven demand forecasting can be integrated with invento
 ## Supporting research questions
 
 - **RQ1:** What demand patterns can be identified from historical SKU-level sales data?
-- **RQ2:** Which forecasting methods are suitable for predicting future product demand?
+- **RQ2:** Under the same forecasting inputs, temporal validation design, evaluation metrics, and matched hyperparameter settings, how do XGBoost, LightGBM, and CatBoost compare in forecasting future retail demand?
 - **RQ3:** How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
 - **RQ4:** How can uncertainty, transparency, governance, and human oversight guide the responsible use of the resulting decision-support outputs?
+
+## RQ2-specific hypothesis
+
+**H0_RQ2:** Under the matched experimental conditions, XGBoost, LightGBM, and CatBoost show comparable demand-forecasting performance across the evaluated horizons.
+
+**H1_RQ2:** Under the matched experimental conditions, demand-forecasting performance differs among XGBoost, LightGBM, and CatBoost across the evaluated horizons.
+
+These are comparative research hypotheses, not statistical-significance hypotheses. Interpret RQ2 descriptively and comparatively for each horizon: compare arithmetic mean WAPE across the four temporal folds, inspect all four fold-level results, and discuss magnitude, direction, fold consistency and supporting MAE, RMSE and Bias. Clearly defined relative differences may also be reported. No significance procedure or universal numerical decision threshold is approved; the folds are not independent experimental replicates. A small aggregate difference driven mainly by one fold is not strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold or create a cross-horizon composite/overall winner; report any horizon-dependent model ordering. See [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md).
 
 ## Primary group-level hypothesis
 
@@ -68,15 +78,52 @@ Dewmi
 Integrated COMP1884 decision-support framework
 ```
 
-## Team
+## Multi-Model Forecasting Design
 
-| Member | COMP1884 focus |
-|---|---|
-| Chathuranga Indrajith Sudusinghe | Model training, model selection, demand forecasting and evaluation |
-| Didilani Prasadika Weerawickrama Pathinayaka | Inventory-risk analytics, replenishment analysis, visual analytics and business interpretation |
-| Haputhanthrige Dewmi Pramodya | Responsible decision support, ethical/legal/governance analysis |
+The forecasting component uses a multi-model design with three primary gradient-boosting models, two supportive machine-learning benchmarks, and two simple forecasting baselines.
 
-See the group contribution files under `docs/team/`.
+```text
+Primary controlled RQ2 comparison
+├── XGBoost
+├── LightGBM
+└── CatBoost
+
+Supportive benchmarks
+├── Ridge Regression
+└── Random Forest
+
+Simple baselines
+├── Naive
+└── Seasonal Naive
+```
+
+**Primary controlled comparison:** XGBoost, LightGBM and CatBoost share forecasting inputs, physical representation, eligible rows, horizons, temporal folds, evaluation metrics, matched hyperparameter dimensions/values, configuration count, search procedure and seed policy. Within each fold/horizon, they share fitted SKU and warehouse vocabularies and physical column order: full one-hot identities followed by the same twelve unscaled numerical engineered predictors, giving 67 columns under full 50-SKU / 5-warehouse training coverage.
+
+The design retains fourteen conceptual predictors, fixed-origin 1/7/14/28-day forecasts and four expanding-window folds. Each primary model has 24 configurations per horizon, with seed 42: **1,152 planned primary validation fits**, not executed results. [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the controlled comparison and hyperparameter search; the [feature contract](docs/forecasting-feature-engineering.md) and [research design](docs/research-design.md) document feature engineering, temporal validation and reproducibility controls for future experimentation.
+
+**Supportive benchmarks:** Ridge Regression and Random Forest provide contextual evidence only and do not determine RQ2. Their configuration policy remains unresolved and requires separate human approval. **Simple baselines:** Naive and Seasonal Naive retain their approved 1/7/14-day formulas; proposed 28-day extensions remain approval-pending. WAPE remains the primary forecasting evaluation metric; MAE, RMSE and Bias are supporting metrics. Protocol approval, implementation acceptance and experiment execution remain separately gated.
+
+## Team Contributions
+
+This is one integrated group research project. Each member leads a defined area
+while contributing to the shared end-to-end decision-support framework.
+
+### Chathuranga Sudusinghe — Forecasting & Research Lead
+- Leads the forecasting research workstream and model-comparison methodology.
+- Contributes to feature and horizon design, temporal validation, hyperparameter evaluation, model selection, reproducibility, and forecast-output generation.
+- Coordinates integration of the forecasting component with the wider group framework.
+
+### Didilani Pathinayaka — Inventory Risk & Replenishment Analysis
+- Leads the inventory-risk and replenishment analysis workstream.
+- Contributes to combining forecast outputs with inventory level, reorder point, supplier lead time, and replenishment information.
+- Supports business-oriented interpretation of inventory-risk and replenishment outputs.
+
+### Dewmi Haputhanthrige — Responsible Decision Support
+- Leads the responsible decision-support and governance workstream.
+- Contributes to transparency, limitations, human oversight, and management-facing interpretation.
+- Supports responsible use of forecasting and inventory-risk outputs within the integrated framework.
+
+See [Chathuranga's](docs/team/chathuranga/group-project-overview.md), [Didilani's](docs/team/didilani/group-project-overview.md) and [Dewmi's](docs/team/dewmi/group-project-overview.md) contribution documents for component boundaries and integration responsibilities. Detailed contribution documents describe component boundaries, collaboration responsibilities, and research decisions.
 
 ## Dataset
 
@@ -123,6 +170,8 @@ See [Dataset Contract](docs/dataset.md), [DR-001 — Dataset Selection](docs/dec
 - [Research design](docs/research-design.md)
 - [Frozen forecasting feature contract](docs/forecasting-feature-engineering.md)
 - [Forecasting methodology and provenance](docs/forecasting-methodology-revision.md)
+- [Issue #65 — protocol alignment pending](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65)
+- [DR-013 — Matched Gradient-Boosting Comparison](docs/decisions/DR-013-matched-gradient-boosting-comparison.md)
 - [Dataset contract](docs/dataset.md)
 - [Project boundaries](docs/project-boundaries.md)
 - [Literature review](docs/literature/literature-review.md)
@@ -167,4 +216,4 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 ## Status
 
-**Research foundation and forecasting feature contract documented.** The current learned models are Ridge Regression, Random Forest Regressor and LightGBM Regressor. Features, revised chronological folds and WAPE-led metrics are settled; feature/preprocessing implementation and its tests remain to be aligned. Proposed 28-day baseline formulas, the revised executable experiment protocol, uncertainty, DR-012 inventory methodology, replenishment quantities and human-review rules retain separate approval boundaries. No experiment execution is authorised.
+**Research design revised under Issue #66.** XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, folds and WAPE-led metrics remain unchanged. The primary models use common full one-hot inputs and a matched 24-configuration grid. Issue #62 is merged for the earlier preprocessing contract; a separate implementation-alignment task is required after design review. The [protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**. Issue #65 Gate 1 is incomplete; baseline, runtime, supportive-policy and downstream approvals remain separate.

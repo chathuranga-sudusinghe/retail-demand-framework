@@ -86,7 +86,7 @@ Not included in the current approved scope because it would add another methodol
 - Direct forecasting requires horizon-specific targets and model outputs.
 - A cumulative 7-day, 14-day or 28-day prediction does not by itself provide the daily path within that horizon.
 - Separate horizon models or outputs can differ in their selected candidate or error behaviour.
-- The strategy itself did not resolve those independent choices. DR-009/010 settled LightGBM and the bounded grids; the frozen feature contract settles predictor membership. Uncertainty and formal demand-condition definitions remain open.
+- The strategy itself did not resolve those independent choices. DR-009/010 historically settled a single LightGBM candidate and unequal grids; [DR-013](DR-013-matched-gradient-boosting-comparison.md) now defines the primary matched boosting comparison. The frozen feature contract retains predictor membership; runtime and supportive configuration decisions remain pending. Uncertainty and formal demand-condition definitions remain open.
 - The decision is specific to this project's horizons and downstream planning quantities; downstream 28-day use remains separately gated.
 
 ## Impact

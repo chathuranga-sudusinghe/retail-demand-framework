@@ -1,5 +1,7 @@
 # Research Design
 
+> **Issue #66 revision — 2026-09-29:** [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Gate 1 is incomplete; execution is not authorised.
+
 > **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and [frozen feature contract](forecasting-feature-engineering.md). This alignment records that human instruction, not new experiment evidence or separate supervisor approval. [Revision and provenance](forecasting-methodology-revision.md) records remaining approval boundaries.
 
 ## 1. Purpose
@@ -21,6 +23,28 @@ Demand forecasting does not significantly improve inventory-risk identification 
 Demand forecasting significantly improves inventory-risk identification and supply-chain decision support.
 
 This is the primary hypothesis for the integrated group research. Its baseline, measurable inventory-risk outcome(s), decision-support outcome(s), and statistical testing must be operationally defined before final hypothesis testing.
+
+## 2.2 RQ2 — matched gradient-boosting comparison
+
+**Under the same forecasting inputs, temporal validation design, evaluation metrics, and matched hyperparameter settings, how do XGBoost, LightGBM, and CatBoost compare in forecasting future retail demand?**
+
+### H0_RQ2
+
+Under the matched experimental conditions, XGBoost, LightGBM, and CatBoost show comparable demand-forecasting performance across the evaluated horizons.
+
+### H1_RQ2
+
+Under the matched experimental conditions, demand-forecasting performance differs among XGBoost, LightGBM, and CatBoost across the evaluated horizons.
+
+These are comparative research hypotheses, not statistical-significance hypotheses, and remain subordinate to the unchanged primary group-level H0/H1.
+
+RQ2 evidence is interpreted descriptively and comparatively, separately for each horizon. WAPE remains the primary comparison metric: compare arithmetic mean WAPE across the four temporal folds, retain and inspect all four fold-level WAPE results, and use MAE, RMSE and Bias as supporting metrics. Report the magnitude and direction of performance differences; relative differences may also be reported when clearly defined. Examine whether observed differences are reasonably consistent across folds.
+
+No statistical-significance procedure is approved for RQ2. The four temporal folds are not treated as independent experimental replicates. No universal numerical threshold is predeclared for a "meaningful difference". A small aggregate difference driven primarily by one fold must not be presented as strong evidence of a general performance difference. Discuss magnitude, direction, fold consistency and supporting metrics rather than mechanically accepting or rejecting H0_RQ2 using an arbitrary threshold.
+
+Do not average or rank performance across horizons into a single composite. Model ordering may differ by horizon; report those differences rather than collapsing them into an overall winner.
+
+[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved revised direction. The [protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains a draft for human approval; this revision does not complete Issue #65 Gate 1 or authorise execution.
 
 ## 3. Source and analytical unit
 
@@ -76,7 +100,7 @@ Feature engineering converts the approved SKU-warehouse-day demand history into 
 
 ### 6.1 Frozen predictor contract
 
-The [authoritative feature specification](forecasting-feature-engineering.md) freezes exactly **14 conceptual predictors: two categorical context predictors and twelve engineered numerical predictors**, in the same order for Ridge Regression, Random Forest Regressor and LightGBM Regressor across horizons 1/7/14/28.
+The [authoritative feature specification](forecasting-feature-engineering.md) freezes exactly **14 conceptual predictors: two categorical context predictors and twelve engineered numerical predictors**, in the same order for the primary XGBoost, LightGBM and CatBoost models and supportive Ridge/Random Forest benchmarks across horizons 1/7/14/28.
 
 - Context: `SKU_ID`, `Warehouse_ID`.
 - Calendar: `dow_sin`, `dow_cos`, derived from the first target day, origin + 1.
@@ -88,7 +112,7 @@ The whole vector requires **28 complete consecutive daily observations per SKU�
 
 ### 6.2 Representation and raw-field boundaries
 
-Ridge and Random Forest use full one-hot SKU/warehouse encoding: 50 + 5 + 12 = **67 physical columns**. LightGBM uses two native categorical identities plus the twelve numerical features = **14 physical inputs**. Every learned model receives the same fourteen conceptual predictors and equivalent underlying information; fair comparison does not require identical matrix width. IDs are nominal categories, never continuous measurements.
+Within each fold/horizon, the primary XGBoost, LightGBM and CatBoost models use the same fitted SKU category vocabulary, the same fitted warehouse category vocabulary and the same physical feature column order: full one-hot SKU_ID, full one-hot Warehouse_ID (all fitted levels retained), followed by the same twelve unscaled numerical engineered predictors. Under full 50-SKU / 5-warehouse training coverage, this gives 50 + 5 + 12 = **67 physical columns**. Native categorical handling is excluded from the primary comparison. Supportive Ridge/Random Forest may reuse this encoding; only Ridge standardises numerical predictors. Category vocabularies are fitted only on eligible training rows. IDs are nominal categories, never continuous measurements.
 
 `Date` supplies alignment/calendar construction; `Units_Sold` supplies past demand and outcome labels. The eleven other raw fields are excluded from the forecasting predictor matrix, including promotion, price and inventory variables. They may retain descriptive or downstream roles. A human-readable weekday label may be derived downstream; it is not a predictor.
 
@@ -127,23 +151,30 @@ Earlier predictions are not fed into later horizon predictions. The 7-, 14- and 
 
 ## 8. Forecasting approach
 
-[DR-007 — Forecasting Model Set](decisions/DR-007-forecasting-model-set.md) approves the following candidates to compare increasing levels of modelling complexity:
+[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) supersedes the primary learned-model roles in DR-007, the single-boosting choice in DR-009 and the primary grids in DR-010. Their earlier bodies remain historical provenance.
 
-| Role | Model | Purpose |
-| --- | --- | --- |
-| Simple baseline | Naive | Test whether more complex models improve on a simple recent-demand benchmark. |
-| Seasonal baseline | Seasonal Naive using lag 7 | Test whether repeating weekly demand provides a useful benchmark. |
-| Linear ML baseline | Ridge Regression | Provide a regularised linear baseline for relationships between engineered features and demand. |
-| Tree-based ML | Random Forest | Capture non-linear relationships and feature interactions. |
-| Gradient-boosting ML | LightGBM | Provide a stronger boosted-tree candidate for comparison with simpler models. |
+| Evidence role | Models | Purpose |
+|---|---|---|
+| Primary controlled RQ2 comparison | XGBoost Regressor, LightGBM Regressor, CatBoost Regressor | Compare boosting implementations under matched external settings. |
+| Supportive benchmarks | Ridge Regression, Random Forest Regressor | Linear and non-linear contextual reference evidence; excluded from determining the RQ2 answer. |
+| Simple forecast baselines | Naive, Seasonal Naive (period 7) | Retain DR-007's exact 1/7/14-day definitions and separate approval of proposed 28-day extensions. |
 
-[DR-009 — Gradient-Boosting Model Choice](decisions/DR-009-gradient-boosting-model-choice.md) selects LightGBM as the single gradient-boosting implementation. The choice controls overlapping dependency and tuning scope for this project; it does not claim that LightGBM is universally better than XGBoost or that it will outperform another candidate. Every candidate must use the same DR-005 validation folds, DR-008 direct targets, and DR-006 evaluation policy.
+The primary models share the dataset, Units_Sold target, SKU-warehouse-day grain, frozen predictor information and physical representation, eligible training/evaluation rows, horizons, four folds, metrics, canonical grid, search procedure and fixed seed 42. The principal experimental variable is the gradient-boosting implementation. Equal external settings do not imply identical internal tree-growing algorithms, model capacity, sampling draws or parameter effects. No model is presumed superior.
 
-### 8.1 Hyperparameter-search strategy
+### 8.1 Matched primary search
 
-[DR-010 — Forecasting Hyperparameter-Search Strategy](decisions/DR-010-hyperparameter-search-strategy.md) defines small, predefined search spaces for Ridge Regression, Random Forest, and LightGBM. Naive and Seasonal Naive remain untuned baselines. Each learned model is tuned separately for the 1-day, 7-day, 14-day, and 28-day horizons by evaluating every approved parameter combination on the same four DR-005 expanding-window folds. Mean WAPE across folds is the primary tuning statistic under DR-006; fold-level stability, MAE, RMSE, and Bias must also be reviewed.
+| Canonical parameter | Values |
+|---|---|
+| learning_rate | [0.03, 0.05, 0.10] |
+| boosting_iterations | [100, 300] |
+| max_depth | [4, 8] |
+| subsample | [0.8, 1.0] |
 
-Search spaces must not be changed ad hoc in response to disappointing validation results. Any revision requires a documented reason and approval before rerunning. Selected settings are frozen before evaluation on the revised final evaluation interval, and results from that interval must never inform tuning or search-space changes. DR-005 records its boundaries and prior-validation-exposure provenance. Ordinary random K-fold cross-validation is not permitted because it would break temporal order.
+There are **24 configurations per primary model × horizon**, enumerated in deterministic Cartesian-product order. Four horizons × three models × 24 configurations × four folds = **1,152 planned primary validation fits**; this is workload planning, not executed evidence. Seed 42 is fixed and mapped to each API. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) specifies canonical configuration identities, API mappings, documented subsampling-enabling controls and pending runtime approvals. [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Record canonical and effective library parameters separately. No additional tuning dimension is approved.
+
+Each configuration uses the same four chronological folds. Mean fold WAPE is primary; fold stability and MAE/RMSE/Bias must also be reviewed separately by horizon. Search spaces must not adapt to results, and the final interval cannot inform selection. No random K-fold or cross-horizon composite is permitted.
+
+The supportive Ridge Regression / Random Forest configuration policy remains unresolved and requires separate human approval. Historical 5/12 configuration grids are not automatically reused. Naive/Seasonal Naive remain untuned. Issue #62 implements the earlier preprocessing contract; revised primary representation and model APIs require a later implementation task after human review.
 
 ## 9. Validation design
 

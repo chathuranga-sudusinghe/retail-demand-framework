@@ -73,7 +73,7 @@ The [authoritative feature contract](forecasting-feature-engineering.md) disting
 
 Exclusion does not make these fields useless to the project. Origin-aligned inventory, reorder point, lead time and order activity may support downstream analysis under its separately approved methods; other fields may support descriptive/business interpretation. The zero-variance stockout field remains a limitation, and source forecasts require separate leakage-safe benchmark approval.
 
-All learned models use two categorical context and twelve engineered predictors (fourteen conceptual predictors), with complete 28-day history. Ridge/Random Forest encode those as 67 columns; LightGBM uses 14 inputs. The forecast target is next-day demand or direct cumulative 7/14/28-day demand from one fixed origin.
+All learned models use two categorical context and twelve engineered predictors (fourteen conceptual predictors), with complete 28-day history. Under [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md), primary XGBoost/LightGBM/CatBoost share full one-hot SKU/warehouse inputs followed by the same twelve unscaled numerical predictors, giving 67 columns under full eligible-training category coverage. Supportive Ridge/Random Forest may reuse this encoding; only Ridge scales numerical predictors. The forecast target is next-day demand or direct cumulative 7/14/28-day demand from one fixed origin.
 
 ### 3.2 Primary modelling identifiers and target
 

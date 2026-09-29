@@ -60,7 +60,7 @@ Recent work also reinforces the importance of promotions. Hewage, Perera and Ban
 
 ### Implication for this project
 
-The following comparison is literature background, not a current instruction to add statistical or other models. The current learned set is Ridge Regression, Random Forest Regressor and LightGBM Regressor, with separately governed baselines:
+The following comparison is literature background, not a current instruction to add statistical or other models. [DR-013](../decisions/DR-013-matched-gradient-boosting-comparison.md) defines the current primary controlled RQ2 comparison as XGBoost, LightGBM and CatBoost; Ridge/Random Forest are supportive contextual benchmarks, with separately governed Naive/Seasonal Naive baselines:
 
 ```text
 simple benchmark
@@ -175,9 +175,9 @@ This is an MSc-level applied contribution rather than a claim of new forecasting
 
 Supported by literature on retail-demand heterogeneity, temporal behaviour, promotion effects, and SKU-level forecasting. Temporal and inventory-alignment profiling has now been completed, and DR-002 selects SKU-warehouse-day as the primary analytical unit. Lag and rolling definitions are frozen in the [feature contract](../forecasting-feature-engineering.md); formal demand-regime definitions remain open.
 
-### RQ2 — Which forecasting methods are suitable for predicting future product demand?
+### RQ2 — Under the same forecasting inputs, temporal validation design, evaluation metrics, and matched hyperparameter settings, how do XGBoost, LightGBM, and CatBoost compare in forecasting future retail demand?
 
-Supported by comparative retail-forecasting, validation, and forecast-accuracy literature. Suitability must be determined through time-aware out-of-sample evidence rather than complexity alone.
+Comparative forecasting, time-aware validation, and forecast-accuracy literature support the general evaluation approach. The project-specific RQ2 design then compares XGBoost, LightGBM and CatBoost under the same predictor representation, matched grid, folds and metrics. Equal external settings do not make the internal algorithms identical. WAPE is primary, with MAE, RMSE and Bias supporting. Only the primary three determine RQ2; supportive benchmarks provide context. The subordinate RQ2 hypotheses are comparative research hypotheses. Evidence is interpreted descriptively by horizon using arithmetic mean WAPE and all four fold-level WAPE results, with MAE, RMSE and Bias supporting. Report magnitude, direction and fold consistency; clearly defined relative differences may also be reported. No statistical-significance procedure or universal numerical decision threshold is approved, and the folds are not independent experimental replicates. A small aggregate difference driven mainly by one fold is not strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold or collapse horizon-dependent model ordering into a composite/overall winner.
 
 ### RQ3 — How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
 
@@ -194,15 +194,17 @@ Supported by XAI and human-centred decision-support literature. The project shou
 - **Primary analytical unit:** SKU-warehouse-day, recorded in DR-002.
 - **Primary forecasting target:** `Units_Sold` at `SKU_ID + Warehouse_ID + Date` grain.
 - **Stockout label limitation:** `Stockout_Flag` is zero-variance and cannot support supervised stockout classification or validation.
-- **Learned models:** Ridge Regression, Random Forest Regressor and LightGBM Regressor (DR-007/009).
+- **Primary RQ2 models:** XGBoost, LightGBM and CatBoost; Ridge/Random Forest are supportive benchmarks only (DR-013). DR-007/009 learned-role decisions remain provenance; baseline provisions are retained.
 - **Features:** the [frozen fourteen-predictor contract](../forecasting-feature-engineering.md), including two categorical identities, twelve numerical features and 28-day minimum history; promotion and additional predictors are excluded.
 - **Targets and evaluation:** direct 1/7/14/28-day targets, four fixed-origin 28-day validation windows and December 3–30 final evaluation at origin December 2 (DR-004/005/008). Prior December 3–16 validation and full-year EDA exposure must be disclosed; the final interval is reserved from subsequent selection/fitting, not fully unseen historically.
 - **Metrics:** WAPE primary; MAE/RMSE/Bias supporting, Bias = forecast − actual; four-fold arithmetic means separately by horizon, without a cross-horizon composite (DR-006).
-- **Search:** bounded grids in DR-010; neither this review nor the feature freeze authorises execution.
+- **Primary search:** DR-013 matched four-dimensional grid, 24 configurations per model × horizon, seed 42 and 1,152 planned primary fits; DR-010 unequal grids remain provenance. Neither this review nor the feature freeze authorises execution.
+
+- **RQ2 hypotheses and interpretation:** comparative research hypotheses with descriptive, horizon-specific interpretation of magnitude, direction, fold consistency and supporting metrics; no significance procedure or universal numerical decision threshold (DR-013).
 
 ### Still open
 
-- implementation/test acceptance and the revised executable experiment protocol;
+- revised primary representation/model implementation alignment after accepted Issue #62, complete fixed runtime/version recipe, supportive configuration policy and Issue #65 protocol freeze;
 - explicit approval of proposed 28-day baseline formulas;
 - DR-012 group approval and separate 28-day downstream use;
 - demand-regime definitions and statistical tests;

@@ -80,7 +80,7 @@ The [final feature contract](../forecasting-feature-engineering.md) is frozen fo
 
 ## Original open items and subsequent decisions
 
-At the original September 22 horizon decision, the following items were not finalised. DR-005 records the approved revised validation details; DR-006 defines the metrics, DR-007/009 the model families and DR-008 the direct strategy. The feature contract is frozen; proposed 28-day baseline formulas and uncertainty retain separate approval requirements. This list is retained as original decision provenance:
+At the original September 22 horizon decision, the following items were not finalised. DR-005 records the approved revised validation details; DR-006 defines the metrics, [DR-013](DR-013-matched-gradient-boosting-comparison.md) supersedes DR-007/009 learned-model roles, and DR-008 defines the direct strategy. The feature contract is frozen; proposed 28-day baseline formulas and uncertainty retain separate approval requirements. This list is retained as original decision provenance:
 
 - recursive versus direct multi-step forecasting;
 - exact lag set;

@@ -4,6 +4,7 @@
 
 **Prepared:** 2026-09-28
 **Feature freeze:** 2026-09-29
+**Representation revision:** Issue #66, 2026-09-29; see [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md)
 
 **Component owner:** Chathuranga
 
@@ -23,11 +24,11 @@ The original Issue #57 feature-freeze task changed this document only. The Septe
 ## Human-reviewed feature contract
 
 Use the same ordered 14 conceptual predictors, definitions and 28-day minimum
-history for Ridge Regression, Random Forest and LightGBM, across all four
+history for primary XGBoost, LightGBM and CatBoost and supportive Ridge/Random Forest, across all four
 forecast horizons: 1, 7, 14 and 28 days. The contract contains categorical
 SKU_ID and Warehouse_ID plus the twelve accepted numerical engineered features.
 Section 3 contains the authoritative contract and encoding policy. Physical
-encoded column counts differ by algorithm; conceptual membership does not.
+representation is shared by the primary models under Issue #66; conceptual membership and formulas are unchanged.
 There are no model-specific or horizon-specific predictor substitutions.
 
 The target remains Units_Sold at SKU_ID + Warehouse_ID + Date. The 7/14/28-day
@@ -58,9 +59,8 @@ A/B/C are superseded; none is a current alternative to the frozen list.
 | Direct context predictors | 2 — `SKU_ID`, `Warehouse_ID` |
 | Engineered predictors | 12 |
 | Total conceptual model predictors | 14 |
-| Ridge physical input columns | 67 |
-| Random Forest physical input columns | 67 |
-| LightGBM input features | 14 |
+| Primary XGBoost / LightGBM / CatBoost physical columns | 67 each under full training-category coverage |
+| Supportive Ridge / Random Forest physical columns | 67 each under full training-category coverage |
 | Minimum predictor history | 28 complete consecutive days per SKU–warehouse |
 | Experiment execution | Not authorised |
 
@@ -68,7 +68,7 @@ A/B/C are superseded; none is a current alternative to the frozen list.
 
 The final contract contains the following **14 conceptual model predictors**:
 two direct context predictors followed by twelve numerical engineered predictors.
-Ridge, Random Forest and LightGBM receive this same underlying information for
+All three primary models and both supportive benchmarks receive this same underlying information for
 horizons 1, 7, 14 and 28 days.
 
 1. `SKU_ID`
@@ -96,10 +96,7 @@ model predictors. `Date` is an alignment/calendar source, not a direct predictor
 target-day or future `Units_Sold` is never part of the predictor vector.
 
 The conceptual predictor count is exactly **14 = 2 + 12**, not 15 + 12.
-The physical encoded count is algorithm-dependent: Ridge and Random Forest have
-67 columns after full one-hot encoding; LightGBM has 14 input features with native
-categorical handling. Ridge does not have 67 conceptually different research
-features. This pipeline description does not authorise experiment execution.
+The primary models use the same full one-hot representation: 67 physical columns under full eligible-training category coverage, representing fourteen conceptual predictors. Supportive Ridge/Random Forest may reuse it, with numerical scaling only for Ridge. This pipeline description does not authorise experiment execution.
 
 ## Contents
 
@@ -262,7 +259,7 @@ the order shown in [Final model feature vector](#final-model-feature-vector).
 It contains two context/identity predictors and twelve engineered predictors,
 and is frozen for feature/preprocessing pipeline implementation.
 
-Ridge Regression, Random Forest and LightGBM use this same feature order and
+Primary XGBoost, LightGBM and CatBoost and supportive Ridge/Random Forest use this same feature order and
 the same definitions for horizons 1/7/14/28. At one origin, the input vector is
 shared across horizon models; cumulative labels differ by horizon. SKU_ID and
 Warehouse_ID enter the predictor matrix through the categorical representations
@@ -271,82 +268,34 @@ have construction/alignment/target roles only, not direct predictor membership.
 
 The calendar is the first target day, t=o+1. Historical inputs end at o.
 Preprocessing that learns statistics must fit only eligible training rows;
-model-specific encoding must preserve conceptual membership and information.
+encoding must preserve conceptual membership and information, with identical physical representation across the three primary models.
 Record stable physical column order and category mappings for each fitted pipeline.
 No feature ablation, extra interaction, alternative window or feature-search
 dimension is authorised by this contract.
 
 ### 3.1 Categorical encoding and physical feature counts
 
-The final conceptual predictor count is **14 for all three learned models**.
-SKU_ID and Warehouse_ID are categorical predictors. LightGBM can consume these
-two variables directly as native categorical features. Ridge and Random Forest
-do not use that same native categorical representation in this pipeline, so
-both identities are one-hot encoded for those models, keeping all category
-levels (`drop=None`).
+[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) revises physical representation for the primary controlled RQ2 comparison. The Issue #57 conceptual feature membership, order and numerical definitions remain frozen. XGBoost, LightGBM and CatBoost all use full one-hot SKU_ID and Warehouse_ID encoding with all eligible-training category levels retained (`drop=None`), followed by the same twelve numerical predictors. Do not use native categorical handling in the primary LightGBM or CatBoost model.
 
-The dataset contains 50 SKU categories and five warehouse categories. Therefore:
-
-- **Ridge:** 50 SKU one-hot columns + 5 warehouse one-hot columns + 12 engineered
-  numerical features = **67 physical input columns**.
-- **Random Forest:** 50 SKU one-hot columns + 5 warehouse one-hot columns + 12
-  engineered numerical features = **67 physical input columns**.
-- **LightGBM:** 2 native categorical predictors + 12 engineered numerical
-  features = **14 physical input features**.
-
-| Model | Conceptual predictors | Categorical representation | Physical input columns |
+| Evidence role / model | Conceptual predictors | Encoding | Physical columns with full training coverage |
 |---|---:|---|---:|
-| Ridge | 14 | One-hot SKU_ID + Warehouse_ID | 67 |
-| Random Forest | 14 | One-hot SKU_ID + Warehouse_ID | 67 |
-| LightGBM | 14 | Native categorical SKU_ID + Warehouse_ID | 14 |
+| Primary XGBoost | 14 | Full one-hot SKU_ID + Warehouse_ID, then numerical predictors | 67 |
+| Primary LightGBM | 14 | Same full one-hot representation | 67 |
+| Primary CatBoost | 14 | Same full one-hot representation | 67 |
+| Supportive Ridge | 14 | Full one-hot identities, numerical scaling only | 67 |
+| Supportive Random Forest | 14 | Full one-hot identities, unscaled numerical inputs | 67 |
 
-The 67 physical columns used by Ridge and Random Forest do **not** represent 67
-different conceptual research features. They are an encoded representation of
-the same 14 conceptual predictors.
+Expected full-coverage width is 50 SKU + 5 warehouse + 12 numerical = **67**, representing fourteen conceptual predictors. Fit category vocabularies only on the same eligible training rows for each fold/horizon. Use lexical category ordering, SKU columns before warehouse columns, followed by the frozen numerical order. Share those mappings/order across the primary models; do not infer category levels from validation or final-evaluation data. Smaller training coverage yields `n_SKU + n_warehouse + 12` columns consistently across primary models, rather than fabricating future categories. Record coverage and actual width. Unknown prediction identities raise under the accepted Issue #62 policy; no all-zero fallback or silent population exclusion is approved.
 
-SKU_ID and Warehouse_ID are nominal categories. Do not use their labels or
-integer codes as continuous measurements. Fit category vocabularies and any
-learned preprocessing only on the relevant training fold, keep category mappings
-stable for prediction, and record the resulting physical feature names/order.
+IDs are nominal categories, never continuous measurements. Primary tree inputs and supportive Random Forest numerical inputs are unscaled. Ridge standardises only the twelve numerical predictors using eligible-training means and population standard deviations (`ddof=0`, constant-column scale 1); identity indicators remain 0/1. This scaler convention does not change the engineered demand-window sample standard deviations (`ddof=1`). A model intercept is not an extra input column. No target encoding, interaction ID or additional engineered feature is accepted.
 
-Ridge scales only the twelve numerical engineered features using eligible
-training-fold statistics; its identity indicators stay 0/1. Random Forest uses
-the same full one-hot representation with no numerical scaling. LightGBM uses
-stable category mappings and explicit categorical handling, with no numerical
-scaling; category codes are labels, not continuous measurements.
+**Earlier representation provenance:** Issue #57 and the accepted Issue #62 implementation used 67 one-hot columns for Ridge/Random Forest and 14 native categorical/numerical inputs for LightGBM. That earlier primary representation is superseded by Issue #66; its source/tests remain unchanged until a separately reviewed alignment task.
 
-Confirm category coverage among eligible training observations when implementing
-each fold; do not learn mappings from future validation/final-evaluation rows.
-A model intercept is not an additional predictor column. No target encoding,
-interaction ID or additional engineered feature is accepted.
+### 3.2 Controlled model comparison
 
-### 3.2 Fair model comparison
+The primary models share the same predictor information and physical encoding, origins, eligible observations, target definitions, temporal folds, complete history rules, metrics, matched four-dimensional grid and seed policy. All learned preprocessing uses eligible training rows only.
 
-The difference in physical input counts does **not** make the model comparison
-unfair. All three learned models receive the same underlying predictor information:
-
-- SKU identity;
-- warehouse identity; and
-- the same twelve engineered numerical predictors.
-
-They also use the same:
-
-- forecast origins;
-- eligible observations;
-- target definitions;
-- temporal folds; and
-- feature-history rules.
-
-Preprocessing is fitted only from each training fold. The physical column count
-differs only because the algorithms use different categorical representations in
-this pipeline. Fair comparison requires **equivalent underlying information,
-not identical physical matrix width**.
-
-Equivalent information does not imply identical model capacity: Ridge learns
-additive product/warehouse adjustments, while tree models can learn interactions.
-Random Forest feature subsampling operates over its encoded physical columns;
-the revised executable protocol must document that representation without
-silently changing the approved hyperparameter search.
+The principal experimental variable is the gradient-boosting implementation. Equal external settings do not make internal tree-growing algorithms, capacities, parameter effects or sampling draws identical. Supportive Ridge/Random Forest provide contextual evidence only; their model-appropriate scaling and separately pending configuration policy do not determine RQ2. Random Forest column-sampling settings must be recorded if its supportive configuration is approved; no tuning dimension is added here.
 
 ## 4. How engineered features are constructed
 
@@ -866,10 +815,10 @@ Using the same synthetic `1..28` history as Section 4.8:
    rules; historical lagging alone does not establish availability.
 8. Keep source forecasts, future inventory, actual cumulative labels, forecast
    errors and retrospective threshold crossings out of prospective predictors.
-9. Enforce exactly the ordered conceptual list in Section 3 for Ridge Regression,
-   Random Forest and LightGBM at every horizon, using its model-specific categorical
-   representations. Different physical counts do not permit different underlying
-   predictors. Membership changes require separate human review.
+9. Enforce exactly the ordered conceptual list in Section 3 for the primary
+   XGBoost/LightGBM/CatBoost models and supportive Ridge/Random Forest at every
+   horizon. Primary models share full one-hot inputs. Membership or representation
+   changes require separate human review.
 10. Reserve the revised December 3–30, 2024 final evaluation interval from all
     subsequent feature, model and hyperparameter selection decisions and fitting.
     December 3–16 had prior validation exposure under the earlier 14-day design,
@@ -900,8 +849,9 @@ tests or experiment commands. This documentation task runs none of them:
 - Verify both identities enter each model's predictor representation, with all
   category levels retained in one-hot matrices, stable mappings, training-only
   numerical scaling for Ridge and equivalent eligible rows across models.
-- With all current categories present, expected physical counts are 67 for Ridge,
-  67 for Random Forest and 14 for LightGBM; the conceptual count remains 14.
+- With full eligible-training category coverage, expected physical counts are
+  67 for each primary model and supportive benchmark; the conceptual count remains 14.
+  Primary matrices must have identical values/order and numerical scaling must stay off.
 - Derive weekday phase directly from Date; no weekday_name predictor is included.
 
 ## 5. Retained-feature rationale
@@ -1157,7 +1107,7 @@ the feature/preprocessing pipeline. This document update implements neither pipe
 |---|---|
 | Final feature contract | Human-reviewed and frozen under the Issue #57 feature-freeze decision |
 | Feature/preprocessing-pipeline implementation | Authorised by the feature freeze; not performed by this documentation task |
-| Source/test acceptance | Requires human review of the implementation against this contract |
+| Source/test acceptance | Issue #62 accepted the earlier contract; revised primary encoding/API alignment requires separate implementation and review |
 | Model training or fitting | Not authorised |
 | Hyperparameter tuning or validation scoring | Not authorised |
 | Feature ablation | Not authorised |
@@ -1182,28 +1132,20 @@ selection and fitting, with prior validation/EDA exposure disclosed.
 
 ### 9.1 Current source and tests
 
-| File | Current observed behaviour | Required alignment after this freeze |
+Issue #62 is merged (PR #64) and implements the Issue #57 conceptual feature contract and earlier preprocessing representation. It does not implement the Issue #66 primary comparison.
+
+| File | Current observed behaviour | Later alignment boundary |
 |---|---|---|
-| src/forecasting/features.py | Historical 13-engineered-column catalogue plus keys; past-only grouped shifts, full windows, sample std and history_end masking | Implement the twelve accepted engineered calculations; retain categorical SKU_ID/Warehouse_ID for Section 3's fourteen conceptual predictors and subsequent approved preprocessing; remove excluded predictor outputs |
-| src/forecasting/targets.py | Complete direct cumulative labels for horizons 1/7/14/28, separated from predictors and bounded by outcome intervals | Preserve meanings, grouping and boundaries; never include target columns in the feature vector |
-| tests/test_forecasting_features.py | Existing synthetic feature, cutoff, target and revised interval checks | Align with the accepted contract; cover new formulas, 28-day windows, missing history, conceptual order, identity inclusion, encoded counts/mappings, training-only preprocessing and crossed SKU/warehouse isolation |
+| src/forecasting/features.py | Twelve frozen numerical calculations plus two context identities; 28-day completeness, fixed-origin masking and ordered conceptual vector | Preserve formulas/order and origin-only history; no new feature is required |
+| src/forecasting/targets.py | Complete direct 1/7/14/28 labels separated from predictors and bounded by outcome intervals | Preserve targets, grouping and date boundaries |
+| src/forecasting/validation.py | Four revised folds and revised final interval; no fitting/scoring | Preserve dates and final-evaluation protection |
+| src/forecasting/preprocessing.py | ridge/random_forest/lightgbm interfaces; full one-hot Ridge/Random Forest, native categorical LightGBM; training-only vocabularies and unknown-ID rejection | Add common unscaled one-hot primary representation and XGBoost/CatBoost interfaces after design approval |
+| tests/test_forecasting_features.py | Synthetic formula, completeness, order, isolation, origin, target and boundary coverage for Issue #62 | Preserve numerical/temporal contract coverage; no estimator fitting authorised here |
+| tests/test_forecasting_preprocessing.py | Synthetic representation, mapping, scaling, training-only fitting, unknown-ID and origin-reuse checks for earlier Issue #62 contract | Later add identical primary-matrix coverage and update the earlier native LightGBM representation assertions |
 
-The source still builds raw weekday/month/quarter, lag_28 and medians. They are
-historical implementation facts, not current accepted predictors. The new
-weekday pair, 28-day mean/std and slope are not implemented by this document.
-The approved categorical preprocessing is also not implemented here. Identity
-columns currently returned as keys must explicitly enter the model representation;
-their presence in a keyed output alone does not prove predictor inclusion.
-No test was executed for this edit, and test inspection does not establish
-forecast usefulness.
+These tests do not establish forecasting accuracy or acceptance of revised model execution. Issue #66 edits documentation only and runs static checks; no source/test/dependency changes, estimator fitting or experiments occur.
 
-For a historical target row t, predictors use dates through t-1 and its label
-uses t,...,t+h-1. For a forecast at fixed origin o, construct/select the input
-row t=o+1 with history_end=o and reuse its accepted fourteen conceptual predictors
-across all four horizons, with the model-specific encodings in Section 3.1.
-Never advance inputs with actual demand inside the forecast
-window. Training labels must end by their fitting cutoff; learned preprocessing
-fits only eligible training data.
+For historical first-target row t, predictors end at t-1 and labels cover t,...,t+h-1. At fixed origin o, use t=o+1 with history_end=o and reuse the same conceptual and primary physical vector across all horizons. Training outcomes must be complete by their fitting cutoff. The later caller must check labels before fitting preprocessing; the feature-only preprocessor does not verify outcome values. See [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) for model roles and [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) for the pending protocol.
 
 ### 9.2 Completed companion-document alignment and provenance
 
@@ -1211,7 +1153,7 @@ The September 29 documentation/provenance alignment has been completed and human
 
 The archived Issue #52 protocol retains its original thirteen-feature methodology; its local artifacts and missing historical runner are documented in the central record. It must not be rerun or relabelled as evidence for this contract. A separately reviewed revised executable protocol is required.
 
-Keep the existing features.py module name. Implement the accepted calculations in reusable source, not only notebooks; no rename or duplicate pipeline is required. Source/tests remain unchanged by this documentation cleanup. Implementation and eventual human acceptance must precede any separately authorised experiment.
+Issue #62 subsequently implemented the accepted calculations in reusable source under the existing module names. Source/tests remain unchanged by Issue #66. After design approval, a separate task must align primary preprocessing/model interfaces and tests; Issue #65 must align its preserved protocol draft. No experiment execution follows automatically.
 
 ## Appendix A — Detailed mathematical notation and date alignment
 
