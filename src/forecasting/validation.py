@@ -1,4 +1,4 @@
-"""DR-005 calendar boundaries and explicit raw-demand fold slicing.
+"""Revised DR-005 28-day boundaries and explicit raw-demand fold slicing.
 
 No features, horizon labels, fitting or scoring are generated here.
 """
@@ -27,15 +27,19 @@ class ValidationFold:
 
 VALIDATION_FOLDS = (
     ValidationFold(1, DateWindow(date(2024, 1, 1), date(2024, 3, 31)),
-                   DateWindow(date(2024, 4, 1), date(2024, 4, 14))),
+                   DateWindow(date(2024, 4, 1), date(2024, 4, 28))),
     ValidationFold(2, DateWindow(date(2024, 1, 1), date(2024, 6, 30)),
-                   DateWindow(date(2024, 7, 1), date(2024, 7, 14))),
+                   DateWindow(date(2024, 7, 1), date(2024, 7, 28))),
     ValidationFold(3, DateWindow(date(2024, 1, 1), date(2024, 9, 30)),
-                   DateWindow(date(2024, 10, 1), date(2024, 10, 14))),
-    ValidationFold(4, DateWindow(date(2024, 1, 1), date(2024, 12, 2)),
-                   DateWindow(date(2024, 12, 3), date(2024, 12, 16))),
+                   DateWindow(date(2024, 10, 1), date(2024, 10, 28))),
+    ValidationFold(4, DateWindow(date(2024, 1, 1), date(2024, 11, 4)),
+                   DateWindow(date(2024, 11, 5), date(2024, 12, 2))),
 )
-FINAL_HOLDOUT = DateWindow(date(2024, 12, 17), date(2024, 12, 30))
+# FINAL_HOLDOUT is a legacy identifier temporarily retained for compatibility
+# pending downstream implementation review. It represents the revised final
+# evaluation interval, reserved from subsequent fitting/selection. It is not fully
+# unseen historically because December 3–16 had prior validation exposure.
+FINAL_HOLDOUT = DateWindow(date(2024, 12, 3), date(2024, 12, 30))
 
 
 def split_fold(data: pd.DataFrame, fold_number: int) -> tuple[pd.DataFrame, pd.DataFrame]:

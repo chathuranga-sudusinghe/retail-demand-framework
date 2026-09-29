@@ -9,7 +9,7 @@ from src.forecasting.features import (
     KEY_COLUMNS, SERIES_COLUMNS, TARGET_COLUMN, calendar_date, prepare_demand,
 )
 
-FORECAST_HORIZONS = (1, 7, 14)
+FORECAST_HORIZONS = (1, 7, 14, 28)
 TARGET_COLUMNS = tuple(f"target_{h}_day" for h in FORECAST_HORIZONS)
 
 
@@ -21,15 +21,16 @@ def build_horizon_targets(
 
     Date is the FIRST forecast date, not the last known/history date. For an
     origin cutoff o, select the row Date=o+1: target_1_day is Units_Sold(o+1),
-    target_7_day sums o+1..o+7, and target_14_day sums o+1..o+14.
-    Thus target_1_day at Date=t is the approved daily target Units_Sold(t).
+    target_7_day sums o+1..o+7, target_14_day sums o+1..o+14,
+    and target_28_day sums o+1..o+28 (four weeks, not a calendar month).
+    Thus target_1_day at Date=t is the daily target Units_Sold(t).
 
     Both outcome bounds are mandatory and inclusive. Labels require the entire
     horizon inside that interval and nonmissing outcomes on every day. Missing
     or boundary-crossing labels remain NaN, including all rows outside it.
     Row count/grain are preserved. These are actual labels only: generating
-    them does not approve direct training, recursive prediction or a scoring
-    policy. Never join these future outcomes into the feature set.
+    them does not authorise experiment execution or selection. Never join these
+    future outcomes into the feature set.
     """
     start, end = calendar_date(window_start), calendar_date(window_end)
     if start > end:
