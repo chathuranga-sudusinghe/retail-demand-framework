@@ -1,5 +1,7 @@
 # Demand exploratory data analysis
 
+> **Historical EDA provenance — notice added 2026-09-29:** The descriptive results and original methodology wording below are preserved from the earlier research stage; they do not define the current feature set, horizons or experiment authority. References to 1/7/14-day horizons, an unselected lag set or an untouched holdout are historical. The current [frozen feature contract](../docs/forecasting-feature-engineering.md) and [methodology/provenance record](../docs/forecasting-methodology-revision.md) govern forecasting. Final evaluation is December 3–30, 2024, origin December 2, reserved from subsequent selection/fitting but not fully unseen historically: December 3–16 had prior validation exposure and full-year EDA inspected the interval. No results were regenerated or tests/experiments executed for this notice.
+
 **Scope:** Local simulated supply-chain data; `Units_Sold` at `Date + SKU_ID + Warehouse_ID`. No model training, final feature engineering, validation folds or new research decisions.
 
 ## Reproduction and provenance

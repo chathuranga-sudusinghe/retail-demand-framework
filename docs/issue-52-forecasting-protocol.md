@@ -3,6 +3,8 @@
 > **Historical Issue #52 evidence — earlier 1/7/14-day methodology.** The protocol/results below retain their original feature set, 14-day windows and boundaries. They are not the official baseline or results for the revised study. December 3–16 had prior validation exposure; the revised December 3–30 final interval is reserved from subsequent selection, not fully unseen historically. Further execution of this archived protocol is not authorised. Any future forecasting experiment must use a separately reviewed revised protocol after the required feature freeze and other methodology approvals. See [revision and provenance](forecasting-methodology-revision.md).
 
 
+> **Source/artifact provenance — 2026-09-29:** This body records the original experiment only. The current feature contract is frozen; further execution remains NOT authorised. Its ignored artifacts are under `outputs/issue-52-validation/`, with no tracked comparison report under `reports/`. The reproduction command below references a historical runner absent from the current checkout. Metadata records the original Git HEAD and source fingerprints; reproduction would require that matching source snapshot and separate human authorisation. Compiled caches are not a source archive. See [current approval and provenance](forecasting-methodology-revision.md).
+
 ## Authority and scope
 
 The user explicitly approved this implementation protocol on 2026-09-28,

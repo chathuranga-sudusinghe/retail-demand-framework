@@ -1,11 +1,12 @@
 # DR-010 — Forecasting Hyperparameter-Search Strategy
 
-> **DR-010 revision — 2026-09-28:** The bounded hyperparameter grids remain unchanged. The human-selected revised direction extends their application to four horizons; the revised methodology remains under human review. This documentation revision authorises no hyperparameter search or training. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-23
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
-**Revision status:** Under human review
+**Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
+**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
 **Owner:** Chathuranga
 **Related issue:** [#44 — Research: define forecasting hyperparameter-search strategy](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/44)
 **Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
@@ -65,7 +66,7 @@ These deliberately modest spaces bound the initial search to 41 learned-model co
 
 ## Revised workload and provenance
 
-The earlier three-horizon/four-fold protocol planned 492 learned fits and 24 baseline evaluations. The revised direction plans 4 horizons × 4 folds × 41 configurations = 656 learned fits. The planned 2 baseline roles × 4 horizons × 4 folds = 32 baseline evaluations apply only if/after both proposed 28-day baseline definitions receive explicit human approval. These are planned workload counts, not executed experiment results. The 41 configurations per horizon and all grids remain unchanged. No training or hyperparameter search may be executed until the final feature set and revised executable forecasting protocol have completed human review and approval. No experiment is authorised by this documentation revision.
+The earlier three-horizon/four-fold protocol planned 492 learned fits and 24 baseline evaluations. The revised direction plans 4 horizons × 4 folds × 41 configurations = 656 learned fits. The planned 2 baseline roles × 4 horizons × 4 folds = 32 baseline evaluations apply only if/after both proposed 28-day baseline definitions receive explicit human approval. These are planned workload counts, not executed experiment results. The 41 configurations per horizon and all grids remain unchanged. The feature set is frozen. No training or search may run until implementation/tests and the revised executable protocol are accepted and the specific run is authorised. No experiment is authorised by this documentation revision.
 
 ## Search procedure
 
@@ -101,6 +102,10 @@ The implementation must record, in machine-readable outputs where practical:
 - the selection rationale, including any fold-stability or supporting-metric concern.
 
 The same preprocessing, feature availability, target construction, metric implementation, and fold boundaries must be used consistently when comparing settings for a model and horizon.
+
+## Frozen representation and comparison inputs
+
+Use the [authoritative fourteen-predictor contract](../forecasting-feature-engineering.md): Ridge/Random Forest use 67 physical columns and LightGBM uses 14 native categorical/numerical inputs. All receive equivalent information and the same origin, eligible population and targets within each horizon. Fit preprocessing only on eligible training rows; record conceptual/physical order and category mappings. Representation does not change the approved grids or approve feature search. The revised executable protocol must document estimator settings, including any encoded-column subsampling behaviour, without silently changing the grid.
 
 ## Search-space changes
 

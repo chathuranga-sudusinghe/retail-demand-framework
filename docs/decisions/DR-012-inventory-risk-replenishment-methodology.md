@@ -1,6 +1,6 @@
 # DR-012 — Inventory-Risk and Replenishment Methodology
 
-> **DR-012 compatibility review — 2026-09-28:** DR-012 remains Proposed for group approval. Its original proposed inventory methodology covers 1/7/14-day forecast inputs. The revised forecasting methodology under human review introduces a proposed 28-day cumulative input; 28-day inventory/replenishment use remains separately pending component-owner/human approval. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Date:** 2026-09-28
 **Status:** Proposed for group approval; implementation and the open decisions below remain pending.
@@ -85,7 +85,7 @@ Missing or invalid information required for an output makes that output unavaila
 
 ### 4. Horizons and supplier lead time
 
-The original proposed inventory scope covers 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand. Revised forecasting DR-004 / DR-008 introduces a proposed 28-day cumulative input under human review; that inventory extension is not approved by this record. Do not combine horizons into one score or treat the cumulative totals as daily forecast paths.
+The original proposed inventory scope covers 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand. Current forecasting DR-004 / DR-008 includes an approved upstream 28-day cumulative input; that inventory extension is not approved by this record. Do not combine horizons into one score or treat the cumulative totals as daily forecast paths.
 
 Retain origin-available `Supplier_Lead_Time_Days` as contextual evidence only. Describe each horizon as shorter than, equal to, or longer than that lead time. Do not round lead time to a horizon, interpolate a daily path, or claim an exact lead-time-demand forecast. Unavailable lead-time context must be marked explicitly; it is not a term in the exposure formula.
 
@@ -159,7 +159,7 @@ Keep retrospective labels and errors distinguishable from information available 
 
 - [DR-002](DR-002-forecasting-analytical-unit.md), [DR-004](DR-004-forecast-horizons.md) and [DR-008](DR-008-multi-step-forecasting-strategy.md): native grain, horizon meanings and direct forecasts.
 - [DR-005](DR-005-forecast-validation-design.md) and [DR-006](DR-006-forecasting-metrics-and-model-selection.md): temporal evaluation and forecasting-selection boundaries.
-- [Issue #52](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/52): project forecasting implementation and reproducible prediction evidence; this DR does not add inventory implementation to that issue.
+- [Issue #52](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/52): historical forecasting protocol/artifacts only, not current implementation or final evidence. Downstream integration requires separately reviewed predictions from the revised frozen-contract pipeline/protocol; this DR does not authorise forecasting or inventory experiments.
 - [Shared data workflow](../workflows/shared-data-foundation.md): snapshot availability, within-day interpretation and final input/output contracts before integration.
 - [DR-011](DR-011-decision-support-output-structure.md) and [Issue #54](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/54): responsible output structure and evaluation-design work; neither supplies an approved uncertainty method or review threshold.
 - Later cross-component decisions: the primary forecast-to-decision study (A), limited robustness analysis (C), and responsible human-review analysis (D).
@@ -183,8 +183,7 @@ Results may describe agreement with the constructed retrospective proxy, missed 
 
 ## 28-day compatibility review — downstream approval pending
 
-The revised forecasting methodology under human review introduces a proposed
-direct cumulative 28-day quantity. Algebraically, the
+The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended

@@ -1,6 +1,6 @@
 # Shared Data Foundation Workflow
 
-> **Shared-data revision — 2026-09-28:** The human-selected revised forecasting direction remains under repository-wide human review. The shared-data contract is being prepared to represent 1/7/14/28-day forecast outputs; interface support does not approve downstream use. Final feature freeze and proposed 28-day baseline definitions remain pending. Downstream 28-day inventory/decision-support use requires separate component-owner/human approval. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The human-approved forecast interface covers 1/7/14/28 days and the [frozen feature contract](../forecasting-feature-engineering.md). Interface support does not approve downstream use. Proposed 28-day baselines and downstream/component-owner approvals remain separate; experiments are NOT authorised. See [revision and provenance](../forecasting-methodology-revision.md).
 
 ## Goal
 
@@ -47,7 +47,7 @@ The following foundation decisions/checks are complete:
 4. `Stockout_Flag` is zero-variance and excluded from predictive/validation use as a stockout label;
 5. source `Demand_Forecast` is leakage-sensitive and excluded from ordinary forecasting use;
 6. warehouse-level inventory alignment has been profiled;
-7. [DR-005](../decisions/DR-005-forecast-validation-design.md) fixes the expanding-window validation schedule and separate final holdout.
+7. [DR-005](../decisions/DR-005-forecast-validation-design.md) fixes the four expanding 28-day windows and December 3–30 final evaluation at origin December 2, reserved from subsequent selection/fitting with prior December 3–16 validation and full-year EDA exposure disclosed.
 
 Pending group approval, [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md) proposes origin-available inventory and policy snapshots for origin reorder-threshold exposure, with fixed origin policy and a no-receipt scenario.
 
@@ -55,8 +55,8 @@ Pending group approval, [DR-012](../decisions/DR-012-inventory-risk-replenishmen
 
 1. define handling of any invalid records discovered by the reproducible pipeline;
 2. define missing-period handling if future processed views introduce gaps;
-3. define product/history eligibility if any exclusion is required;
-4. define whether and how `Promotion_Flag` is available at prediction time;
+3. implement the frozen 28-complete-day predictor history and complete-target eligibility without inventing extra product exclusions or imputation;
+4. retain `Promotion_Flag` as descriptive context, excluded from the frozen forecasting inputs; any later predictor use requires a separate contract revision;
 5. document source snapshot within-day semantics and resolve availability/invalid-input handling under DR-012's origin timing contract;
 6. finalise the forecasting-to-inventory output contract;
 7. finalise the inventory-to-decision-support output contract.
@@ -69,7 +69,7 @@ All shared cleaning, validation, alignment, and aggregation logic must live in c
 
 ### Forecast-to-inventory timing
 
-The shared forecast interface is intended to represent next-day and cumulative 7-, 14- and proposed 28-day forecast quantities under the revised forecasting direction. Retain `SKU_ID`, `Warehouse_ID`, forecast origin `t` and horizon `h` separately, with the explicit target interval `t+1` through `t+h`, inclusive. A target-start date must not be mistaken for the origin date.
+The approved shared forecast interface represents next-day and direct cumulative 7-, 14- and 28-day quantities from one fixed origin. Retain `SKU_ID`, `Warehouse_ID`, forecast origin `t` and horizon `h` separately, with the explicit target interval `t+1` through `t+h`, inclusive. A target-start date must not be mistaken for the origin date.
 
 DR-012 remains Proposed for group approval; its original downstream scope covers 1/7/14-day forecast inputs. Carrying an `h=28` record through the shared-data schema does not approve 28-day inventory interpretation or the longer no-receipt scenario. **28-day downstream use requires separate component-owner/human approval.** The following inventory timing and scenario requirements remain subject to DR-012 group approval.
 
@@ -81,7 +81,9 @@ Keep realised cumulative `Units_Sold`, retrospective exposure states and errors 
 
 ### Data views
 
-Forecasting view, at minimum:
+The model-ready matrix follows the linked fourteen-predictor contract; other raw columns retained in shared/downstream views do not become forecasting predictors.
+
+Historical demand view, at minimum (construction/alignment, not the predictor matrix):
 
 ```text
 SKU_ID

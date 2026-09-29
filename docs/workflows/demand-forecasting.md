@@ -1,6 +1,6 @@
 # Demand Forecasting Workflow
 
-> **Workflow revision — 2026-09-28:** The forecasting workflow is being revised to a human-selected 1/7/14/28-day direction; the revised methodology remains under repository-wide human review. The final feature set, proposed 28-day baseline definitions and revised executable protocol remain pending. No experiment is authorised by this workflow revision. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The current 1/7/14/28-day forecasting design and [fourteen-predictor contract](../forecasting-feature-engineering.md) are human-approved. Implementation acceptance, proposed 28-day baselines and the revised executable protocol remain separate. Experiments are NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 ## Owner
 
@@ -75,54 +75,15 @@ The first profiling stage has already established complete 365-day SKU-warehouse
 - demand sparsity;
 - SKU heterogeneity.
 
-## Feature-engineering baseline
+## Frozen feature/preprocessing contract
 
-DR-003 documents the initial feature catalogue; the revised full experimental set is not frozen. Human calendar direction replaces integer weekday, prefers paired sine/cosine for 1 day, drops month/quarter and defers annual encodings/dummies. See `docs/forecasting-feature-engineering.md`; no final list is selected here.
+Follow the [authoritative ordered contract](../forecasting-feature-engineering.md): two categorical identities (`SKU_ID`, `Warehouse_ID`) plus twelve numerical features comprising paired weekday encoding, lags 1/7/14, complete 7/14/28-day mean/sample-standard-deviation summaries and the fourteen-day slope. No model-specific or horizon-specific feature substitutions are approved.
 
-### Calendar
+Require 28 complete consecutive demand observations per SKU–warehouse, ending at the forecast origin. Calendar features refer to origin + 1. Fit learned preprocessing only on eligible training rows; complete training targets must end by the fitting cutoff. At evaluation, reuse one origin's vector across horizons without realised-demand updates.
 
-Historical implemented calendar candidates (not the revised final set):
+Ridge scales only the twelve numerical features and fully one-hot encodes both identities; Random Forest uses the same unscaled one-hot representation. Each has 67 physical columns with all 50 SKU and five warehouse categories present. LightGBM uses explicit native categorical handling and twelve unscaled numerical features, totalling 14 inputs. All have fourteen conceptual predictors and equivalent underlying information; comparison also shares origins, eligible observations, targets and folds.
 
-- `day_of_week`;
-- `month`;
-- `quarter`.
-
-`week_of_year` is excluded from the primary feature set because the dataset contains only one year of observations and therefore does not provide repeated year-over-year evidence for numbered-week effects.
-
-### Lagged demand
-
-Candidate lag features include:
-
-- `lag_1`;
-- `lag_7`;
-- `lag_14`;
-- `lag_28`.
-
-The final lag set requires human review and freeze before experiments; previous scores do not choose it.
-
-### Rolling demand
-
-Initial approved rolling windows:
-
-- 7 days;
-- 14 days.
-
-The new 28-day forecast horizon does not approve a new historical rolling window.
-
-Candidate statistics for each window:
-
-- rolling mean;
-- rolling median;
-- rolling standard deviation.
-
-The current target value must never be included in its own rolling feature.
-
-### Other candidates
-
-- recent growth / decline indicator — calculation still open;
-- `Promotion_Flag` — treatment still open and must be known at prediction origin if used.
-
-No additional composite forecasting feature formed from inventory, cost, price, or replenishment variables is currently approved.
+`Date` and `Units_Sold` serve construction/alignment/target roles. All other raw fields are excluded forecasting inputs, while retaining appropriate descriptive/downstream roles. The contract lists excluded calendar, lag, median and composite alternatives. DR-003 and Issue #52 describe superseded historical catalogues, not active candidates.
 
 ## Approved candidate model set
 
@@ -156,7 +117,7 @@ Do not average results across horizons into one tuning score. Ordinary random K-
 
 ## Forecast horizons
 
-Under the revised forecasting direction currently under human review, the intended decision-support horizons are:
+The approved forecasting horizons are:
 
 - **1 day** — next-day demand;
 - **7 days** — cumulative demand over the next week;
@@ -165,7 +126,7 @@ Under the revised forecasting direction currently under human review, the intend
 
 These horizons do not change the daily analytical grain. Forecast outputs retain `SKU_ID` and `Warehouse_ID`; the 7-day, 14-day and 28-day outputs are cumulative-demand targets aligned to their forecast origin.
 
-All four forecast horizons are distinct from the 7-day and 14-day rolling **feature windows**:
+All four forecast horizons are distinct from the independently approved 7-, 14- and 28-day rolling **feature windows**:
 
 - rolling window = how much historical demand is summarised as an input feature;
 - forecast horizon = how far into the future demand is predicted.
@@ -236,7 +197,7 @@ unavailable, not zero, shortened labels or reasons to borrow later dates.
 A 28-day feature warm-up is feasible even in the initial 91-day history. With a
 complete 28-day look-back and horizon h, eligibility is N − 28 − h + 1 rows per
 series before other exclusions: 63/57/50/36 for h=1/7/14/28 in fold 1. This is
-feasibility, not a guarantee of model adequacy; the final feature set remains open.
+feasibility, not a guarantee of model adequacy. The frozen feature contract requires this complete 28-day history for every learned model and horizon.
 
 ### Final-evaluation provenance and protection
 
@@ -270,7 +231,10 @@ At minimum:
 ```text
 SKU_ID
 Warehouse_ID
-period
+forecast_origin
+target_start_date
+target_end_date
+forecast_horizon
 actual_demand
 forecast_demand
 error
@@ -278,7 +242,7 @@ absolute_error
 model_id
 ```
 
-Where possible, also include forecast uncertainty or prediction-interval fields.
+Where supported by a separately approved method, include uncertainty fields. Actual demand and errors are retrospective evaluation evidence, kept separate from prospective forecasts and downstream review inputs; Bias/error uses forecast − actual. Final schema names/types remain subject to the cross-component contract.
 
 ## Approved metric and model-selection policy
 
@@ -307,9 +271,6 @@ Didilani does not retrain or repeat the demand-forecasting task. Her component c
 
 ## Issue #52 provenance and experiment stop point
 
-The earlier [Issue #52 protocol](../issue-52-forecasting-protocol.md) and report
-retain their original 1/7/14-day, 14-day-window and 13-feature provenance. They are
-not the revised research baseline. Final feature freeze, proposed 28-day baseline
-approval and a reviewed revised executable protocol are pending. The runner is
-blocked; no further experiment command is authorised here. The owner must approve
-and manually execute any later run under AGENTS.md after code/protocol review.
+The earlier [Issue #52 protocol](../issue-52-forecasting-protocol.md) and ignored local artifacts retain their original 1/7/14-day, fourteen-day-window and thirteen-feature provenance. They are not the revised research baseline; [the central record](../forecasting-methodology-revision.md) documents artifact locations and the absent historical runner.
+
+The final feature contract is frozen. Proposed 28-day baselines, implementation/test acceptance and the revised executable protocol remain separately gated. There is no current experiment runner source. No further experiment command is authorised; the owner must approve any later run under AGENTS.md after code/protocol review.

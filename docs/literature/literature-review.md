@@ -3,7 +3,8 @@
 **Project:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis  
 **Module:** COMP1884 Group Project, MSc Data Science, University of Greenwich  
 **Status:** Working literature-review baseline for group review  
-**Last updated:** 2026-09-22
+**Original literature baseline:** 2026-09-22
+**Current methodology alignment:** 2026-09-29; literature background and original study findings are preserved.
 
 ## 1. Purpose and scope
 
@@ -16,7 +17,7 @@ historical demand
     -> responsible management-facing decision support
 ```
 
-The review is not intended to justify a pre-selected model. Instead, it identifies evidence that can guide methodological decisions. Since this baseline review was created, dataset profiling and DR-002 have fixed the primary analytical unit as SKU-warehouse-day. The exact model set, inventory-risk formula, replenishment logic, uncertainty treatment, and human-review rules remain open and must be operationally justified before they are fixed.
+The review is not intended to justify a pre-selected model. Instead, it identifies evidence that can guide methodological decisions. Since this baseline review was created, dataset profiling and DR-002 have fixed the primary analytical unit as SKU-warehouse-day. The learned models, feature contract, horizons, chronological folds and metric policy are now settled. Inventory-risk approval, replenishment logic, uncertainty treatment and human-review rules retain separate decision boundaries; see [current methodology and provenance](../forecasting-methodology-revision.md).
 
 The review concentrates on five connected areas:
 
@@ -35,7 +36,7 @@ The selected High-Dimensional Supply Chain Inventory Dataset contains daily simu
 These characteristics constrain what the literature can legitimately support in this project.
 
 - `Units_Sold` is the project's historical demand source.
-- `Promotion_Flag` makes promotion-aware forecasting literature potentially relevant, provided the promotion state would be known at the prediction origin.
+- Promotion literature remains relevant background and descriptive context, but `Promotion_Flag` and promotion-derived predictors are excluded from the current frozen forecasting contract.
 - `Inventory_Level`, `Reorder_Point`, `Supplier_Lead_Time_Days`, and `Order_Quantity` provide a basis for downstream inventory-risk and replenishment analysis.
 - `Stockout_Flag` is constant at 0 in all 91,250 records and therefore cannot support supervised stockout classification or serve as stockout validation ground truth.
 - `Order_Quantity` is sparse, with relatively few non-zero order events, which limits direct modelling of replenishment quantities as an ordinary target.
@@ -55,11 +56,11 @@ Nasseri et al. (2023) compare tree-based ensembles with LSTM-based deep learning
 
 Feizabadi (2022) connects machine-learning-based demand forecasting to wider supply-chain performance and argues that forecasting should be considered in relation to operational outcomes rather than only statistical accuracy. This perspective is especially important to the COMP1884 architecture, where the forecast is explicitly an upstream input to inventory-risk and replenishment analysis.
 
-Recent work also reinforces the importance of promotions. Hewage, Perera and Bandara (2026) examine demand behaviour across the promotional life cycle and compare traditional and contemporary forecasting approaches. Their results show that promotions can generate demand volatility extending beyond the promotion period. The current dataset does not contain the rich promotional descriptors used in many retail studies, but its `Promotion_Flag` can still justify testing whether known promotion status adds useful, leakage-safe explanatory information.
+Recent work also reinforces the importance of promotions. Hewage, Perera and Bandara (2026) examine demand behaviour across the promotional life cycle and compare traditional and contemporary forecasting approaches. Their results show that promotions can generate demand volatility extending beyond the promotion period. The current dataset does not contain the rich promotional descriptors used in many retail studies, and its promotion comparisons remain descriptive. This literature does not authorise promotion predictors or an ablation experiment in the current study.
 
 ### Implication for this project
 
-The retail forecasting literature supports the following research direction without yet fixing an exact model set:
+The following comparison is literature background, not a current instruction to add statistical or other models. The current learned set is Ridge Regression, Random Forest Regressor and LightGBM Regressor, with separately governed baselines:
 
 ```text
 simple benchmark
@@ -79,7 +80,7 @@ These studies support the project's existing decision to avoid random train/test
 
 Forecast-error metrics also require care. Hyndman and Koehler (2006) demonstrate that commonly used percentage-based measures can behave poorly in some situations and propose scaled-error approaches for comparison across series. For the current project, this is relevant because multiple SKUs may have different demand levels and some periods may contain low or zero demand. It therefore supports the repository's cautious treatment of MAPE and the use of complementary metrics such as MAE, RMSE, WAPE, bias, and potentially a scaled error measure where appropriate.
 
-No single metric should automatically determine the selected forecasting method. RMSE gives greater weight to large errors, MAE is easier to interpret in the target's units, WAPE can provide an aggregate relative measure where the denominator is well behaved, and forecast bias can reveal systematic over- or under-forecasting. The final metric set should match the observed demand distributions and downstream decision needs.
+The literature motivates complementary error reporting; the current project policy in DR-006 uses mean validation-fold WAPE as primary, with supporting errors, Bias and stability review. No new metric or cross-horizon composite is approved by this background discussion. RMSE gives greater weight to large errors, MAE is easier to interpret in the target's units, WAPE can provide an aggregate relative measure where the denominator is well behaved, and forecast bias can reveal systematic over- or under-forecasting. The final metric set should match the observed demand distributions and downstream decision needs.
 
 ### Implication for this project
 
@@ -172,7 +173,7 @@ This is an MSc-level applied contribution rather than a claim of new forecasting
 
 ### RQ1 — What demand patterns can be identified from historical SKU-level sales data?
 
-Supported by literature on retail-demand heterogeneity, temporal behaviour, promotion effects, and SKU-level forecasting. Temporal and inventory-alignment profiling has now been completed, and DR-002 selects SKU-warehouse-day as the primary analytical unit. Lag structure and any demand-regime definitions remain open.
+Supported by literature on retail-demand heterogeneity, temporal behaviour, promotion effects, and SKU-level forecasting. Temporal and inventory-alignment profiling has now been completed, and DR-002 selects SKU-warehouse-day as the primary analytical unit. Lag and rolling definitions are frozen in the [feature contract](../forecasting-feature-engineering.md); formal demand-regime definitions remain open.
 
 ### RQ2 — Which forecasting methods are suitable for predicting future product demand?
 
@@ -188,19 +189,22 @@ Supported by XAI and human-centred decision-support literature. The project shou
 
 ## 10. Methodological decisions: resolved and still open
 
-### Resolved after literature review and dataset profiling
+### Current resolved forecasting decisions
 
 - **Primary analytical unit:** SKU-warehouse-day, recorded in DR-002.
 - **Primary forecasting target:** `Units_Sold` at `SKU_ID + Warehouse_ID + Date` grain.
 - **Stockout label limitation:** `Stockout_Flag` is zero-variance and cannot support supervised stockout classification or validation.
+- **Learned models:** Ridge Regression, Random Forest Regressor and LightGBM Regressor (DR-007/009).
+- **Features:** the [frozen fourteen-predictor contract](../forecasting-feature-engineering.md), including two categorical identities, twelve numerical features and 28-day minimum history; promotion and additional predictors are excluded.
+- **Targets and evaluation:** direct 1/7/14/28-day targets, four fixed-origin 28-day validation windows and December 3–30 final evaluation at origin December 2 (DR-004/005/008). Prior December 3–16 validation and full-year EDA exposure must be disclosed; the final interval is reserved from subsequent selection/fitting, not fully unseen historically.
+- **Metrics:** WAPE primary; MAE/RMSE/Bias supporting, Bias = forecast − actual; four-fold arithmetic means separately by horizon, without a cross-horizon composite (DR-006).
+- **Search:** bounded grids in DR-010; neither this review nor the feature freeze authorises execution.
 
 ### Still open
 
-- exact forecasting model set;
-- exact lag and rolling-window definitions;
-- whether and how `Promotion_Flag` is used;
-- exact train/validation/test dates and rolling-origin design;
-- final metric set;
+- implementation/test acceptance and the revised executable experiment protocol;
+- explicit approval of proposed 28-day baseline formulas;
+- DR-012 group approval and separate 28-day downstream use;
 - demand-regime definitions and statistical tests;
 - uncertainty representation;
 - inventory-risk / shortage-pressure / overstock formulas and thresholds;

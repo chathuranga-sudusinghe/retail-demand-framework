@@ -1,11 +1,12 @@
 # DR-004 — Forecast Horizons for Decision Support
 
-> **Horizon revision — 2026-09-28:** [Revision and provenance](../forecasting-methodology-revision.md) records the human-selected revised 1/7/14/28-day forecasting direction currently under repository-wide human review. The added 28-day horizon represents four-week / approximately monthly planning. See [DR-005](DR-005-forecast-validation-design.md) for validation-window details. No separate supervisor approval or new experiment result is claimed.
+> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the 1/7/14-day forecasting-methodology baseline
 **Revision date:** 2026-09-28
-**Revision status:** Under human review
+**Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
+**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
 **Owner:** Chathuranga  
 **Related issue:** #28
 
@@ -27,7 +28,7 @@ The verified project dataset contains `Supplier_Lead_Time_Days` values from 2 to
 
 ## Decision
 
-The original accepted decision covered 1-, 7- and 14-day horizons. The human-selected revised direction adds 28 days; the following revised set remains under repository-wide human review:
+The original September 22 decision covered 1/7/14 days. The current owner-approved design adds 28 days:
 
 - **1 day** — immediate next-day SKU-warehouse demand;
 - **7 days** — cumulative demand over the next 7 days;
@@ -73,13 +74,13 @@ All features used for each horizon must remain leakage-safe and must be based on
 
 ## Revision rationale and provenance
 
-The accepted September 22 decision approved only 1/7/14 days. On September 28, human review selected an extension to 28 days for four-week / approximately monthly planning, not an exact calendar month. This revision remains under repository-wide human review and does not imply final acceptance of the entire revised methodology. Verified supplier lead times remain 2–14 days and do not alone justify 28 days. Historical feature windows do not automatically change.
+The accepted September 22 decision approved only 1/7/14 days. On September 28, human review selected an extension to 28 days for four-week / approximately monthly planning, not an exact calendar month. The current forecasting design is human-approved; this does not approve the executable protocol, experiments or downstream methods. Verified supplier lead times remain 2–14 days and do not alone justify 28 days. Historical windows and forecast horizons remain different concepts; the separate frozen feature contract explicitly approves complete 7/14/28-day mean/std summaries.
 
-Final feature freeze remains pending. Proposed 28-day baseline definitions require separate human approval. Downstream 28-day inventory-risk use requires component-owner/human approval; no human-review rule is approved here. Uncertainty methodology remains open. The direct forecasting strategy is unchanged.
+The [final feature contract](../forecasting-feature-engineering.md) is frozen for feature/preprocessing implementation. Proposed 28-day baseline definitions require separate human approval. Downstream 28-day inventory-risk use requires component-owner/human approval; no human-review rule is approved here. Uncertainty methodology remains open. The direct forecasting strategy is unchanged.
 
 ## Original open items and subsequent decisions
 
-At the original September 22 horizon decision, the following items were not finalised. DR-005 records the revised validation details under human review; DR-006 defines the metrics, DR-007/009 the model families and DR-008 the direct strategy. Final feature freeze, proposed 28-day baselines and uncertainty remain open. This list is retained as original decision provenance:
+At the original September 22 horizon decision, the following items were not finalised. DR-005 records the approved revised validation details; DR-006 defines the metrics, DR-007/009 the model families and DR-008 the direct strategy. The feature contract is frozen; proposed 28-day baseline formulas and uncertainty retain separate approval requirements. This list is retained as original decision provenance:
 
 - recursive versus direct multi-step forecasting;
 - exact lag set;

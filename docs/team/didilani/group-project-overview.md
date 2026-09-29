@@ -1,6 +1,6 @@
 # Didilani — COMP1884 Group Project Contribution
 
-> **Component revision — 2026-09-28:** DR-012 remains Proposed for group approval. The original downstream scope covers 1/7/14-day inputs; the revised forecasting methodology under human review introduces a proposed 28-day cumulative input. Downstream 28-day inventory/replenishment interpretation still requires separate component-owner/human approval. See the [central methodology-revision record](../../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../../forecasting-methodology-revision.md).
 
 ## Member details
 
@@ -107,8 +107,7 @@ This is not a dashboard-only contribution. The visual layer communicates a subst
 
 ## 28-day compatibility review — downstream approval pending
 
-The revised forecasting direction under human review introduces a proposed
-direct cumulative 28-day quantity. Algebraically, the
+The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended
