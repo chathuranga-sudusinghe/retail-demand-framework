@@ -1,6 +1,6 @@
 """Training-only representations of the frozen Issue #57 predictor contract.
 
-Issue #62 prepares inputs only: no estimator, training loop, score or experiment.
+Issue #68 aligns representations only: no estimator, training loop, score or experiment.
 Call fit_preprocessor on historical feature rows for one training fold/horizon.
 The caller must restrict those rows to complete observed horizon labels using
 build_horizon_targets. We additionally enforce predictor completeness, the
@@ -8,27 +8,29 @@ training cutoff and the horizon's outcome-end boundary, without reading labels.
 
 Vocabularies are lexically sorted from eligible training rows only. One-hot
 models retain ALL fitted levels; smaller coverage gives len(SKUs)+len(warehouses)
-+12 physical columns rather than forcing 67 with future categories. LightGBM
-keeps unordered pandas categorical dtypes with the same frozen vocabularies.
++12 physical columns rather than forcing 67 with future categories. Primary
+XGBoost, LightGBM and CatBoost share the same unscaled full one-hot path.
 Unknown prediction identities raise: no all-zero identity block, new category,
 numeric ID interpretation or silent missing-category conversion is introduced.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
-from typing import Literal
 
 import numpy as np
 import pandas as pd
 
+from src.forecasting.configuration import (
+    PRIMARY_MODELS, SUPPORTIVE_MODELS, ModelName, PrimaryModel,
+)
 from src.forecasting.features import (
     CATEGORICAL_FEATURE_COLUMNS, CONCEPTUAL_FEATURE_COLUMNS, FEATURE_COLUMNS,
     calendar_date, feature_eligibility,
 )
 from src.forecasting.targets import FORECAST_HORIZONS
 
-ModelRepresentation = Literal["ridge", "random_forest", "lightgbm"]
+ModelRepresentation = ModelName
 
 
 def _predictors(features: pd.DataFrame) -> pd.DataFrame:
@@ -83,8 +85,6 @@ class ForecastPreprocessor:
 
     @property
     def physical_feature_names(self) -> tuple[str, ...]:
-        if self.model == "lightgbm":
-            return CONCEPTUAL_FEATURE_COLUMNS
         return (
             *(f"{column}={category}"
               for column, categories in self.category_vocabularies.items()
@@ -110,13 +110,6 @@ class ForecastPreprocessor:
         for column, categories in self.category_vocabularies.items():
             if not predictors[column].isin(categories).all():
                 raise ValueError(f"Unknown {column} category outside eligible training vocabulary.")
-        if self.model == "lightgbm":
-            for column, categories in self.category_vocabularies.items():
-                predictors[column] = pd.Categorical(
-                    predictors[column], categories=list(categories), ordered=False,
-                )
-            return predictors
-
         indicators = [
             predictors[column].eq(category).to_numpy(dtype=float)
             for column, categories in self.category_vocabularies.items()
@@ -145,8 +138,8 @@ def fit_preprocessor(
     No model is created/fitted; only category vocabularies and numerical scaling
     statistics are calculated. No additional dependency or data access is needed.
     """
-    if model not in ("ridge", "random_forest", "lightgbm"):
-        raise ValueError("model must be ridge, random_forest or lightgbm.")
+    if model not in (*PRIMARY_MODELS, *SUPPORTIVE_MODELS):
+        raise ValueError("model must be xgboost, lightgbm, catboost, ridge or random_forest.")
     if type(horizon) is not int or horizon not in FORECAST_HORIZONS:
         raise ValueError("horizon must be 1, 7, 14 or 28 days.")
     cutoff = calendar_date(training_end)
@@ -186,3 +179,20 @@ def fit_preprocessor(
         model=model, training_end=cutoff, horizon=horizon, training_row_count=len(training),
         vocabularies=vocabularies, numerical_means=means, numerical_scales=scales,
     )
+
+
+def fit_primary_preprocessors(
+    features: pd.DataFrame, *, training_end: str | date | pd.Timestamp, horizon: int,
+) -> dict[PrimaryModel, ForecastPreprocessor]:
+    """Fit one eligible-training vocabulary and share it across primary models.
+
+    All returned immutable states share the same vocabularies, numerical order,
+    cutoff and eligibility population. Transform the same rows for each model
+    to obtain identical unscaled full one-hot matrices. As with fit_preprocessor,
+    callers must first restrict fitting rows to complete observed horizon labels.
+    No prediction rows or model estimators are used to learn this state.
+    """
+    shared = fit_preprocessor(
+        features, "xgboost", training_end=training_end, horizon=horizon,
+    )
+    return {model: replace(shared, model=model) for model in PRIMARY_MODELS}

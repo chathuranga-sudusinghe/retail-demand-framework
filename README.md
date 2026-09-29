@@ -216,4 +216,6 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 ## Status
 
-**Research design revised under Issue #66.** XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, folds and WAPE-led metrics remain unchanged. The primary models use common full one-hot inputs and a matched 24-configuration grid. Issue #62 is merged for the earlier preprocessing contract; a separate implementation-alignment task is required after design review. The [protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**. Issue #65 Gate 1 is incomplete; baseline, runtime, supportive-policy and downstream approvals remain separate.
+Research design was revised and approved under Issue #66. XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, temporal folds and WAPE-led evaluation policy remain unchanged. The primary models use a common full one-hot representation and a matched 24-configuration grid.
+
+The revised forecasting experiment protocol under Issue #65 has been human-reviewed and approved. Issue #68 now aligns the implementation and tests with the approved Issue #66 / DR-013 design. Model training, hyperparameter evaluation, validation scoring and final evaluation remain separately gated and are not yet authorised.
