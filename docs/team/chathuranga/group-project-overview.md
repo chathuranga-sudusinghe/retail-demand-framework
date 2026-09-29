@@ -6,8 +6,7 @@
 
 ## Member details
 
-**Name:** Chathuranga Indrajith Sudusinghe  
-**Student ID:** 001559279
+**Name:** Chathuranga Indrajith Sudusinghe
 
 ## Role
 

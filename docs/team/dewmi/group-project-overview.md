@@ -4,8 +4,7 @@
 
 ## Member details
 
-**Name:** Haputhanthrige Dewmi Pramodya  
-**Student ID:** 001560683
+**Name:** Haputhanthrige Dewmi Pramodya
 
 ## Role
 

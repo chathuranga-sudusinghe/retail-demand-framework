@@ -105,25 +105,27 @@ The design retains fourteen conceptual predictors, fixed-origin 1/7/14/28-day fo
 
 ## Team Contributions
 
-This is one integrated group research project. Each member leads a defined area
-while contributing to the shared end-to-end decision-support framework.
+This is one integrated group research project. Each member is responsible for a defined component while contributing to the shared end-to-end decision-support framework.
 
-### Chathuranga Sudusinghe — Forecasting & Research Lead
-- Leads the forecasting research workstream and model-comparison methodology.
-- Contributes to feature and horizon design, temporal validation, hyperparameter evaluation, model selection, reproducibility, and forecast-output generation.
-- Coordinates integration of the forecasting component with the wider group framework.
+### Chathuranga Sudusinghe — Team Lead & Forecasting / Research Lead
+
+- Leads the overall group project coordination and forecasting research workstream.
+- Responsible for model-comparison methodology, temporal validation, model selection, reproducibility, and forecast-output generation.
+- Coordinates integration across the forecasting, inventory-risk, and responsible decision-support components.
 
 ### Didilani Pathinayaka — Inventory Risk & Replenishment Analysis
-- Leads the inventory-risk and replenishment analysis workstream.
-- Contributes to combining forecast outputs with inventory level, reorder point, supplier lead time, and replenishment information.
-- Supports business-oriented interpretation of inventory-risk and replenishment outputs.
+
+- Responsible for the inventory-risk and replenishment analysis workstream.
+- Develops the integration of forecast outputs with inventory level, reorder point, supplier lead time, and replenishment information.
+- Contributes business-oriented interpretation of inventory-risk and replenishment outputs.
 
 ### Dewmi Haputhanthrige — Responsible Decision Support
-- Leads the responsible decision-support and governance workstream.
-- Contributes to transparency, limitations, human oversight, and management-facing interpretation.
+
+- Responsible for the responsible decision-support and governance workstream.
+- Develops transparency, limitations, human oversight, and management-facing interpretation.
 - Supports responsible use of forecasting and inventory-risk outputs within the integrated framework.
 
-See [Chathuranga's](docs/team/chathuranga/group-project-overview.md), [Didilani's](docs/team/didilani/group-project-overview.md) and [Dewmi's](docs/team/dewmi/group-project-overview.md) contribution documents for component boundaries and integration responsibilities. Detailed contribution documents describe component boundaries, collaboration responsibilities, and research decisions.
+See [Chathuranga's](docs/team/chathuranga/group-project-overview.md), [Didilani's](docs/team/didilani/group-project-overview.md) and [Dewmi's](docs/team/dewmi/group-project-overview.md) contribution documents for component boundaries, collaboration responsibilities, and research decisions.
 
 ## Dataset
 
