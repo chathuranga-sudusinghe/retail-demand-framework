@@ -1,18 +1,19 @@
 # DR-007 — Forecasting Model Set
 
-> **DR-007 revision — 2026-09-28:** The approved model-family set remains unchanged. The revised forecasting direction adds a 28-day horizon, whose exact baseline definitions are proposed and still require explicit human approval. The repository-wide horizon revision remains under human review; see the [central methodology-revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
-**Revision status:** Under human review
+**Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
+**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
 **Owner:** Chathuranga
 **Related issue:** [#40 — Formalise forecasting model set and multi-step strategy](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/40)
 **Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
 
 ## Context
 
-DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting direction currently under repository-wide human review. DR-005 defines the common four-fold expanding-window validation schedule, and DR-006 defines WAPE as the primary selection metric with MAE, RMSE, and Bias as supporting metrics.
+DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting design approved by the project owner. DR-005 defines the common four-fold expanding-window validation schedule, and DR-006 defines WAPE as the primary selection metric with MAE, RMSE, and Bias as supporting metrics.
 
 A fixed candidate set is required before training so model families are not added or removed in response to validation or results from the revised final evaluation interval. The set must include meaningful baselines and increasing levels of modelling complexity without assuming that greater complexity produces better forecasts.
 
@@ -44,9 +45,9 @@ No model is expected to perform better merely because it is more complex. Suitab
 
 ## Common evaluation requirements
 
-All candidate roles follow the revised 1/7/14/28 horizon direction once that revision is accepted. The Naive and Seasonal Naive roles additionally require explicit approval of their proposed 28-day formulas before 28-day baseline execution. This baseline-formula approval requirement does not apply to Ridge Regression, Random Forest or LightGBM 28-day target support.
+The three learned models follow the approved 1/7/14/28-day design and common fourteen-predictor contract. The Naive and Seasonal Naive roles additionally require explicit approval of their proposed 28-day formulas before 28-day baseline execution. This baseline-formula approval requirement does not apply to Ridge Regression, Random Forest or LightGBM 28-day target support.
 
-Once the horizon revision is accepted, every candidate must:
+For any separately authorised execution, every approved candidate must:
 
 - use the same DR-005 four-fold validation schedule;
 - evaluate the same human-selected 1-day, 7-day, 14-day, and 28-day horizons recorded in revised DR-004, with the additional formula-approval requirement applying only to 28-day Naive and Seasonal Naive baseline execution;
@@ -130,9 +131,9 @@ Rejected. Model selection must follow DR-006 evidence, not an assumption that mo
 
 ## Limitations
 
-- LightGBM still requires a separately approved dependency addition and implementation; neither is introduced by this decision record.
-- Model hyperparameters and search strategy remain open.
-- The final lag set and `Promotion_Flag` treatment remain open.
+- Current `requirements.txt` contains `lightgbm==4.6.0` as a pre-existing local change; this documentation alignment does not accept/install dependencies or implement a model.
+- DR-010 settles the bounded model grids/search policy; the revised executable protocol and implementation remain separately reviewed.
+- The frozen feature contract settles lags, rolling windows, categorical identities and promotion exclusion for all learned models/horizons.
 - The dataset contains one simulated year, which limits the evidence available to every candidate.
 - The candidate set does not guarantee that any machine-learning model will outperform the baselines.
 - This decision defines model roles, not training code or model results.

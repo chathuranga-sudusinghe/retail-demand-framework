@@ -1,17 +1,18 @@
 # DR-006 — Forecasting Metrics and Model-Selection Policy
 
-> **DR-006 revision — 2026-09-28:** The existing metric/model-selection policy is being extended to the revised 1/7/14/28-day horizon set; metric equations and the existing selection policy are unchanged. The horizon revision remains under repository-wide human review; see the [central methodology-revision record](../forecasting-methodology-revision.md). [DR-005](DR-005-forecast-validation-design.md) owns validation and final-evaluation boundaries and provenance.
+> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
-**Revision status:** Under human review
+**Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
+**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
 **Owner:** Chathuranga
 **Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
 
 ## Context
 
-DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting direction currently under repository-wide human review. DR-005 defines the common four expanding-window validation folds and reserves the revised final evaluation interval for evaluation after model selection; see DR-005 for the December 3–16 prior-validation-exposure limitation.
+DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting design approved by the project owner. DR-005 defines the common four expanding-window validation folds and reserves the revised final evaluation interval for evaluation after model selection; see DR-005 for the December 3–16 prior-validation-exposure limitation.
 
 Those decisions establish what is forecast and where it is evaluated, but they do not define the primary metric or how fold-level results determine model selection. A common policy is required so candidate models are compared consistently without selecting from one favourable fold or using results from the revised final evaluation interval to revise earlier choices.
 
@@ -101,7 +102,7 @@ MAPE was not selected because zero or near-zero actual demand requires special h
 
 ## Evaluation policy
 
-Under the revised direction currently under human review, every candidate model must be evaluated using the same four DR-005 validation folds and the human-selected 1-day, 7-day, 14-day, and 28-day horizons recorded in revised DR-004.
+Under the current human-approved forecasting design, every candidate model must be evaluated using the same four DR-005 validation folds and the human-selected 1-day, 7-day, 14-day, and 28-day horizons recorded in revised DR-004.
 
 For each model and each horizon independently:
 
@@ -123,7 +124,7 @@ Results from the revised final evaluation interval must not be used for model fi
 - Mean values can hide fold-to-fold variation, so individual fold results must also be reviewed.
 - The policy does not define a universal WAPE quality band or guarantee performance in a real retailer.
 - The dataset is simulated and covers one observed year; the four folds cannot represent every future demand condition.
-- This decision does not resolve the exact model set, final lag set, recursive versus direct forecasting, `Promotion_Flag` treatment, hyperparameter search, uncertainty representation, or demand-regime definitions.
+- The original metric decision did not resolve models, features, strategy or search. DR-007/008/009/010 and the frozen feature contract now settle those choices, including promotion exclusion. Uncertainty and formal demand-regime definitions remain separate.
 
 ## Impact
 
@@ -131,4 +132,4 @@ Results from the revised final evaluation interval must not be used for model fi
 - `docs/workflows/demand-forecasting.md` applies the same policy to the modelling workflow.
 - `docs/decisions/README.md` records this policy as formalised rather than open.
 - Future model evaluation must retain fold-level metrics and their four-fold arithmetic means for each horizon included in the current methodology at execution time.
-- The original metric decision introduced no training or results. This revision under human review extends its applicability to 28 days and the revised common schedule; metric equations and horizon-specific selection remain unchanged.
+- The original metric decision introduced no training or results. The current human-approved design applies it to 28 days and the revised common schedule; metric equations and horizon-specific selection remain unchanged.

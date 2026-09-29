@@ -1,6 +1,6 @@
 # Inventory-Risk and Replenishment Analysis Workflow
 
-> **Workflow revision — 2026-09-28:** DR-012 remains Proposed for group approval. The original proposed inventory scope covers 1/7/14-day forecast inputs; the revised forecasting methodology under human review introduces a proposed 28-day cumulative input. Downstream 28-day inventory/replenishment use remains pending separate component-owner/human approval. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 ## Owner
 
@@ -40,7 +40,7 @@ For the same SKU-warehouse, `I_t` and `R_t` are inventory and reorder-point valu
 | `B_t > 0` and forecast cumulative demand `>= B_t` | Forecast threshold crossing within the horizon |
 | `B_t > 0` and forecast cumulative demand `< B_t` | No forecast threshold crossing within the horizon |
 
-The original proposed inventory scope applies separately to 1-day, 7-day cumulative and 14-day cumulative forecasts; the proposed 28-day forecasting input under the revised methodology currently under human review has not yet been approved for this downstream rule. Equality counts as reaching the threshold. Keep the origin threshold fixed and assume no receipts, transfers, returns, losses or other adjustments. Future inventory values must not be joined as origin inputs. Document snapshot availability and within-day interpretation before integration.
+The original proposed inventory scope applies separately to 1-day, 7-day cumulative and 14-day cumulative forecasts; the approved upstream 28-day forecasting input has not yet been approved for this downstream rule. Equality counts as reaching the threshold. Keep the origin threshold fixed and assume no receipts, transfers, returns, losses or other adjustments. Future inventory values must not be joined as origin inputs. Document snapshot availability and within-day interpretation before integration.
 
 Missing/invalid required evidence produces unavailable/not assessed with a reason, not `FALSE`. DR-012 leaves problematic-forecast handling open and does not approve clipping. Negative arithmetic projected balances are not verified physical negative inventory.
 
@@ -80,8 +80,7 @@ Subject to group approval, DR-012 would supply the method for later forecast-to-
 
 ## 28-day compatibility review — downstream approval pending
 
-The revised forecasting methodology under human review introduces a proposed
-direct cumulative 28-day quantity. Algebraically, the
+The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended

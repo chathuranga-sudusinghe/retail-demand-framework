@@ -3,11 +3,12 @@
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
-**Revision status:** Under human review; no experiment execution authorised
+**Revision status:** Current forecasting design human-approved; experiment execution NOT authorised
+**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
 **Revision owner:** Chathuranga
-**Group-level acceptance:** Pending
+**Group-level acceptance:** Pending; separate from the project owner's current forecasting approval
 **Related issue:** [#31 — Define expanding-window forecast validation design](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31)
-**Approval provenance:** The original design was approved through Issue #31. The project owner supplied the human-selected horizon/fold amendment on 2026-09-28; repository-wide file-by-file human review and group-level acceptance remain pending. Separate supervisor approval is not asserted.
+**Approval provenance:** The original design was approved through Issue #31. The project owner supplied the horizon/fold amendment on 2026-09-28 and explicitly confirmed the current forecasting position for this September 29 alignment. Implementation/protocol acceptance and separate group-level matters remain gated. Separate supervisor approval is not asserted.
 
 ## Context and revision
 
@@ -18,10 +19,9 @@ The earlier 14-day fold design cannot accommodate a complete 28-day outcome.
 Previous scores were not used to choose this amendment. Historical evidence is
 [demand EDA](../../reports/demand-eda.md), its saved notebook and the temporal profile.
 [Revision and provenance](../forecasting-methodology-revision.md) records the
-human-selected revised scope currently under repository-wide review, calendar
-review direction and remaining human decisions.
+current human-approved forecasting scope, frozen feature contract and separate remaining approval boundaries.
 
-## Current revised design — under human review
+## Current human-approved forecasting design
 
 Use four expanding-window chronological folds, with one fixed forecast origin
 at the training cutoff for every SKU–warehouse and horizon. This is the project's
@@ -83,7 +83,7 @@ unavailable, not zero, shortened labels or reasons to borrow later dates.
 A 28-day feature warm-up is feasible even in the initial 91-day history. With a
 complete 28-day look-back and horizon h, eligibility is N − 28 − h + 1 rows per
 series before other exclusions: 63/57/50/36 for h=1/7/14/28 in fold 1. This is
-feasibility, not a guarantee of model adequacy; the final feature set remains open.
+feasibility, not a guarantee of model adequacy. The frozen feature contract requires this complete 28-day history for every learned model and horizon.
 
 ### Final-evaluation provenance and protection
 
@@ -102,8 +102,7 @@ effectiveness. Prior validation exposure limits the independence of the revised
 final evaluation. Overlapping cumulative training labels also create dependence.
 WAPE can reflect changing demand denominators, so retain absolute errors and Bias.
 
-Final feature freeze, proposed 28-day baseline approval, uncertainty, formal demand
-conditions/statistical tests and downstream/component-owner approval remain open.
+The feature contract is frozen with 28 complete consecutive history days. Proposed 28-day baseline approval, implementation/test acceptance, the revised executable protocol, uncertainty, formal demand conditions/statistical tests and downstream/component-owner approval remain separate.
 No change to model families, metric equations, grids, inventory rules, ownership
 or research hypotheses is made by this validation amendment.
 

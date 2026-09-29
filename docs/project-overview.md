@@ -1,6 +1,6 @@
 # COMP1884 Group Project Overview
 
-> **Forecasting methodology revision — 2026-09-28:** The forecasting methodology is being revised from 1/7/14 to 1/7/14/28 days and remains under repository-wide human review. Detailed validation boundaries, provenance and remaining approvals are recorded in the [forecasting-methodology revision record](forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The current human-approved forecasting design uses 1/7/14/28-day outputs and the [frozen feature contract](forecasting-feature-engineering.md). [Revision and provenance](forecasting-methodology-revision.md) distinguishes implementation/protocol acceptance and pending baseline/downstream decisions. No experiment execution or separate supervisor approval is asserted.
 
 ## 1. Project identity
 

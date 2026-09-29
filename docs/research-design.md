@@ -1,6 +1,6 @@
 # Research Design
 
-> **Research-design revision — 2026-09-28:** The research design is being revised to a human-selected 1/7/14/28-day forecasting direction and remains under repository-wide human review. No new experiment result or separate supervisor approval is claimed. Detailed provenance is recorded in the [forecasting-methodology revision record](forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and [frozen feature contract](forecasting-feature-engineering.md). This alignment records that human instruction, not new experiment evidence or separate supervisor approval. [Revision and provenance](forecasting-methodology-revision.md) records remaining approval boundaries.
 
 ## 1. Purpose
 
@@ -74,111 +74,29 @@ The forecasting component may examine:
 
 Feature engineering converts the approved SKU-warehouse-day demand history into model inputs that represent recent demand memory, short-term demand behaviour, and calendar effects without exposing the model to future information.
 
-### 6.1 Calendar features
+### 6.1 Frozen predictor contract
 
-**Human review direction, 2026-09-28:** integer `day_of_week` is proposed for replacement; paired `dow_sin`/`dow_cos` is the current direction for the 1-day case; month and quarter are excluded from the initial revised set; month sine/cosine and weekday dummies remain deferred. The descriptions below document the implemented historical candidates, not the final revised feature list. The final ordered feature set and horizon-specific feature policy are not frozen. These calendar directions must not be silently extended to the 28-day horizon. See [feature review](forecasting-feature-engineering.md).
+The [authoritative feature specification](forecasting-feature-engineering.md) freezes exactly **14 conceptual predictors: two categorical context predictors and twelve engineered numerical predictors**, in the same order for Ridge Regression, Random Forest Regressor and LightGBM Regressor across horizons 1/7/14/28.
 
-#### `day_of_week`
+- Context: `SKU_ID`, `Warehouse_ID`.
+- Calendar: `dow_sin`, `dow_cos`, derived from the first target day, origin + 1.
+- Demand memory: `lag_1`, `lag_7`, `lag_14`.
+- Recent level/dispersion: mean and sample standard deviation (`ddof=1`) over complete 7-, 14- and 28-day histories ending at the origin.
+- Direction: `rolling_slope_14` over the ordered fourteen-day history.
 
-**Definition:** day of the week associated with the forecast date.
+The whole vector requires **28 complete consecutive daily observations per SKU–warehouse**. All inputs use only origin-available information; no realised demand inside a forecast window updates the vector. Training rows require complete horizon labels ending by their fitting cutoff. Learned preprocessing fits only eligible training rows.
 
-**Why considered:** daily retail demand may differ between weekdays and weekends or show repeating weekly behaviour.
+### 6.2 Representation and raw-field boundaries
 
-**Leakage rule:** it is derived only from the known calendar date.
+Ridge and Random Forest use full one-hot SKU/warehouse encoding: 50 + 5 + 12 = **67 physical columns**. LightGBM uses two native categorical identities plus the twelve numerical features = **14 physical inputs**. Every learned model receives the same fourteen conceptual predictors and equivalent underlying information; fair comparison does not require identical matrix width. IDs are nominal categories, never continuous measurements.
 
-#### `month`
+`Date` supplies alignment/calendar construction; `Units_Sold` supplies past demand and outcome labels. The eleven other raw fields are excluded from the forecasting predictor matrix, including promotion, price and inventory variables. They may retain descriptive or downstream roles. A human-readable weekday label may be derived downstream; it is not a predictor.
 
-**Definition:** calendar month associated with the forecast date.
-
-**Why considered:** it may capture broad within-year demand differences.
-
-**Caution:** the dataset contains only approximately one year of data, so month effects must not be interpreted as robust multi-year seasonality.
-
-#### `quarter`
-
-**Definition:** calendar quarter associated with the forecast date.
-
-**Why considered:** it may provide a coarse within-year temporal grouping.
-
-**Caution:** as with month, the one-year dataset limits claims about repeated annual seasonal behaviour.
-
-#### `week_of_year` — excluded from the primary feature set
-
-`week_of_year` is not included in the primary forecasting feature set. The dataset contains only one year of observations, so each numbered week occurs only once. The project therefore lacks repeated year-over-year evidence from which a model could learn a stable week-number effect.
-
-This does not mean that weekly behaviour is ignored. Weekly demand structure can instead be represented through features such as `day_of_week`, lagged demand, and 7-day rolling statistics.
-
-### 6.2 Lag features
-
-Lag features represent demand observed at an earlier point in the same SKU-warehouse series.
-
-Candidate lags currently include:
-
-- `lag_1` — `Units_Sold` one day earlier;
-- `lag_7` — `Units_Sold` seven days earlier;
-- `lag_14` — `Units_Sold` fourteen days earlier;
-- `lag_28` — `Units_Sold` twenty-eight days earlier.
-
-**Why considered:** lag features provide the model with direct information about recent demand and possible repeating short-cycle behaviour.
-
-**Leakage rule:** for a forecast at time `t`, the lagged value must come only from observations strictly before `t`.
-
-The exact final lag set remains open and must be justified through modelling evidence rather than selected mechanically.
-
-### 6.3 Rolling features
-
-Rolling features summarise recent historical demand over a fixed look-back window for the same SKU-warehouse series.
-
-The initial approved rolling windows are:
-
-- **7 days** — represents recent weekly demand behaviour;
-- **14 days** — provides a smoother two-week view of recent demand.
-
-Candidate rolling statistics are:
-
-- `rolling_mean_7` and `rolling_mean_14` — average historical demand in the previous 7 or 14 days;
-- `rolling_median_7` and `rolling_median_14` — typical recent demand with reduced sensitivity to unusual spikes;
-- `rolling_std_7` and `rolling_std_14` — recent demand variability / volatility.
-
-A 30-day rolling window is not part of the initial primary feature set. It may be examined later as a sensitivity or alternative feature only if evidence justifies it.
-
-**Leakage rule:** the current target value must never be included in its own rolling calculation. Rolling statistics for time `t` must be calculated from observations before `t` only.
-
-### 6.4 Recent growth / decline indicators
-
-A recent growth or decline feature would summarise whether recent demand is increasing, decreasing, or broadly stable.
-
-**Why considered:** it may help represent short-term direction that is not fully captured by one individual lag.
-
-**Status:** candidate only. The exact calculation has not yet been approved and must not be invented during implementation.
-
-### 6.5 Exogenous variables
-
-`Promotion_Flag` may be considered only when it would genuinely be known at the prediction origin. Profiling found that promotion status conflicts across warehouses in approximately 41.6% of SKU-day groups, which further supports retaining the warehouse dimension rather than collapsing to one SKU-day promotion value.
-
-The final treatment of `Promotion_Flag` remains an open methodology decision.
-
-Inventory fields should not automatically be inserted into the forecasting model. Their role must be justified separately from their downstream use in inventory analysis.
-
-### 6.6 Features not yet defined
-
-The project has not approved additional composite forecasting features created by summing, subtracting, multiplying, or dividing multiple raw columns.
-
-Examples that are **not currently approved forecasting features** include:
-
-- `Inventory_Level - Reorder_Point`;
-- `Unit_Price - Unit_Cost`;
-- `Unit_Price / Unit_Cost`;
-- lead-time-demand combinations;
-- other inventory-policy-derived variables.
-
-Such variables may belong more naturally to downstream inventory-risk analysis and must not be added to the forecasting model without separate evidence and approval.
-
-All forecasting features must be generated without future-data leakage.
+Raw weekday, weekday dummies, month/quarter and annual/holiday encodings, lag 28, medians, additional windows and unapproved composites are excluded. Exact formulas, ordering, exclusions and availability rules live in the feature specification. The earlier DR-003/Issue #52 catalogues and reviewed alternatives are superseded provenance, not active choices or an ablation plan.
 
 ## 7. Forecast horizon
 
-Under the revised forecasting direction currently under human review, the project is intended to evaluate four decision-support forecast horizons while retaining the approved daily SKU-warehouse analytical grain:
+Under the human-approved forecasting design, the project evaluates four decision-support forecast horizons while retaining the approved daily SKU-warehouse analytical grain:
 
 - **1-day horizon** — immediate next-day demand for each SKU-warehouse series;
 - **7-day horizon** — cumulative demand over the next 7 days;
@@ -287,7 +205,7 @@ unavailable, not zero, shortened labels or reasons to borrow later dates.
 A 28-day feature warm-up is feasible even in the initial 91-day history. With a
 complete 28-day look-back and horizon h, eligibility is N − 28 − h + 1 rows per
 series before other exclusions: 63/57/50/36 for h=1/7/14/28 in fold 1. This is
-feasibility, not a guarantee of model adequacy; the final feature set remains open.
+feasibility, not a guarantee of model adequacy. The frozen feature contract requires this complete 28-day history for every learned model and horizon.
 
 ### Final-evaluation provenance and protection
 
@@ -466,7 +384,7 @@ Management-facing output
 ```
 
 
-The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. Under the revised direction, the 7-day, 14-day and proposed 28-day forecasts represent cumulative demand over their respective horizons, without implying a daily forecast path. Representing a 28-day cumulative forecasting output does not itself approve downstream 28-day inventory/replenishment use; that remains subject to component-owner/human approval. DR-012 proposes the initial inventory exposure method; group approval, implementation and the final schema remain pending. Uncertainty, overstock, numerical replenishment and human-review rules remain provisional until their related decisions are approved.
+The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. Under the revised direction, the 7-day, 14-day and 28-day forecasts represent cumulative demand over their respective horizons, without implying a daily forecast path. Representing a 28-day cumulative forecasting output does not itself approve downstream 28-day inventory/replenishment use; that remains subject to component-owner/human approval. DR-012 proposes the initial inventory exposure method; group approval, implementation and the final schema remain pending. Uncertainty, overstock, numerical replenishment and human-review rules remain provisional until their related decisions are approved.
 
 ## 15. Threats to validity
 

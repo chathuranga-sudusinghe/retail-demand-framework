@@ -1,6 +1,6 @@
 # Responsible Decision-Support Workflow
 
-> **Workflow revision — 2026-09-28:** The DR-011 output structure remains accepted for structure only. The revised forecasting interface is intended to include 1/7/14/28-day outputs; the 28-day forecasting revision remains under human review. Downstream 28-day interpretation, inventory use and human-review triggers remain separately pending. See the [central methodology-revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 ## Owner
 
@@ -113,7 +113,7 @@ Before claiming that this layer "improves trust", "improves interpretability", o
 
 The decision-support output should keep the forecasting context clear. Each forecast should be linked to its `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon.
 
-Under the revised forecasting direction currently under human review, the forecast interface includes:
+The approved upstream forecast interface includes:
 
 - 1-day next-day demand;
 - 7-day cumulative demand;
@@ -126,8 +126,7 @@ The overall output structure follows DR-011, while fields that depend on invento
 
 ## Revised forecasting interface and owner review
 
-Under the revised forecasting direction, the forecast interface is intended to
-support 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
+The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate

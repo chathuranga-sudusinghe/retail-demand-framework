@@ -1,9 +1,13 @@
 # DR-003 — Initial Forecasting Feature-Engineering Baseline
 
 **Date:** 2026-09-22  
-**Status:** Accepted for the current forecasting-methodology baseline  
+**Original decision status:** Accepted for the forecasting-methodology baseline at the September 22 decision
 **Owner:** Chathuranga  
 **Related issue:** #26
+
+> **Supersession notice — 2026-09-29:** The original decision body below is historical provenance. Its calendar/lag/median candidates and then-open choices are superseded by the human-approved [fourteen-predictor contract](../forecasting-feature-engineering.md): two categorical identities plus twelve numerical features, complete 7/14/28-day summaries and 28-day minimum history. Original dates, definitions and rationale are preserved; these are not current predictor alternatives or execution authority. Models, targets, folds, metrics and grids are settled in subsequent records; uncertainty and downstream decisions remain separate.
+
+## Original decision body — historical
 
 ## Context
 

@@ -46,8 +46,8 @@ The table below explains each source field in plain language so that a reader ca
 | Column | Observed dtype | Plain-language definition | Project use / caution |
 |---|---|---|---|
 | `Date` | text/date | Calendar date for the recorded observation. | Defines temporal order. Forecasting and validation must preserve this order. |
-| `SKU_ID` | text | Identifier for the product / stock-keeping unit (SKU). | Used to distinguish product-level demand series. |
-| `Warehouse_ID` | text | Identifier for the warehouse in which the observation is recorded. | Required in the primary forecasting grain selected in DR-002. It preserves warehouse-specific inventory context. |
+| `SKU_ID` | text | Identifier for the product / stock-keeping unit (SKU). | Categorical forecasting context predictor and product-level series key under the frozen feature contract. |
+| `Warehouse_ID` | text | Identifier for the warehouse in which the observation is recorded. | Categorical forecasting context predictor and series key; preserves warehouse-specific downstream alignment. |
 | `Supplier_ID` | text | Identifier for the supplier associated with the recorded product / supply relationship. | May support descriptive analysis or downstream operational interpretation. It is not automatically a forecasting feature. |
 | `Region` | text | Geographic region associated with the operational record. | May support descriptive segmentation. It is not automatically included in the forecasting model. |
 | `Units_Sold` | integer | Number of units sold for the given SKU, warehouse, and date. | **Primary forecasting target / demand source.** At the selected analytical grain, the model aims to predict future `Units_Sold` for each SKU-warehouse series. |
@@ -57,13 +57,25 @@ The table below explains each source field in plain language so that a reader ca
 | `Order_Quantity` | integer | Simulated quantity ordered for replenishment on the recorded row. A value of 0 indicates no recorded replenishment quantity for that row. | Sparse: non-zero in 5,027 of 91,250 rows. It must not be treated as a normal dense target without additional justification. |
 | `Unit_Cost` | decimal | Simulated cost to the business for one unit of the product. | Potentially useful for later business interpretation or cost-aware analysis, but no cost-optimisation claim is made unless a method is explicitly defined. |
 | `Unit_Price` | decimal | Simulated selling price of one unit of the product. | Potentially useful for descriptive or business interpretation. It is not automatically a forecasting feature. |
-| `Promotion_Flag` | integer/binary | Indicator showing whether a promotion is active for the recorded SKU-warehouse-date observation. | Potential exogenous forecasting feature only if known at the prediction origin. Profiling showed warehouse-level promotion states can differ within the same SKU-day. |
+| `Promotion_Flag` | integer/binary | Indicator showing whether a promotion is active for the recorded SKU-warehouse-date observation. | Excluded from the frozen forecasting predictor set. Descriptive promotion analysis remains useful; warehouse-level states can differ within the same SKU-day. Any later predictor use requires separate approval and availability review. |
 | `Stockout_Flag` | integer/binary | Indicator intended to represent whether a stockout occurred. | **Not usable as a target or validation label in this dataset** because it is 0 for all 91,250 rows. Stockout / shortage pressure must be derived from other evidence. |
 | `Demand_Forecast` | decimal | Demand forecast supplied by the dataset creator / simulation. | **Not the project's forecasting target.** It is leakage-sensitive and must not be used as an ordinary model feature. It may only be considered later as a separately documented benchmark if methodologically justified. |
 
 Schema, row count, date coverage, missingness, cardinalities, and key field behaviour above have been verified from the downloaded CSV.
 
-### 3.1 Primary modelling identifiers and target
+### 3.1 Frozen forecasting roles
+
+The [authoritative feature contract](forecasting-feature-engineering.md) distinguishes raw-data roles from model inputs:
+
+- **KEEP as categorical predictors:** `SKU_ID`, `Warehouse_ID`.
+- **Construction/alignment/target only:** `Date`, `Units_Sold`.
+- **EXCLUDE from forecasting predictors:** `Supplier_ID`, `Region`, `Inventory_Level`, `Supplier_Lead_Time_Days`, `Reorder_Point`, `Order_Quantity`, `Unit_Cost`, `Unit_Price`, `Promotion_Flag`, `Stockout_Flag`, `Demand_Forecast`.
+
+Exclusion does not make these fields useless to the project. Origin-aligned inventory, reorder point, lead time and order activity may support downstream analysis under its separately approved methods; other fields may support descriptive/business interpretation. The zero-variance stockout field remains a limitation, and source forecasts require separate leakage-safe benchmark approval.
+
+All learned models use two categorical context and twelve engineered predictors (fourteen conceptual predictors), with complete 28-day history. Ridge/Random Forest encode those as 67 columns; LightGBM uses 14 inputs. The forecast target is next-day demand or direct cumulative 7/14/28-day demand from one fixed origin.
+
+### 3.2 Primary modelling identifiers and target
 
 Following DR-002, the primary forecasting analytical unit is:
 
@@ -189,8 +201,8 @@ plus forecast outputs from Chathuranga's component.
 Needs:
 
 - regular demand series from `Units_Sold`;
-- temporal/calendar features;
-- leakage-safe lag/rolling features where used;
+- the exact frozen categorical/calendar/lag/rolling/slope contract;
+- complete 28-day origin-available demand histories;
 - model-ready chronological train/validation/test data;
 - model predictions and errors.
 

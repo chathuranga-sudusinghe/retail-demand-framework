@@ -1,6 +1,6 @@
 # Responsible Decision-Support Methodology
 
-> **Research revision — 2026-09-28:** DR-011 is accepted for structure only. The revised forecast interface is intended to include 1/7/14/28-day outputs; the 28-day forecasting revision remains under human review. Downstream 28-day interpretation, inventory use, uncertainty and human-review criteria remain separately pending. See the [central forecasting-methodology revision record](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 ## 1. Problem Definition
 
@@ -139,8 +139,7 @@ Some parts of the decision-support methodology still require agreement from the 
 
 ## Revised forecasting interface and owner review
 
-Under the revised forecasting direction, the forecast interface is intended to
-support 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
+The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate

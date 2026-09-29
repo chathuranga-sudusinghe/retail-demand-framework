@@ -1,6 +1,6 @@
 # Dewmi — COMP1884 Group Project Contribution
 
-> **Component revision — 2026-09-28:** DR-011 remains accepted for structure only. The revised forecast interface is intended to include 1/7/14/28-day outputs; the 28-day forecasting revision remains under human review. Downstream 28-day interpretation, inventory use and human-review triggers remain separately pending. See the [central methodology-revision record](../../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../../forecasting-methodology-revision.md).
 
 ## Member details
 
@@ -92,7 +92,7 @@ Her component consumes the outputs of Chathuranga and Didilani and implements th
 
 The responsible decision-support layer will keep the forecasting identity and timing information visible when it combines outputs from the different project components. This includes `SKU_ID`, `Warehouse_ID`, the forecast origin, and the forecast horizon.
 
-Under the revised forecasting direction currently under human review, the intended forecast-interface horizons are:
+The approved upstream forecast-interface horizons are:
 
 - 1-day next-day demand;
 - 7-day cumulative demand;
@@ -105,8 +105,7 @@ DR-011 defines the overall structure for this management-facing output. Details 
 
 ## Revised forecasting interface and owner review
 
-Under the revised forecasting direction, the forecast interface is intended to
-support 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
+The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative 7/14/28-day quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate

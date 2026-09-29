@@ -1,14 +1,14 @@
-# Forecasting methodology revision — human review, 2026-09-28
+# Forecasting methodology revision — current approval and provenance
 
 ## Authority and scope
 
-This records the human-selected horizon and validation revision supplied by the
-project owner on 2026-09-28. The revised methodology remains under repository-wide
-human review. It does not claim separate supervisor approval.
+This records the horizon/validation revision supplied by the project owner on
+2026-09-28 and the current human-approved forecasting position and feature freeze
+aligned on 2026-09-29. Approval comes from the owner's explicit instructions, not AI-generated text. No separate supervisor or additional group approval is asserted.
 The earlier September 22–23 decisions remain part of the methodological history.
 No previous model scores were used to choose or justify this revision.
 
-## Current revised forecasting direction under review
+## Current human-approved forecasting design
 
 - One-year simulated data at `SKU_ID + Warehouse_ID + Date`, using `Units_Sold`.
 - Direct forecasts from the same fixed origin: next-day demand and cumulative
@@ -20,9 +20,7 @@ No previous model scores were used to choose or justify this revision.
 - Existing horizon-specific WAPE selection and supporting MAE, RMSE and Bias;
   arithmetic means across four folds, with no averaging across horizons.
 - Existing model families and bounded hyperparameter grids remain unchanged.
-  Historical preprocessing/completeness rules are provenance; final feature and
-  revised executable preprocessing details remain subject to feature freeze and
-  protocol approval. No new search dimension or automatic feature addition is approved.
+  The [authoritative feature contract](forecasting-feature-engineering.md) freezes two categorical context and twelve numerical engineered predictors, fourteen conceptual predictors in the same order for all models/horizons, with 28 complete consecutive history days. Ridge/Random Forest use 67 physical columns; LightGBM uses 14 inputs, preserving equivalent underlying information. No search dimension or extra feature is approved.
 
 Three folds were feasible: April high demand, July decline and October low demand.
 Four folds were preferred because November–early December adds recovery evidence:
@@ -49,27 +47,20 @@ The earlier design used 1/7/14-day targets, April 1–14, July 1–14, October 1
 and December 3–16 validation, and December 17–30 final evaluation. Earlier Issue
 #52 protocol, feature snapshot and results describe that design only. They are
 not the official baseline for the redesigned study and must not be relabelled.
-The EDA notebook, reports and analysis source retain their historical wording.
+The EDA notebook, reports and analysis source retain their historical wording beneath local provenance notices; no descriptive result is regenerated.
 
-## Human decisions still open
+## Approval and execution boundaries
 
-- Final ordered feature set, calculation rules and horizon/model feature policy.
-- Calendar review direction: replace raw integer `day_of_week`; prefer paired
-  `dow_sin`/`dow_cos` for 1 day; drop month and quarter from the initial set;
-  defer month sine/cosine and weekday dummies. This is not a complete feature freeze.
-- Explicit approval of the proposed 28-day Naive and Seasonal Naive extensions
-  recorded in DR-007; no new baseline is silently accepted.
-- **28-day downstream use requires component-owner/human approval.** DR-012 remains
-  proposed; its formula, origin snapshots, threshold and lead-time meanings are
-  unchanged. A longer no-receipt scenario requires separate interpretation review.
-- Uncertainty, human-review rules, numerical replenishment and final integration
-  contracts remain with their respective component owners.
-- Acceptance of implementation/tests and a revised executable experiment protocol.
-  The revised runner remains blocked while the feature freeze and required
-  28-day baseline approvals for the proposed Naive and Seasonal Naive definitions
-  are pending.
-  Any future experiment still requires specific human authorisation and manual
-  execution under AGENTS.md. No experiments were run for this revision.
+The final ordered features, formulas, categorical representation and common horizon/model policy are **frozen for feature/preprocessing implementation**. Date/Units_Sold have construction/alignment/target roles; the eleven other raw fields are excluded forecasting inputs but may retain wider project roles. Earlier Options A/B/C and the twelve-only intermediate contract are superseded provenance.
+
+The following remain separate:
+
+- explicit approval of proposed 28-day Naive and Seasonal Naive formulas in DR-007;
+- implementation/test acceptance and a revised executable experiment protocol;
+- DR-012 group approval and **component-owner/human approval for 28-day downstream use**;
+- uncertainty, human-review rules, numerical replenishment and final integration contracts.
+
+Current source still implements the historical feature catalogue; no current model/experiment/evaluation/metrics source modules are present. Their replacement is future implementation work, not authorised experiment execution. Model fitting, tuning, validation scoring, ablation and final evaluation remain **NOT authorised**. Every later run requires specific human authorisation under AGENTS.md. No experiment or test was run for this documentation alignment.
 
 ## Computational scope
 
@@ -89,12 +80,8 @@ require 492 learned fits and 24 baseline evaluations but omit recovery validatio
 - DR-005 retains the exact superseded fold table and December 17–30 holdout wording
   in its explicitly historical section; DR-004/007/010 retain original scope/counts
   where labelled as provenance. DR-007's 1/7/14 baseline definitions remain valid.
-- The archived Issue #52 protocol and report preserve their entire original bodies
-  under historical notices. Their 13-feature list, scores, dates, counts and earlier
-  approval history are unchanged and do not choose the redesigned methodology.
-- Feature-review Options A/B are retained as historical proposals incompatible with
-  the partial calendar direction; Option C remains unselected. The old 13-column
-  source feature catalogue is preserved until the full revised freeze.
-- DR-001/002/003, data dictionaries, literature/reference material and Git/workflow
-  governance retain independent historical/data/window meanings. A 14-day supplier
+- The archived [Issue #52 protocol](issue-52-forecasting-protocol.md) and ignored local `outputs/issue-52-validation/comparison.md` preserve their original bodies beneath historical notices. Its metadata, candidate metrics, selected configurations/predictions, eligibility records and artifact audit belong to that earlier run, not the revised study. No historical score selects the current feature contract or model.
+- There is no tracked Issue #52 comparison report under `reports/`, and the historical reproduction command references absent `src/forecasting/experiment.py`. The run metadata records Git HEAD `ec1296ecebeae359222036c93b4dd482fe977e23` and source fingerprints; reproducing it would require the matching historical source snapshot and separate authorisation. Compiled caches are not that source archive.
+- Feature-review Options A/B/C are superseded historical proposals. The old thirteen-column source catalogue remains an implementation gap until the frozen feature pipeline is implemented; it is not an active research alternative.
+- DR-001/002 and DR-003's explicitly historical body retain independent decision meanings; active data dictionaries, literature applicability and workflow summaries now link the frozen contract. Git/workflow governance remains unchanged. A 14-day supplier
   limit or rolling window is not an obsolete 14-day maximum forecast horizon.

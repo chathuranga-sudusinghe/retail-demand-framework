@@ -1,6 +1,6 @@
 # Chathuranga — COMP1884 Group Project Contribution
 
-> **Component revision — 2026-09-28:** The forecasting component is being revised to the human-selected 1/7/14/28-day direction; the revised methodology remains under repository-wide human review. Final feature freeze, proposed 28-day baseline definitions and the revised executable protocol remain pending. No experiment execution is authorised by this overview. See the [central methodology-revision record](../../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The human-approved component uses direct 1/7/14/28-day targets and the [frozen fourteen-predictor contract](../../forecasting-feature-engineering.md). Implementation acceptance, proposed 28-day baselines and the revised executable protocol remain separate. No experiment is authorised; see [approval and provenance](../../forecasting-methodology-revision.md).
 
 ## Member details
 
@@ -41,11 +41,13 @@ Primary inputs:
 - `SKU_ID`;
 - `Warehouse_ID`;
 - `Units_Sold`;
-- selected leakage-safe supporting variables where justified.
+- the twelve numerical engineered features defined in the frozen contract, constructed from the fields above.
 
 DR-002 has fixed the primary forecasting analytical unit as `SKU_ID + Warehouse_ID + Date`. The target at this grain is `Units_Sold`.
 
-The source `Demand_Forecast` field is not the project's forecasting target and must not be used in a way that leaks target/future information.
+The frozen contract contains **two categorical context + twelve numerical engineered = fourteen conceptual predictors** in the same order for all learned models/horizons, with 28 complete consecutive history days. Ridge and Random Forest use 67 full one-hot/numerical columns; LightGBM uses 14 native categorical/numerical inputs. Equivalent information, origins, eligible observations and targets make the comparison fair despite different matrix widths.
+
+`Date` and `Units_Sold` are construction/alignment/target sources; the eleven other raw fields, including source `Demand_Forecast`, promotion and inventory, are excluded predictors. They may remain useful to other components.
 
 ## Responsibilities
 
@@ -78,13 +80,7 @@ forecast uncertainty / interval fields, if available
 
 ## Evaluation
 
-Candidate metrics:
-
-- MAE;
-- RMSE;
-- WAPE;
-- MAPE with zero-demand safeguards;
-- Bias / Mean Forecast Error.
+**WAPE is primary** under DR-006; MAE, RMSE and Bias are supporting. Bias = forecast − actual. Calculate the arithmetic mean over four folds separately by horizon; no cross-horizon composite is approved. Review fold-level stability and supporting errors before selection. MAPE is not part of the primary policy.
 
 ## Downstream dependency
 
@@ -110,10 +106,6 @@ This component is limited to the forecasting work required by the integrated COM
 
 ## Revised forecasting responsibility
 
-The human-selected revised forecasting direction under repository-wide review
-uses direct 1/7/14/28-day targets and four expanding 28-day validation windows. The fourth window retains November–early December recovery
-evidence beyond the feasible three-fold alternative. Final feature freeze and
-proposed 28-day baseline definitions still need approval. The December 3–30 final
-window has prior December 3–16 validation exposure and is protected from subsequent
-selection. Didilani and Dewmi retain independent downstream decisions; no 28-day
-inventory or human-review rule is silently approved. No experiment execution is authorised by this overview.
+The human-approved design uses direct 1/7/14/28-day targets and four expanding 28-day validation windows.
+
+The frozen feature/preprocessing pipeline and its tests still require implementation and human acceptance. Proposed 28-day baseline formulas and the executable protocol remain separate approvals. Final evaluation covers December 3–30 at origin December 2, reserved from subsequent selection/fitting but not fully unseen historically: December 3–16 had prior validation exposure and full-year EDA inspected the interval. Didilani and Dewmi retain independent downstream decisions. No 28-day inventory or human-review rule, or experiment execution, is approved here.

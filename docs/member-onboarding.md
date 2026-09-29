@@ -12,7 +12,7 @@ You do not need to understand all of GitHub before starting. Follow the workflow
 
 You need:
 
-- access to the private GitHub repository;
+- access to the project GitHub repository;
 - Git installed;
 - Python 3.12.x for this project;
 - a local clone of the repository;

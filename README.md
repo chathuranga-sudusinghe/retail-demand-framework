@@ -1,6 +1,6 @@
 # Retail Demand Framework
 
-> **Forecasting methodology revision — 2026-09-28:** A revised 1/7/14/28-day forecasting direction is currently under human review. See the [forecasting-methodology revision record](docs/forecasting-methodology-revision.md) for scope, provenance and remaining approvals.
+> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). Implementation acceptance, the revised executable protocol, proposed 28-day baselines and downstream methods remain separately gated. Experiment execution is NOT authorised. See [revision and provenance](docs/forecasting-methodology-revision.md).
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
@@ -121,6 +121,8 @@ See [Dataset Contract](docs/dataset.md), [DR-001 — Dataset Selection](docs/dec
 
 - [Project overview](docs/project-overview.md)
 - [Research design](docs/research-design.md)
+- [Frozen forecasting feature contract](docs/forecasting-feature-engineering.md)
+- [Forecasting methodology and provenance](docs/forecasting-methodology-revision.md)
 - [Dataset contract](docs/dataset.md)
 - [Project boundaries](docs/project-boundaries.md)
 - [Literature review](docs/literature/literature-review.md)
@@ -165,4 +167,4 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 ## Status
 
-**Research foundation completed; component work is starting.** Dataset selection, the literature-review baseline, temporal/inventory profiling, the primary forecasting analytical unit, and the dataset data dictionary are documented. The next stage is component-specific methodology and implementation, with expanding-window validation cut points now approved in [DR-005](docs/decisions/DR-005-forecast-validation-design.md). Still-open decisions such as model set, final metrics, inventory-risk formulas, replenishment logic, uncertainty representation, and human-review rules must be resolved through evidence and decision records.
+**Research foundation and forecasting feature contract documented.** The current learned models are Ridge Regression, Random Forest Regressor and LightGBM Regressor. Features, revised chronological folds and WAPE-led metrics are settled; feature/preprocessing implementation and its tests remain to be aligned. Proposed 28-day baseline formulas, the revised executable experiment protocol, uncertainty, DR-012 inventory methodology, replenishment quantities and human-review rules retain separate approval boundaries. No experiment execution is authorised.
