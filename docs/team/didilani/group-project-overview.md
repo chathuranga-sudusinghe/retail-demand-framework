@@ -4,8 +4,7 @@
 
 ## Member details
 
-**Name:** Didilani Prasadika Weerawickrama Pathinayaka  
-**Student ID:** 001560460
+**Name:** Didilani Prasadika Weerawickrama Pathinayaka
 
 ## Role
 
