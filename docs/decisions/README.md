@@ -1,5 +1,7 @@
 # Decision Records
 
+> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](../forecasting-runner.md).
+
 > **Documentation alignment — 2026-09-29:** The project owner has approved the current forecasting design and [frozen fourteen-predictor contract](../forecasting-feature-engineering.md). Original decision dates remain provenance. [Current approval and provenance](../forecasting-methodology-revision.md) records separate protocol, baseline and downstream gates; experiments remain NOT authorised.
 
 This directory records important project decisions that affect multiple members or components.
@@ -31,7 +33,7 @@ Each decision record should include:
 - [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Proposed for group approval.
 - [DR-013 — Matched Gradient-Boosting RQ2 Comparison](DR-013-matched-gradient-boosting-comparison.md) — Current matched primary RQ2 comparison authority.
 
-[Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) holds its draft protocol in the owner-confirmed preserved stash. Protocol alignment and reassessment of earlier unresolved items are deferred until Issue #66 is approved; Gate 1 remains incomplete.
+Issue #65 has a human-approved/frozen protocol. PR #76 accepted the preceding runner; Issue #89 operational changes require human implementation review and source/protocol-bound specific authorization.
 
 RQ2 subordinate hypotheses and interpretation are approved as comparative and descriptive under DR-013: use horizon-specific arithmetic mean WAPE, all four fold-level results and supporting metrics; discuss magnitude, direction and fold consistency. No significance procedure or universal numerical decision threshold is approved, and no cross-horizon composite/overall winner is introduced.
 

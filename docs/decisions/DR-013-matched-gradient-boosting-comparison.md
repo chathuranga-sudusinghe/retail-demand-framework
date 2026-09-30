@@ -1,8 +1,10 @@
 # DR-013 — Matched Gradient-Boosting RQ2 Comparison
 
+> **Current status cross-reference — Issue #89:** [The frozen protocol](../protocol.md) resolves prior pending supportive configuration, 28-day baseline and numeric runtime wording. Primary scientific decisions remain unchanged. [Runner operations](../forecasting-runner.md) describe current implementation and separate approval gates. Original decision/development wording below is retained as provenance and does not supersede later recorded approvals. Issue #89 implementation awaits human review; no new run or final evaluation is authorized here.
+
 **Date:** 2026-09-29
 
-**Status:** Owner-approved research direction recorded; protocol/runtime details remain DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED
+**Status:** Owner-approved research direction; protocol/runtime details resolved in the frozen protocol. Changed implementation and each experiment require separate human approval.
 
 **Owner:** Chathuranga
 

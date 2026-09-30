@@ -1,5 +1,7 @@
 # DR-007 — Forecasting Model Set
 
+> **Current status cross-reference — Issue #89:** [The frozen protocol](../protocol.md) resolves prior pending supportive configuration, 28-day baseline and numeric runtime wording. Primary scientific decisions remain unchanged. [Runner operations](../forecasting-runner.md) describe current implementation and separate approval gates. Original decision/development wording below is retained as provenance and does not supersede later recorded approvals. Issue #89 implementation awaits human review; no new run or final evaluation is authorized here.
+
 **Status:** PARTIALLY SUPERSEDED BY DR-013
 
 ## Current status and effect
@@ -12,14 +14,14 @@
 | SUPPORTIVE benchmarks | Ridge Regression, Random Forest Regressor |
 | Separate simple forecasting baselines | Naive, Seasonal Naive (weekly period 7) |
 
-Only the three primary implementations determine the matched RQ2 answer. Ridge and Random Forest provide supportive/contextual evidence. Their configuration policy remains pending separate human approval under DR-013.
+Only the three primary implementations determine the matched RQ2 answer. Ridge and Random Forest provide supportive/contextual evidence. Their fixed configuration policy is resolved in the frozen protocol.
 
 ## Retained provisions still in force
 
 - **Naive baseline role:** provide a simple recent-demand benchmark by extending the latest origin-observed demand level.
 - **Seasonal Naive baseline role:** provide a weekly-repeat benchmark using the latest complete observed seven-day pattern.
 - The approved leakage-safe 1-day, 7-day and 14-day formulas below remain unchanged.
-- Both proposed 28-day baseline formulas remain approval-pending; a learned-model 28-day horizon does not approve baseline execution.
+- Both 28-day baseline formulas are approved in the frozen protocol; their execution still requires the specific authorized scope.
 
 ### Approved leakage-safe 1-day, 7-day and 14-day baseline formulas
 
