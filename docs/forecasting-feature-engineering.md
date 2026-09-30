@@ -1,5 +1,7 @@
 # Forecasting feature engineering — final human-reviewed contract
 
+> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Downstream and Gate 6 approvals remain separate. See [runner operations](forecasting-runner.md).
+
 **Status:** HUMAN-REVIEWED — FROZEN FOR IMPLEMENTATION
 
 **Prepared:** 2026-09-28
@@ -289,13 +291,13 @@ Expected full-coverage width is 50 SKU + 5 warehouse + 12 numerical = **67**, re
 
 IDs are nominal categories, never continuous measurements. Primary tree inputs and supportive Random Forest numerical inputs are unscaled. Ridge standardises only the twelve numerical predictors using eligible-training means and population standard deviations (`ddof=0`, constant-column scale 1); identity indicators remain 0/1. This scaler convention does not change the engineered demand-window sample standard deviations (`ddof=1`). A model intercept is not an extra input column. No target encoding, interaction ID or additional engineered feature is accepted.
 
-**Earlier representation provenance:** Issue #57 and the accepted Issue #62 implementation used 67 one-hot columns for Ridge/Random Forest and 14 native categorical/numerical inputs for LightGBM. That earlier primary representation is superseded by Issue #66; its source/tests remain unchanged until a separately reviewed alignment task.
+**Earlier representation provenance:** Issue #57 and the accepted Issue #62 implementation used 67 one-hot columns for Ridge/Random Forest and 14 native categorical/numerical inputs for LightGBM. That earlier primary representation is superseded by Issue #66; the current source/tests implement the later common primary representation.
 
 ### 3.2 Controlled model comparison
 
 The primary models share the same predictor information and physical encoding, origins, eligible observations, target definitions, temporal folds, complete history rules, metrics, matched four-dimensional grid and seed policy. All learned preprocessing uses eligible training rows only.
 
-The principal experimental variable is the gradient-boosting implementation. Equal external settings do not make internal tree-growing algorithms, capacities, parameter effects or sampling draws identical. Supportive Ridge/Random Forest provide contextual evidence only; their model-appropriate scaling and separately pending configuration policy do not determine RQ2. Random Forest column-sampling settings must be recorded if its supportive configuration is approved; no tuning dimension is added here.
+The principal experimental variable is the gradient-boosting implementation. Equal external settings do not make internal tree-growing algorithms, capacities, parameter effects or sampling draws identical. Supportive Ridge/Random Forest provide contextual evidence only; their model-appropriate scaling and fixed configuration policy resolved in the frozen protocol do not determine RQ2. Random Forest column-sampling settings from the resolved supportive configuration must be recorded during authorised execution; no tuning dimension is added here.
 
 ## 4. How engineered features are constructed
 
@@ -1139,21 +1141,21 @@ Issue #62 is merged (PR #64) and implements the Issue #57 conceptual feature con
 | src/forecasting/features.py | Twelve frozen numerical calculations plus two context identities; 28-day completeness, fixed-origin masking and ordered conceptual vector | Preserve formulas/order and origin-only history; no new feature is required |
 | src/forecasting/targets.py | Complete direct 1/7/14/28 labels separated from predictors and bounded by outcome intervals | Preserve targets, grouping and date boundaries |
 | src/forecasting/validation.py | Four revised folds and revised final interval; no fitting/scoring | Preserve dates and final-evaluation protection |
-| src/forecasting/preprocessing.py | ridge/random_forest/lightgbm interfaces; full one-hot Ridge/Random Forest, native categorical LightGBM; training-only vocabularies and unknown-ID rejection | Add common unscaled one-hot primary representation and XGBoost/CatBoost interfaces after design approval |
+| src/forecasting/preprocessing.py | Common primary one-hot representation; Ridge numerical scaling; training-only vocabularies and unknown-ID rejection; versioned fitted-state persistence | Implemented; Issue #89 operational changes await human review |
 | tests/test_forecasting_features.py | Synthetic formula, completeness, order, isolation, origin, target and boundary coverage for Issue #62 | Preserve numerical/temporal contract coverage; no estimator fitting authorised here |
-| tests/test_forecasting_preprocessing.py | Synthetic representation, mapping, scaling, training-only fitting, unknown-ID and origin-reuse checks for earlier Issue #62 contract | Later add identical primary-matrix coverage and update the earlier native LightGBM representation assertions |
+| tests/test_forecasting_preprocessing.py | Synthetic common primary representation and identical-matrix checks, mapping, Ridge scaling, training-only fitting, unknown-ID rejection, origin reuse and fitted-state persistence round-trip checks | Implemented/tested; Issue #89 operational changes await human implementation review; no real forecasting run has occurred |
 
-These tests do not establish forecasting accuracy or acceptance of revised model execution. Issue #66 edits documentation only and runs static checks; no source/test/dependency changes, estimator fitting or experiments occur.
+These tests do not establish forecasting accuracy or acceptance of revised model execution. **Historical Issue #66 provenance:** that documentation-only revision ran static checks without source/test/dependency changes, estimator fitting or experiments. The current implementation includes the tested common primary representation and Issue #89 orchestration work, which awaits human implementation review; no real forecasting run has occurred.
 
-For historical first-target row t, predictors end at t-1 and labels cover t,...,t+h-1. At fixed origin o, use t=o+1 with history_end=o and reuse the same conceptual and primary physical vector across all horizons. Training outcomes must be complete by their fitting cutoff. The later caller must check labels before fitting preprocessing; the feature-only preprocessor does not verify outcome values. See [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) for model roles and [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) for the pending protocol.
+For historical first-target row t, predictors end at t-1 and labels cover t,...,t+h-1. At fixed origin o, use t=o+1 with history_end=o and reuse the same conceptual and primary physical vector across all horizons. Training outcomes must be complete by their fitting cutoff. The later caller must check labels before fitting preprocessing; the feature-only preprocessor does not verify outcome values. See [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) for model roles and [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) for the frozen/approved protocol.
 
 ### 9.2 Completed companion-document alignment and provenance
 
-The September 29 documentation/provenance alignment has been completed and human-reviewed under Issue #61. It records the human-reviewed Issue #57 feature-freeze decision in the research design, workflows, dataset roles, decision-record status notes and member overviews. Original decision dates, historical catalogues and descriptive results remain provenance. [The central revision record](forecasting-methodology-revision.md) distinguishes settled forecasting choices from pending implementation/protocol, baseline and downstream approvals.
+The September 29 documentation/provenance alignment has been completed and human-reviewed under Issue #61. It records the human-reviewed Issue #57 feature-freeze decision in the research design, workflows, dataset roles, decision-record status notes and member overviews. Original decision dates, historical catalogues and descriptive results remain provenance. [The central revision record](forecasting-methodology-revision.md) distinguishes frozen forecasting choices, including the protocol and 28-day baseline formulas, from pending Issue #89 implementation review, specific execution authorization and downstream approvals.
 
-The archived Issue #52 protocol retains its original thirteen-feature methodology; its local artifacts and missing historical runner are documented in the central record. It must not be rerun or relabelled as evidence for this contract. A separately reviewed revised executable protocol is required.
+The archived Issue #52 protocol retains its original thirteen-feature methodology; its local artifacts and the matching historical runner/source version required for reproduction are documented in the central record. It must not be rerun or relabelled as evidence for this contract. The revised executable protocol is already frozen/approved under Issue #65; Issue #89 implementation review and specific execution authorization remain separate.
 
-Issue #62 subsequently implemented the accepted calculations in reusable source under the existing module names. Source/tests remain unchanged by Issue #66. After design approval, a separate task must align primary preprocessing/model interfaces and tests; Issue #65 must align its preserved protocol draft. No experiment execution follows automatically.
+Issue #62 subsequently implemented the accepted calculations in reusable source under the existing module names. Source/tests remain unchanged by Issue #66. Common primary preprocessing/model interfaces and tests are already implemented, and Issue #65 is frozen/approved. Issue #89 operational changes await human implementation review; specific execution authorization remains separate, and no real forecasting run has occurred. No experiment execution follows automatically.
 
 ## Appendix A — Detailed mathematical notation and date alignment
 

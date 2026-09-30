@@ -1,5 +1,7 @@
 # Contributing Guide
 
+> **Current contribution guidance:** Four-member responsibilities are defined in the member overviews: Chathuranga (Research Team Lead & Forecasting), Didilani (Inventory Risk & Replenishment Analysis), Dewmi (Responsible Decision Support) and Tinosh (System Integration and Prototype Engineering). Git-changing commands below are examples for explicitly approved human workflow, not standing AI authorization. Preserve unrelated modifications; stage only reviewed files. Forecasting experiments require exactly Python 3.12.3 and a matching specific authorization.
+
 ## 1. Purpose
 
 This guide explains how group members should contribute to the `retail-demand-framework` repository.
@@ -9,6 +11,7 @@ The repository is shared by:
 - Chathuranga Indrajith Sudusinghe
 - Didilani Prasadika Weerawickrama Pathinayaka
 - Haputhanthrige Dewmi Pramodya
+- Tinosh — System Integration and Prototype Engineering
 
 All members have write access, but normal work must still follow the branch and Pull Request workflow.
 
@@ -36,7 +39,7 @@ Issue
 
 ## 3. Before starting work
 
-Always update your local `main` branch first:
+Inspect `git status --short --branch` first. Reuse the matching task branch. Synchronize only when needed and explicitly approved; for an approved synchronization:
 
 ```bash
 git checkout main
@@ -138,7 +141,7 @@ git status
 Stage selected changes:
 
 ```bash
-git add .
+git add <reviewed-file-paths>
 ```
 
 Commit:

@@ -1,6 +1,6 @@
 # Research Design
 
-> **Issue #66 revision — 2026-09-29:** [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Gate 1 is incomplete; execution is not authorised.
+> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](forecasting-runner.md).
 
 > **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and [frozen feature contract](forecasting-feature-engineering.md). This alignment records that human instruction, not new experiment evidence or separate supervisor approval. [Revision and provenance](forecasting-methodology-revision.md) records remaining approval boundaries.
 
@@ -44,7 +44,7 @@ No statistical-significance procedure is approved for RQ2. The four temporal fol
 
 Do not average or rank performance across horizons into a single composite. Model ordering may differ by horizon; report those differences rather than collapsing them into an overall winner.
 
-[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved revised direction. The [protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains a draft for human approval; this revision does not complete Issue #65 Gate 1 or authorise execution.
+[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved revised direction. The protocol is frozen/approved; changed implementation acceptance and each specific run remain separately gated.
 
 ## 3. Source and analytical unit
 
@@ -170,7 +170,7 @@ The primary models share the dataset, Units_Sold target, SKU-warehouse-day grain
 | max_depth | [4, 8] |
 | subsample | [0.8, 1.0] |
 
-There are **24 configurations per primary model × horizon**, enumerated in deterministic Cartesian-product order. Four horizons × three models × 24 configurations × four folds = **1,152 planned primary validation fits**; this is workload planning, not executed evidence. Seed 42 is fixed and mapped to each API. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) specifies canonical configuration identities, API mappings, documented subsampling-enabling controls and pending runtime approvals. [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Record canonical and effective library parameters separately. No additional tuning dimension is approved.
+There are **24 configurations per primary model × horizon**, enumerated in deterministic Cartesian-product order. Four horizons × three models × 24 configurations × four folds = **1,152 planned primary validation fits**; this is workload planning, not executed evidence. Seed 42 is fixed and mapped to each API. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) specifies canonical configuration identities, API mappings, documented subsampling-enabling controls and numeric runtime controls resolved in the frozen protocol. Issue #65 is aligned and frozen; changed implementation and specific execution remain separately reviewed. Protocol approval and experiment execution remain separately gated. Record canonical and effective library parameters separately. No additional tuning dimension is approved.
 
 Each configuration uses the same four chronological folds. Mean fold WAPE is primary; fold stability and MAE/RMSE/Bias must also be reviewed separately by horizon. Search spaces must not adapt to results, and the final interval cannot inform selection. No random K-fold or cross-horizon composite is permitted.
 

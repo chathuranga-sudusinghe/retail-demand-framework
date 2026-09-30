@@ -1,5 +1,7 @@
 # Collaboration Workflow
 
+> **Current contribution guidance:** Four-member responsibilities are defined in the member overviews: Chathuranga (Research Team Lead & Forecasting), Didilani (Inventory Risk & Replenishment Analysis), Dewmi (Responsible Decision Support) and Tinosh (System Integration and Prototype Engineering). Git-changing commands below are examples for explicitly approved human workflow, not standing AI authorization. Preserve unrelated modifications; stage only reviewed files. Forecasting experiments require exactly Python 3.12.3 and a matching specific authorization.
+
 ## Goal
 
 This document defines the official contribution workflow for the COMP1884 group project.
@@ -20,7 +22,7 @@ GitHub Issue
 Assigned contributor
         |
         v
-Update local main
+Check state; synchronize only if needed and approved
         |
         v
 Create task branch
@@ -50,7 +52,7 @@ Merge to main
 Linked Issue auto-closes
         |
         v
-Verify Issue state and pull latest main locally
+Verify Issue state; synchronize only if needed and approved
 ```
 
 ---
@@ -144,6 +146,9 @@ Cross-review is encouraged because this is one integrated group project.
 
 ---
 
+### Tinosh
+Implements approved adapters, schemas, technical visuals, API/integration tests and prototype engineering; component owners retain analytical meaning.
+
 ## 7. AI-assisted contribution model
 
 The team may use ChatGPT and Codex.
@@ -226,7 +231,7 @@ git checkout -b feature/inventory-risk-baseline
 She then works only on the assigned Issue, commits, and pushes:
 
 ```bash
-git add .
+git add <reviewed-file-paths>
 git commit -m "feat: add inventory risk baseline"
 git push -u origin feature/inventory-risk-baseline
 ```

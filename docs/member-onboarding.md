@@ -1,5 +1,7 @@
 # Member Onboarding Guide
 
+> **Current contribution guidance:** Four-member responsibilities are defined in the member overviews: Chathuranga (Research Team Lead & Forecasting), Didilani (Inventory Risk & Replenishment Analysis), Dewmi (Responsible Decision Support) and Tinosh (System Integration and Prototype Engineering). Git-changing commands below are examples for explicitly approved human workflow, not standing AI authorization. Preserve unrelated modifications; stage only reviewed files. Forecasting experiments require exactly Python 3.12.3 and a matching specific authorization.
+
 ## Purpose
 
 This guide is for contributors who are new to GitHub, branches, Pull Requests, ChatGPT, or Codex.
@@ -14,7 +16,7 @@ You need:
 
 - access to the project GitHub repository;
 - Git installed;
-- Python 3.12.x for this project;
+- Python 3.12.3 for this project;
 - a local clone of the repository;
 - access to ChatGPT / Codex if you plan to use them;
 - the **High-Dimensional Supply Chain Inventory Dataset** stored locally under `data/raw/`.
@@ -143,7 +145,7 @@ Make sure:
 Example:
 
 ```bash
-git add .
+git add <reviewed-file-paths>
 git commit -m "feat: add assigned task"
 git push -u origin feature/my-task-name
 ```
@@ -174,7 +176,7 @@ Do not create a new branch.
 Stay on the same feature branch, make the requested changes, then:
 
 ```bash
-git add .
+git add <reviewed-file-paths>
 git commit -m "fix: address review feedback"
 git push
 ```
