@@ -148,3 +148,103 @@ by silently extending another component's proposed method. Unavailable/unapprove
 outputs need an explicit reason. No uncertainty method, threshold or decision rule
 is approved by this interface update. Ownership and existing responsible-use
 principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.
+
+
+## 12. Measurable Responsible Decision-Support and Human-Review Criteria
+
+### 12.1 Evaluation Unit
+
+For this evaluation, each management-facing decision-support record will be treated as one evaluation unit. The record should be linked clearly to the relevant `SKU_ID`, `Warehouse_ID`, forecast origin and forecast horizon so that the information can be traced back to the correct forecasting and inventory context.
+
+The main purpose of the evaluation is to check whether a manager can understand the information provided before using it to support a decision. This includes checking what evidence is available, where the information has come from, what information is still missing or has not been assessed, and which parts still require human judgement.
+
+Where reviewed forecasting and inventory-risk outputs are available, they will be used as the supporting evidence. This part of the research will not recalculate forecasts, change the agreed inventory-risk method, or create new replenishment quantities. Those outputs remain the responsibility of their respective project components.
+
+### 12.2 Measurable Transparency Checks
+
+The transparency checks focus on information that can be observed directly in the decision-support record. Each check can be recorded as `met`, `not met`, or `not assessable`, with a short reason where needed.
+
+| Check | What will be reviewed |
+| --- | --- |
+| Forecast visibility | Whether the forecast value, forecast origin and horizon are clearly shown. |
+| Risk visibility | Whether the available inventory-risk result and its supporting evidence are visible. |
+| Recommendation traceability | Whether a replenishment recommendation, when available, can be traced to the evidence supporting it. |
+| Uncertainty visibility | Whether available forecast-error or uncertainty information is shown rather than hidden. |
+| Assumption visibility | Whether assumptions that affect interpretation are visible to the manager. |
+| Limitation visibility | Whether relevant data or model limitations are clearly stated. |
+| Human-review transparency | Whether a human-review state is accompanied by a reason explaining why it is present. |
+| Source distinction | Whether forecasting, inventory-risk and responsible decision-support information can be distinguished from each other. |
+
+A check should not be marked as failed simply because an upstream component has not produced the required information. In that situation, the result should be recorded as `not assessable`, together with the reason the evidence is unavailable. This avoids treating missing information as if it were a valid zero or false value.
+
+### 12.3 Missing and Unavailable Information
+
+Missing information needs to be shown clearly because it can affect how a manager interprets the decision-support record. A blank value should not automatically be treated as zero, and unavailable information should not be hidden.
+
+Where information is missing, the record should distinguish between the following situations:
+
+- `not produced` – the information cannot currently be produced because there is no approved or defensible method;
+- `not applicable` – the information does not apply to the particular record;
+- `pending upstream output` – the information depends on another project component and is not yet available;
+- `not assessed` – the relevant evaluation or human-review check has not yet been completed.
+
+A short reason should be recorded with the status where it is needed to understand why the information is unavailable.
+
+These states are intended to make missing information visible rather than fill the gap with an assumed value. They do not introduce a new forecasting, inventory-risk or replenishment rule.
+
+### 12.4 Human-Review Protocol
+
+Human review should be represented as a clear state rather than a simple true or false value. This is important because a false value could be misunderstood as meaning that no review is needed, even when the review criteria have not yet been assessed.
+
+For evaluation purposes, the decision-support record should show whether human review has been assessed and, where additional review is required, explain the reason. If the review has not yet been assessed, this should be shown explicitly as `not assessed`.
+
+A review reason should point back to the information that caused the concern, such as conflicting evidence, missing supporting information, an important limitation, or another condition defined by an approved downstream rule. This allows a manager to understand why the record needs additional attention instead of seeing an unexplained warning.
+
+This protocol does not define numerical thresholds for triggering human review. Those thresholds and decision rules should only be applied after they have been agreed by the relevant component owners. Regardless of the review state, the output remains advisory and the final decision stays with the human reviewer.
+
+### 12.5 Evaluation Recording
+
+The results of the responsible decision-support evaluation should be recorded in a simple and consistent way. For each decision-support record, the applicable transparency checks should be reviewed and their outcome recorded as `met`, `not met`, or `not assessable`.
+
+Where a check is marked as `not met` or `not assessable`, a short reason should also be included. This provides evidence for the evaluation and makes it possible to identify which parts of the decision-support output need further improvement.
+
+The evaluation can then report the number or proportion of records meeting each transparency check. These results describe how consistently the prototype presents the required information. They should not be interpreted as evidence that the system improves managerial trust, business performance or decision quality, as those outcomes would require a separate form of evaluation.
+
+### 12.6 Interpretation of the Evaluation
+
+The evaluation results will be used to show how consistently the prototype meets the responsible decision-support criteria defined in this methodology. They can also help identify areas where information is unclear, missing or difficult to trace back to its source.
+
+A high number of `met` results would indicate that the required information is being presented consistently. However, this should not be taken as proof that managers trust the system more or make better decisions because of it. Those outcomes are outside the scope of this evaluation unless they are tested separately with suitable evidence.
+
+Any `not met` or `not assessable` results should be reported rather than removed from the evaluation. This is particularly important where the result depends on an upstream method or decision that has not yet been approved.
+
+The findings should therefore be interpreted as evidence about the transparency and reviewability of the prototype, rather than evidence of improved business performance or automatic decision-making.
+
+### 12.7 Supported and Unsupported Claims
+
+The evaluation should separate conclusions that are supported by the available evidence from claims that have not been tested in this project.
+
+The evaluation can support statements about whether the required decision-support information is present, whether its source can be identified, whether missing information is made explicit, and whether human-review reasons are visible and traceable to the available evidence.
+
+It cannot, on its own, support claims that the decision-support approach improves manager trust, leads to better decisions, reduces inventory costs, improves business performance or performs effectively in a real retail environment. These outcomes have not been evaluated through this methodology.
+
+Any conclusion reported from this evaluation should therefore remain within the evidence actually produced by the project. Unsupported claims should be identified as outside the current evaluation rather than presented as project findings.
+
+### 12.8 Upstream Dependencies
+
+The responsible decision-support evaluation depends on reviewed outputs from other parts of the project. Forecast information should come from Chathuranga's reviewed forecasting outputs and the agreed forecasting-facing contract. Inventory-risk evidence and its interpretation should come from Didilani's reviewed inventory-risk work.
+
+These dependencies should remain visible when the decision-support record is evaluated. If an expected upstream output is unavailable or has not yet been approved, it should be shown as unavailable rather than treated as complete or replaced with an assumed value.
+
+This methodology does not recalculate forecasting outputs or redefine the inventory-risk method. It uses reviewed upstream evidence where it is available and keeps any remaining gaps explicit.
+
+### 12.9 Handoff and Implementation Boundary
+
+This research note defines the responsible decision-support meaning, evaluation criteria and human-review requirements. The next stage is Issue #73, where responsible decision-support records can be created and tested against these requirements.
+
+The implementation should preserve the transparency checks, missing-information states, human-review reasons, assumptions, limitations and source distinctions defined here. Any information that depends on an upstream component should remain identifiable rather than being replaced with an assumed value.
+
+Tinosh may later support the technical presentation or integration of reviewed decision-support records. This does not transfer ownership of the responsible-use methodology or human-review logic. Changes to these criteria should remain under Dewmi's responsible decision-support component and follow the project's review process.
+
+The resulting output remains advisory. It should support management review and should not be treated as an automatic approval or replenishment instruction.
+
