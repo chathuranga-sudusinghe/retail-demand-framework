@@ -857,3 +857,15 @@ validation-run authorisation, selection freeze and final-run authorisation remai
 separate gates. Downstream inventory-risk, replenishment, uncertainty and human-
 review methodology stay outside this forecasting-protocol task. No tests, model
 fits, scores or experiments are executed by this document update.
+
+## Issue #89 operational/artifact amendment — implementation pending human review
+
+This amendment implements the project owner's Issue #89 operational instructions. It changes no grain, features, labels, horizons, folds, grid, model settings, baseline/metric formulas, tie semantics or final-stage research policy. Scientific schema remains issue-65-v2 and protocol version remains issue-65-matched-frozen-1; the full protocol byte hash binds this amendment.
+
+Normal execution is `python -m src.forecasting.experiment` from the repository root. Fixed pathlib locations resolve dataset and reviewed execution record; the exact approved run ID is resolved, not generated. No approvals or hashes are manufactured/refreshed. Existing directories are consumed and cannot be overwritten/resumed. See [runner operations](forecasting-runner.md).
+
+Completion requires readback schema/count/key/provenance checks, reconciliation using existing scientific functions, hashes and saved-model replay. All successful learned validation fits are retained in native XGBoost/LightGBM/CatBoost formats or trusted version-bound joblib, with fitted preprocessing and derived origin predictors. They are validation candidates, not final/deployment models. Baselines retain formula provenance. No raw/full dataset or training matrix is copied. This explicitly extends the earlier seven-artifact/no-model-binary operational policy; scientific columns and selection meaning remain unchanged. Storage capacity must be reviewed before execution.
+
+Authorization/model/state files and finalized logs are hashed by run_manifest.json (version 1). Lifecycle is preflight, running, finalizing, verified_completed; failures are failed/interrupted. The manifest is published LAST after verification, log closure and final metadata. Metadata alone is not completion evidence. Failed, partial, missing or corrupt bundles are rejected by completed-evidence consumers. Recovery preserves the original exception.
+
+Source/tests, direct joblib/threadpoolctl pins and this amendment change approval-bound hashes. Earlier authorization cannot authorize changed code without renewed human review and a matching reviewed record. Writing this amendment neither executes nor approves an experiment. Gate 6 remains blocked.
