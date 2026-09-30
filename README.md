@@ -1,8 +1,8 @@
 # Retail Demand Framework
 
-> **Issue #66 revision — 2026-09-29:** [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. Protocol approval and experiment execution remain separately gated. Gate 1 is incomplete; execution is not authorised.
+> **Issue #66 revision — 2026-09-29:** [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 remains the provenance for the earlier preprocessing contract. The revised protocol under Issue #65 is frozen/approved (Gate 1), implementation is complete (Gate 2), and PR #76 is human-reviewed/accepted and merged (Gate 3). See the current gate status below.
 
-> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). Implementation acceptance, the revised executable protocol, proposed 28-day baselines and downstream methods remain separately gated. Experiment execution is NOT authorised. See [revision and provenance](docs/forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). The [frozen validation protocol](docs/protocol.md) records the approved supportive configurations and 28-day simple baselines. [Issue #78](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/78) authorises only the specific Gate 4 validation run `comp1884-validation-20260929-full-01`, which has not yet been executed. Downstream methods retain their separate approval requirements. See [revision and provenance](docs/forecasting-methodology-revision.md) for historical context and the current gate status below.
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
@@ -114,7 +114,7 @@ Simple baselines
 
 The design retains fourteen conceptual predictors, fixed-origin 1/7/14/28-day forecasts and four expanding-window folds. Each primary model has 24 configurations per horizon, with seed 42: **1,152 planned primary validation fits**, not executed results. [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the controlled comparison and hyperparameter search; the [feature contract](docs/forecasting-feature-engineering.md) and [research design](docs/research-design.md) document feature engineering, temporal validation and reproducibility controls for future experimentation.
 
-**Supportive benchmarks:** Ridge Regression and Random Forest provide contextual evidence only and do not determine RQ2. Their configuration policy remains unresolved and requires separate human approval. **Simple baselines:** Naive and Seasonal Naive retain their approved 1/7/14-day formulas; proposed 28-day extensions remain approval-pending. WAPE remains the primary forecasting evaluation metric; MAE, RMSE and Bias are supporting metrics. Protocol approval, implementation acceptance and experiment execution remain separately gated.
+**Supportive benchmarks:** Ridge Regression and Random Forest provide contextual evidence only and do not determine RQ2. Their fixed configuration policy is approved in the [frozen validation protocol](docs/protocol.md). **Simple baselines:** Naive and Seasonal Naive retain their approved 1/7/14-day formulas; the 28-day extensions are also approved in that protocol. WAPE remains the primary forecasting evaluation metric; MAE, RMSE and Bias are supporting metrics. Protocol approval, implementation acceptance and experiment execution remain separately gated.
 
 ## Team Contributions
 
@@ -191,7 +191,7 @@ See [Dataset Contract](docs/dataset.md), [DR-001 — Dataset Selection](docs/dec
 - [Research design](docs/research-design.md)
 - [Frozen forecasting feature contract](docs/forecasting-feature-engineering.md)
 - [Forecasting methodology and provenance](docs/forecasting-methodology-revision.md)
-- [Issue #65 — protocol alignment pending](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65)
+- [Issue #65 — protocol frozen / approved](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65)
 - [DR-013 — Matched Gradient-Boosting Comparison](docs/decisions/DR-013-matched-gradient-boosting-comparison.md)
 - [Dataset contract](docs/dataset.md)
 - [Project boundaries](docs/project-boundaries.md)
@@ -241,4 +241,4 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 Research design was revised and approved under Issue #66. XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, temporal folds and WAPE-led evaluation policy remain unchanged. The primary models use a common full one-hot representation and a matched 24-configuration grid.
 
-The revised forecasting experiment protocol under Issue #65 has been human-reviewed and approved, and the forecasting runner implementation in PR #76 has been accepted and merged. Issue #78 authorises the specific Gate 4 validation run `comp1884-validation-20260929-full-01`; that run has not yet been executed. Final model/configuration freeze, final refit, and final evaluation remain separately gated and are not authorised.
+Gate 1 is complete: the revised forecasting experiment protocol under Issue #65 is frozen/approved. Gate 2 is complete: the forecasting runner implementation is complete. Gate 3 is complete: PR #76 has been human-reviewed/accepted and merged. [Issue #78](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/78) authorises Gate 4 only for the specific validation run `comp1884-validation-20260929-full-01`; that run has not yet been executed. Gate 5 is pending validation evidence review, and Gate 6 is blocked. Final model/configuration freeze, final refit, and final evaluation are not authorised.
