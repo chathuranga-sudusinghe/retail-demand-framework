@@ -10,7 +10,7 @@
 
 ## Role
 
-**Model Training, Model Selection, Demand Forecasting, and Forecast Evaluation**
+**Research Team Lead & Forecasting**
 
 ## Purpose in the group system
 
@@ -71,6 +71,8 @@ The frozen contract contains **two categorical context + twelve numerical engine
 7. Measure forecast error, bias, and uncertainty where feasible.
 8. Produce a stable forecast-output contract for Didilani's component.
 9. Document assumptions and limitations.
+
+Chathuranga also leads overall research-team coordination and cross-component research review. FastAPI/API integration is shared with Tinosh: Chathuranga guides API architecture and integration design, owns forecasting-facing input/output contracts, and reviews endpoint behaviour affecting forecasting meaning, provenance, origin and horizon. Tinosh leads endpoint, adapter, test and prototype implementation. This shared role does not make Chathuranga the owner of every prototype implementation detail.
 
 ## Candidate outputs
 

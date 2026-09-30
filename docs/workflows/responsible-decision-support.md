@@ -42,6 +42,7 @@ The main analytical inputs are produced upstream:
 - Chathuranga produces the demand forecast and forecast-evaluation information.
 - Didilani produces the inventory-risk and replenishment outputs.
 - Dewmi does not repeat those calculations; she converts them into a responsible decision-support presentation and human-review process.
+- Tinosh may integrate and technically present Dewmi's reviewed records in the prototype. Dewmi retains the record semantics, management-facing meaning and human-review criteria, and reviews their presentation.
 
 ## Required principles
 

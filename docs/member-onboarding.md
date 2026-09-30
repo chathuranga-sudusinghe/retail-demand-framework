@@ -61,6 +61,13 @@ docs/team/didilani/group-project-overview.md
 docs/team/dewmi/group-project-overview.md
 ```
 
+### Tinosh
+
+```text
+docs/team/tinosh/group-project-overview.md
+docs/workflows/system-integration-and-prototype.md
+```
+
 These files define each member's responsibility inside the shared COMP1884 group project.
 
 ---

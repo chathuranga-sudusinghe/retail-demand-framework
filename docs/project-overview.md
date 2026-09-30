@@ -33,7 +33,7 @@ To investigate how data-driven demand forecasting can be integrated with invento
 4. Combine forecast outputs with inventory variables to identify inventory and replenishment risks.
 5. Present risk and replenishment information through clear analytical outputs.
 6. Incorporate uncertainty, transparency, limitations, and human oversight into decision support.
-7. Integrate the three member components into one end-to-end prototype/framework.
+7. Integrate the forecasting, inventory-risk and responsible decision-support components into one end-to-end prototype/framework.
 
 ## 6. Main research question
 
@@ -76,6 +76,7 @@ The expected COMP1884 output is one integrated retail decision-support prototype
 - an inventory-risk and replenishment-analysis component;
 - a visual/business interpretation layer;
 - a responsible decision-support layer;
+- a technical integration and prototype layer;
 - documented assumptions, limitations, and evaluation.
 
 The intended end-to-end behaviour is:
@@ -92,19 +93,23 @@ A recommended replenishment quantity may be produced where the final method can 
 
 ### Chathuranga
 
-Owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and generation of SKU-warehouse-day forecast outputs for downstream use.
+As Research Team Lead & Forecasting owner, coordinates group research and owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and SKU-warehouse-day forecast outputs. Shares API architecture and integration review with Tinosh, including forecasting-facing contracts and provenance.
 
 ### Didilani
 
-Owns inventory-risk and replenishment analysis. Her component consumes Chathuranga's forecast outputs while retaining `Warehouse_ID`, then combines them with warehouse-specific inventory variables such as inventory level, reorder point, supplier lead time, and replenishment quantity. She also owns visual/business interpretation of the resulting risk outputs.
+Owns inventory-risk and replenishment analysis. Her component consumes Chathuranga's forecast outputs while retaining `Warehouse_ID`, then combines them with warehouse-specific inventory variables such as inventory level, reorder point, supplier lead time, and replenishment quantity. She defines the analytical requirements and meaning of inventory-risk visuals, documents and interprets the findings, and reviews their technical representation.
 
 ### Dewmi
 
 Owns responsible decision support, transparency, limitations, ethical/legal/governance analysis, and human oversight. Her component consumes forecast and inventory-risk/replenishment outputs and converts them into responsible management-facing decision-support information.
 
+### Tinosh
+
+Owns system integration and prototype engineering: approved component adapters and interchange contracts, technical visual implementation, API and integration tests, reproducibility checks, and final prototype assembly. FastAPI/API integration is shared with Chathuranga. Tinosh implements the delivery layer without changing component methodology or the meaning of its outputs.
+
 ## 11. Integration rule
 
-The components are not three unrelated mini-projects. They must exchange defined inputs and outputs:
+The components are parts of one group product. They must exchange defined inputs and outputs:
 
 ```text
 Chathuranga forecast
@@ -113,8 +118,14 @@ Didilani inventory-risk / replenishment analysis
         ->
 Dewmi responsible decision-support layer
         ->
+Chathuranga + Tinosh shared API integration
+        ->
+Tinosh technical visuals and prototype assembly
+        ->
 Final integrated framework output
 ```
+
+Integration may use each reviewed output as it becomes available; the implementation need not follow a strictly sequential schedule. FastAPI is an integration/delivery technology, not a research method.
 
 ## 12. Dataset
 

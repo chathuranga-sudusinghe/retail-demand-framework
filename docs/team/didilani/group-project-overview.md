@@ -8,7 +8,7 @@
 
 ## Role
 
-**Inventory-Risk Analytics, Replenishment Analysis, Visual Analytics, and Business Interpretation**
+**Inventory Risk & Replenishment Analysis**
 
 ## Purpose in the group system
 
@@ -50,7 +50,7 @@ Primary inputs include:
 5. Preserve origin timing, horizon meaning and the no-receipt assumptions in reusable logic.
 6. Evaluate retrospective crossings and boundary margins without inventing a numeric near-boundary tolerance.
 7. Keep numerical replenishment quantity provisional until a defensible method is separately approved.
-8. Create visual analytics that explain the risk/replenishment outputs.
+8. Define and document the analytical requirements and meaning of visuals that explain risk/replenishment outputs, and review their technical representation.
 9. Translate analytical outputs into business interpretation.
 10. Produce outputs usable by Dewmi's responsible decision-support component.
 
@@ -103,6 +103,8 @@ If a numerical replenishment method is later justified and approved, any quantit
 ## Scope boundary
 
 This is not a dashboard-only contribution. The visual layer communicates a substantive inventory-risk and replenishment-analysis method.
+
+Didilani retains inventory-risk visual analysis, documentation, interpretation and conclusions. Tinosh implements approved reusable charts, rendering and prototype visuals after the relevant analytical requirements are defined and reviewed. Existing Issue #71 work remains with Didilani; this ownership split does not reassign that Issue.
 
 ## 28-day compatibility review — downstream approval pending
 

@@ -50,6 +50,8 @@ The full project is guided by the primary group-level hypothesis, while this com
 9. Ensure the framework supports rather than replaces managerial judgement.
 10. Contribute to robustness/sensitivity evaluation where feasible.
 
+Dewmi owns responsible decision-support record semantics, management-facing meaning and human-review criteria. Tinosh may implement their technical presentation and integration, subject to Dewmi's review; he does not define or change the responsible-use method or review logic.
+
 ## Candidate decision-support output
 
 ```text

@@ -417,6 +417,8 @@ Management-facing output
 
 The management-facing output follows the structure defined in DR-011. It keeps `SKU_ID`, `Warehouse_ID`, forecast origin, and forecast horizon visible so that each output can be traced back to its forecasting context. Under the revised direction, the 7-day, 14-day and 28-day forecasts represent cumulative demand over their respective horizons, without implying a daily forecast path. Representing a 28-day cumulative forecasting output does not itself approve downstream 28-day inventory/replenishment use; that remains subject to component-owner/human approval. DR-012 proposes the initial inventory exposure method; group approval, implementation and the final schema remain pending. Uncertainty, overstock, numerical replenishment and human-review rules remain provisional until their related decisions are approved.
 
+Tinosh's fourth-member contribution is technical integration and prototype engineering within this existing research design. He may implement reviewed component adapters, approved visual outputs and prototype delivery, while Chathuranga shares API architecture and forecasting-contract review. Didilani retains inventory-risk method and interpretation; Dewmi retains responsible decision-support semantics and human-review methodology. FastAPI is a delivery technology, not a research method, and does not alter the research questions, analytical rules or evaluation protocol.
+
 ## 15. Threats to validity
 
 Important threats include:

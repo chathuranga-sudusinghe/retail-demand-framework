@@ -75,8 +75,21 @@ Responsible decision support and governance
 Dewmi
             |
             v
+Responsible management-facing records
+            |
+            v
+Shared API integration
+Chathuranga + Tinosh
+            |
+            v
+Technical visuals and prototype assembly
+Tinosh
+            |
+            v
 Integrated COMP1884 decision-support framework
 ```
+
+The integration layer may assemble reviewed component outputs as they become available; FastAPI is a delivery technology, not a research method.
 
 ## Multi-Model Forecasting Design
 
@@ -107,25 +120,31 @@ The design retains fourteen conceptual predictors, fixed-origin 1/7/14/28-day fo
 
 This is one integrated group research project. Each member is responsible for a defined component while contributing to the shared end-to-end decision-support framework.
 
-### Chathuranga Sudusinghe — Team Lead & Forecasting / Research Lead
+### Chathuranga Sudusinghe — Research Team Lead & Forecasting
 
-- Leads the overall group project coordination and forecasting research workstream.
-- Responsible for model-comparison methodology, temporal validation, model selection, reproducibility, and forecast-output generation.
-- Coordinates integration across the forecasting, inventory-risk, and responsible decision-support components.
+- Leads overall research-team coordination and the forecasting workstream.
+- Responsible for forecasting methodology, model comparison and selection, temporal validation, reproducibility, evaluation, and forecast-output generation.
+- Coordinates cross-component research integration and shares API integration with Tinosh.
 
 ### Didilani Pathinayaka — Inventory Risk & Replenishment Analysis
 
-- Responsible for the inventory-risk and replenishment analysis workstream.
-- Develops the integration of forecast outputs with inventory level, reorder point, supplier lead time, and replenishment information.
-- Contributes business-oriented interpretation of inventory-risk and replenishment outputs.
+- Responsible for inventory-risk and replenishment analysis.
+- Defines and evaluates inventory-risk evidence using approved forecasting outputs and inventory information.
+- Owns documentation and business interpretation of inventory-risk findings and reviews the analytical meaning of related visual outputs.
 
 ### Dewmi Haputhanthrige — Responsible Decision Support
 
-- Responsible for the responsible decision-support and governance workstream.
+- Responsible for responsible decision-support and governance.
 - Develops transparency, limitations, human oversight, and management-facing interpretation.
-- Supports responsible use of forecasting and inventory-risk outputs within the integrated framework.
+- Defines and reviews the responsible presentation of forecasting and inventory-risk evidence.
 
-See [Chathuranga's](docs/team/chathuranga/group-project-overview.md), [Didilani's](docs/team/didilani/group-project-overview.md) and [Dewmi's](docs/team/dewmi/group-project-overview.md) contribution documents for component boundaries, collaboration responsibilities, and research decisions.
+### Tinosh Gamage — System Integration and Prototype Engineering
+
+- Responsible for cross-component technical integration and final prototype engineering.
+- Implements approved visual outputs, integration adapters, API/integration tests, and prototype components.
+- Shares FastAPI/API integration with Chathuranga while preserving the research meaning defined by each component owner.
+
+See [Chathuranga's](docs/team/chathuranga/group-project-overview.md), [Didilani's](docs/team/didilani/group-project-overview.md), [Dewmi's](docs/team/dewmi/group-project-overview.md) and [Tinosh's](docs/team/tinosh/group-project-overview.md) contribution documents for component boundaries and collaboration responsibilities.
 
 ## Dataset
 
@@ -183,10 +202,12 @@ See [Dataset Contract](docs/dataset.md), [DR-001 — Dataset Selection](docs/dec
 - [Chathuranga — COMP1884](docs/team/chathuranga/group-project-overview.md)
 - [Didilani — COMP1884](docs/team/didilani/group-project-overview.md)
 - [Dewmi — COMP1884](docs/team/dewmi/group-project-overview.md)
+- [Tinosh — COMP1884](docs/team/tinosh/group-project-overview.md)
 - [Shared data workflow](docs/workflows/shared-data-foundation.md)
 - [Forecasting workflow](docs/workflows/demand-forecasting.md)
 - [Inventory-risk workflow](docs/workflows/inventory-risk-analysis.md)
 - [Responsible decision-support workflow](docs/workflows/responsible-decision-support.md)
+- [System integration and prototype workflow](docs/workflows/system-integration-and-prototype.md)
 
 ## Repository structure
 
@@ -220,4 +241,4 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 Research design was revised and approved under Issue #66. XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, temporal folds and WAPE-led evaluation policy remain unchanged. The primary models use a common full one-hot representation and a matched 24-configuration grid.
 
-The revised forecasting experiment protocol under Issue #65 has been human-reviewed and approved. Issue #68 now aligns the implementation and tests with the approved Issue #66 / DR-013 design. Model training, hyperparameter evaluation, validation scoring and final evaluation remain separately gated and are not yet authorised.
+The revised forecasting experiment protocol under Issue #65 has been human-reviewed and approved, and the forecasting runner implementation in PR #76 has been accepted and merged. Issue #78 authorises the specific Gate 4 validation run `comp1884-validation-20260929-full-01`; that run has not yet been executed. Final model/configuration freeze, final refit, and final evaluation remain separately gated and are not authorised.
