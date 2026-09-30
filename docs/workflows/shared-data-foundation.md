@@ -108,6 +108,8 @@ Stockout_Flag
 
 The final cross-component schemas must be documented before integration.
 
+Chathuranga and Tinosh share API integration design and review, with Chathuranga responsible for forecasting-facing contract meaning. Tinosh implements agreed adapters and delivery schemas after review by the relevant component owner. These technical contracts must preserve provenance, origin, horizon and unavailable-state reasons; they must not settle the pending snapshot or methodological decisions by default.
+
 ## Data ownership
 
 The raw dataset remains local. No member should commit raw or processed full datasets to GitHub.

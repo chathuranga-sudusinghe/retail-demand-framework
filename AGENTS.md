@@ -228,11 +228,15 @@ A recommendation is decision support, not an automatically executable purchase o
 Primary COMP1884 area:
 
 ```text
+Research Team Lead & Forecasting
+Research-team coordination
 Model training
 Model comparison / selection
 Demand forecasting
 Forecast evaluation
 ```
+
+Chathuranga owns forecasting methodology and output meaning, coordinates cross-component research, and shares FastAPI/API architecture and integration review with Tinosh.
 
 Relevant docs:
 
@@ -246,11 +250,14 @@ docs/workflows/demand-forecasting.md
 Primary COMP1884 area:
 
 ```text
-Inventory-risk analytics
+Inventory Risk & Replenishment Analysis
+Inventory-risk methodology and evaluation
 Replenishment analysis
-Visual analytics
+Analytical visual requirements and documentation
 Business interpretation
 ```
+
+Didilani defines and reviews the meaning of visual outputs based on her component's evidence. Tinosh owns technical implementation of approved visuals; this does not transfer Didilani's analytical ownership.
 
 Relevant docs:
 
@@ -264,10 +271,12 @@ docs/workflows/inventory-risk-analysis.md
 Primary COMP1884 area:
 
 ```text
-Responsible decision support
+Responsible Decision Support
 Ethical / legal / governance analysis
 Transparency and human oversight
 ```
+
+Dewmi owns decision-support record semantics and reviews their presentation in the prototype.
 
 Relevant docs:
 
@@ -276,7 +285,28 @@ docs/team/dewmi/group-project-overview.md
 docs/workflows/responsible-decision-support.md
 ```
 
-Members may collaborate across boundaries, but ownership changes must be explicit.
+### Tinosh
+
+Primary COMP1884 area:
+
+```text
+System Integration and Prototype Engineering
+Cross-component adapters and agreed interchange contracts
+Technical implementation of approved visual outputs
+Integration and API testing
+Final prototype engineering
+```
+
+Relevant docs:
+
+```text
+docs/team/tinosh/group-project-overview.md
+docs/workflows/system-integration-and-prototype.md
+```
+
+FastAPI/API integration is shared by Chathuranga and Tinosh: Chathuranga leads architecture and forecasting-facing contract review; Tinosh implements endpoints, schemas, adapters and tests. Technical visual implementation follows analytical requirements defined and reviewed by the relevant component owner. Tinosh must not redefine forecasting, inventory-risk, replenishment or responsible decision-support methodology.
+
+Members may collaborate across boundaries, but ownership changes require explicit human review and approval.
 
 ---
 

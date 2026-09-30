@@ -54,6 +54,8 @@ Forecast-output contract
 Didilani inventory-risk / replenishment analysis
 ```
 
+Chathuranga retains the forecasting-output contract and reviews its API representation with Tinosh. Their shared API work must preserve SKU, warehouse, forecast origin, horizon, target-window meaning and model provenance. Tinosh may implement the adapter and endpoint only against a reviewed contract; API integration does not alter model selection or forecasting evaluation.
+
 ## Approved analytical unit and target
 
 DR-002 selects:

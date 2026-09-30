@@ -30,6 +30,8 @@ Exposure evidence + margins + assumptions / limitations
 Visual interpretation and responsible decision-support handoff
 ```
 
+Didilani defines and reviews the analytical content of inventory-risk visuals and the business interpretation. Tinosh may implement approved chart/rendering code and prototype delivery. The inventory-risk evidence and assumptions passed onward remain Didilani's responsibility; technical integration must not create a new exposure or replenishment rule.
+
 ## Proposed interpretation
 
 For the same SKU-warehouse, `I_t` and `R_t` are inventory and reorder-point values available at origin `t`; `B_t = I_t - R_t`. Forecast demand covers `t+1` through `t+h`, inclusive.
