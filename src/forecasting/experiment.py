@@ -6,7 +6,8 @@ Final fitting, preprocessing and evaluation deliberately have no implementation.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator, cast
 
@@ -25,8 +26,11 @@ from src.forecasting.configuration import (
 from src.forecasting.evaluation import (
     PreparedFold, PreflightError, frame_hash, prepare_fold, require_native_roster, validation_view,
 )
+from src.forecasting.execution import ExecutionContext, load_dataset, resolve_execution
+from src.forecasting.integrity import build_manifest, plan_counts, verify_scientific
+from src.forecasting.model_artifacts import persist_model
 from src.forecasting.metadata import (
-    REPOSITORY, ExecutionBlocked, RunScope, ValidationAuthorization, environment_metadata,
+    ExecutionBlocked, RunScope, ValidationAuthorization, environment_metadata,
     initial_metadata,
 )
 from src.forecasting.metrics import METRIC_NAMES, forecasting_metrics
@@ -34,6 +38,7 @@ from src.forecasting.models import (
     construct_estimator, effective_iterations, effective_parameters, estimator_parameters, fit_estimator,
     parameter_metadata,
 )
+from src.forecasting.paths import DEFAULT_LAYOUT, RepositoryLayout
 from src.forecasting.progress import RunProgress
 from src.forecasting.reporting import comparison_text
 from src.forecasting.selection import MODEL_ORDER, ROLES, record_order, select_primary, summarize_configurations
@@ -165,7 +170,7 @@ def _execute_candidates(
             "representation_id": representation_ids.get((model, candidate.horizon, candidate.fold_id)),
             "training_population_hash": population.training_population_hash,
             "pair_key_hash": fold.pair_key_hash, "input_view_hash": fold.input_view_hash,
-            "candidate_status": "running", "failure_reason": None,
+            "candidate_status": "running", "fit_completed": False if learned else None, "failure_reason": None,
             "baseline_formula_reference": BASELINE_FORMULAS.get(model),
         }
         metadata["candidate_records"].append(candidate_record)
@@ -181,7 +186,7 @@ def _execute_candidates(
                 fitted = fit_estimator(estimator, model, candidate.configuration,
                                        train_matrix.copy(), population.labels.copy())
                 progress.complete_fit()
-                candidate_record.update(fitted)
+                candidate_record.update(fitted, fit_completed=True)
                 with threadpool_limits(limits=1):
                     predicted = np.asarray(estimator.predict(origin_matrix.copy()), dtype=float)
             else:
@@ -191,6 +196,11 @@ def _execute_candidates(
             metrics = forecasting_metrics(population.observed_targets, predicted)
             if metrics["metric_status"] == "failed":
                 raise ValueError(metrics["failure_reason"])
+            if learned:
+                progress.operation = "model_persistence"
+                record = persist_model(writer.directory, estimator, candidate_record,
+                                       population.preprocessors[model], fold.origin_features, metadata)
+                metadata["model_artifacts"].append(record)
             metric_record = {**keys, **temporal, **metrics}
             metadata["metric_records"].append(metric_record)
             candidate_record.update(candidate_status="completed", metric_status=metrics["metric_status"])
@@ -210,7 +220,10 @@ def _execute_candidates(
                     record["scored_origin_count"] = 1
             progress.complete_candidate(learned=learned)
         except Exception as exc:
-            progress.fail_candidate(exc)
+            try:
+                progress.fail_candidate(exc)
+            except BaseException as logging_error:
+                exc.add_note(f"Candidate failure logging failed: {type(logging_error).__name__}.")
             candidate_record.update(candidate_status="failed", metric_status="failed", failure_reason=str(exc))
             if estimator is not None:
                 try:
@@ -222,7 +235,10 @@ def _execute_candidates(
                 **keys, **temporal, "n_predictions": 0, **dict.fromkeys(METRIC_NAMES),
                 "wape_denominator": None, "metric_status": "failed", "failure_reason": str(exc),
             })
-            writer.write_json("diagnostics.json", {"candidate": candidate_record, "failure_reason": str(exc)})
+            try:
+                writer.write_json("diagnostics.json", {"candidate": candidate_record, "failure_reason": str(exc)})
+            except BaseException as recovery_error:
+                exc.add_note(f"Candidate diagnostic persistence failed: {type(recovery_error).__name__}.")
             raise  # No automatic retry, replacement prediction or partial-fold comparison.
         # Checkpoint inside this run only, so interruption preserves completed evidence.
         if candidate.fold_id == 4:
@@ -279,67 +295,138 @@ def _write_results(
         metadata[key].sort(key=record_order)
     # Persist the current status/selection before the renderer reads its evidence.
     writer.write_json("run_metadata.json", metadata)
-    writer.write_comparison(comparison_text(writer.directory))
+    if allow_selection:
+        verify_scientific(writer.directory, include_report=False)
+    writer.write_comparison(comparison_text(writer.directory, require_verified=False))
     metadata["artifact_manifest"] = writer.manifest()
     writer.write_json("run_metadata.json", metadata)
 
 
 def run_validation(
     data: pd.DataFrame, *, run_id: str, authorization: ValidationAuthorization | None = None,
+    execution_context: ExecutionContext | None = None, layout: RepositoryLayout | None = None,
 ) -> Path:
-    """Only a separately human-authorised, source/input-bound Gate 4 run may fit.
-
-    No default approval or public synthetic bypass is provided. All four folds and
-    all 24 configurations remain mandatory for every in-scope primary horizon.
-    """
+    """Run only the exact human-authorised validation scope; completion is manifest-last."""
     if authorization is None:
         raise ExecutionBlocked("Gate 3 acceptance and explicit Gate 4 validation scope are required.")
-    authorization.validate(REPOSITORY, run_id)
+    layout = layout if layout is not None else (execution_context.layout if execution_context else DEFAULT_LAYOUT)
+    if execution_context is not None and execution_context.layout != layout:
+        raise ExecutionBlocked("Execution context and supplied repository layout differ.")
+    authorization.validate(layout.root, run_id)
     scope = authorization.scope
-    writer = ArtifactWriter(REPOSITORY, run_id)
-    metadata = initial_metadata(authorization, REPOSITORY)
-    writer.write_json("run_metadata.json", metadata)
+    writer = ArtifactWriter(layout, run_id)
+    metadata = initial_metadata(authorization, layout.root)
+    metadata.update(expected_counts=plan_counts(scope), completed_counts={}, model_artifacts=[],
+                    integrity_result=None, completed_at_utc=None, failed_at_utc=None,
+                    authorization_digest=None, dataset_reference=layout.dataset.relative_to(layout.root).as_posix())
     predictions: list[dict[str, Any]] = []
-    progress = RunProgress(writer.directory, run_id,
-                           primary_fits=sum(c.model in PRIMARY_MODELS for c in planned_candidates(scope)),
-                           supportive_fits=sum(c.model in SUPPORTIVE_MODELS for c in planned_candidates(scope)),
-                           baseline_evaluations=sum(c.model in BASELINE_MODELS for c in planned_candidates(scope)))
+    progress: RunProgress | None = None
     try:
-        metadata.update(environment_metadata(REPOSITORY))
+        writer.write_json("run_metadata.json", metadata)
+        if execution_context is None:
+            writer.write_json("authorization.json", asdict(authorization))
+        else:
+            if execution_context.authorization != authorization:
+                raise ExecutionBlocked("Resolved execution context differs from authorization.")
+            payload = execution_context.authorization_path.read_bytes()
+            from hashlib import sha256
+            if sha256(payload).hexdigest() != execution_context.authorization_digest:
+                raise ExecutionBlocked("Execution record changed after resolution.")
+            temporary = writer.directory / "authorization.json.tmp"
+            temporary.write_bytes(payload)
+            temporary.replace(writer.directory / "authorization.json")
+        from src.forecasting.artifacts import file_hash
+        metadata["authorization_digest"] = file_hash(writer.directory / "authorization.json")
+        progress = RunProgress(writer.directory, run_id,
+                               primary_fits=metadata["expected_counts"]["primary_fits"],
+                               supportive_fits=metadata["expected_counts"]["supportive_fits"],
+                               baseline_evaluations=metadata["expected_counts"]["baseline_evaluations"])
+        progress.phase("runtime_preflight")
+        metadata.update(environment_metadata(layout.root))
+        progress.phase("input_preflight")
         scoped = validation_view(data)
         if frame_hash(scoped) != authorization.input_view_hash:
             raise ExecutionBlocked("Validation input differs from the specifically authorised input view.")
-        # Never derive a training roster from future categories.
         first_training = scoped.loc[scoped.Date.le(pd.Timestamp(VALIDATION_FOLDS[0].training.end))]
         require_native_roster(first_training)
+        progress.phase("fold_preflight")
         prepared = {fold.number: prepare_fold(scoped, fold.number, horizons=scope.horizons) for fold in VALIDATION_FOLDS}
         first_roster = prepared[1].pair_key_hash
         if any(fold.pair_key_hash != first_roster for fold in prepared.values()):
             raise PreflightError("Pair roster changed between frozen validation folds.")
+        metadata["expected_pair_count"] = len(prepared[1].origin_features)
         metadata["representation_records"] = _representation_records(prepared, scope)
         metadata["eligibility_records"] = _eligibility_records(prepared, scope, run_id)
-        metadata["planned_primary_fits"] = sum(1 for c in planned_candidates(scope) if c.model in PRIMARY_MODELS)
-        metadata["planned_supportive_fits"] = sum(1 for c in planned_candidates(scope) if c.model in SUPPORTIVE_MODELS)
-        metadata["planned_baseline_evaluations"] = sum(1 for c in planned_candidates(scope) if c.model in BASELINE_MODELS)
+        metadata["planned_primary_fits"] = metadata["expected_counts"]["primary_fits"]
+        metadata["planned_supportive_fits"] = metadata["expected_counts"]["supportive_fits"]
+        metadata["planned_baseline_evaluations"] = metadata["expected_counts"]["baseline_evaluations"]
         metadata["run_status"] = "running"
         writer.write_json("run_metadata.json", metadata)
-        progress.operation = "preprocessing"
+        progress.phase("preprocessing")
         _execute_candidates(prepared, scope, metadata, predictions, writer, progress)
-        metadata["run_status"] = "completed" if all(r["metric_status"] == "valid" for r in metadata["metric_records"]) else "completed_with_unavailable_metrics"
-        progress.operation = "artifact_reporting"
+        metadata["run_status"] = "finalizing"
+        counts = {"primary_fits": sum(r["model"] in PRIMARY_MODELS and r["candidate_status"] == "completed" for r in metadata["candidate_records"]),
+                  "supportive_fits": sum(r["model"] in SUPPORTIVE_MODELS and r["candidate_status"] == "completed" for r in metadata["candidate_records"]),
+                  "baseline_evaluations": sum(r["model"] in BASELINE_MODELS and r["candidate_status"] == "completed" for r in metadata["candidate_records"]),
+                  "total_evaluations": len(metadata["metric_records"]),
+                  "configuration_summaries": len(summarize_configurations(metadata["metric_records"]))}
+        metadata["completed_counts"] = counts
+        metadata["metric_availability"] = "all_valid" if all(r["metric_status"] == "valid" for r in metadata["metric_records"]) else "unavailable_metrics_present"
+        progress.phase("artifact_reporting")
         _write_results(writer, metadata, predictions, scope, allow_selection=True)
-        progress.complete_run(metadata["run_status"])
+        progress.phase("integrity_verification")
+        result = verify_scientific(writer.directory)
+        authorization.validate(layout.root, run_id)
+        current_data = load_dataset(execution_context.dataset_path) if execution_context else data
+        if frame_hash(validation_view(current_data)) != authorization.input_view_hash:
+            raise ExecutionBlocked("Validation input changed during execution.")
+        if execution_context and file_hash(execution_context.authorization_path) != execution_context.authorization_digest:
+            raise ExecutionBlocked("Execution record changed during execution.")
+        # No completion claim in the log before the final manifest exists.
+        progress.complete_run("finalizing_verified")
+        progress.close()
+        progress = None
+        metadata.update(run_status="verified_completed", integrity_result=result,
+                        completed_at_utc=datetime.now(timezone.utc).isoformat())
+        writer.write_json("run_metadata.json", metadata)
+        manifest = build_manifest(writer.directory, metadata, result)
+        writer.write_json("run_manifest.json", manifest)  # LAST mutation; consumers require this manifest.
     except BaseException as exc:
-        progress.fail_run(exc)
-        metadata.update(run_status="failed", failure_reason=str(exc) or type(exc).__name__)
-        diagnostic = {"failure_reason": metadata["failure_reason"],
-                      "eligibility_diagnostics": exc.diagnostics if isinstance(exc, PreflightError) else []}
-        if not (writer.directory / "diagnostics.json").exists():
-            writer.write_json("diagnostics.json", diagnostic)
-        _write_results(writer, metadata, predictions, scope, allow_selection=False)
+        metadata.update(run_status="interrupted" if isinstance(exc, (KeyboardInterrupt, SystemExit)) else "failed",
+                        failure_reason=str(exc) or type(exc).__name__, failure_type=type(exc).__name__,
+                        failed_at_utc=datetime.now(timezone.utc).isoformat(), completed_at_utc=None,
+                        integrity_result=None, selection_records=[])
+        for record in metadata["candidate_records"]:
+            if record["candidate_status"] == "running":
+                record.update(candidate_status=metadata["run_status"], failure_reason=type(exc).__name__)
+        original_error = exc
+        metadata["completed_counts"] = {
+            "primary_fits": sum(r["model"] in PRIMARY_MODELS and r.get("fit_completed") is True for r in metadata["candidate_records"]),
+            "supportive_fits": sum(r["model"] in SUPPORTIVE_MODELS and r.get("fit_completed") is True for r in metadata["candidate_records"]),
+            "baseline_evaluations": sum(r["model"] in BASELINE_MODELS and r["candidate_status"] == "completed" for r in metadata["candidate_records"]),
+            "total_evaluations": sum(r["candidate_status"] == "completed" for r in metadata["candidate_records"]),
+        }
+        # Recovery steps are independent and best effort: never hide the original exception.
+        def recover(action: Any) -> None:
+            try:
+                action()
+            except BaseException as secondary:
+                original_error.add_note(f"Recovery failed: {type(secondary).__name__}.")
+        if progress is not None:
+            recover(lambda: progress.fail_run(original_error))
+        recover(lambda: writer.write_json("run_metadata.json", metadata))
+        recover(lambda: writer.write_json("diagnostics.json", {
+            "failure_type": type(original_error).__name__, "failure_reason": metadata["failure_reason"],
+            "eligibility_diagnostics": original_error.diagnostics if isinstance(original_error, PreflightError) else []}))
+        recover(lambda: _write_results(writer, metadata, predictions, scope, allow_selection=False))
         raise
     finally:
-        progress.close()
+        if progress is not None:
+            try:
+                progress.close()
+            except BaseException:
+                # Successful finalization closes explicitly above; this is failure cleanup only.
+                pass
     return writer.directory
 
 
@@ -350,18 +437,14 @@ def run_final_evaluation(*args: Any, **kwargs: Any) -> None:
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, required=True)
-    parser.add_argument("--run-id", required=True)
-    parser.add_argument("--authorization", type=Path, required=True)
     parser.add_argument("--stage", default="validation")
     arguments = parser.parse_args(argv)
     if arguments.stage != "validation":
         run_final_evaluation()
-    authorization = ValidationAuthorization.from_json(arguments.authorization)
-    authorization.validate(REPOSITORY, arguments.run_id)  # BEFORE reading the dataset.
-    data = pd.read_csv(arguments.input, usecols=["Date", "SKU_ID", "Warehouse_ID", "Units_Sold"],
-                       dtype={"SKU_ID": str, "Warehouse_ID": str, "Units_Sold": object})
-    run_validation(data, run_id=arguments.run_id, authorization=authorization)
+    context = resolve_execution(DEFAULT_LAYOUT)
+    data = load_dataset(context.dataset_path)
+    run_validation(data, run_id=context.authorization.run_id, authorization=context.authorization,
+                   execution_context=context)
 
 
 if __name__ == "__main__":
