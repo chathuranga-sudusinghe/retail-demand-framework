@@ -122,11 +122,11 @@ The design retains fourteen conceptual predictors, fixed-origin 1/7/14/28-day fo
 
 This is one integrated group research project. Each member is responsible for a defined component while contributing to the shared end-to-end decision-support framework.
 
-### Chathuranga Sudusinghe — Forecasting & Research Team Lead
+### Chathuranga Sudusinghe — System Architecture, Forecasting & Research Lead
 
-- Leads overall research-team coordination and the forecasting workstream.
-- Responsible for forecasting methodology, model comparison and selection, temporal validation, reproducibility, evaluation, and forecast-output generation.
-- Coordinates cross-component research integration and shares API integration with Tinosh.
+- Leads overall research coordination, forecasting methodology, and shared system architecture.
+- Responsible for forecasting methodology, model comparison and selection, temporal validation, reproducibility, evaluation, shared data architecture, forecasting lifecycle design, and forecast-output generation.
+- Coordinates cross-component research and technical integration and shares FastAPI/API integration with Tinosh.
 
 ### Didilani Pathinayaka — Inventory Risk & Replenishment Analysis
 
