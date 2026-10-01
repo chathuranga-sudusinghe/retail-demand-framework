@@ -100,7 +100,7 @@ Simple baselines remain untuned: the protocol approves both formulas over four h
 ## Audit classification of intentionally retained references
 
 - `notebooks/eda/demand_eda.ipynb`, `reports/demand-eda.md`,
-  `reports/temporal-demand-profile.md` and `src/data/demand_eda.py` retain the
+  `reports/temporal-demand-profile.md` and `src/analysis/demand_exploratory_analysis.py` retain the
   historical exploratory context, including then-approved 1/7/14 horizons and
   then-proposed untouched-test wording. They are not instructions for the revised
   final evaluation. No notebook, raw data or descriptive result was regenerated.

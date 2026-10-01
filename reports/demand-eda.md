@@ -6,10 +6,10 @@
 
 ## Reproduction and provenance
 
-Use the repository virtual environment and install `requirements-dev.txt`. From the repository root, run:
+Use the repository virtual environment and install `requirements-dev.txt`. Only after a separately reviewed scope authorization, replace the date placeholders below. Set the notebook SCOPE_START/SCOPE_END explicitly before execution; its stored full-year outputs are historical evidence, not permission to revisit reserved outcomes. The historical report renderer requires the documented full-source profile and must not relabel a partial scope as that evidence. From the repository root, the entry points are:
 
 ```bash
-.venv/bin/python -m src.data.demand_eda
+.venv/bin/python -m src.analysis.demand_exploratory_analysis --start YYYY-MM-DD --end YYYY-MM-DD
 .venv/bin/python - <<'PY'
 import nbformat
 from nbclient import NotebookClient
@@ -20,7 +20,7 @@ nbformat.write(nb, p)
 PY
 ```
 
-The notebook loads the source directly, displays summary tables and every figure inline, then saves those same figure objects as PNGs. It regenerates this report. Full generated tables stay under ignored `data/processed/demand_eda/`. The executed notebook contains aggregate outputs, not source-record previews.
+The notebook uses the shared scoped loader/validator, displays summary tables and every figure inline, then saves those same figure objects as PNGs. It regenerates this report. Full generated tables stay under ignored `data/processed/demand_eda/`. The executed notebook contains aggregate outputs, not source-record previews.
 
 | item | value |
 | --- | --- |

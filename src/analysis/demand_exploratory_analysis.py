@@ -1,7 +1,7 @@
 """Descriptive EDA at Date + SKU_ID + Warehouse_ID; no modelling decisions.
 
 Run from the repository root:
-    python -m src.data.demand_eda --input data/raw/supply_chain_dataset1.csv
+    python -m src.analysis.demand_exploratory_analysis --input data/raw/supply_chain_dataset1.csv
 Detailed CSV tables are written only beneath data/processed/.
 Historical EDA provenance: original descriptive computations and results are
 preserved. The frozen fourteen-predictor specification and current methodology
@@ -10,105 +10,43 @@ record govern forecasting; this module does not authorise models or experiments.
 from __future__ import annotations
 
 import argparse
-import hashlib
 from pathlib import Path
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from src.data.profile_inventory_alignment import profile_native_grain
+from src.analysis.inventory_alignment_analysis import profile_native_grain
+from src.data.data_cleaning import (
+    KEY, build_validated_dataset, load_raw_source, scoped_source_receipt,
+    quality_tables as validation_quality_tables,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
-KEY = ["Date", "SKU_ID", "Warehouse_ID"]
-IDS = ["SKU_ID", "Warehouse_ID", "Supplier_ID", "Region"]
-COUNTS = ["Units_Sold", "Inventory_Level", "Supplier_Lead_Time_Days", "Reorder_Point", "Order_Quantity"]
-FLAGS = ["Promotion_Flag", "Stockout_Flag"]
-NUMERIC = COUNTS + ["Unit_Cost", "Unit_Price"] + FLAGS + ["Demand_Forecast"]
-COLUMNS = ["Date"] + IDS + NUMERIC
 LAGS = (1, 7, 14, 28)
 
 
-def validate_data(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
-    """Audit without dropping, imputing, clipping or merging rows.
+def historical_baseline_comparison(validated: pd.DataFrame) -> pd.DataFrame:
+    """Compare descriptive observations with the documented historical profile.
 
-    Date/numeric parsing is an in-memory representation change. Invalid parses
-    remain missing and are counted. Call require_valid before demand analysis.
-    Nonnegative count/cost/price and integral count rules follow field meanings;
-    observed historical min/max values are not imposed as business constraints.
-    Demand_Forecast is inspected only for source quality, never demand evidence.
+    A partial authorized scope can validate successfully without matching these
+    historical facts. This comparison is research context, never a cleaning rule.
     """
-    missing = sorted(set(COLUMNS) - set(raw.columns))
-    if missing:
-        raise ValueError(f"Missing required columns: {', '.join(missing)}")
-    if raw.empty:
-        raise ValueError("Dataset is empty.")
-    df = raw.copy(deep=True)
-    issues: list[dict[str, object]] = []
-
-    def check(name: str, count: int) -> None:
-        issues.append({"check": name, "affected": int(count)})
-
-    missingness = pd.DataFrame({
-        "column": raw.columns,
-        "missing": raw.isna().sum().to_numpy(),
-        "blank": [int(raw[c].astype("string").str.strip().eq("").fillna(False).sum()) for c in raw],
-    })
-    check("missing_cells", missingness["missing"].sum())
-    check("blank_cells", missingness["blank"].sum())
-    # Source contract is a calendar date, not a timestamp. Do not truncate times.
-    df["Date"] = pd.to_datetime(raw["Date"], format="%Y-%m-%d", errors="coerce")
-    check("invalid_dates", (df["Date"].isna() & raw["Date"].notna()).sum())
-    check("non_midnight_dates", (df["Date"].notna() & df["Date"].ne(df["Date"].dt.normalize())).sum())
-    for c in IDS:
-        check(f"{c}_surrounding_whitespace", raw[c].astype("string").ne(raw[c].astype("string").str.strip()).fillna(False).sum())
-    for c in NUMERIC:
-        df[c] = pd.to_numeric(raw[c], errors="coerce")
-        check(f"{c}_invalid_numeric", (df[c].isna() & raw[c].notna()).sum())
-        check(f"{c}_infinite", np.isinf(df[c].to_numpy(dtype=float, na_value=np.nan)).sum())
-        if c in COUNTS + ["Unit_Cost", "Unit_Price"]:
-            check(f"{c}_negative", (df[c] < 0).sum())
-        if c in COUNTS:
-            check(f"{c}_fractional", (df[c].notna() & np.isfinite(df[c]) & df[c].mod(1).ne(0)).sum())
-        if c in FLAGS:
-            check(f"{c}_not_binary", (df[c].notna() & ~df[c].isin([0, 1])).sum())
-    check("exact_duplicate_extra_rows", raw.duplicated().sum())
-    check("duplicate_native_key_rows", df.duplicated(KEY, keep=False).sum())
-    valid_keys = df.dropna(subset=KEY)
-    coverage = pd.DataFrame()
-    if not valid_keys.empty:
-        dates = pd.date_range(valid_keys.Date.min(), valid_keys.Date.max(), freq="D")
-        pairs = pd.MultiIndex.from_product(
-            [sorted(valid_keys.SKU_ID.unique()), sorted(valid_keys.Warehouse_ID.unique())], names=KEY[1:])
-        observed = valid_keys.groupby(KEY[1:]).Date.nunique().reindex(pairs, fill_value=0)
-        coverage = observed.rename("observed_days").reset_index()
-        coverage["expected_days_in_observed_span"] = len(dates)
-        coverage["missing_days"] = len(dates) - coverage.observed_days
-        coverage["completeness"] = coverage.observed_days / len(dates)
-        check("missing_series_days_in_observed_span", coverage.missing_days.sum())
-    numeric = df[NUMERIC].agg(["min", "max", "mean", "median"]).T.rename_axis("column").reset_index()
-    actual = [len(df), len(raw.columns), df.Date.nunique(), df.SKU_ID.nunique(), df.Warehouse_ID.nunique(),
-              df.Date.min().strftime("%Y-%m-%d") if df.Date.notna().any() else "NaT",
-              df.Date.max().strftime("%Y-%m-%d") if df.Date.notna().any() else "NaT",
-              df.Supplier_ID.nunique(), df.Region.nunique(), int(df.Stockout_Flag.eq(0).sum()),
-              int(df.Order_Quantity.gt(0).sum())]
-    baseline = pd.DataFrame({"check": ["rows", "columns", "dates", "skus", "warehouses", "date_min", "date_max",
-                                           "suppliers", "regions", "stockout_zero_rows", "nonzero_order_rows"],
-                             "documented": [91250, 15, 365, 50, 5, "2024-01-01", "2024-12-30", 10, 4, 91250, 5027],
-                             "observed": actual})
+    observed = [len(validated), len(validated.columns), validated.Date.nunique(), validated.SKU_ID.nunique(),
+                validated.Warehouse_ID.nunique(), validated.Date.min().date().isoformat(), validated.Date.max().date().isoformat(),
+                validated.Supplier_ID.nunique(), validated.Region.nunique(), int(validated.Stockout_Flag.eq(0).sum()),
+                int(validated.Order_Quantity.gt(0).sum())]
+    baseline = pd.DataFrame({"check": ["rows", "columns", "dates", "skus", "warehouses", "date_min", "date_max", "suppliers", "regions", "stockout_zero_rows", "nonzero_order_rows"],
+                             "documented": [91250, 15, 365, 50, 5, "2024-01-01", "2024-12-30", 10, 4, 91250, 5027], "observed": observed})
     baseline["matches"] = baseline.documented.eq(baseline.observed)
-    return df.sort_values(KEY[1:] + ["Date"]).reset_index(drop=True), {
-        "validation": pd.DataFrame(issues), "missingness": missingness,
-        "coverage": coverage, "numeric_ranges": numeric, "baseline": baseline,
-        "native_grain": profile_native_grain(df),
-    }
+    return baseline
 
 
-def require_valid(tables: dict[str, pd.DataFrame]) -> None:
-    """Stop on quality defects; historical baseline differences remain visible."""
-    failures = tables["validation"].query("affected > 0")
-    if not failures.empty:
-        raise ValueError("Data-quality issues require review; no repair applied:\n" + failures.to_string(index=False))
+def quality_tables(validated: pd.DataFrame, audit: dict[str, Any]) -> dict[str, pd.DataFrame]:
+    """Combine shared validation evidence with analysis-local historical context."""
+    return {**validation_quality_tables(validated, audit),
+            "baseline": historical_baseline_comparison(validated)}
 
 
 def summarize(df: pd.DataFrame, groups: list[str]) -> pd.DataFrame:
@@ -131,9 +69,7 @@ def lag_correlation(values: pd.Series, lag: int) -> float:
 
 
 def analyze_demand(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    """Validate native records before building descriptive aggregate views."""
-    df, audit = validate_data(df)
-    require_valid(audit)
+    """Analyze a shared validated/typed DataFrame; never clean source records."""
     df = df[KEY + ["Units_Sold", "Promotion_Flag"]].copy()
     df["month"] = df.Date.dt.to_period("M").astype(str)
     df["quarter"] = df.Date.dt.to_period("Q").astype(str)
@@ -261,22 +197,21 @@ def save_tables(tables: dict[str, pd.DataFrame], output_dir: Path) -> None:
         table.to_csv(output_dir / f"{name}.csv", index=False)
 
 
-def source_receipt(path: Path) -> pd.DataFrame:
-    return pd.DataFrame({"item": ["source_file", "sha256", "bytes", "pandas", "numpy"],
-                         "value": [path.name, hashlib.sha256(path.read_bytes()).hexdigest(), str(path.stat().st_size), pd.__version__, np.__version__]})
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=ROOT / "data/raw/supply_chain_dataset1.csv")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "data/processed/demand_eda")
+    parser.add_argument("--start", required=True, help="Explicitly authorized scope start")
+    parser.add_argument("--end", required=True, help="Explicitly authorized scope end")
     args = parser.parse_args()
-    df, audit = validate_data(pd.read_csv(args.input))
+    raw = load_raw_source(args.input, start=args.start, end=args.end)
+    df, validation_audit = build_validated_dataset(raw)
+    audit = quality_tables(df, validation_audit)
+    audit["native_grain"] = profile_native_grain(df)
     save_tables(audit, args.output_dir)
     print(audit["validation"].to_string(index=False))
-    require_valid(audit)
     tables = analyze_demand(df)
-    save_tables({**tables, "source_receipt": source_receipt(args.input)}, args.output_dir)
+    save_tables({**tables, "source_receipt": scoped_source_receipt(raw, args.input)}, args.output_dir)
     print(tables["monthly"].to_string(index=False))
     print("Detailed local tables saved. Execute notebooks/eda/demand_eda.ipynb for inline figures and PNG exports.")
 
@@ -320,7 +255,6 @@ def interpretations(tables: dict[str, pd.DataFrame]) -> dict[str, str]:
 
 def build_report(audit: dict[str, pd.DataFrame], tables: dict[str, pd.DataFrame], receipt: pd.DataFrame) -> str:
     """Render only reviewed aggregate evidence, never raw records."""
-    require_valid(audit)
     if not audit["baseline"]["matches"].all():
         raise ValueError("Source differs from documented baseline; report the contradiction before regenerating the report.")
     notes = interpretations(tables)
@@ -332,8 +266,8 @@ def build_report(audit: dict[str, pd.DataFrame], tables: dict[str, pd.DataFrame]
     chunks = ["# Demand exploratory data analysis\n",
         "**Scope:** Local simulated supply-chain data; `Units_Sold` at `Date + SKU_ID + Warehouse_ID`. No model training, final feature engineering, validation folds or new research decisions.\n\n> **Historical EDA provenance — notice added 2026-09-29:** The descriptive results and original methodology wording below are preserved from the earlier research stage; they do not define the current feature set, horizons or experiment authority. References to 1/7/14-day horizons, an unselected lag set or an untouched holdout are historical. The current [frozen feature contract](../docs/forecasting-feature-engineering.md) and [methodology/provenance record](../docs/forecasting-methodology-revision.md) govern forecasting. Final evaluation is December 3–30, 2024, origin December 2, reserved from subsequent selection/fitting but not fully unseen historically: December 3–16 had prior validation exposure and full-year EDA inspected the interval. No results were regenerated or tests/experiments executed for this notice.\n",
         "## Reproduction and provenance\n",
-        "Use the repository virtual environment and install `requirements-dev.txt`. From the repository root, run:\n\n```bash\n.venv/bin/python -m src.data.demand_eda\n.venv/bin/python - <<'PY'\nimport nbformat\nfrom nbclient import NotebookClient\np = 'notebooks/eda/demand_eda.ipynb'\nnb = nbformat.read(p, as_version=4)\nNotebookClient(nb, timeout=180, kernel_name='python3', resources={'metadata': {'path': '.'}}).execute()\nnbformat.write(nb, p)\nPY\n```\n",
-        "The notebook loads the source directly, displays summary tables and every figure inline, then saves those same figure objects as PNGs. It regenerates this report. Full generated tables stay under ignored `data/processed/demand_eda/`. The executed notebook contains aggregate outputs, not source-record previews.\n",
+        "Use the repository virtual environment and install `requirements-dev.txt`. After separate human scope authorization, replace the date placeholders below and set notebook SCOPE_START/SCOPE_END explicitly. Stored full-year outputs are historical; the full-source report renderer must not relabel a partial scope as that evidence. From the repository root, the entry points are:\n\n```bash\n.venv/bin/python -m src.analysis.demand_exploratory_analysis --start YYYY-MM-DD --end YYYY-MM-DD\n.venv/bin/python - <<'PY'\nimport nbformat\nfrom nbclient import NotebookClient\np = 'notebooks/eda/demand_eda.ipynb'\nnb = nbformat.read(p, as_version=4)\nNotebookClient(nb, timeout=180, kernel_name='python3', resources={'metadata': {'path': '.'}}).execute()\nnbformat.write(nb, p)\nPY\n```\n",
+        "The notebook uses the shared scoped loader/validator, displays summary tables and every figure inline, then saves those same figure objects as PNGs. It regenerates this report. Full generated tables stay under ignored `data/processed/demand_eda/`. The executed notebook contains aggregate outputs, not source-record previews.\n",
         markdown_table(receipt), "\n## Verified validation and cleaning\n", validation_text,
         "\n" + markdown_table(audit["baseline"]),
         "\nCoverage is measured for every observed SKU × warehouse combination against the global observed daily span, so missing edge days or an entirely absent combination cannot be hidden by each series' own span. Cardinalities and endpoints are separately compared with the documented baseline. Every current series has 365 dates; all 250 series occur on every observed day. The span ends 2024-12-30: December has 30/31 days and the leap year has 365/366 calendar dates. December 31 is outside the observed source span; it is not silently added or treated as zero demand.\n",

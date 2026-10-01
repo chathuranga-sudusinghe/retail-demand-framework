@@ -8,8 +8,9 @@ It does NOT train forecasting models and does NOT use Stockout_Flag as a target.
 
 Example
 -------
-python -m src.data.profile_inventory_alignment \
+python -m src.analysis.inventory_alignment_analysis \
     --input data/raw/supply_chain_dataset1.csv \
+    --start YYYY-MM-DD --end YYYY-MM-DD \
     --output-dir data/processed/temporal_profile
 """
 
@@ -20,6 +21,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.data.data_cleaning import build_validated_dataset, load_raw_source
+
 
 KEY_COLUMNS = ["Date", "SKU_ID", "Warehouse_ID"]
 
@@ -29,24 +32,6 @@ INVENTORY_COLUMNS = [
     "Supplier_Lead_Time_Days",
     "Order_Quantity",
 ]
-
-
-def load_data(path: Path) -> pd.DataFrame:
-    """Load the local raw dataset and validate required fields."""
-    df = pd.read_csv(path)
-
-    required = set(KEY_COLUMNS + ["Units_Sold"] + INVENTORY_COLUMNS)
-    missing = required.difference(df.columns)
-    if missing:
-        raise ValueError(
-            "Dataset is missing required column(s): "
-            + ", ".join(sorted(missing))
-        )
-
-    df = df.copy()
-    df["Date"] = pd.to_datetime(df["Date"], errors="raise")
-
-    return df.sort_values(KEY_COLUMNS).reset_index(drop=True)
 
 
 def profile_native_grain(df: pd.DataFrame) -> pd.DataFrame:
@@ -190,13 +175,16 @@ def parse_args() -> argparse.Namespace:
         default=Path("data/processed/temporal_profile"),
         help="Directory for generated local profiling summaries.",
     )
+    parser.add_argument("--start", required=True, help="Explicitly authorized scope start")
+    parser.add_argument("--end", required=True, help="Explicitly authorized scope end")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    df = load_data(args.input)
+    raw = load_raw_source(args.input, start=args.start, end=args.end)
+    df, _ = build_validated_dataset(raw)
 
     native_grain = profile_native_grain(df)
     cross_warehouse = profile_cross_warehouse_variation(df)
