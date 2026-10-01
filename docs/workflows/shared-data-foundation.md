@@ -21,6 +21,7 @@ The leakage-safe forecasting sequence and representation ownership are defined b
 | Authority | Ownership retained |
 |---|---|
 | [Dataset contract](../dataset.md), especially Sections 7/8 | Source meaning, field roles, data quality, shared processed-layer intent and member-specific data needs |
+| [Cleaning/validation contract](../data-cleaning-and-validation.md) | Non-destructive source validation and the Issue #102 persisted validated handoff; source meaning remains in dataset.md |
 | [Feature contract](../forecasting-feature-engineering.md) | Frozen predictors, formulas, leakage controls, preprocessing semantics and model-input definitions |
 | [Protocol](../protocol.md) | Chronological windows, eligibility, metrics, selection, execution gates and experiment requirements |
 | [Runner operations](../forecasting-runner.md) | Execution/orchestration mechanics and current persistence behavior |
@@ -52,7 +53,7 @@ Module names refer to existing files under src/data/, src/analysis/ and src/fore
 | Stage | Representation purpose | Inputs -> outputs | Existing owning modules/docs |
 |---|---|---|---|
 | Raw source | Preserve the original local reproduction input | Acquired source -> unmodified snapshot and identity receipt | Manual acquisition; data_cleaning.scoped_source_receipt (authorized scope only; parent receipt remains acquisition evidence); dataset contract |
-| Cleaned / validated representation | Provide typed, keyed, sorted observations and quality evidence without inventing repair rules | Authorized observations -> validated records and audit | data_cleaning.build_validated_dataset and shared audit for analysis; features.prepare_demand for the existing forecasting demand projection; dataset/cleaning contracts |
+| Cleaned / validated representation | Provide typed, keyed, sorted observations and quality evidence without inventing repair rules | Authorized observations -> validated records and audit | data_cleaning.build_validated_dataset and shared audit; validated_handoff.prepare_validated_handoff for scoped persisted handoff; features.prepare_demand for the existing forecasting demand projection; dataset/cleaning contracts |
 | Authorized chronological scope | Isolate records permitted for the named experiment before scientific preparation | Loaded records plus authorized scope -> scoped demand view | execution.load_dataset/resolve_execution; evaluation.validation_view; protocol and runner operations |
 | Chronological views | Separate fitting history, origin-time inputs and retrospective outcomes; specify protected final view | Scoped demand plus protocol view definitions -> training and validation/outcome slices; reserved final specification | validation.split_fold; evaluation.prepare_fold; experiment.run_final_evaluation blocks final execution; protocol |
 | Fold/origin-specific features and separate targets | Construct conceptual predictors and independently aligned observed labels | Corresponding view/history and origin -> keyed engineered features, separate targets and eligibility evidence | features.build_features/build_origin_features/feature_eligibility; targets.build_horizon_targets; evaluation.prepare_fold; feature contract and protocol |
@@ -63,12 +64,12 @@ A validated dataset is not an engineered feature table. An engineered table cont
 
 ### Provenance, persistence and lifecycle status
 
-The expectations below distinguish current behavior from architecture-defined shared handoffs that still need implementation review. No dataset export or matrix persistence is implemented or authorized here.
+The expectations below distinguish current behavior from architecture-defined shared handoffs that still need implementation review. Issue #102 implements validated Parquet publication subject to implementation review and separate owner preparation authorization; matrix persistence remains unimplemented.
 
 | Stage | Provenance to preserve | Current persistence | Persistence expectation and lifecycle class |
 |---|---|---|---|
 | Raw source | Source/snapshot identity, receipt/hash/size and acquisition provenance | Local raw CSV; EDA receipt | Retained locally or in a verified archive; never committed. Archive superseded source snapshots needed by historical evidence |
-| Cleaned / validated representation | Parent identity, authorized validation scope, code/rule versions, audit and representation identity | Records in memory; EDA/profile audits persisted | Accepted shared handoff may be persisted under validated storage after review. Regenerable from exact retained parents/code; archive if required by superseded findings |
+| Cleaned / validated representation | Parent identity, authorized validation scope, code/rule versions, audit and representation identity | Issue #99 accepted records in memory; Issue #102 adds validated.parquet plus schema/audit/provenance JSON, tested synthetically only | Owner-authorized shared handoff uses immutable data/processed/validated/<data_version>/ after implementation review; pending_human_review is not human acceptance. Regenerable from exact retained parents/code; archive if required by superseded findings |
 | Authorized scope | Execution authorization, protocol/source/input fingerprints and scope identity | Scoped records in memory; authorization and fingerprints persist in runner bundles | Retain scope/authorization evidence. Scoped records are regenerable; scratch copies temporary |
 | Chronological views | Protocol identity, stage/fold, boundaries, origin/horizon, membership/population identity and exclusions | Views in memory; boundaries/counts/hashes persist | Retain view definitions and eligibility/membership evidence. Physical view copies are optional regenerable caches; archive supporting evidence with its run. Final view remains protected |
 | Features and separate targets | Parent view, origin/cutoff, feature/protocol/code versions, key alignment, eligibility and target scope | Historical tables/labels in memory; origin features and validation outcomes persist through current runner | Accepted keyed handoffs may be persisted under model-ready data after review; targets remain separately identified and access-scoped. Regenerable tables; temporary scratch copies; archive accepted versions supporting reports |
@@ -79,9 +80,11 @@ Regenerable material depends on retained source bytes, code, environment, defini
 
 ### Current implementation and later alignment
 
-Current data/processed/ contains EDA/profile tables and an execution record, not a persisted shared validated snapshot or historical training feature/matrix export. artifacts/ is empty, models/ is absent and outputs/ was intentionally removed. The unchanged runner still targets that old location; Issue #94 aligns protocol requirements without changing code. Do not execute the runner to recreate it.
+Legacy local data/processed/ EDA/profile tables and execution records remain untouched and are not authoritative inputs to the new stage. Issue #102 supplies a single CLI/programmatic validated Parquet handoff; no real shared validated snapshot has been generated by this implementation and historical training feature/matrix exports remain unimplemented. artifacts/ is empty, models/ is absent and outputs/ was intentionally removed. The unchanged runner still targets that old location; Issue #94 aligns protocol requirements without changing code. Do not execute the runner to recreate it.
 
-Shared validation/profiling currently resides in src/data/; forecast-specific preparation, alignment and preprocessing reside in src/forecasting/. This records existing ownership without moving code.
+Issue #99 places shared source cleaning/validation in src/data/data_cleaning.py and descriptive analysis in src/analysis/. Issue #102 adds src/data/validated_handoff.py for persistence only, delegating all source rules to the cleaner. Forecast-specific preparation, alignment and preprocessing remain in src/forecasting/.
+
+The [validated handoff contract](../data-cleaning-and-validation.md#10-executable-validated-handoff--issue-102) defines the approved pyarrow Parquet bundle, reviewed version identifiers, mandatory caller-supplied data_version, verified source-receipt inputs, strict readback and provenance. Unique staging belongs under data/processed/interim/<preparation_id>/validated-handoff/. Exclusive publication refuses existing versions and writes provenance last; interruption leaves an incomplete version for human investigation, never automatic deletion/reuse. Machine validation cannot manufacture human approval. This stage does not authorize final outcomes, construct features/targets or fit preprocessing.
 
 The [storage policy amendment boundary](../artifact-storage-policy.md#required-protocol-amendment-before-selective-retention) and [Issue #94 protocol alignment](../protocol.md#issue-94-operational-alignment--implementation-boundary) distinguish approved architecture from remaining retention/schema decisions and implementation. Current all-fit persistence/replay remains the compatibility requirement until the exact retention set and migration are accepted. No scientific, downstream or final-evaluation decision is changed here.
 
@@ -111,7 +114,7 @@ Pending group approval, [DR-012](../decisions/DR-012-inventory-risk-replenishmen
 
 ## Reproducibility rule
 
-All shared cleaning, validation, alignment, and aggregation logic must live in code under `src/data/` rather than only inside notebooks.
+Shared source cleaning/validation lives in `src/data/`; descriptive research analysis lives in `src/analysis/`. Important preparation/analysis logic must remain reusable source code rather than notebook-only implementations.
 
 ## Output contracts
 
