@@ -17,7 +17,7 @@ from xgboost.core import XGBoostError
 from src.forecasting.artifacts import ARTIFACT_NAMES, CSV_SCHEMAS, PROTOCOL_VERSION, SCHEMA_VERSION, file_hash, json_value
 from src.forecasting.baselines import BASELINE_MODELS
 from src.forecasting.configuration import PRIMARY_GRID, PRIMARY_MODELS, SUPPORTIVE_MODELS
-from src.forecasting.execution import RunScope, ValidationAuthorization
+from src.forecasting.authorization import RunScope, ValidationAuthorization
 from src.forecasting.metrics import forecasting_metrics
 from src.forecasting.model_artifacts import replay_model, safe_path
 from src.forecasting.selection import ROLES, select_primary, summarize_configurations

@@ -17,7 +17,10 @@ from src.forecasting.configuration import PRIMARY_GRID
 from src.forecasting.features import CATEGORICAL_FEATURE_COLUMNS, CONCEPTUAL_FEATURE_COLUMNS, FEATURE_COLUMNS
 
 from src.forecasting.paths import REPOSITORY as REPOSITORY, RepositoryLayout
-from src.forecasting.execution import ExecutionBlocked, RunScope as RunScope, ValidationAuthorization  # re-export existing API
+from src.forecasting.authorization import (
+    ExecutionBlocked as ExecutionBlocked, RunScope as RunScope,
+    ValidationAuthorization as ValidationAuthorization,
+)  # Preserve existing public imports directly from the authoritative module.
 LIBRARIES = ("numpy", "pandas", "scikit-learn", "xgboost", "lightgbm", "catboost", "threadpoolctl", "joblib", "scipy")
 DECISION_REFERENCES = tuple(f"docs/decisions/{name}" for name in (
     "DR-002-forecasting-analytical-unit.md", "DR-004-forecast-horizons.md",

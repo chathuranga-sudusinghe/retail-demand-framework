@@ -2,11 +2,11 @@
 import csv
 import json
 import pytest
-from src.forecasting import experiment, integrity, model_artifacts, reporting
+from src.forecasting import orchestration, integrity, model_artifacts, reporting
 from src.forecasting.artifacts import ArtifactWriter, file_hash
-from test_forecasting_experiment import (authorization, install_synthetic_runner_mocks,
+from test_forecasting_orchestration import (authorization, install_synthetic_runner_mocks,
                                          panel, scope)
-from test_forecasting_experiment import prepared_folds as _prepared_folds
+from test_forecasting_orchestration import prepared_folds as _prepared_folds
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def prepared_folds():
 def complete_bundle(tmp_path, monkeypatch, prepared_folds):
     install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds)
     approved = authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,)))
-    return experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
+    return orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
 
 
 def test_completed_bundle_manifest_counts_hashes_and_readonly_reporting(complete_bundle):
@@ -90,9 +90,9 @@ def test_failure_never_publishes_completion_and_preserves_original(tmp_path, mon
     elif point == "model":
         monkeypatch.setattr(model_artifacts, "_save_estimator", fail)
     elif point == "interrupt":
-        monkeypatch.setattr(experiment, "fit_estimator", fail)
+        monkeypatch.setattr(orchestration, "fit_estimator", fail)
     elif point == "verification":
-        monkeypatch.setattr(experiment, "verify_scientific", fail)
+        monkeypatch.setattr(orchestration, "verify_scientific", fail)
     else:
         real = ArtifactWriter.write_json
         def write(self, name, value):
@@ -101,7 +101,7 @@ def test_failure_never_publishes_completion_and_preserves_original(tmp_path, mon
             return real(self, name, value)
         monkeypatch.setattr(ArtifactWriter, "write_json", write)
     with pytest.raises(type(original)) as caught:
-        experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
+        orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     assert caught.value is original
     directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
     assert not (directory / "run_manifest.json").exists()
@@ -128,7 +128,7 @@ def test_manifest_is_last_write_and_requires_verification(tmp_path, monkeypatch,
         return real(self, name, value)
     monkeypatch.setattr(ArtifactWriter, "write_json", write)
     approved = authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=()))
-    directory = experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
+    directory = orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     assert writes[-1] == "run_manifest.json"
     writer = object.__new__(ArtifactWriter)
     writer.directory = directory
@@ -172,12 +172,12 @@ def test_changed_source_at_finalization_blocks_manifest(tmp_path, monkeypatch, p
     def validate(self, root, run_id):
         calls.append(run_id)
         if len(calls) == 2:
-            from src.forecasting.execution import ExecutionBlocked
+            from src.forecasting.authorization import ExecutionBlocked
             raise ExecutionBlocked("Controlled changed source at finalization.")
         return real(self, root, run_id)
     monkeypatch.setattr(type(approved), "validate", validate)
     with pytest.raises(PermissionError, match="changed source"):
-        experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
+        orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
     assert not (directory / "run_manifest.json").exists()
     assert json.loads((directory / "run_metadata.json").read_text())["run_status"] == "failed"

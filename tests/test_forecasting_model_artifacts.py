@@ -10,7 +10,7 @@ from src.forecasting.features import FEATURE_COLUMNS
 from src.forecasting.metadata import initial_metadata, REPOSITORY
 from src.forecasting.models import construct_estimator, fit_estimator
 from src.forecasting.preprocessing import fit_preprocessor, preprocessor_state, restore_preprocessor
-from test_forecasting_experiment import authorization
+from test_forecasting_orchestration import authorization
 
 
 def synthetic_features():
