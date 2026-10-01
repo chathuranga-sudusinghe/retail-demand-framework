@@ -12,8 +12,9 @@ does NOT use Stockout_Flag as a target/label.
 
 Example
 -------
-python -m src.data.profile_temporal_demand \
+python -m src.analysis.forecasting_grain_analysis \
     --input data/raw/supply_chain_dataset1.csv \
+    --start YYYY-MM-DD --end YYYY-MM-DD \
     --output-dir data/processed/temporal_profile
 """
 
@@ -25,39 +26,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from src.data.data_cleaning import build_validated_dataset, load_raw_source
 
-REQUIRED_COLUMNS = {
-    "Date",
-    "SKU_ID",
-    "Warehouse_ID",
-    "Units_Sold",
-    "Promotion_Flag",
-}
 
 FORBIDDEN_MODEL_COLUMNS = {
     "Demand_Forecast",
     "Stockout_Flag",
 }
-
-
-def load_data(path: Path) -> pd.DataFrame:
-    """Load and minimally validate the local raw dataset."""
-    df = pd.read_csv(path)
-
-    missing = REQUIRED_COLUMNS.difference(df.columns)
-    if missing:
-        raise ValueError(
-            "Dataset is missing required column(s): "
-            + ", ".join(sorted(missing))
-        )
-
-    df = df.copy()
-    df["Date"] = pd.to_datetime(df["Date"], errors="raise")
-
-    if (df["Units_Sold"] < 0).any():
-        raise ValueError("Units_Sold contains negative values.")
-
-    return df.sort_values(["Date", "SKU_ID", "Warehouse_ID"]).reset_index(drop=True)
 
 
 def check_source_constraints(df: pd.DataFrame) -> pd.DataFrame:
@@ -354,13 +329,16 @@ def parse_args() -> argparse.Namespace:
         default=Path("data/processed/temporal_profile"),
         help="Directory for generated local profiling summaries.",
     )
+    parser.add_argument("--start", required=True, help="Explicitly authorized scope start")
+    parser.add_argument("--end", required=True, help="Explicitly authorized scope end")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    df = load_data(args.input)
+    raw = load_raw_source(args.input, start=args.start, end=args.end)
+    df, _ = build_validated_dataset(raw)
     constraints = check_source_constraints(df)
     comparison, _ = profile_candidate_units(df)
     promotion_check = promotion_consistency_check(df)
