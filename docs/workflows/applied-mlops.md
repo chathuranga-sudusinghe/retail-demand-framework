@@ -1,13 +1,13 @@
 # Applied MLOps Workflow
 
-**Status:** Issue #93 documentation draft for human review; no experiment or implementation authorization.
+**Status:** Merged Issue #93 applied-MLOps authority; no experiment or implementation authorization.
 **Related issue:** [#93 — Define applied MLOps, research reporting, and progress logging](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/93).
 
 ## Purpose and authority
 
 Machine Learning Operations (MLOps) here means reproducible research preparation, controlled experiments, trustworthy persistence and reviewable evidence. It does not introduce deployment, a model registry service, scheduled retraining or production monitoring.
 
-Merged Issue #92 supplies the [data lifecycle](shared-data-foundation.md) and [artifact/storage policy](../artifact-storage-policy.md). Their storage migration and selective-retention amendments remain separate implementation work; acceptance of documentation does not make those paths executable. This workflow references those authorities instead of redefining their architecture.
+Merged Issue #92 supplies the [data lifecycle](shared-data-foundation.md) and [artifact/storage policy](../artifact-storage-policy.md). Issue #94 aligns operational protocol requirements; storage migration and the exact selective-retention set remain separate reviewed work. Acceptance of documentation does not make those paths executable. This workflow references those authorities instead of redefining their architecture.
 
 The [dataset contract](../dataset.md) owns source meaning/quality and shared/member data needs. The [feature contract](../forecasting-feature-engineering.md) owns predictors, availability and preprocessing semantics. The [protocol](../protocol.md) owns scientific settings, eligibility, evaluation, selection and gates. [Runner operations](../forecasting-runner.md) own exact commands, execution mechanics, persistence and recovery. [Methodology revision](../forecasting-methodology-revision.md), [research design](../research-design.md) and [decision records](../decisions/README.md) govern research provenance and interpretation.
 
@@ -44,7 +44,7 @@ For each implementation review, record relevant test/static-check commands, envi
 
 ## Persistence, integrity and failure boundaries
 
-The current runner persists every successful learned validation fit and its required state, then reconciles and replays the saved evidence. That requirement remains operative until Issue #94 or a dedicated amendment changes the protocol and accepted implementation. Do not infer permission to prune candidate binaries from the future selective-retention policy.
+The current runner persists every successful learned validation fit and its required state, then reconciles and replays the saved evidence. All-fit persistence remains the compatibility requirement until the exact retention set is human-approved and migrated implementation accepted under the Issue #94 protocol boundary. Do not infer permission to prune candidate binaries from the approved architecture direction with an unresolved exact selective-retention set.
 
 Follow Issue #92 for machine evidence, reusable bundles and reviewed-report responsibilities. Keep completed evidence immutable and traceable. Current verification assumes the existing bundle layout; cross-location references need the separately reviewed migration. The removed outputs/ architecture must not be recreated by running unchanged code.
 

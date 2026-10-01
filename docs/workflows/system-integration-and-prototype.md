@@ -1,5 +1,7 @@
 # System Integration and Prototype Workflow
 
+Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
+
 ## Owner and purpose
 
 Primary technical owner: **Tinosh Gamage — System Integration and Prototype Engineering**. FastAPI/API integration is shared with **Chathuranga — Research Team Lead & Forecasting**. This workflow delivers the existing COMP1884 research components as one reviewable prototype; it does not establish new research methodology.

@@ -1,6 +1,6 @@
 # Research and Project Progress Log
 
-**Status:** Issue #93 logging-format draft for human review. No historical events or approvals have been added.
+**Status:** Merged Issue #93 progress-log authority. No historical events or approvals have been added.
 
 ## Purpose and boundaries
 
@@ -38,4 +38,4 @@ The following is a template, not an event:
 
 ## Chronological entries
 
-No event entries are recorded in this draft. Populate only with verified events and explicit evidence through the normal human review workflow. Creating this format does not approve a member change, research decision, experiment or Git operation.
+No verified event entries have yet been populated. Populate only with verified events and explicit evidence through the normal human review workflow. Creating this format does not approve a member change, research decision, experiment or Git operation.

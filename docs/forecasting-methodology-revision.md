@@ -1,6 +1,8 @@
 # Forecasting methodology revision — current approval and provenance
 
-> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](forecasting-runner.md).
+Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
+
+> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
 
 ## Authority and scope
 
@@ -56,20 +58,42 @@ The final ordered features, formulas, categorical representation and common hori
 
 The following remain separate:
 
-- explicit approval of proposed 28-day Naive and Seasonal Naive formulas in DR-007;
-- implementation/test acceptance and a revised executable experiment protocol;
+- implementation/test acceptance of the new lifecycle/storage architecture and a new specific-run authorization;
+- validation evidence review, horizon-specific selection freeze and Gate 6 final refit/evaluation approval;
 - DR-012 group approval and **component-owner/human approval for 28-day downstream use**;
 - uncertainty, human-review rules, numerical replenishment and final integration contracts.
 
-Issue #62/PR #64 supplied the earlier features, targets, folds and preprocessing. Later primary alignment and PR #76 supplied common one-hot representations, models, metrics and the runner. Issue #89 extends operational orchestration only. Human review and a matching specific authorization are required before executing this changed implementation.
+Issue #62/PR #64 supplied the earlier features, targets, folds and preprocessing. Later primary alignment and PR #76 supplied common one-hot representations, models, metrics and the runner. Issue #89 extended operational orchestration and was merged through PR #90. That acceptance does not implement Issues #92/#93 storage boundaries or authorize a new run.
 
 Issue #65 now has a human-approved/frozen protocol. Supportive settings, 28-day baseline formulas and numeric runtime controls are resolved there. Protocol approval, changed implementation acceptance and specific-run authorization remain separate.
 
+## Validation-run provenance and current evidence availability
+
+The project owner's Issue #94 instruction confirms that a real forecasting validation
+run has occurred; active documentation must not describe the repository as never run.
+The retained local record `data/processed/forecasting/validation_authorization.json`
+identifies `validation-20261001-01`, validation-only scope, implementation acceptance
+reference PR #90 and specific owner authorization dated 2026-10-01. PR #90 is merged.
+The authorization record is permission/provenance, not proof of completed execution.
+
+The former generated directory was intentionally removed. This checkout has no
+corresponding completion manifest, metric/prediction tables or model bundle available
+for independent verification; no archive, score, reviewed result or selection freeze
+is inferred. Locating retained original evidence and confirming completion/review are
+human follow-up requirements before a report can substantiate findings. Do not
+regenerate missing evidence and label it the original run, or reuse that authorization
+against the changed protocol/document hashes. This note records the supplied status
+and inspected authorization only; it does not approve another experiment.
+
+Merged Issues #92/#93 govern future lifecycle, storage, MLOps and report/progress
+handoffs. Issue #94 aligns documentation while the code remains on the legacy layout.
+No storage migration erases prior final-period exposure or changes scientific rules.
+
 ## Computational scope
 
-The primary matched grid has 24 configurations per model × horizon. **24 × 3 primary models × 4 horizons × 4 folds = 1,152 planned primary validation fits**. These are planned workload counts, not executed results. The supportive Ridge Regression / Random Forest configuration policy remains unresolved and requires separate human approval. Historical 5/12 configuration grids are not automatically reused. Supportive fits and later final refits are excluded from 1,152.
+The primary matched grid has 24 configurations per model × horizon. **24 × 3 primary models × 4 horizons × 4 folds = 1,152 planned primary validation fits**. These are planned workload counts, not executed results. The fixed supportive Ridge Regression / Random Forest configurations are approved in the frozen protocol. Historical 5/12 configuration grids are not automatically reused. Supportive fits and later final refits are excluded from 1,152.
 
-Simple baselines remain untuned: 2 baseline roles × 3 currently defined horizons × 4 folds = 24 evaluations. Both 28-day definitions need explicit approval before a fourth horizon adds 8, giving 32 baseline evaluations. No baseline is silently removed or redefined.
+Simple baselines remain untuned: the protocol approves both formulas over four horizons, giving 32 planned baseline evaluations. Planned counts are not completion evidence; no baseline is silently removed or redefined.
 
 **Earlier planning provenance:** the former Ridge/Random Forest/LightGBM search had 5/12/24 configurations, 41 configurations per horizon and 656 planned fits over four horizons/folds (492 for three horizons). DR-010 retains that superseded planning unchanged; those counts are not the current primary workload.
 
@@ -83,10 +107,10 @@ Simple baselines remain untuned: 2 baseline roles × 3 currently defined horizon
 - DR-005 retains the exact superseded fold table and December 17–30 holdout wording
   in its explicitly historical section; DR-004/007/010 retain original scope/counts
   where labelled as provenance. DR-007's 1/7/14 baseline definitions remain valid.
-- The archived [Issue #52 protocol](issue-52-forecasting-protocol.md) and ignored local `outputs/issue-52-validation/comparison.md` preserve their original bodies beneath historical notices. Its metadata, candidate metrics, selected configurations/predictions, eligibility records and artifact audit belong to that earlier run, not the revised study. No historical score selects the current feature contract or model.
+- The archived [Issue #52 protocol](issue-52-forecasting-protocol.md) retains its original body beneath historical notices. Its former local `outputs/issue-52-validation/comparison.md` path is historical only; the directory was removed and no accessible archive is established. Its metadata, candidate metrics, selected configurations/predictions, eligibility records and artifact audit belong to that earlier run, not the revised study. No historical score selects the current feature contract or model.
 - There is no tracked Issue #52 comparison report under `reports/`, and the historical reproduction command requires the matching historical version of `src/forecasting/experiment.py`, rather than the current incompatible runner. The run metadata records Git HEAD `ec1296ecebeae359222036c93b4dd482fe977e23` and source fingerprints; reproducing it would require the matching historical source snapshot and separate authorisation. Compiled caches are not that source archive.
 - Feature-review Options A/B/C and the earlier thirteen-column catalogue are superseded historical proposals. Issue #62 implemented the frozen conceptual features; its native LightGBM preprocessing was the earlier alignment gap identified under Issue #66 and is now historical provenance, superseded by the implemented common primary representation.
-- DR-007/009/010 bodies retain earlier learned roles, single-boosting selection, unequal grids, representation and workload beneath explicit DR-013 supersession notices. Retained Naive/Seasonal Naive definitions and 28-day approval boundaries are still in force.
+- DR-007/009/010 bodies retain earlier learned roles, single-boosting selection, unequal grids, representation and workload beneath explicit DR-013 supersession notices. Retained Naive/Seasonal Naive definitions remain valid; the frozen protocol records the later approval of 28-day formulas.
 - Issue #62 source/tests preserve the accepted earlier model/representation contract; the earlier native-categorical contract is historical provenance, superseded by the implemented common primary representation.
 - DR-001/002 and DR-003's explicitly historical body retain independent decision meanings; active data dictionaries, literature applicability and workflow summaries now link the frozen contract. Git/workflow governance remains unchanged. A 14-day supplier
   limit or rolling window is not an obsolete 14-day maximum forecast horizon.

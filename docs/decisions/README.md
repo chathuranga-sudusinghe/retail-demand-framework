@@ -1,6 +1,8 @@
 # Decision Records
 
-> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](../forecasting-runner.md).
+Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
+
+> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
 
 > **Documentation alignment — 2026-09-29:** The project owner has approved the current forecasting design and [frozen fourteen-predictor contract](../forecasting-feature-engineering.md). Original decision dates remain provenance. [Current approval and provenance](../forecasting-methodology-revision.md) records separate protocol, baseline and downstream gates; experiments remain NOT authorised.
 
@@ -33,7 +35,7 @@ Each decision record should include:
 - [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Proposed for group approval.
 - [DR-013 — Matched Gradient-Boosting RQ2 Comparison](DR-013-matched-gradient-boosting-comparison.md) — Current matched primary RQ2 comparison authority.
 
-Issue #65 has a human-approved/frozen protocol. PR #76 accepted the preceding runner; Issue #89 operational changes require human implementation review and source/protocol-bound specific authorization.
+Issue #65 has a human-approved/frozen scientific protocol. PR #90 merged Issue #89 orchestration. Issue #94 aligns operational documentation; accepted migration and matching specific authorization remain required before further execution.
 
 RQ2 subordinate hypotheses and interpretation are approved as comparative and descriptive under DR-013: use horizon-specific arithmetic mean WAPE, all four fold-level results and supporting metrics; discuss magnitude, direction and fold consistency. No significance procedure or universal numerical decision threshold is approved, and no cross-horizon composite/overall winner is introduced.
 
@@ -41,9 +43,9 @@ RQ2 subordinate hypotheses and interpretation are approved as comparative and de
 
 Examples include:
 
-- revised primary preprocessing/model implementation alignment after Issue #62, runtime/version controls and Issue #65 protocol approval;
-- supportive Ridge/Random Forest configuration/tuning policy;
-- proposed 28-day baseline formulas and separate downstream 28-day approval;
+- exact retained-model set/audit exceptions and archive responsibilities under the storage policy;
+- final estimator/preprocessor refit policy and selection freeze under the protocol;
+- separate downstream 28-day approval (forecasting baseline formulas are already approved);
 - demand-regime definitions;
 - uncertainty representation;
 - remaining inventory input-contract details, overstock/excess-stock evaluation and numerical replenishment quantities beyond DR-012's proposed origin reorder-threshold exposure method;

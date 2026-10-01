@@ -1,6 +1,6 @@
 # Research Reports
 
-**Status:** Issue #93 reporting-contract draft for human review. No report results or approvals are created here.
+**Status:** Merged Issue #93 reporting-contract authority. No report results or approvals are created here.
 
 ## Purpose, locations and ownership
 

@@ -1,8 +1,10 @@
 # Retail Demand Framework
 
+Repository-wide authorities: [data lifecycle](docs/workflows/shared-data-foundation.md), [storage and retention](docs/artifact-storage-policy.md), [applied MLOps](docs/workflows/applied-mlops.md), [research reporting](reports/README.md), and [continuous progress log](docs/research-progress.md). These connect existing scientific/component contracts without replacing them.
+
 > **Issue #66 revision — 2026-09-29:** [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 remains the provenance for the earlier preprocessing contract. The revised protocol under Issue #65 is frozen/approved (Gate 1), implementation is complete (Gate 2), and PR #76 is human-reviewed/accepted and merged (Gate 3). See the current gate status below.
 
-> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). The [frozen validation protocol](docs/protocol.md) records the approved supportive configurations and 28-day simple baselines. Issue #78 is closed and superseded by [Issue #89](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/89). The Issue #89 implementation exists but awaits human implementation review; no real forecasting run has occurred. Downstream methods retain their separate approval requirements. See [revision and provenance](docs/forecasting-methodology-revision.md) for historical context and the current gate status below.
+> **Current documentation alignment — Issue #94:** The forecasting feature contract and scientific protocol remain frozen. Issue #89 is merged through PR #90; validation has occurred, with evidence availability documented in the [methodology revision](docs/forecasting-methodology-revision.md). Issues #92/#93 are authoritative for repository-wide lifecycle, storage, MLOps, reporting and progress. Runtime migration and future experiment approvals remain separate.
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
@@ -222,7 +224,9 @@ src/inventory_risk/  Inventory-risk implementation
 src/visualization/   Shared analytical visualisation code
 src/decision_support/Decision-support implementation
 tests/              Automated tests
-reports/            Project/report support material
+artifacts/          Machine-readable run evidence (approved layout; migration pending)
+models/             Reusable model/state bundles (approved layout; migration pending)
+reports/            Human-reviewed research findings and lightweight figures
 ```
 
 ## Development principle
@@ -241,16 +245,6 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 Research design was revised and approved under Issue #66. XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, temporal folds and WAPE-led evaluation policy remain unchanged. The primary models use a common full one-hot representation and a matched 24-configuration grid.
 
-Gate 1 is complete: the revised forecasting experiment protocol under Issue #65 is frozen/approved. Gates 2–3 were completed for the preceding runner: PR #76 was human-reviewed/accepted and merged. [Issue #78](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/78) is closed and superseded by [Issue #89](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/89); it remains historical provenance for the unexecuted validation run `comp1884-validation-20260929-full-01`, not current execution authorization. Issue #89 implementation exists but awaits human implementation review and a matching specific execution authorization. No real forecasting run has occurred. Gate 5 awaits validation evidence review, and Gate 6 is blocked. Final model/configuration freeze, final refit, and final evaluation are not authorised.
+Gate 1 is frozen/approved. PR #76 accepted the preceding runner and PR #90 merged Issue #89 orchestration. The owner confirms a real validation run occurred; the retained authorization record identifies `validation-20261001-01`. Its removed machine bundle cannot be reverified from this checkout; see [methodology provenance](docs/forecasting-methodology-revision.md). No selection freeze or final-evaluation approval is inferred. Issue #78's unexecuted run remains historical only.
 
-## Issue #89 operational implementation — pending human review
-
-The normal owner interface from the repository root is now:
-
-```bash
-python -m src.forecasting.experiment
-```
-
-It resolves `data/raw/supply_chain_dataset1.csv`, the reviewed local record at `data/processed/forecasting/validation_authorization.json`, and that record's exact approved run ID. No record is supplied/generated by implementation. [Runner operations](docs/forecasting-runner.md) explain validation-only model persistence, failure handling, storage requirements and manifest-last completion. Missing/stale/consumed authorization fails safely.
-
-The Gate 1–3 status above records the preceding implementation. Issue #89 changes await human acceptance. Source/protocol/dependency hashes have changed. The closed Issue #78 authorization is historical and must not be reused for the Issue #89 implementation; execution requires renewed human review and a matching record. No real validation, training on project data or final evaluation was performed. Gate 6 and downstream methodological approvals remain separate.
+Issues #92/#93 define the approved architecture. The runner still implements the removed storage layout and all-fit persistence; [runner operations](docs/forecasting-runner.md) and [protocol operational alignment](docs/protocol.md#issue-94-operational-alignment--implementation-boundary) explain the implementation boundary. Do not run unchanged code to recreate the removed directory. New hashes, reviewed implementation and specific authorization are required before another experiment. Gate 6 and downstream approvals remain separate.

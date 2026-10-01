@@ -1,20 +1,23 @@
 # Forecasting runner — Issue #89 orchestration
 
-The frozen scientific contract remains in [protocol.md](protocol.md). PR #76 accepted the preceding runner. Issue #89 operational changes require human implementation review and a matching specific authorization. No experiment was executed or authorized by implementing this code; Gate 6 remains blocked.
+The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #94 aligns operational documentation; source behavior remains unchanged. No new experiment is authorized and Gate 6 remains blocked.
 
-## Normal owner command
+## Existing entrypoint — blocked pending architecture migration
 
-From the repository root, activate the approved Python 3.12.3 environment and run:
+The accepted legacy entrypoint is shown for implementation identification only.
+Do not execute it with unchanged code: it would recreate the removed storage
+architecture. Future execution requires reviewed migration, the approved Python
+3.12.3 environment and a new matching specific authorization.
 
 ```bash
 python -m src.forecasting.experiment
 ```
 
-Fixed pathlib locations:
+Current code locations — legacy runtime description, not active execution guidance:
 
 - Dataset: `data/raw/supply_chain_dataset1.csv`.
 - Reviewed local record: `data/processed/forecasting/validation_authorization.json`.
-- Output: `outputs/revised-forecasting/<exact-approved-run-id>/`.
+- Legacy output: `outputs/revised-forecasting/<exact-approved-run-id>/` (removed; migration required).
 
 The existing ValidationAuthorization fields now live in execution.py, with compatibility exports from metadata.py. The reviewed record supplies the exact ID, ordered scope and human references. No approval is generated, no hashes are refreshed, and no latest-file discovery occurs. Missing/malformed/stale records, missing datasets, duplicate required CSV headers and consumed run directories fail before estimator construction. A failed directory cannot be resumed/reused; another run requires separate review. Approval references are a local workflow guard, not cryptographic identity.
 
@@ -38,7 +41,7 @@ The existing ValidationAuthorization fields now live in execution.py, with compa
 
 `preflight -> running -> finalizing -> verified_completed`; failures are `failed` or `interrupted`. Metadata alone never establishes completion. Persisted scientific evidence is verified; source/protocol/input and execution record are checked again; finalization logging closes; final metadata is written; `run_manifest.json` is atomically published LAST. Consumers must use `verify_completed`. Missing, partial, inconsistent or corrupt bundles are rejected. The comparison records finalizing status at rendering time; the manifest is the completion authority. Undefined WAPE remains explicit and unselectable. Selection/freeze still requires human review.
 
-## Outputs
+## Legacy runtime persistence — implementation evidence
 
 Existing scientific names and CSV columns remain unchanged:
 
@@ -63,9 +66,40 @@ models/preprocessing/<family>/h<horizon>/fold-<n>/
   origin_features.json
 ```
 
-Every successful learned validation fit is saved. Full-plan counts are 1,152 primary fits, 32 supportive fits, 32 baseline evaluations, 1,216 evaluations and 304 summaries: planned counts, not results. Native coverage yields 304,000 prediction records. Baselines have formula provenance, not binaries. Retaining 1,184 learned artifacts increases storage requirements, particularly 300-tree Random Forest models; review disk capacity before an authorized run. No raw/full dataset or training matrix is copied.
+Under the accepted legacy runtime contract, every successful learned validation fit is saved. Full-plan counts are 1,152 primary fits, 32 supportive fits, 32 baseline evaluations, 1,216 evaluations and 304 summaries: planned counts, not results. Native coverage yields 304,000 prediction records. Baselines have formula provenance, not binaries. Retaining 1,184 learned artifacts increases storage requirements, particularly 300-tree Random Forest models; review capacity against the approved retention plan before any future authorized run. No raw/full dataset or training matrix is copied.
 
 Descriptors link exact run/family/horizon/configuration/fold, training/validation intervals, Git/source/protocol/feature/input provenance, requested/effective parameters, versions and hashes. Versioned state restores the original one-hot order and Ridge scaling. Reloaded models replay persisted predictions exactly using the same matrix layout and CPU/thread controls. No refitting occurs. Only trusted locally generated joblib files with verified provenance/hashes are loaded. Hashes detect alterations, not malicious replacement of an entire bundle.
+
+## Approved architecture handoff — not yet implemented
+
+Machine-readable evidence belongs in `artifacts/forecasting/<run_id>/`, selected
+reusable model/state bundles in `models/forecasting/<run_id>/`, reviewed findings
+in `reports/forecasting/<run_id>.md`, and temporary candidates in the storage
+policy's run-scoped temporary location. Data handoffs retain the lifecycle's
+scope/view/feature/preprocessing order; no full training matrix export is approved
+by this reconciliation. Existing module responsibilities above describe current
+code; they must be updated after accepted migration rather than inventing new APIs.
+
+The [Issue #94 protocol amendment](protocol.md#issue-94-operational-alignment--implementation-boundary)
+defines the required cross-location manifests, metadata and retained-model replay.
+Complete configuration/metric/prediction evidence must survive for all evaluated
+candidates. The exact selected-fold/tie/supportive/audit retention set and schema
+version still require human approval; until accepted implementation, all-fit
+persistence and replay remain the compatibility requirement. No pruning of current
+or historical bundles is authorized. Retained models must keep exact fitted
+preprocessing/order/scaling and origin replay inputs; reload never refits.
+
+Completion must reconcile all scientific evidence, hashes and retained dependencies,
+then publish the final manifest last. Retained-model/replay counts must be distinct
+from evaluation counts. Completed bundles remain immutable; any approved archive
+derivative must identify its parent and omissions. Missing retained dependencies,
+failed/partial evidence or inconsistent candidate records block completed consumption.
+Existing verification is single-bundle/all-fit and cannot verify the new layout yet.
+
+The completed-run handoff includes a report following the reporting authority;
+generated `comparison.md` remains a draft evidence summary. Human interpretation,
+selection freeze and final authorization are separate. Link reviewed milestones in
+the progress log; do not invent approvals or results from the existence of a report.
 
 ## Failure and interruption
 
