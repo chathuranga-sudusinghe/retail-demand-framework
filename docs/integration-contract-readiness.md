@@ -64,13 +64,15 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 
 ## 3. Forecasting artifacts — actual implemented field names
 
-> **Important:** Everything in this section exists in **source code** as a schema. **No real forecasting run has been executed**, so no reviewed forecast values exist yet (see Blocker B1).
+> **Important:** Everything in this section exists in **source code** as a schema. A validation-only run was previously authorised and executed, but its generated local evidence was later intentionally deleted during the architecture reset. No currently retained/reviewable validation bundle is available for downstream integration (see Blocker B1).
 
 All names below are copied exactly from [src/forecasting/artifacts.py](../src/forecasting/artifacts.py). Schema version: `issue-65-v2`. Protocol version: `issue-65-matched-frozen-1`.
 
 ### 3.1 Run output files
 
-Written to the local, git-ignored directory `outputs/revised-forecasting/<run_id>/` ([paths.py](../src/forecasting/paths.py)):
+The currently implemented historical/legacy runtime writes to the local, git-ignored directory `outputs/revised-forecasting/<run_id>/` ([paths.py](../src/forecasting/paths.py)). Downstream integration must not treat this path as a stable future contract. Issue #98 is refactoring active storage toward the approved repository responsibilities: `data/`, `models/`, `artifacts/` and `reports/`.
+
+The legacy runtime file set is:
 
 ```text
 run_metadata.json
@@ -82,7 +84,7 @@ eligibility_counts.csv
 comparison.md
 ```
 
-Issue #89 adds `authorization.json`, `run.log`, `run_manifest.json`, failure `diagnostics.json`, and validation model/state files. `run_manifest.json` is published **last** and is the only completion evidence; metadata alone is not ([forecasting-runner.md](forecasting-runner.md)).
+Issue #89 was merged through PR #90, the merged state against which this document was prepared. Subsequent architecture refactoring is tracked under Issue #98. The merged #89 implementation adds `authorization.json`, `run.log`, `run_manifest.json`, failure `diagnostics.json`, and validation model/state files. `run_manifest.json` is published **last** and is the only completion evidence; metadata alone is not ([forecasting-runner.md](forecasting-runner.md)).
 
 ### 3.2 `predictions.csv` columns, grouped by purpose
 
@@ -256,7 +258,7 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 
 | Handoff | Implemented / frozen | Structure-only | Proposed | Unresolved |
 |---|---|---|---|---|
-| Forecasting artifacts (retrospective validation) | Column schemas, schema version, origin/horizon/target meaning, status and provenance fields | — | — | No reviewed run output exists yet |
+| Forecasting artifacts (retrospective validation) | Column schemas, schema version, origin/horizon/target meaning, status and provenance fields | — | — | Historical validation-only execution occurred; its evidence was intentionally deleted. No currently retained/reviewable validation bundle is available |
 | Forecasting → prospective forecast input | Horizon and origin meaning | — | — | No prospective artifact defined |
 | Forecasting → inventory-risk | Grain, horizon meaning, no source `Demand_Forecast`, `Stockout_Flag` limitation | — | DR-012 exposure method and inputs | Snapshot semantics, problematic forecasts, final schema, 28-day use, `Order_Quantity` availability |
 | Inventory-risk → decision support | Advisory-only rule | DR-011 field groups | DR-012 §8 handoff content | Final schema, replenishment quantity, uncertainty, review rules, missing-value encoding |
@@ -272,7 +274,7 @@ Each blocker is recorded from an existing source. No solution is proposed.
 
 | ID | Blocker | Component owner | Related Issue | Required decision or deliverable |
 |---|---|---|---|---|
-| B1 | No reviewed forecast output exists. Issue #89 implementation awaits human review; no validation run has been authorised or executed. | Chathuranga | #89 (supersedes closed #78) | Implementation acceptance, specific run authorisation, executed and human-reviewed validation evidence |
+| B1 | Issue #89 was merged through PR #90. A validation-only run was previously authorised and executed, but its generated local evidence was intentionally deleted during the architecture reset. No current reviewed/reusable validation evidence is available for downstream integration. The active architecture refactor is #98. | Chathuranga | #98 (active architecture refactor); #89 / PR #90 merged (#89 supersedes closed #78) | Currently retained, human-reviewed and reusable validation evidence under the architecture being refactored in #98; any new execution requires specific run authorisation |
 | B2 | No prospective forecast-input artifact is defined; implemented artifacts are retrospective validation only, and `final_evaluation` is blocked until Gate 6 (final refit / preprocessing policy deferred). | Chathuranga | Forecasting validation work; Gate 6 per [protocol.md §12, §16](protocol.md); #86 | Decision on what forecast record, if any, is handed downstream and when |
 | B3 | Origin inventory snapshot availability and within-day (before/after sales) semantics are undocumented. | Didilani | #51 (DR-012); #70 / #85 | Documented snapshot semantics and handling of unavailable origin snapshots |
 | B4 | DR-012 is still Proposed. | Didilani (group decision) | #51; #70 / #85 | Group approval or revision of DR-012 |
