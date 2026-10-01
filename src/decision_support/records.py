@@ -42,8 +42,26 @@ class DecisionSupportRecord:
                 "human_review_reasons must be provided when review is required."
             )
 
+
+
         allowed_statuses = {"not_assessed", "review_required", "no_additional_review"}
         if self.human_review_status not in allowed_statuses:
             raise ValueError(
                 f"Unsupported human_review_status: {self.human_review_status}"
             )
+
+        upstream_fields = {
+            "forecast_demand": self.forecast_demand,
+            "forecast_provenance": self.forecast_provenance,
+            "inventory_risk_evidence": self.inventory_risk_evidence,
+            "inventory_risk_provenance": self.inventory_risk_provenance,
+            "replenishment_recommendation": self.replenishment_recommendation,
+            "uncertainty_or_error": self.uncertainty_or_error,
+        }
+
+        for field_name, value in upstream_fields.items():
+            if value is None and not self.unavailable_fields.get(field_name):
+                raise ValueError(
+                    f"{field_name} is unavailable and requires an explicit reason "
+                    "in unavailable_fields"
+                )
