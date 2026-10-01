@@ -11,6 +11,7 @@ def test_default_human_review_status_is_not_assessed():
     )
 
     assert record.human_review_status == "not_assessed"
+    assert record.human_review_reasons == ["Human review has not yet been assessed."]
 
 def test_review_required_must_have_reason():
         with pytest.raises(ValueError):
@@ -20,7 +21,9 @@ def test_review_required_must_have_reason():
             forecast_origin="2026-10-01",
             forecast_horizon="7-day",
             human_review_status="review_required",
-        )
+            human_review_reasons=[],
+            )
+
 
 def test_invalid_human_review_status_is_rejected():
     with pytest.raises(ValueError):

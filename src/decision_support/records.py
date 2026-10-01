@@ -29,7 +29,9 @@ class DecisionSupportRecord:
     evidence: list[str] = field(default_factory=list)
     management_consideration: Optional[str] = None
     human_review_status: str = "not_assessed"
-    human_review_reasons: list[str] = field(default_factory=list)
+    human_review_reasons: list[str] = field(
+    default_factory=lambda: ["Human review has not yet been assessed."]
+)
     unavailable_fields: dict[str, str] = field(default_factory=dict)
     component_provenance: dict[str, str] = field(default_factory=dict)
 
