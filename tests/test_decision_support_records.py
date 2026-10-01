@@ -22,7 +22,7 @@ def test_default_human_review_status_is_not_assessed():
     assert record.human_review_reasons == ["Human review has not yet been assessed."]
 
 def test_review_required_must_have_reason():
-        with pytest.raises(ValueError):
+    with pytest.raises(ValueError):
             DecisionSupportRecord(
             sku_id="SKU-001",
             warehouse_id="WH-01",
@@ -31,6 +31,16 @@ def test_review_required_must_have_reason():
             human_review_status="review_required",
             human_review_reasons=[],
             )
+def test_not_assessed_must_have_reason():
+    with pytest.raises(ValueError):
+        DecisionSupportRecord(
+            sku_id="SKU-001",
+            warehouse_id="WH-01",
+            forecast_origin="2026-10-01",
+            forecast_horizon="7-day",
+            human_review_status="not_assessed",
+            human_review_reasons=[],
+        )
 
 
 def test_invalid_human_review_status_is_rejected():
