@@ -3,6 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 
 import numpy as np
 import pandas as pd
@@ -328,7 +331,8 @@ def test_cli_executes_one_complete_stage(source, tmp_path, capsys):
     assert len(handoff.read_validated_handoff(source.parents[2], "cli", expected_provenance_sha256=result["provenance_sha256"])) == 8
 
 
-def test_cli_missing_arguments_and_invalid_scope_fail(source, tmp_path):
+def test_cli_missing_receipt_and_invalid_scope_fail(source, tmp_path, monkeypatch):
+    monkeypatch.setattr(handoff, "repository_root", lambda: tmp_path)
     with pytest.raises(SystemExit) as exc:
         handoff.main([])
     assert exc.value.code == 2
@@ -380,3 +384,50 @@ def test_optional_source_provenance_requires_text_when_available(source, field, 
     supplied[field] = value
     with pytest.raises(ValueError):
         publish(source, source_receipt=supplied)
+
+
+def test_no_argument_module_cli_uses_project_defaults_end_to_end(source):
+    repository = source.parents[2]
+    supplied = receipt(source)
+    supplied["snapshot_reference"] = str(handoff.PROJECT_INPUT)
+    supplied["verification_method"] = "manual-sha256-and-size-verification"
+    source.rename(repository / handoff.PROJECT_INPUT)
+    (repository / handoff.PROJECT_SOURCE_RECEIPT).write_text(json.dumps(supplied))
+    implementation = Path(handoff.__file__).resolve().parents[2]
+    for name in ("src/data/data_cleaning.py", "src/data/validated_handoff.py"):
+        target = repository / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(implementation / name, target)
+    completed = subprocess.run([sys.executable, "-m", "src.data.validated_handoff"],
+        cwd=repository, text=True, capture_output=True, check=True, timeout=20)
+    result = json.loads(completed.stdout)
+    directory = repository / "data/processed/validated/supply-chain-dataset1-validated-v1"
+    assert Path(result["directory"]) == directory
+    provenance = json.loads((directory / "provenance.json").read_text())
+    assert provenance["data_version"] == "supply-chain-dataset1-validated-v1"
+    assert provenance["source"] == supplied
+    assert provenance["scope"] == {
+        "start_date": "2024-01-01", "end_date": "2024-12-30", "columns": cleaning.COLUMNS,
+        "validation_mode": "shared-source-quality", "purpose": "shared validated source preparation",
+        "authorization_reference": "https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/102"}
+    assert provenance["human_review"]["status"] == "pending_human_review"
+    assert len(handoff.read_validated_handoff(repository, handoff.PROJECT_DATA_VERSION,
+        expected_provenance_sha256=result["provenance_sha256"])) == 8
+    assert list((repository / "data/processed/interim").iterdir()) == []
+    repeated = subprocess.run([sys.executable, "-m", "src.data.validated_handoff"],
+        cwd=repository, text=True, capture_output=True, check=False, timeout=20)
+    assert repeated.returncode == 2 and "no overwrite" in repeated.stderr
+
+
+def test_relative_cli_overrides_resolve_against_repository(source, tmp_path, capsys, monkeypatch):
+    repository = source.parents[2]
+    (repository / "receipt.json").write_text(json.dumps(receipt(source)))
+    monkeypatch.chdir(tmp_path.parent)
+    handoff.main(["--repository", str(repository), "--input", "data/raw/source.csv",
+        "--source-receipt", "receipt.json", "--data-version", "override",
+        "--start", "2024-01-01", "--end", "2024-01-04", "--purpose", "synthetic override",
+        "--authorization-reference", "synthetic authorization"])
+    result = json.loads(capsys.readouterr().out)
+    assert Path(result["directory"]).name == "override"
+    provenance = json.loads((Path(result["directory"]) / "provenance.json").read_text())
+    assert provenance["scope"]["purpose"] == "synthetic override"

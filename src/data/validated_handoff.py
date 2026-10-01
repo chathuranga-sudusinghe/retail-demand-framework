@@ -34,6 +34,19 @@ FILES = ("validated.parquet", "schema.json", "validation-audit.json", "provenanc
 ROW_ORDER = ["SKU_ID", "Warehouse_ID", "Date"]
 CONTRACT_REFERENCE = "docs/data-cleaning-and-validation.md"
 
+# Reviewed project defaults; overrides remain available for synthetic/development use.
+PROJECT_INPUT = Path("data/raw/supply_chain_dataset1.csv")
+PROJECT_SOURCE_RECEIPT = Path("data/raw/source-receipt.json")
+PROJECT_START = "2024-01-01"
+PROJECT_END = "2024-12-30"
+PROJECT_PURPOSE = "shared validated source preparation"
+PROJECT_DATA_VERSION = "supply-chain-dataset1-validated-v1"
+PROJECT_AUTHORIZATION_REFERENCE = "https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/102"
+
+
+def repository_root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
 
 @dataclass(frozen=True)
 class HandoffResult:
@@ -113,7 +126,8 @@ def _source_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Source SHA-256 must be a lowercase 64-digit receipt.")
     if type(receipt["size_bytes"]) is not int or receipt["size_bytes"] <= 0:
         raise ValueError("Source size_bytes must be a positive integer.")
-    if receipt["verification_method"] not in {"verified_acquisition_receipt", "explicit_verified_metadata"}:
+    if receipt["verification_method"] not in {"verified_acquisition_receipt", "explicit_verified_metadata",
+                                               "manual-sha256-and-size-verification"}:
         raise ValueError("Source identity requires explicitly verified receipt metadata.")
     return dict(receipt)
 
@@ -417,21 +431,23 @@ def prepare_validated_handoff(*, repository: Path, input_path: Path, data_versio
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repository", type=Path, default=Path(__file__).resolve().parents[2])
-    parser.add_argument("--input", type=Path, required=True)
-    parser.add_argument("--data-version", required=True)
-    parser.add_argument("--start", required=True)
-    parser.add_argument("--end", required=True)
-    parser.add_argument("--purpose", required=True)
-    parser.add_argument("--authorization-reference", required=True)
-    parser.add_argument("--source-receipt", type=Path, required=True,
+    parser.add_argument("--repository", type=Path, default=repository_root())
+    parser.add_argument("--input", type=Path, default=PROJECT_INPUT)
+    parser.add_argument("--data-version", default=PROJECT_DATA_VERSION)
+    parser.add_argument("--start", default=PROJECT_START)
+    parser.add_argument("--end", default=PROJECT_END)
+    parser.add_argument("--purpose", default=PROJECT_PURPOSE)
+    parser.add_argument("--authorization-reference", default=PROJECT_AUTHORIZATION_REFERENCE)
+    parser.add_argument("--source-receipt", type=Path, default=PROJECT_SOURCE_RECEIPT,
                         help="JSON containing externally verified source identity/hash metadata")
     args = parser.parse_args(argv)
     try:
         input_path = args.input if args.input.is_absolute() else args.repository / args.input
+        receipt_path = (args.source_receipt if args.source_receipt.is_absolute()
+                        else args.repository / args.source_receipt)
         result = prepare_validated_handoff(repository=args.repository, input_path=input_path,
             data_version=args.data_version, start=args.start, end=args.end, purpose=args.purpose,
-            authorization_reference=args.authorization_reference, source_receipt=_json_read(args.source_receipt))
+            authorization_reference=args.authorization_reference, source_receipt=_json_read(receipt_path))
     except (ValueError, OSError, AssertionError, KeyError, TypeError, pa.ArrowException) as exc:
         parser.exit(2, f"Validated handoff failed: {exc}\n")
     print(json.dumps({"directory": str(result.directory), "provenance_sha256": result.provenance_sha256}))
