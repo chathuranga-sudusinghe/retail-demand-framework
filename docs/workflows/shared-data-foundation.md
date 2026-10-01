@@ -47,12 +47,12 @@ The reserved final-evaluation view is a protected specification at this stage, n
 
 ### Representation purposes, inputs/outputs and existing owners
 
-Module names refer to existing files under src/data/ and src/forecasting/; no new API is prescribed. Scientific validation requirements remain in the linked authorities.
+Module names refer to existing files under src/data/, src/analysis/ and src/forecasting/; no new API is prescribed. Scientific validation requirements remain in the linked authorities.
 
 | Stage | Representation purpose | Inputs -> outputs | Existing owning modules/docs |
 |---|---|---|---|
-| Raw source | Preserve the original local reproduction input | Acquired source -> unmodified snapshot and identity receipt | Manual acquisition; demand_eda.source_receipt; dataset contract |
-| Cleaned / validated representation | Provide typed, keyed, sorted observations and quality evidence without inventing repair rules | Authorized observations -> validated records and audit | demand_eda.validate_data/require_valid and profiling modules for EDA; features.prepare_demand for forecasting; dataset contract |
+| Raw source | Preserve the original local reproduction input | Acquired source -> unmodified snapshot and identity receipt | Manual acquisition; data_cleaning.scoped_source_receipt (authorized scope only; parent receipt remains acquisition evidence); dataset contract |
+| Cleaned / validated representation | Provide typed, keyed, sorted observations and quality evidence without inventing repair rules | Authorized observations -> validated records and audit | data_cleaning.build_validated_dataset and shared audit for analysis; features.prepare_demand for the existing forecasting demand projection; dataset/cleaning contracts |
 | Authorized chronological scope | Isolate records permitted for the named experiment before scientific preparation | Loaded records plus authorized scope -> scoped demand view | execution.load_dataset/resolve_execution; evaluation.validation_view; protocol and runner operations |
 | Chronological views | Separate fitting history, origin-time inputs and retrospective outcomes; specify protected final view | Scoped demand plus protocol view definitions -> training and validation/outcome slices; reserved final specification | validation.split_fold; evaluation.prepare_fold; experiment.run_final_evaluation blocks final execution; protocol |
 | Fold/origin-specific features and separate targets | Construct conceptual predictors and independently aligned observed labels | Corresponding view/history and origin -> keyed engineered features, separate targets and eligibility evidence | features.build_features/build_origin_features/feature_eligibility; targets.build_horizon_targets; evaluation.prepare_fold; feature contract and protocol |
