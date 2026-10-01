@@ -19,15 +19,18 @@ Current code locations — legacy runtime description, not active execution guid
 - Reviewed local record: `data/processed/forecasting/validation_authorization.json`.
 - Legacy output: `outputs/revised-forecasting/<exact-approved-run-id>/` (removed; migration required).
 
-The existing ValidationAuthorization fields now live in execution.py, with compatibility exports from metadata.py. The reviewed record supplies the exact ID, ordered scope and human references. No approval is generated, no hashes are refreshed, and no latest-file discovery occurs. Missing/malformed/stale records, missing datasets, duplicate required CSV headers and consumed run directories fail before estimator construction. A failed directory cannot be resumed/reused; another run requires separate review. Approval references are a local workflow guard, not cryptographic identity.
+The existing ValidationAuthorization fields now live in authorization.py, with direct compatibility exports from execution.py and metadata.py. Issue #106 separates package responsibilities while preserving the legacy runtime/input/storage behavior. The reviewed record supplies the exact ID, ordered scope and human references. No approval is generated, no hashes are refreshed, and no latest-file discovery occurs. Missing/malformed/stale records, missing datasets, duplicate required CSV headers and consumed run directories fail before estimator construction. A failed directory cannot be resumed/reused; another run requires separate review. Approval references are a local workflow guard, not cryptographic identity.
 
 ## Responsibilities
 
 | Module | Responsibility |
 |---|---|
 | paths.py | Fixed repository-relative locations; no import-time writes. |
-| execution.py | Strict record/scope loading, approval checks and four-column CSV loading. |
-| experiment.py | Sole entrypoint, sequential scientific orchestration, lifecycle and independent recovery. |
+| authorization.py | Strict record/scope loading, human approval checks and execution-context resolution. |
+| execution.py | Current four-column CSV loading; direct legacy authorization exports. |
+| experiment.py | Thin CLI/runtime entrypoint: arguments, authorization resolution, input loading and orchestration dispatch. |
+| orchestration.py | Candidate planning, preparation/execution coordination, validation lifecycle, independent recovery and final-evaluation blocking. |
+| persistence.py | Authorization snapshots, checkpoints, model-index coordination, result-set persistence and manifest-last finalization; delegates low-level artifact/model I/O. |
 | features/targets/validation/configuration/models/baselines/metrics | Unchanged scientific definitions and runtime controls. |
 | preprocessing.py | Unchanged transformations plus versioned fitted-state reconstruction. |
 | evaluation/selection | Existing populations, alignment and selection semantics. |
