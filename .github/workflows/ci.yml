@@ -28,7 +28,16 @@ jobs:
         run: python -m pip install -r requirements-dev.txt
 
       - name: Verify imports
-        run: python -c "import src"
+        run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
+
+      - name: Check dependency consistency
+        run: python -m pip check
+
+      - name: Lint forecasting source and tests
+        run: ruff check src/forecasting tests/test_forecasting_*.py
+
+      - name: Type-check forecasting source
+        run: python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
 
       - name: Run tests
         run: python -m pytest -q

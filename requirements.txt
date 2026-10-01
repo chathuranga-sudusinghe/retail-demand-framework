@@ -7,3 +7,7 @@ lightgbm==4.7.0
 catboost==1.2.10
 statsmodels==0.15.0
 matplotlib==3.11.2
+
+# Direct operational dependencies: thread controls and trusted local model persistence.
+threadpoolctl==3.7.0
+joblib==1.6.0
