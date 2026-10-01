@@ -1,5 +1,7 @@
 # DR-005 — Forecast Validation Design
 
+> **Current status cross-reference — Issue #89:** [The frozen protocol](../protocol.md) resolves prior pending supportive configuration, 28-day baseline and numeric runtime wording. Primary scientific decisions remain unchanged. [Runner operations](../forecasting-runner.md) describe current implementation and separate approval gates. Original decision/development wording below is retained as provenance and does not supersede later recorded approvals. Issue #89 implementation awaits human review; no new run or final evaluation is authorized here.
+
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28

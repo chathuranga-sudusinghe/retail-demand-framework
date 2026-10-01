@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.forecasting import experiment
+from src.forecasting import experiment, model_artifacts
 from src.forecasting.artifacts import (
     ARTIFACT_NAMES, CSV_SCHEMAS, PROTOCOL_VERSION, SCHEMA_VERSION, ArtifactWriter, file_hash,
 )
@@ -20,6 +20,8 @@ from src.forecasting.metadata import (
     REPOSITORY, ExecutionBlocked, RunScope, ValidationAuthorization, environment_metadata,
     initial_metadata, source_hashes,
 )
+from src.forecasting.execution import ExecutionContext, load_dataset, resolve_execution
+from src.forecasting.paths import RepositoryLayout
 from src.forecasting.metrics import forecasting_metrics
 from src.forecasting.models import estimator_parameters
 from src.forecasting.selection import record_order, select_primary, summarize_configurations
@@ -156,8 +158,7 @@ def test_default_execution_and_final_entry_are_blocked_before_data_or_estimator_
     with pytest.raises(ExecutionBlocked, match="Gate 6"):
         experiment.run_final_evaluation(object(), authorization=object())
     with pytest.raises(ExecutionBlocked, match="Gate 6"):
-        experiment.main(["--input", "no-dataset.csv", "--run-id", "blocked", "--authorization", "no-approval.json",
-                         "--stage", "final_evaluation"])
+        experiment.main(["--stage", "final_evaluation"])
     importlib.reload(experiment)
     constructor.assert_not_called()
 
@@ -213,7 +214,7 @@ def install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds, *, fai
         def get_params(self, deep=True):
             return estimator_parameters(self.model, self.configuration)
 
-        def predict(self, matrix):
+        def predict(self, matrix, **kwargs):
             return np.ones(len(matrix))  # All primary configurations tie by construction.
 
     def construct(model, configuration):
@@ -244,6 +245,16 @@ def install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds, *, fai
             return
         real_write(self, name, value)
 
+    # Native I/O is substituted only in the synthetic harness; descriptors,
+    # preprocessing, hashes and replay validation use their actual implementation.
+    def save_mock(estimator, model, path):
+        path.write_text("synthetic constant model")
+
+    def load_mock(model, path):
+        return SyntheticEstimator(model, None)
+
+    monkeypatch.setattr(model_artifacts, "_save_estimator", save_mock)
+    monkeypatch.setattr(model_artifacts, "_load_estimator", load_mock)
     monkeypatch.setattr(experiment, "construct_estimator", construct)
     monkeypatch.setattr(experiment, "fit_estimator", fit)
     monkeypatch.setattr(experiment, "prepare_fold", lambda data, number, **kwargs: prepared_folds[number])
@@ -270,12 +281,13 @@ def test_mocked_full_plan_writes_exact_artifacts_metadata_and_same_candidate_pop
     approved = authorization()
     directory = experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     assert directory == tmp_path / "outputs/revised-forecasting" / approved.run_id
-    assert set(p.name for p in directory.iterdir()) == set(ARTIFACT_NAMES) | {"run.log"}
+    assert set(p.name for p in directory.iterdir()) == set(ARTIFACT_NAMES) | {"run.log", "run_manifest.json", "authorization.json", "models"}
     assert len(constructed) == len(fitting) == 1184  # 1,152 mocked primary + 32 mocked supportive.
     assert writes[0] == ("run_metadata.json", "preflight")
-    assert writes[-1] == ("run_metadata.json", "completed")
+    assert writes[-1] == ("run_manifest.json", None)
+    assert not any(status == "completed" for _, status in writes)
     metadata = json.loads((directory / "run_metadata.json").read_text())
-    assert metadata["run_status"] == "completed"
+    assert metadata["run_status"] == "verified_completed"
     assert metadata["planned_primary_fits"] == 1152
     assert metadata["planned_supportive_fits"] == metadata["planned_baseline_evaluations"] == 32
     assert metadata["schema_version"] == SCHEMA_VERSION
@@ -352,7 +364,7 @@ def test_mocked_full_plan_writes_exact_artifacts_metadata_and_same_candidate_pop
         assert f"completed_fits={min(number, 1184)}/1184 " in line
     for number, line in enumerate(completions, 1):
         assert f"completed_fits={number}/1184 " in line
-    assert "event=run_complete" in lines[-1]
+    assert "event=finalization_verified" in lines[-1]
     assert "fit_progress=100.00%" in lines[-1] and "progress=100.00%" in lines[-1]
     assert "total_elapsed_seconds=" in lines[-1]
     assert not any(value in log for value in ("SKU_ID", "Warehouse_ID", "Units_Sold", "prediction=", "matrix", "-999", "get_params"))
@@ -418,7 +430,8 @@ def test_logging_leaves_all_result_artifact_bytes_unchanged(monkeypatch, tmp_pat
             if muted:
                 patch.setattr(experiment, "RunProgress", muted_progress)
             directory = experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
-            results.append({name: (directory / name).read_bytes() for name in ARTIFACT_NAMES})
+            results.append({name: (directory / name).read_bytes() for name in CSV_SCHEMAS} |
+                           {"selected_configurations.json": (directory / "selected_configurations.json").read_bytes()})
     assert results[0] == results[1]
 
 
@@ -458,7 +471,7 @@ def test_preflight_missing_outcome_persists_calendar_diagnostics_without_any_fit
     metadata = json.loads((directory / "run_metadata.json").read_text())
     assert metadata["run_status"] == "failed"
     assert metadata["selection_records"] == []
-    assert "Run status: failed" in (directory / "comparison.md").read_text()
+    assert "Run status at rendering: failed" in (directory / "comparison.md").read_text()
 
 
 def test_exact_csv_column_order_is_checked_against_the_frozen_protocol():
@@ -499,3 +512,129 @@ def test_runtime_and_metadata_capture_actual_pinned_environment_without_fitting(
     assert metadata["run_status"] == "preflight"
     assert len(metadata["conceptual_feature_names"]) == 14
     assert len(metadata["numerical_feature_names"]) == 12
+
+
+@pytest.mark.parametrize("point", ["fit", "persistence", "metrics"])
+@pytest.mark.parametrize("logging_error", [OSError("controlled log failure"), KeyboardInterrupt()])
+def test_candidate_logging_failure_preserves_original_and_recovery(
+    tmp_path, monkeypatch, prepared_folds, point, logging_error,
+):
+    install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds)
+    approved = authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=()))
+    original = ValueError("controlled candidate failure")
+
+    def fail(*args, **kwargs):
+        raise original
+
+    def fail_logging(*args, **kwargs):
+        raise logging_error
+
+    target = {"fit": "fit_estimator", "persistence": "persist_model", "metrics": "forecasting_metrics"}[point]
+    monkeypatch.setattr(experiment, target, fail)
+    monkeypatch.setattr(experiment.RunProgress, "fail_candidate", fail_logging)
+    with pytest.raises(ValueError) as caught:
+        experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
+    assert caught.value is original
+    assert f"Candidate failure logging failed: {type(logging_error).__name__}." in original.__notes__
+    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    metadata = json.loads((directory / "run_metadata.json").read_text())
+    assert metadata["failure_type"] == "ValueError"
+    assert metadata["failure_reason"] == str(original)
+    assert metadata["candidate_records"][0]["candidate_status"] == "failed"
+    assert metadata["metric_records"][0]["metric_status"] == "failed"
+    assert (directory / "diagnostics.json").is_file()
+    assert not (directory / "run_manifest.json").exists()
+
+
+def test_candidate_diagnostic_interrupt_preserves_original_failure(tmp_path, monkeypatch, prepared_folds):
+    install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds)
+    approved = authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=()))
+    original = ValueError("controlled candidate failure")
+    interrupted_writes = []
+    write_json = ArtifactWriter.write_json
+
+    def fail_fit(*args, **kwargs):
+        raise original
+
+    def write(self, name, value):
+        if name == "diagnostics.json" and "candidate" in value:
+            interrupted_writes.append(name)
+            raise KeyboardInterrupt("controlled diagnostic interruption")
+        return write_json(self, name, value)
+
+    monkeypatch.setattr(experiment, "fit_estimator", fail_fit)
+    monkeypatch.setattr(ArtifactWriter, "write_json", write)
+    with pytest.raises(ValueError) as caught:
+        experiment.run_validation(panel(), run_id=approved.run_id, authorization=approved)
+    assert caught.value is original
+    assert interrupted_writes == ["diagnostics.json"]
+    assert "Candidate diagnostic persistence failed: KeyboardInterrupt." in original.__notes__
+    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    assert not (directory / "run_manifest.json").exists()
+
+
+@pytest.mark.parametrize("use_context", [False, True])
+def test_alternate_layout_is_used_consistently_without_global_root_patching(
+    tmp_path, monkeypatch, prepared_folds, use_context,
+):
+    from dataclasses import asdict
+    layout = RepositoryLayout(tmp_path / "alternate-repository")
+    # Copy only approval-bound source/configuration records, never project data.
+    for relative in (*source_hashes(REPOSITORY), "docs/protocol.md"):
+        destination = layout.repository_path(relative)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((REPOSITORY / relative).read_bytes())
+    source = panel()
+    layout.dataset.parent.mkdir(parents=True)
+    source.to_csv(layout.dataset, index=False)
+    approved = replace(
+        authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=())),
+        protocol_hash=file_hash(layout.protocol), source_hashes=source_hashes(layout.root),
+    )
+    layout.execution_record.parent.mkdir(parents=True)
+    layout.execution_record.write_text(json.dumps(asdict(approved)))
+    install_synthetic_runner_mocks(monkeypatch, layout.root, prepared_folds)
+    # Use the real writer/layout; only estimator computation and environment collection are synthetic.
+    monkeypatch.setattr(experiment, "ArtifactWriter", ArtifactWriter)
+    environments = []
+    environment = experiment.environment_metadata
+    def collect(root):
+        environments.append(root)
+        return environment(root)
+    monkeypatch.setattr(experiment, "environment_metadata", collect)
+    validations = []
+    validate = type(approved).validate
+    def check(self, root, run_id):
+        validations.append(root)
+        return validate(self, root, run_id)
+    monkeypatch.setattr(type(approved), "validate", check)
+    context = resolve_execution(layout) if use_context else None
+    data = load_dataset(context.dataset_path) if context else source
+    directory = experiment.run_validation(
+        data, run_id=approved.run_id, authorization=approved,
+        execution_context=context, layout=None if context else layout,
+    )
+    assert directory == layout.run_directory(approved.run_id)
+    assert environments == [layout.root]
+    assert validations == [layout.root] * (3 if use_context else 2)
+    metadata = json.loads((directory / "run_metadata.json").read_text())
+    assert metadata["protocol_hash"] == file_hash(layout.protocol)
+    assert metadata["feature_contract_hash"] == file_hash(layout.feature_contract)
+    assert metadata["source_hashes"] == source_hashes(layout.root)
+    assert (directory / "run_manifest.json").is_file()
+    assert (directory / "authorization.json").is_file()
+    assert layout.validation_model_directory(directory).is_dir()
+    assert layout.preprocessing_state_directory(directory, "ridge", 1, 1).is_dir()
+    assert not (REPOSITORY / "outputs/revised-forecasting" / approved.run_id).exists()
+
+
+def test_context_layout_conflict_is_rejected_before_run_creation(tmp_path):
+    approved = authorization()
+    original = RepositoryLayout(tmp_path / "original")
+    conflicting = RepositoryLayout(tmp_path / "conflicting")
+    context = ExecutionContext(approved, original.execution_record, "synthetic", {}, original.dataset, original)
+    with pytest.raises(ExecutionBlocked, match="repository layout differ"):
+        experiment.run_validation(None, run_id=approved.run_id, authorization=approved,
+                                  execution_context=context, layout=conflicting)
+    assert not original.output_root.exists()
+    assert not conflicting.output_root.exists()

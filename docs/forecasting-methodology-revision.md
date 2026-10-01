@@ -1,5 +1,7 @@
 # Forecasting methodology revision — current approval and provenance
 
+> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](forecasting-runner.md).
+
 ## Authority and scope
 
 This records the horizon/validation revision supplied by the project owner on
@@ -59,9 +61,9 @@ The following remain separate:
 - DR-012 group approval and **component-owner/human approval for 28-day downstream use**;
 - uncertainty, human-review rules, numerical replenishment and final integration contracts.
 
-Issue #62 is merged through PR #64 and implements the frozen features, targets, revised fold utilities and earlier preprocessing contract. Model/metrics/runner modules remain absent. The preprocessor supports only Ridge/Random Forest/native-categorical LightGBM; Issue #66 requires later common primary encoding and XGBoost/CatBoost interfaces/tests after design approval. No source/tests/dependencies change here. Model fitting, tuning, validation scoring, ablation and final evaluation remain **NOT authorised**. Every later run requires specific human authorisation under AGENTS.md.
+Issue #62/PR #64 supplied the earlier features, targets, folds and preprocessing. Later primary alignment and PR #76 supplied common one-hot representations, models, metrics and the runner. Issue #89 extends operational orchestration only. Human review and a matching specific authorization are required before executing this changed implementation.
 
-[Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains pending alignment with the revised Issue #66 research design. Its protocol remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**. Protocol approval and experiment execution remain separately gated; Gate 1 is incomplete. Its prior draft must later be aligned, including artifact schemas and the runtime recipe, and its previous four unresolved items reassessed.
+Issue #65 now has a human-approved/frozen protocol. Supportive settings, 28-day baseline formulas and numeric runtime controls are resolved there. Protocol approval, changed implementation acceptance and specific-run authorization remain separate.
 
 ## Computational scope
 
@@ -82,9 +84,9 @@ Simple baselines remain untuned: 2 baseline roles × 3 currently defined horizon
   in its explicitly historical section; DR-004/007/010 retain original scope/counts
   where labelled as provenance. DR-007's 1/7/14 baseline definitions remain valid.
 - The archived [Issue #52 protocol](issue-52-forecasting-protocol.md) and ignored local `outputs/issue-52-validation/comparison.md` preserve their original bodies beneath historical notices. Its metadata, candidate metrics, selected configurations/predictions, eligibility records and artifact audit belong to that earlier run, not the revised study. No historical score selects the current feature contract or model.
-- There is no tracked Issue #52 comparison report under `reports/`, and the historical reproduction command references absent `src/forecasting/experiment.py`. The run metadata records Git HEAD `ec1296ecebeae359222036c93b4dd482fe977e23` and source fingerprints; reproducing it would require the matching historical source snapshot and separate authorisation. Compiled caches are not that source archive.
-- Feature-review Options A/B/C and the earlier thirteen-column catalogue are superseded historical proposals. Issue #62 implemented the frozen conceptual features; its native LightGBM preprocessing is now an alignment gap for Issue #66, not an active primary representation alternative.
+- There is no tracked Issue #52 comparison report under `reports/`, and the historical reproduction command requires the matching historical version of `src/forecasting/experiment.py`, rather than the current incompatible runner. The run metadata records Git HEAD `ec1296ecebeae359222036c93b4dd482fe977e23` and source fingerprints; reproducing it would require the matching historical source snapshot and separate authorisation. Compiled caches are not that source archive.
+- Feature-review Options A/B/C and the earlier thirteen-column catalogue are superseded historical proposals. Issue #62 implemented the frozen conceptual features; its native LightGBM preprocessing was the earlier alignment gap identified under Issue #66 and is now historical provenance, superseded by the implemented common primary representation.
 - DR-007/009/010 bodies retain earlier learned roles, single-boosting selection, unequal grids, representation and workload beneath explicit DR-013 supersession notices. Retained Naive/Seasonal Naive definitions and 28-day approval boundaries are still in force.
-- Issue #62 source/tests preserve the accepted earlier model/representation contract; their native categorical references are intentional implementation evidence awaiting a separate alignment task.
+- Issue #62 source/tests preserve the accepted earlier model/representation contract; the earlier native-categorical contract is historical provenance, superseded by the implemented common primary representation.
 - DR-001/002 and DR-003's explicitly historical body retain independent decision meanings; active data dictionaries, literature applicability and workflow summaries now link the frozen contract. Git/workflow governance remains unchanged. A 14-day supplier
   limit or rolling window is not an obsolete 14-day maximum forecast horizon.

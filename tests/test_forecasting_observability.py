@@ -155,7 +155,7 @@ def saved_evidence(tmp_path):
 
 
 def test_report_required_summary_matrices_and_horizon_evidence(saved_evidence):
-    text = reporting.comparison_text(saved_evidence.directory)
+    text = reporting.comparison_text(saved_evidence.directory, require_verified=False)
     for value in ("synthetic-report", PROTOCOL_VERSION, "1234567890abcdef", "Validation folds: 1, 2, 3, 4",
                   "Authorised horizons (days): 1, 7, 14, 28", "Primary model roles: XGBoost, LightGBM, CatBoost",
                   "Supportive model roles: Ridge, Random Forest", "Baseline model roles: Naive, Seasonal Naive",
@@ -204,17 +204,17 @@ def test_report_reads_artifacts_without_recalculation_or_changes(saved_evidence,
     monkeypatch.setattr(selection, "select_primary", forbidden)
     directory = saved_evidence.directory
     before = {path.name: path.read_bytes() for path in directory.iterdir()}
-    text = reporting.comparison_text(directory)
+    text = reporting.comparison_text(directory, require_verified=False)
     assert {path.name: path.read_bytes() for path in directory.iterdir()} == before
-    assert reporting.comparison_text(directory) == text
+    assert reporting.comparison_text(directory, require_verified=False) == text
     forbidden.assert_not_called()
     # Change a recorded display value, not a computed value: the report must follow the CSV.
     path = directory / "configuration_summary.csv"
     path.write_text(path.read_text().replace("0.3141592653589793", "0.8765432109876543"))
-    assert "0.8765432109876543" in reporting.comparison_text(directory)
+    assert "0.8765432109876543" in reporting.comparison_text(directory, require_verified=False)
     (directory / "selected_configurations.json").unlink()
     with pytest.raises(FileNotFoundError):
-        reporting.comparison_text(directory)
+        reporting.comparison_text(directory, require_verified=False)
 
 
 def test_report_failed_partial_scope_keeps_all_sections_and_unavailable_status(saved_evidence):
@@ -228,8 +228,8 @@ def test_report_failed_partial_scope_keeps_all_sections_and_unavailable_status(s
     saved_evidence.write_json("selected_configurations.json", {"selections": []})
     saved_evidence.write_csv("configuration_summary.csv", [])
     saved_evidence.write_csv("fold_metrics.csv", [])
-    text = reporting.comparison_text(directory)
-    assert "Run status: failed" in text and "Failure: Synthetic preflight failure" in text
+    text = reporting.comparison_text(directory, require_verified=False)
+    assert "Run status at rendering: failed" in text and "Failure: Synthetic preflight failure" in text
     assert "Recorded fold IDs: none; not executed" in text
     assert "| 1-day | not selected | not authorised | not authorised |" in text
     assert "| 1-day | unavailable | unavailable | unavailable |" in text
@@ -239,3 +239,68 @@ def test_report_failed_partial_scope_keeps_all_sections_and_unavailable_status(s
     assert text.count("This horizon was not authorised and was not executed.") == 3
     assert "Baseline exclusion — Naive: Synthetic explicit exclusion" in text
     assert "blocked_gate_6; blocked/not executed" in text
+
+
+def test_cleanup_attempts_every_flush_and_close_and_reports_first_error(tmp_path):
+    logger = progress.RunProgress(tmp_path, "cleanup", primary_fits=0, supportive_fits=0, baseline_evaluations=1)
+    logger.close()
+    handlers = [Mock(spec=logging.Handler), Mock(spec=logging.Handler)]
+    original = OSError("flush failed")
+    handlers[0].flush.side_effect = original
+    handlers[0].close.side_effect = RuntimeError("close failed")
+    for handler in handlers:
+        logger.logger.addHandler(handler)
+    with pytest.raises(OSError) as caught:
+        logger.close()
+    assert caught.value is original
+    assert "Additional progress cleanup failure: RuntimeError." in original.__notes__
+    assert logger.logger.handlers == []
+    for handler in handlers:
+        handler.flush.assert_called_once_with()
+        handler.close.assert_called_once_with()
+
+
+def test_cleanup_does_not_mask_active_primary_exception(tmp_path):
+    logger = progress.RunProgress(tmp_path, "cleanup", primary_fits=0, supportive_fits=0, baseline_evaluations=1)
+    logger.close()
+    handler = Mock(spec=logging.Handler)
+    handler.flush.side_effect = OSError("flush failed")
+    handler.close.side_effect = RuntimeError("close failed")
+    logger.logger.addHandler(handler)
+    original = ValueError("primary failure")
+    with pytest.raises(ValueError) as caught:
+        try:
+            raise original
+        finally:
+            logger.close()
+    assert caught.value is original
+    assert original.__notes__ == [
+        "Progress handler cleanup failed: OSError.",
+        "Progress handler cleanup failed: RuntimeError.",
+    ]
+    assert logger.logger.handlers == []
+    handler.flush.assert_called_once_with()
+    handler.close.assert_called_once_with()
+
+
+@pytest.mark.parametrize("point", ["file_constructor", "formatter", "initial_event"])
+def test_initialization_failure_closes_all_acquired_handlers_and_preserves_error(tmp_path, monkeypatch, point):
+    terminal, file_handler = Mock(spec=logging.Handler), Mock(spec=logging.Handler)
+    terminal.flush.side_effect = OSError("cleanup failure")
+    original = RuntimeError("initialization failure")
+    monkeypatch.setattr(progress.logging, "StreamHandler", Mock(return_value=terminal))
+    factory = Mock(side_effect=original) if point == "file_constructor" else Mock(return_value=file_handler)
+    monkeypatch.setattr(progress.logging, "FileHandler", factory)
+    if point == "formatter":
+        terminal.setFormatter.side_effect = original
+    elif point == "initial_event":
+        monkeypatch.setattr(progress.RunProgress, "_emit", Mock(side_effect=original))
+    with pytest.raises(RuntimeError) as caught:
+        progress.RunProgress(tmp_path, "setup", primary_fits=0, supportive_fits=0, baseline_evaluations=1)
+    assert caught.value is original
+    assert "Progress handler cleanup failed: OSError." in original.__notes__
+    terminal.flush.assert_called_once_with()
+    terminal.close.assert_called_once_with()
+    if point != "file_constructor":
+        file_handler.flush.assert_called_once_with()
+        file_handler.close.assert_called_once_with()

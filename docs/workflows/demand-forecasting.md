@@ -1,8 +1,8 @@
 # Demand Forecasting Workflow
 
-> **Issue #66 revision — 2026-09-29:** [DR-013](../decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 is accepted for its earlier preprocessing contract; revised primary alignment requires later implementation review. Issue #65 remains pending alignment with the revised Issue #66 research design. The protocol remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**; Gate 1 is incomplete.
+> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Downstream and Gate 6 approvals remain separate. See [runner operations](../forecasting-runner.md).
 
-> **Documentation alignment — 2026-09-29:** The current 1/7/14/28-day forecasting design and [fourteen-predictor contract](../forecasting-feature-engineering.md) are human-approved. Implementation acceptance, proposed 28-day baselines and the revised executable protocol remain separate. Experiments are NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** The current 1/7/14/28-day forecasting design and [fourteen-predictor contract](../forecasting-feature-engineering.md) are human-approved. The revised executable protocol is frozen/approved under Issue #65, including the resolved 28-day baseline formulas. Issue #89 implementation awaits human review; execution requires separate specific authorization. Experiments are NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 ## Owner
 
@@ -97,7 +97,7 @@ Primary XGBoost, LightGBM and CatBoost share full one-hot identities (all eligib
 |---|---|---|
 | Primary controlled RQ2 comparison | XGBoost Regressor, LightGBM Regressor, CatBoost Regressor | Shared external representation/grid and evaluation controls; only these models answer RQ2. |
 | Supportive benchmarks | Ridge Regression, Random Forest Regressor | Contextual linear/non-linear evidence, labelled separately. |
-| Simple baselines | Naive, Seasonal Naive (period 7) | DR-007's 1/7/14 formulas retained; proposed 28-day formulas still require approval. |
+| Simple baselines | Naive, Seasonal Naive (period 7) | DR-007's 1/7/14 formulas retained; 28-day formulas are resolved in the frozen protocol. |
 
 No candidate is presumed superior. DR-007/009/010 retain their earlier bodies as provenance, with explicit supersession notices for the learned roles, single-boosting choice and primary search. Internal algorithms and parameter effects are not identical despite matched external settings.
 
@@ -107,9 +107,9 @@ Use the canonical Cartesian product in order: learning_rate [0.03, 0.05, 0.10], 
 
 For later authorised execution, evaluate each canonical configuration across all four folds, fit preprocessing only on complete eligible training rows, calculate fold WAPE/MAE/RMSE/Bias and arithmetic fold means, then review horizon-specific mean WAPE and supporting/stability evidence. Record both canonical identity and effective library parameters. Do not add search dimensions, adapt grids to results, use random K-fold validation, average across horizons or use final-evaluation outcomes for selection.
 
-DR-013 documents official API verification and proposed subsampling-enabling controls. Exact dependency pins, complete fixed runtime recipe and supportive configuration policy remain human decisions. RQ2 interpretation follows the approved descriptive and comparative policy in DR-013, separately for each horizon. The supportive Ridge Regression / Random Forest configuration policy remains unresolved and requires separate human approval. Historical 5/12 configuration grids are not automatically reused. Naive/Seasonal Naive remain untuned.
+DR-013 documents official API verification. The [frozen validation protocol](../protocol.md) resolves dependency pins, the fixed runtime recipe, subsampling controls and the fixed supportive Ridge Regression / Random Forest configuration policy. Historical 5/12 configuration grids are not reused. Naive/Seasonal Naive remain untuned. RQ2 interpretation follows the approved descriptive and comparative policy in DR-013, separately for each horizon.
 
-The accepted Issue #62 source reflects the earlier preprocessing contract; a separate implementation-alignment task must follow design approval. [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) remains pending alignment with the revised Issue #66 research design. The protocol remains **DRAFT FOR HUMAN APPROVAL — EXECUTION NOT AUTHORISED**; Gate 1 is incomplete. Its prior draft and unresolved items require later review.
+Issue #62 remains provenance for the earlier preprocessing contract. The current source implements common primary representation, XGBoost/LightGBM/CatBoost interfaces and validation orchestration with tests. Issue #65 is frozen/approved and Gate 1 is complete; PR #76 accepted the preceding runner. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity and awaits human implementation review. Implementation acceptance and specific execution authorization remain separate; no real forecasting run has occurred.
 
 ## Forecast horizons
 
@@ -131,7 +131,7 @@ The initial 1/7/14 horizons were informed by periodic-review literature and veri
 
 [DR-008](../decisions/DR-008-multi-step-forecasting-strategy.md) selects **direct horizon-specific forecasting** as the primary multi-step strategy. Separate models or horizon-specific outputs predict next-day demand, 7-day cumulative demand, 14-day cumulative demand, and 28-day cumulative demand directly from information available at the forecast origin. Earlier predictions are not fed into later horizon predictions.
 
-## Revised validation workflow under review
+## Frozen validation workflow
 
 Random train/test splitting is not permitted; validation must preserve temporal order through the revised expanding-window design recorded in DR-005.
 
@@ -269,6 +269,6 @@ Didilani does not retrain or repeat the demand-forecasting task. Her component c
 
 ## Issue #52 provenance and experiment stop point
 
-The earlier [Issue #52 protocol](../issue-52-forecasting-protocol.md) and ignored local artifacts retain their original 1/7/14-day, fourteen-day-window and thirteen-feature provenance. They are not the revised research baseline; [the central record](../forecasting-methodology-revision.md) documents artifact locations and the absent historical runner.
+The earlier [Issue #52 protocol](../issue-52-forecasting-protocol.md) and ignored local artifacts retain their original 1/7/14-day, fourteen-day-window and thirteen-feature provenance. They are not the revised research baseline; [the central record](../forecasting-methodology-revision.md) documents artifact locations and the matching historical runner version.
 
-The conceptual feature contract is frozen and Issue #62 is accepted for its earlier representation. Proposed 28-day baselines, revised primary implementation/test acceptance and the Issue #65 protocol remain separately gated. There is no current experiment runner source. No further experiment command is authorised; the owner must approve any later run under AGENTS.md after code/protocol review.
+The conceptual feature contract and Issue #65 protocol are frozen, including the 28-day baseline formulas. Issue #62 remains accepted provenance for the earlier representation. Current experiment runner source exists at `src/forecasting/experiment.py`, with common primary representation and validation orchestration implemented and tested. Issue #89 operational changes await human implementation review. No real forecasting run has occurred; the owner must separately authorise a specific run under AGENTS.md after implementation review. Final model/configuration freeze, final refit and final evaluation retain their separate approval gates.

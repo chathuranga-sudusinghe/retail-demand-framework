@@ -22,8 +22,11 @@ def _table(columns: Iterable[str], rows: Iterable[Iterable[Any]]) -> list[str]:
             *("| " + " | ".join(_cell(value) for value in row) + " |" for row in rows), ""]
 
 
-def comparison_text(directory: Path) -> str:
+def comparison_text(directory: Path, *, require_verified: bool = True) -> str:
     """Render stored values/status/ties only; no means, differences or winners computed."""
+    if require_verified:
+        from src.forecasting.integrity import verify_completed
+        verify_completed(directory)
     metadata = json.loads((directory / "run_metadata.json").read_text(encoding="utf-8"))
     selected = json.loads((directory / "selected_configurations.json").read_text(encoding="utf-8"))
     with (directory / "configuration_summary.csv").open(newline="", encoding="utf-8") as stream:
@@ -51,7 +54,8 @@ def comparison_text(directory: Path) -> str:
              f"- Protocol version: {_cell(metadata['protocol_version'])}",
              f"- Git commit SHA: {_cell(metadata.get('git_commit_sha'))}",
              f"- Evaluation stage: {_cell(metadata['evaluation_stage'])}",
-             f"- Run status: {_cell(metadata['run_status'])}",
+             f"- Run status at rendering: {_cell(metadata['run_status'])}",
+             "- Completion authority: [run manifest](run_manifest.json); metadata alone does not establish completion.",
              "- Validation folds: 1, 2, 3, 4 (frozen protocol plan).",
              "- Recorded fold IDs: " + (", ".join(sorted({r["fold_id"] for r in folds})) or "none; not executed"),
              "- Authorised horizons (days): " + ", ".join(map(str, scope["horizons"]))]

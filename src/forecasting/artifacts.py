@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import csv
 import json
-import re
 from datetime import date, datetime
 from hashlib import sha256
 from pathlib import Path
@@ -12,6 +11,7 @@ from typing import Any
 import numpy as np
 
 from src.forecasting.selection import record_order
+from src.forecasting.paths import RepositoryLayout
 
 SCHEMA_VERSION = "issue-65-v2"
 PROTOCOL_VERSION = "issue-65-matched-frozen-1"
@@ -47,7 +47,11 @@ ARTIFACT_NAMES = ("run_metadata.json", "fold_metrics.csv", "configuration_summar
 
 
 def file_hash(path: Path) -> str:
-    return sha256(path.read_bytes()).hexdigest()
+    digest = sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def json_value(value: Any) -> Any:
@@ -73,22 +77,29 @@ def json_text(value: Any) -> str:
     return json.dumps(json_value(value), indent=2, allow_nan=False, ensure_ascii=False) + "\n"
 
 
+def require_mutable_run(directory: Path) -> None:
+    """Use the completion manifest as the shared persistence boundary."""
+    if (directory / "run_manifest.json").exists():
+        raise FileExistsError("A published run cannot be modified.")
+
+
 class ArtifactWriter:
     """Own exactly one newly created run directory; previous runs are untouchable."""
 
-    def __init__(self, repository: Path, run_id: str):
-        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", run_id):
-            raise ValueError("run_id must be a safe, nonempty local directory name.")
-        self.repository = repository.resolve()
-        output_root = self.repository / "outputs" / "revised-forecasting"
-        if not output_root.resolve().is_relative_to(self.repository):
-            raise ValueError("Output directory must stay inside the repository.")
-        output_root.mkdir(parents=True, exist_ok=True)
-        self.directory = output_root / run_id
+    def __init__(self, repository: Path | RepositoryLayout, run_id: str):
+        self.layout = RepositoryLayout(repository) if isinstance(repository, Path) else repository
+        self.repository = self.layout.root
+        self.directory = self.layout.run_directory(run_id)
+        self.directory.parent.mkdir(parents=True, exist_ok=True)
         self.directory.mkdir(exist_ok=False)
 
+    def _require_mutable(self) -> None:
+        require_mutable_run(self.directory)
+
     def write_json(self, name: str, value: Any) -> None:
-        if name not in ("run_metadata.json", "selected_configurations.json", "diagnostics.json"):
+        self._require_mutable()
+        if name not in ("run_metadata.json", "selected_configurations.json", "diagnostics.json",
+                        "authorization.json", "run_manifest.json"):
             raise ValueError("Unknown JSON artifact.")
         encoded = json_text(value)
         temporary = self.directory / (name + ".tmp")
@@ -96,6 +107,7 @@ class ArtifactWriter:
         temporary.replace(self.directory / name)
 
     def write_csv(self, name: str, rows: list[dict[str, Any]]) -> None:
+        self._require_mutable()
         columns = CSV_SCHEMAS[name]
         ordered = sorted(rows, key=record_order)
         for row in ordered:
@@ -117,7 +129,10 @@ class ArtifactWriter:
         temporary.replace(self.directory / name)
 
     def write_comparison(self, text: str) -> None:
-        (self.directory / "comparison.md").write_text(text, encoding="utf-8")
+        self._require_mutable()
+        temporary = self.directory / "comparison.md.tmp"
+        temporary.write_text(text, encoding="utf-8")
+        temporary.replace(self.directory / "comparison.md")
 
     def manifest(self) -> list[dict[str, Any]]:
         records = []

@@ -1,6 +1,7 @@
 """Operational progress only: no data access, model construction or approval."""
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import logging
 import re
 import sys
@@ -28,19 +29,24 @@ class RunProgress:
         # An unregistered logger avoids persistent global state or duplicate handlers.
         self.logger = logging.Logger(f"forecasting.run.{run_id}", level=logging.INFO)
         self.logger.propagate = False
-        terminal = logging.StreamHandler(sys.stdout)
-        file_handler = logging.FileHandler(directory / "run.log", mode="x", encoding="utf-8")
-        for handler in (terminal, file_handler):
-            handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
-            self.logger.addHandler(handler)
-        self._emit("run_start", primary_fits=primary_fits, supportive_fits=supportive_fits,
-                   baseline_evaluations=baseline_evaluations,
-                   planned_fits=self.total_fits, planned_evaluations=self.total_evaluations)
+        handlers: list[logging.Handler] = []
+        try:
+            handlers.append(logging.StreamHandler(sys.stdout))
+            handlers.append(logging.FileHandler(directory / "run.log", mode="x", encoding="utf-8"))
+            for handler in handlers:
+                handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
+                self.logger.addHandler(handler)
+            self._emit("run_start", primary_fits=primary_fits, supportive_fits=supportive_fits,
+                       baseline_evaluations=baseline_evaluations,
+                       planned_fits=self.total_fits, planned_evaluations=self.total_evaluations)
+        except BaseException as exc:
+            self._close_handlers(handlers, primary_error=exc)
+            raise
 
     def _emit(self, event: str, *, level: int = logging.INFO, **details: Any) -> None:
         progress = 100 * self.completed_evaluations / self.total_evaluations if self.total_evaluations else 0
         fit_progress = 100 * self.completed_fits / self.total_fits if self.total_fits else 0
-        fields = {"run_id": self.run_id, "evaluation_stage": "validation", "event": event,
+        fields = {"timestamp_utc": datetime.now(timezone.utc).isoformat(), "run_id": self.run_id, "evaluation_stage": "validation", "event": event,
                   "operation": self.operation, "fold": self.context.get("fold_id", "-"),
                   "horizon": self.context.get("horizon", "-"),
                   "evidence_role": self.context.get("evidence_role", "-"),
@@ -52,6 +58,11 @@ class RunProgress:
                   "progress": f"{progress:.2f}%", "elapsed_seconds": f"{perf_counter() - self.started:.3f}",
                   **details}
         self.logger.log(level, " ".join(f"{key}={value}" for key, value in fields.items()))
+
+    def phase(self, operation: str) -> None:
+        self.context = {}
+        self.operation = operation
+        self._emit("phase_start")
 
     def start_candidate(self, keys: dict[str, Any], *, learned: bool) -> None:
         # Explicit allowlist: never pass metadata, arrays, predictions or exception payloads.
@@ -112,12 +123,28 @@ class RunProgress:
 
     def complete_run(self, status: str) -> None:
         self.context = {}
-        self.operation = "completed"
-        self._emit("run_complete", status=status,
+        self.operation = "finalizing" if status == "finalizing_verified" else "completed"
+        self._emit("finalization_verified" if status == "finalizing_verified" else "run_complete", status=status,
                    total_elapsed_seconds=f"{perf_counter() - self.started:.3f}")
 
-    def close(self) -> None:
-        for handler in self.logger.handlers[:]:
-            handler.flush()
-            handler.close()
+    def _close_handlers(
+        self, handlers: list[logging.Handler], *, primary_error: BaseException | None = None,
+    ) -> None:
+        errors: list[BaseException] = []
+        for handler in handlers:
+            for action in (handler.flush, handler.close):
+                try:
+                    action()
+                except BaseException as exc:
+                    errors.append(exc)
             self.logger.removeHandler(handler)
+        if primary_error is not None:
+            for error in errors:
+                primary_error.add_note(f"Progress handler cleanup failed: {type(error).__name__}.")
+        elif errors:
+            for error in errors[1:]:
+                errors[0].add_note(f"Additional progress cleanup failure: {type(error).__name__}.")
+            raise errors[0]
+
+    def close(self) -> None:
+        self._close_handlers(self.logger.handlers[:], primary_error=sys.exception())

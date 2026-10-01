@@ -1,5 +1,7 @@
 # DR-010 — Forecasting Hyperparameter-Search Strategy
 
+> **Current status cross-reference — Issue #89:** [The frozen protocol](../protocol.md) resolves prior pending supportive configuration, 28-day baseline and numeric runtime wording. Primary scientific decisions remain unchanged. [Runner operations](../forecasting-runner.md) describe current implementation and separate approval gates. Original decision/development wording below is retained as provenance and does not supersede later recorded approvals. Issue #89 implementation awaits human review; no new run or final evaluation is authorized here.
+
 **Status:** PRIMARY SEARCH DESIGN SUPERSEDED BY DR-013
 
 ## Current status and effect

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from datetime import date
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -196,3 +197,40 @@ def fit_primary_preprocessors(
         features, "xgboost", training_end=training_end, horizon=horizon,
     )
     return {model: replace(shared, model=model) for model in PRIMARY_MODELS}
+
+
+def preprocessor_state(state: ForecastPreprocessor) -> dict[str, Any]:
+    """Serialize fitted state without refitting or changing transformation rules."""
+    return {
+        "state_version": 1, "model": state.model, "training_end": state.training_end.isoformat(),
+        "horizon": state.horizon, "training_row_count": state.training_row_count,
+        "vocabularies": state.vocabularies, "numerical_means": state.numerical_means,
+        "numerical_scales": state.numerical_scales,
+        "physical_feature_names": state.physical_feature_names,
+        "conceptual_feature_names": state.conceptual_feature_names,
+    }
+
+
+def restore_preprocessor(value: dict[str, Any]) -> ForecastPreprocessor:
+    """Reject malformed or incompatible state; transformation never learns."""
+    if value.get("state_version") != 1 or value.get("model") not in (*PRIMARY_MODELS, *SUPPORTIVE_MODELS):
+        raise ValueError("Unsupported preprocessing state.")
+    if type(value.get("horizon")) is not int or value["horizon"] not in FORECAST_HORIZONS:
+        raise ValueError("Invalid persisted horizon.")
+    if type(value.get("training_row_count")) is not int or value["training_row_count"] <= 0:
+        raise ValueError("Invalid persisted training population.")
+    vocabularies = tuple(tuple(v) for v in value["vocabularies"])
+    if len(vocabularies) != len(CATEGORICAL_FEATURE_COLUMNS) or any(
+        not v or any(not isinstance(x, str) or not x.strip() or x != x.strip() for x in v)
+        or tuple(sorted(set(v))) != v for v in vocabularies
+    ):
+        raise ValueError("Invalid persisted category vocabulary.")
+    means, scales = tuple(value["numerical_means"]), tuple(value["numerical_scales"])
+    expected = len(FEATURE_COLUMNS) if value["model"] == "ridge" else 0
+    if len(means) != expected or len(scales) != expected or not np.isfinite((*means, *scales)).all() or any(s <= 0 for s in scales):
+        raise ValueError("Invalid persisted numerical scaling state.")
+    state = ForecastPreprocessor(value["model"], calendar_date(value["training_end"]),
+                                 value["horizon"], value["training_row_count"], vocabularies, means, scales)
+    if list(state.physical_feature_names) != list(value["physical_feature_names"]) or list(state.conceptual_feature_names) != list(value["conceptual_feature_names"]):
+        raise ValueError("Persisted feature order differs from the frozen contract.")
+    return state

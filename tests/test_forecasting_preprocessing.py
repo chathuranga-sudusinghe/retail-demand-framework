@@ -321,3 +321,17 @@ def test_shared_primary_fit_excludes_incomplete_and_outcome_crossing_categories(
 def test_unapproved_representation_is_rejected(model):
     with pytest.raises(ValueError, match="model must be"):
         fit_preprocessor(build_features(synthetic_panel()), model, training_end="2024-02-09", horizon=1)
+
+
+@pytest.mark.parametrize("model", MODELS)
+def test_persisted_state_preserves_exact_matrix_and_unknown_category_behavior(model):
+    import json
+    from src.forecasting.preprocessing import preprocessor_state, restore_preprocessor
+    fitted, eligible = training_preprocessor(model)
+    restored = restore_preprocessor(json.loads(json.dumps(preprocessor_state(fitted))))
+    assert restored == fitted
+    pd.testing.assert_frame_equal(restored.transform(eligible), fitted.transform(eligible))
+    unknown = eligible.copy()
+    unknown.loc[unknown.index[0], "SKU_ID"] = "unseen"
+    with pytest.raises(ValueError, match="Unknown"):
+        restored.transform(unknown)

@@ -2,7 +2,7 @@
 
 > **Issue #66 revision — 2026-09-29:** [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 remains the provenance for the earlier preprocessing contract. The revised protocol under Issue #65 is frozen/approved (Gate 1), implementation is complete (Gate 2), and PR #76 is human-reviewed/accepted and merged (Gate 3). See the current gate status below.
 
-> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). The [frozen validation protocol](docs/protocol.md) records the approved supportive configurations and 28-day simple baselines. [Issue #78](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/78) authorises only the specific Gate 4 validation run `comp1884-validation-20260929-full-01`, which has not yet been executed. Downstream methods retain their separate approval requirements. See [revision and provenance](docs/forecasting-methodology-revision.md) for historical context and the current gate status below.
+> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and frozen the [14-predictor feature contract](docs/forecasting-feature-engineering.md). The [frozen validation protocol](docs/protocol.md) records the approved supportive configurations and 28-day simple baselines. Issue #78 is closed and superseded by [Issue #89](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/89). The Issue #89 implementation exists but awaits human implementation review; no real forecasting run has occurred. Downstream methods retain their separate approval requirements. See [revision and provenance](docs/forecasting-methodology-revision.md) for historical context and the current gate status below.
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
@@ -120,7 +120,7 @@ The design retains fourteen conceptual predictors, fixed-origin 1/7/14/28-day fo
 
 This is one integrated group research project. Each member is responsible for a defined component while contributing to the shared end-to-end decision-support framework.
 
-### Chathuranga Sudusinghe — Research Team Lead & Forecasting
+### Chathuranga Sudusinghe — Forecasting & Research Team Lead
 
 - Leads overall research-team coordination and the forecasting workstream.
 - Responsible for forecasting methodology, model comparison and selection, temporal validation, reproducibility, evaluation, and forecast-output generation.
@@ -241,4 +241,16 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 Research design was revised and approved under Issue #66. XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, temporal folds and WAPE-led evaluation policy remain unchanged. The primary models use a common full one-hot representation and a matched 24-configuration grid.
 
-Gate 1 is complete: the revised forecasting experiment protocol under Issue #65 is frozen/approved. Gate 2 is complete: the forecasting runner implementation is complete. Gate 3 is complete: PR #76 has been human-reviewed/accepted and merged. [Issue #78](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/78) authorises Gate 4 only for the specific validation run `comp1884-validation-20260929-full-01`; that run has not yet been executed. Gate 5 is pending validation evidence review, and Gate 6 is blocked. Final model/configuration freeze, final refit, and final evaluation are not authorised.
+Gate 1 is complete: the revised forecasting experiment protocol under Issue #65 is frozen/approved. Gates 2–3 were completed for the preceding runner: PR #76 was human-reviewed/accepted and merged. [Issue #78](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/78) is closed and superseded by [Issue #89](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/89); it remains historical provenance for the unexecuted validation run `comp1884-validation-20260929-full-01`, not current execution authorization. Issue #89 implementation exists but awaits human implementation review and a matching specific execution authorization. No real forecasting run has occurred. Gate 5 awaits validation evidence review, and Gate 6 is blocked. Final model/configuration freeze, final refit, and final evaluation are not authorised.
+
+## Issue #89 operational implementation — pending human review
+
+The normal owner interface from the repository root is now:
+
+```bash
+python -m src.forecasting.experiment
+```
+
+It resolves `data/raw/supply_chain_dataset1.csv`, the reviewed local record at `data/processed/forecasting/validation_authorization.json`, and that record's exact approved run ID. No record is supplied/generated by implementation. [Runner operations](docs/forecasting-runner.md) explain validation-only model persistence, failure handling, storage requirements and manifest-last completion. Missing/stale/consumed authorization fails safely.
+
+The Gate 1–3 status above records the preceding implementation. Issue #89 changes await human acceptance. Source/protocol/dependency hashes have changed. The closed Issue #78 authorization is historical and must not be reused for the Issue #89 implementation; execution requires renewed human review and a matching record. No real validation, training on project data or final evaluation was performed. Gate 6 and downstream methodological approvals remain separate.

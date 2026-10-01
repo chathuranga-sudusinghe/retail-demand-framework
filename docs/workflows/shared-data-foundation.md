@@ -1,6 +1,8 @@
 # Shared Data Foundation Workflow
 
-> **Documentation alignment — 2026-09-29:** The human-approved forecast interface covers 1/7/14/28 days and the [frozen feature contract](../forecasting-feature-engineering.md). Interface support does not approve downstream use. Proposed 28-day baselines and downstream/component-owner approvals remain separate; experiments are NOT authorised. See [revision and provenance](../forecasting-methodology-revision.md).
+> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](../forecasting-runner.md).
+
+> **Documentation alignment — 2026-09-29:** The human-approved forecast interface covers 1/7/14/28 days and the [frozen feature contract](../forecasting-feature-engineering.md). Interface support does not approve downstream use. The frozen protocol resolves the 28-day baseline formulas. Downstream/component-owner approvals remain separate; experiments are NOT authorised. See [revision and provenance](../forecasting-methodology-revision.md).
 
 ## Goal
 
