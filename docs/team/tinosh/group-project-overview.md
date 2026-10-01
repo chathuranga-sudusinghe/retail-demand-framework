@@ -1,5 +1,7 @@
 # Tinosh Gamage — COMP1884 Group Project Contribution
 
+Repository-wide authorities: [data lifecycle](../../workflows/shared-data-foundation.md), [storage and retention](../../artifact-storage-policy.md), [applied MLOps](../../workflows/applied-mlops.md), [research reporting](../../../reports/README.md), and [continuous progress log](../../research-progress.md). These connect existing scientific/component contracts without replacing them.
+
 ## Member details
 
 **Name:** Tinosh Gamage

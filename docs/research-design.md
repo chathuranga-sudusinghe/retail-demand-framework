@@ -1,6 +1,8 @@
 # Research Design
 
-> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](forecasting-runner.md).
+Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
+
+> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
 
 > **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and [frozen feature contract](forecasting-feature-engineering.md). This alignment records that human instruction, not new experiment evidence or separate supervisor approval. [Revision and provenance](forecasting-methodology-revision.md) records remaining approval boundaries.
 
@@ -157,7 +159,7 @@ Earlier predictions are not fed into later horizon predictions. The 7-, 14- and 
 |---|---|---|
 | Primary controlled RQ2 comparison | XGBoost Regressor, LightGBM Regressor, CatBoost Regressor | Compare boosting implementations under matched external settings. |
 | Supportive benchmarks | Ridge Regression, Random Forest Regressor | Linear and non-linear contextual reference evidence; excluded from determining the RQ2 answer. |
-| Simple forecast baselines | Naive, Seasonal Naive (period 7) | Retain DR-007's exact 1/7/14-day definitions and separate approval of proposed 28-day extensions. |
+| Simple forecast baselines | Naive, Seasonal Naive (period 7) | Retain DR-007's exact 1/7/14-day definitions; the frozen protocol records approved 28-day extensions. |
 
 The primary models share the dataset, Units_Sold target, SKU-warehouse-day grain, frozen predictor information and physical representation, eligible training/evaluation rows, horizons, four folds, metrics, canonical grid, search procedure and fixed seed 42. The principal experimental variable is the gradient-boosting implementation. Equal external settings do not imply identical internal tree-growing algorithms, model capacity, sampling draws or parameter effects. No model is presumed superior.
 
@@ -174,7 +176,7 @@ There are **24 configurations per primary model × horizon**, enumerated in dete
 
 Each configuration uses the same four chronological folds. Mean fold WAPE is primary; fold stability and MAE/RMSE/Bias must also be reviewed separately by horizon. Search spaces must not adapt to results, and the final interval cannot inform selection. No random K-fold or cross-horizon composite is permitted.
 
-The supportive Ridge Regression / Random Forest configuration policy remains unresolved and requires separate human approval. Historical 5/12 configuration grids are not automatically reused. Naive/Seasonal Naive remain untuned. Issue #62 implements the earlier preprocessing contract; revised primary representation and model APIs require a later implementation task after human review.
+The frozen protocol owns the approved fixed supportive Ridge/Random Forest configurations and untuned baseline formulas. Historical 5/12 grids are not reused. Common primary representation and model APIs are implemented; PR #90 merged operational orchestration. Lifecycle and storage migration remain separate implementation work.
 
 ## 9. Validation design
 

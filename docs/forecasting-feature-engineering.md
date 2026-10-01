@@ -1,6 +1,8 @@
 # Forecasting feature engineering — final human-reviewed contract
 
-> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Downstream and Gate 6 approvals remain separate. See [runner operations](forecasting-runner.md).
+Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
+
+> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
 
 **Status:** HUMAN-REVIEWED — FROZEN FOR IMPLEMENTATION
 
@@ -1109,13 +1111,13 @@ the feature/preprocessing pipeline. This document update implements neither pipe
 |---|---|
 | Final feature contract | Human-reviewed and frozen under the Issue #57 feature-freeze decision |
 | Feature/preprocessing-pipeline implementation | Authorised by the feature freeze; not performed by this documentation task |
-| Source/test acceptance | Issue #62 accepted the earlier contract; revised primary encoding/API alignment requires separate implementation and review |
+| Source/test acceptance | Issue #62 accepted the earlier contract; common primary alignment is implemented and Issue #89 orchestration was merged through PR #90. Storage migration needs separate acceptance |
 | Model training or fitting | Not authorised |
 | Hyperparameter tuning or validation scoring | Not authorised |
 | Feature ablation | Not authorised |
 | Final evaluation or experiment execution | Not authorised |
-| Revised executable experiment protocol | Separate review/approval still required |
-| Proposed 28-day Naive / Seasonal Naive extensions | Separate baseline approval boundaries remain |
+| Revised executable experiment protocol | Issue #65 scientific protocol is frozen/approved; Issue #94 reconciles operational documentation only |
+| 28-day Naive / Seasonal Naive extensions | Formulas are approved in the frozen protocol; specific execution and downstream use remain separate |
 | Current forecasting design | Human-approved as recorded by the project owner; no separate supervisor approval asserted |
 | Downstream methods | Separate group/component-owner review boundaries remain |
 | Earlier Issue #52 evidence | Historical methodology and approval provenance preserved |
@@ -1141,21 +1143,21 @@ Issue #62 is merged (PR #64) and implements the Issue #57 conceptual feature con
 | src/forecasting/features.py | Twelve frozen numerical calculations plus two context identities; 28-day completeness, fixed-origin masking and ordered conceptual vector | Preserve formulas/order and origin-only history; no new feature is required |
 | src/forecasting/targets.py | Complete direct 1/7/14/28 labels separated from predictors and bounded by outcome intervals | Preserve targets, grouping and date boundaries |
 | src/forecasting/validation.py | Four revised folds and revised final interval; no fitting/scoring | Preserve dates and final-evaluation protection |
-| src/forecasting/preprocessing.py | Common primary one-hot representation; Ridge numerical scaling; training-only vocabularies and unknown-ID rejection; versioned fitted-state persistence | Implemented; Issue #89 operational changes await human review |
+| src/forecasting/preprocessing.py | Common primary one-hot representation; Ridge numerical scaling; training-only vocabularies and unknown-ID rejection; versioned fitted-state persistence | Implemented; Issue #89 operational changes were merged through PR #90 |
 | tests/test_forecasting_features.py | Synthetic formula, completeness, order, isolation, origin, target and boundary coverage for Issue #62 | Preserve numerical/temporal contract coverage; no estimator fitting authorised here |
-| tests/test_forecasting_preprocessing.py | Synthetic common primary representation and identical-matrix checks, mapping, Ridge scaling, training-only fitting, unknown-ID rejection, origin reuse and fitted-state persistence round-trip checks | Implemented/tested; Issue #89 operational changes await human implementation review; no real forecasting run has occurred |
+| tests/test_forecasting_preprocessing.py | Synthetic common primary representation and identical-matrix checks, mapping, Ridge scaling, training-only fitting, unknown-ID rejection, origin reuse and fitted-state persistence round-trip checks | Implemented/tested; Issue #89 operational changes were merged through PR #90; validation-run provenance and evidence availability are recorded in the methodology revision record |
 
-These tests do not establish forecasting accuracy or acceptance of revised model execution. **Historical Issue #66 provenance:** that documentation-only revision ran static checks without source/test/dependency changes, estimator fitting or experiments. The current implementation includes the tested common primary representation and Issue #89 orchestration work, which awaits human implementation review; no real forecasting run has occurred.
+These tests do not establish forecasting accuracy or acceptance of revised model execution. **Historical Issue #66 provenance:** that documentation-only revision ran static checks without source/test/dependency changes, estimator fitting or experiments. The current implementation includes the tested common primary representation and Issue #89 orchestration work, which was merged through PR #90; validation-run provenance and evidence availability are recorded in the methodology revision record.
 
 For historical first-target row t, predictors end at t-1 and labels cover t,...,t+h-1. At fixed origin o, use t=o+1 with history_end=o and reuse the same conceptual and primary physical vector across all horizons. Training outcomes must be complete by their fitting cutoff. The later caller must check labels before fitting preprocessing; the feature-only preprocessor does not verify outcome values. See [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) for model roles and [Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) for the frozen/approved protocol.
 
 ### 9.2 Completed companion-document alignment and provenance
 
-The September 29 documentation/provenance alignment has been completed and human-reviewed under Issue #61. It records the human-reviewed Issue #57 feature-freeze decision in the research design, workflows, dataset roles, decision-record status notes and member overviews. Original decision dates, historical catalogues and descriptive results remain provenance. [The central revision record](forecasting-methodology-revision.md) distinguishes frozen forecasting choices, including the protocol and 28-day baseline formulas, from pending Issue #89 implementation review, specific execution authorization and downstream approvals.
+The September 29 documentation/provenance alignment has been completed and human-reviewed under Issue #61. It records the human-reviewed Issue #57 feature-freeze decision in the research design, workflows, dataset roles, decision-record status notes and member overviews. Original decision dates, historical catalogues and descriptive results remain provenance. [The central revision record](forecasting-methodology-revision.md) distinguishes frozen forecasting choices, including the protocol and 28-day baseline formulas, from accepted Issue #89 implementation, run-specific authorization and downstream approvals.
 
-The archived Issue #52 protocol retains its original thirteen-feature methodology; its local artifacts and the matching historical runner/source version required for reproduction are documented in the central record. It must not be rerun or relabelled as evidence for this contract. The revised executable protocol is already frozen/approved under Issue #65; Issue #89 implementation review and specific execution authorization remain separate.
+The archived Issue #52 protocol retains its original thirteen-feature methodology; its local artifacts and the matching historical runner/source version required for reproduction are documented in the central record. It must not be rerun or relabelled as evidence for this contract. The revised executable protocol is already frozen/approved under Issue #65; Issue #89 was merged through PR #90; future architecture acceptance and specific execution authorization remain separate.
 
-Issue #62 subsequently implemented the accepted calculations in reusable source under the existing module names. Source/tests remain unchanged by Issue #66. Common primary preprocessing/model interfaces and tests are already implemented, and Issue #65 is frozen/approved. Issue #89 operational changes await human implementation review; specific execution authorization remains separate, and no real forecasting run has occurred. No experiment execution follows automatically.
+Issue #62 subsequently implemented the accepted calculations in reusable source under the existing module names. Source/tests remain unchanged by Issue #66. Common primary preprocessing/model interfaces and tests are already implemented, and Issue #65 is frozen/approved. Issue #89 operational changes were merged through PR #90; specific execution authorization remains separate; validation-run provenance and evidence availability are recorded in the methodology revision record. No experiment execution follows automatically.
 
 ## Appendix A — Detailed mathematical notation and date alignment
 

@@ -1,5 +1,7 @@
 # Meeting Notes
 
+Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). Meeting details remain here; log later milestones by linking the meeting rather than rewriting its minutes.
+
 This directory stores concise group and supervisor meeting records for the COMP1884 project.
 
 Meeting records are part of the project's accountability, coordination, and group-work evidence.

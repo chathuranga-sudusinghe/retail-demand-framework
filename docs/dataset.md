@@ -1,5 +1,7 @@
 # Dataset Contract
 
+Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
+
 ## 1. Selected source dataset
 
 **Dataset:** High-Dimensional Supply Chain Inventory Dataset  
@@ -166,7 +168,7 @@ No member should create a conflicting private cleaning rule without documenting 
 
 ## 7. Shared processed dataset
 
-The shared processed layer should provide reproducible fields needed by downstream components.
+The shared processed layer should provide reproducible fields needed by downstream components. The lifecycle authority defines preparation order and the storage policy defines persistence classes; this section owns view meaning, not a full-year feature export. The generic `period`/`demand` names below express shared-view intent, not a replacement for the current forecasting modules’ `Date`/`Units_Sold` interfaces.
 
 At minimum, the forecasting view should provide:
 
@@ -203,7 +205,8 @@ Needs:
 - regular demand series from `Units_Sold`;
 - the exact frozen categorical/calendar/lag/rolling/slope contract;
 - complete 28-day origin-available demand histories;
-- model-ready chronological train/validation/test data;
+- fold/origin-specific model-ready training and validation inputs, with separate targets and training-only fitted preprocessing;
+- a reserved final-evaluation view governed by the protocol, never materialized or used by default;
 - model predictions and errors.
 
 ### Didilani

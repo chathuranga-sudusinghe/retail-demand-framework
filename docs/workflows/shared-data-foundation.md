@@ -1,6 +1,6 @@
 # Shared Data Foundation Workflow
 
-> **Issue #89 operational alignment:** Gate 1 is frozen/approved and PR #76 accepted the preceding runner. Common primary encoding and validation orchestration are implemented. Issue #89 adds argument-free resolution, validation model persistence and manifest-last integrity without changing scientific methodology. These changes await human implementation review and a matching specific authorization; no experiment was run. Earlier draft/implementation-pending wording below records previous stages and does not reopen approved forecasting decisions. Downstream and Gate 6 approvals remain separate. See [runner operations](../forecasting-runner.md).
+> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
 
 > **Documentation alignment — 2026-09-29:** The human-approved forecast interface covers 1/7/14/28 days and the [frozen feature contract](../forecasting-feature-engineering.md). Interface support does not approve downstream use. The frozen protocol resolves the 28-day baseline formulas. Downstream/component-owner approvals remain separate; experiments are NOT authorised. See [revision and provenance](../forecasting-methodology-revision.md).
 
@@ -14,7 +14,7 @@ The leakage-safe forecasting sequence and representation ownership are defined b
 
 ## Issue #92 — data lifecycle and representation contracts
 
-**Status:** Documentation proposal for human review. This workflow connects existing scientific authorities and defines representation provenance/persistence. It does not redefine their contracts or authorize implementation, data repair or experiments. The [storage policy](../artifact-storage-policy.md) owns repository-wide locations and retention classes.
+**Status:** Merged Issue #92 lifecycle authority; Issue #94 reference reconciliation remains subject to human review. This workflow connects existing scientific authorities and defines representation provenance/persistence. It does not redefine their contracts or authorize implementation, data repair or experiments. The [storage policy](../artifact-storage-policy.md) owns repository-wide locations and retention classes.
 
 ### Existing authority boundaries
 
@@ -63,7 +63,7 @@ A validated dataset is not an engineered feature table. An engineered table cont
 
 ### Provenance, persistence and lifecycle status
 
-The expectations below distinguish current behavior from proposed shared handoffs. No dataset export or matrix persistence is implemented or authorized here.
+The expectations below distinguish current behavior from architecture-defined shared handoffs that still need implementation review. No dataset export or matrix persistence is implemented or authorized here.
 
 | Stage | Provenance to preserve | Current persistence | Persistence expectation and lifecycle class |
 |---|---|---|---|
@@ -79,11 +79,11 @@ Regenerable material depends on retained source bytes, code, environment, defini
 
 ### Current implementation and later alignment
 
-Current data/processed/ contains EDA/profile tables and an execution record, not a persisted shared validated snapshot or historical training feature/matrix export. artifacts/ is empty, models/ is absent and outputs/ was intentionally removed. The unchanged runner/protocol still reference that old location; do not execute the runner to recreate it.
+Current data/processed/ contains EDA/profile tables and an execution record, not a persisted shared validated snapshot or historical training feature/matrix export. artifacts/ is empty, models/ is absent and outputs/ was intentionally removed. The unchanged runner still targets that old location; Issue #94 aligns protocol requirements without changing code. Do not execute the runner to recreate it.
 
 Shared validation/profiling currently resides in src/data/; forecast-specific preparation, alignment and preprocessing reside in src/forecasting/. This records existing ownership without moving code.
 
-The [storage policy amendment boundary](../artifact-storage-policy.md#required-protocol-amendment-before-selective-retention) identifies changes required under Issue #94 or a dedicated approved amendment task. Current all-fit persistence/replay requirements remain operative until that work is accepted. No scientific, downstream or final-evaluation decision is changed here.
+The [storage policy amendment boundary](../artifact-storage-policy.md#required-protocol-amendment-before-selective-retention) and [Issue #94 protocol alignment](../protocol.md#issue-94-operational-alignment--implementation-boundary) distinguish approved architecture from remaining retention/schema decisions and implementation. Current all-fit persistence/replay remains the compatibility requirement until the exact retention set and migration are accepted. No scientific, downstream or final-evaluation decision is changed here.
 
 ## Current foundation decisions
 
