@@ -135,6 +135,31 @@ def test_missing_columns_and_duplicate_forecast_keys_are_rejected():
         prepare_inventory_risk_inputs(pd.concat([frame, frame], ignore_index=True))
 
 
+def test_same_sku_warehouse_origin_model_and_configuration_allow_distinct_horizons():
+    origin = pd.Timestamp("2024-01-01")
+    horizons = (1, 7, 14, 28)
+    records = pd.DataFrame(
+        [
+            forecast_inventory_row(
+                horizon=horizon,
+                target_end_date=(origin + pd.Timedelta(days=horizon)).strftime("%Y-%m-%d"),
+            )
+            for horizon in horizons
+        ]
+    )
+
+    prepared = prepare_inventory_risk_inputs(records)
+
+    assert prepared["horizon"].tolist() == list(horizons)
+    assert prepared["forecast_input_status"].tolist() == ["available"] * len(horizons)
+    assert prepared["downstream_use_status"].tolist() == [
+        "proposed_method_not_group_approved",
+        "proposed_method_not_group_approved",
+        "proposed_method_not_group_approved",
+        "not_approved_for_downstream_use",
+    ]
+
+
 def test_context_fields_are_preserved_but_not_reinterpreted_as_receipts():
     result = prepare_inventory_risk_inputs(pd.DataFrame([forecast_inventory_row()]))
 

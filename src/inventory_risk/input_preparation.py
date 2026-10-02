@@ -175,12 +175,12 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
 
     duplicate_key = [
         "run_id", "evaluation_stage", "evidence_role", "model", "configuration_id",
-        "SKU_ID", "Warehouse_ID", "forecast_origin",
+        "SKU_ID", "Warehouse_ID", "forecast_origin", "horizon",
     ]
     if "fold_id" in frame.columns:
         duplicate_key.append("fold_id")
     if frame.duplicated(duplicate_key, keep=False).any():
-        raise ValueError("Duplicate forecast records at run/model/configuration/SKU/warehouse/origin grain.")
+        raise ValueError("Duplicate forecast records at run/model/configuration/SKU/warehouse/origin/horizon grain.")
 
     frame["_forecast_origin_date"] = frame["forecast_origin"].map(_calendar_date)
     frame["_inventory_record_date"] = frame["Date"].map(_calendar_date)
