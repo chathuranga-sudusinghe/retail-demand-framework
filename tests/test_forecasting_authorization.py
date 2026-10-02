@@ -24,7 +24,7 @@ def test_resolves_exact_reviewed_id_and_consumed_run(tmp_path, monkeypatch):
     approved, path = local_record(tmp_path, monkeypatch)
     dataset = approved_dataset(tmp_path)
     dataset.parent.mkdir(parents=True)
-    dataset.write_text("Date,SKU_ID,Warehouse_ID,Units_Sold\n2024-01-01,A,W1,1\n")
+    dataset.write_bytes(b"synthetic existence marker; resolution never decodes data")
     context = authorization_module.resolve_execution(tmp_path)
     assert context.authorization.run_id == approved.run_id
     assert context.authorization_path == path and context.dataset_path == dataset
@@ -71,7 +71,7 @@ def test_authorization_digest_uses_verified_snapshot_without_another_read(tmp_pa
     payload = path.read_bytes()
     dataset = approved_dataset(tmp_path)
     dataset.parent.mkdir(parents=True)
-    dataset.write_text("Date,SKU_ID,Warehouse_ID,Units_Sold\n2024-01-01,A,W1,1\n")
+    dataset.write_bytes(b"synthetic existence marker; resolution never decodes data")
     reads = []
     original_read = type(path).read_bytes
 
@@ -94,7 +94,7 @@ def test_resolution_retains_supplied_layout_and_legacy_path_argument(tmp_path, m
     approved, path = local_record(tmp_path, monkeypatch)
     layout = RepositoryLayout(tmp_path)
     layout.dataset.parent.mkdir(parents=True)
-    layout.dataset.write_text("Date,SKU_ID,Warehouse_ID,Units_Sold\n2024-01-01,A,W1,1\n")
+    layout.dataset.write_bytes(b"synthetic existence marker; resolution never decodes data")
     context = authorization_module.resolve_execution(layout)
     assert context.layout is layout
     assert context.authorization_path == layout.execution_record == path

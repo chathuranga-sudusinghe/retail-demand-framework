@@ -241,9 +241,8 @@ def _file_record(directory: Path, name: str) -> dict[str, Any]:
             "sha256": file_sha256(directory / name)}
 
 
-def _verify_bundle(directory: Path, *, expected: pd.DataFrame | None = None,
-                   expected_provenance_sha256: str | None = None) -> pd.DataFrame:
-    """Fail closed; never reorder or repair records before comparing them."""
+def _verify_bundle_receipts(directory: Path, *, expected_provenance_sha256: str | None = None) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    """Verify publication metadata and actual file hashes against the published receipts."""
     if {p.name for p in directory.iterdir()} != set(FILES):
         raise ValueError("Incomplete or unexpected validated bundle files.")
     if any((directory / name).is_symlink() or not (directory / name).is_file() for name in FILES):
@@ -298,6 +297,26 @@ def _verify_bundle(directory: Path, *, expected: pd.DataFrame | None = None,
         raise ValueError("Invalid provenance self-reference marker.")
     schema = _json_read(directory / "schema.json")
     audit = _json_read(directory / "validation-audit.json")
+    for key in ("schema_version", "rule_version", "scope", "input_fingerprint", "output_fingerprint"):
+        target = {"schema_version": SCHEMA_VERSION, "rule_version": RULE_VERSION, "scope": scope,
+                  "input_fingerprint": provenance["input"]["scoped_fingerprint"],
+                  "output_fingerprint": provenance["output"]["logical_fingerprint"]}[key]
+        if audit.get(key) != target:
+            raise ValueError("Audit/provenance identity mismatch.")
+    evidence = audit["validation"]
+    cleaning.require_valid_audit(evidence)
+    if audit.get("output_ordered") is not True:
+        raise ValueError("Invalid population/order evidence.")
+    return provenance, schema, audit
+
+
+def _verify_bundle(directory: Path, *, expected: pd.DataFrame | None = None,
+                   expected_provenance_sha256: str | None = None) -> pd.DataFrame:
+    """Fail closed; never reorder or repair records before comparing them."""
+    provenance, schema, audit = _verify_bundle_receipts(
+        directory, expected_provenance_sha256=expected_provenance_sha256,
+    )
+    scope = provenance["scope"]
     frame = _read_parquet(directory / "validated.parquet", schema)
     if expected is not None:
         _exact_equal(expected, frame)
@@ -308,14 +327,7 @@ def _verify_bundle(directory: Path, *, expected: pd.DataFrame | None = None,
     _exact_equal(frame, accepted)
     if provenance["output"] != _output(frame):
         raise ValueError("Output population/fingerprint mismatch.")
-    for key in ("schema_version", "rule_version", "scope", "input_fingerprint", "output_fingerprint"):
-        target = {"schema_version": SCHEMA_VERSION, "rule_version": RULE_VERSION, "scope": scope,
-                  "input_fingerprint": provenance["input"]["scoped_fingerprint"],
-                  "output_fingerprint": provenance["output"]["logical_fingerprint"]}[key]
-        if audit.get(key) != target:
-            raise ValueError("Audit/provenance identity mismatch.")
     evidence = audit["validation"]
-    cleaning.require_valid_audit(evidence)
     for key in ("status", "checks", "input_rows", "output_rows", "unique_native_keys",
                 "defective_row_positions", "distinct_values", "numeric_ranges"):
         if evidence.get(key) != current_audit[key]:
@@ -340,6 +352,91 @@ def read_validated_handoff(repository: Path, data_version: str, *,
         return frame
     except (KeyError, TypeError, AssertionError, OSError, pa.ArrowException) as exc:
         raise ValueError("Invalid or unreadable validated handoff.") from exc
+
+
+@dataclass(frozen=True)
+class ValidatedProjection:
+    frame: pd.DataFrame
+    provenance: dict[str, Any]
+    provenance_sha256: str
+    scope: dict[str, Any]
+
+
+def read_validated_projection(*, repository: Path, data_version: str, columns: tuple[str, ...],
+                              start: str, end: str,
+                              expected_provenance_sha256: str | None = None) -> ValidatedProjection:
+    """Decode only selected fields/dates; never rerun a whole-source outcome audit.
+
+    The complete Parquet byte hash is recomputed before Arrow consumption.
+    Byte hashing never decodes or evaluates reserved outcomes. Arrow projection
+    and date filters restrict decoded data to the requested scope.
+    """
+    bounds = _scope(start, end, "scoped validated projection", "caller-specified scope")
+    if not columns or len(set(columns)) != len(columns) or set(columns) - set(cleaning.COLUMNS):
+        raise ValueError("Projection columns must be a unique subset of the validated schema.")
+    directory = _confined(repository / "data" / "processed" / "validated",
+                          repository / "data" / "processed" / "validated" / _component(data_version))
+    try:
+        path = directory / "validated.parquet"
+        before = path.stat()
+        anchor = file_sha256(directory / "provenance.json")
+        provenance, schema, audit = _verify_bundle_receipts(
+            directory, expected_provenance_sha256=expected_provenance_sha256 or anchor,
+        )
+        if provenance["data_version"] != data_version:
+            raise ValueError("Bundle version does not match requested directory.")
+        if start < provenance["scope"]["start_date"] or end > provenance["scope"]["end_date"]:
+            raise ValueError("Projection scope exceeds the validated handoff scope.")
+        parquet = pq.ParquetFile(path)
+        physical = parquet.schema_arrow
+        definitions = schema["columns"]
+        if (physical.names != cleaning.COLUMNS or physical.metadata
+                or schema.get("ordered_columns") != cleaning.COLUMNS
+                or [d.get("name") for d in definitions] != cleaning.COLUMNS
+                or schema.get("schema_version") != SCHEMA_VERSION
+                or schema.get("native_key") != cleaning.KEY or schema.get("row_order") != ROW_ORDER
+                or parquet.metadata.num_rows != provenance["output"]["row_count"]
+                or audit["validation"]["output_rows"] != provenance["output"]["row_count"]):
+            raise ValueError("Invalid declared Parquet schema/population.")
+        for field, definition in zip(physical, definitions, strict=True):
+            if (field.nullable or str(field.type) != definition.get("storage_type")
+                    or definition.get("logical_type") != str(field.type) or definition.get("nullable") is not False):
+                raise ValueError("Parquet schema differs from declared storage types.")
+        if physical.field("Date").type != pa.date32():
+            raise ValueError("Validated Date must use date32 calendar days.")
+        # Push bounds and fields into Arrow BEFORE decoding to pandas or examining demand.
+        table = pq.read_table(path, columns=list(columns), filters=[
+            ("Date", ">=", pd.Timestamp(bounds["start_date"]).date()),
+            ("Date", "<=", pd.Timestamp(bounds["end_date"]).date()),
+        ])
+        if any(table[column].null_count for column in columns):
+            raise ValueError("Validated projection cannot contain missing values.")
+        frame = table.to_pandas(date_as_object=False)
+        for definition in definitions:
+            if definition["name"] in columns:
+                frame[definition["name"]] = frame[definition["name"]].astype(definition["pandas_dtype"])
+        decoded_schema = pa.Schema.from_pandas(frame, preserve_index=False)
+        for field in table.schema:
+            if field.name == "Date":
+                if not pd.api.types.is_datetime64_dtype(frame.Date.dtype):
+                    raise ValueError("Declared Date decoding must preserve calendar datetime values.")
+            elif field.name in cleaning.IDS:
+                decoded = decoded_schema.field(field.name).type
+                if field.type != pa.string() or not (pa.types.is_string(decoded) or pa.types.is_large_string(decoded)):
+                    raise ValueError("Declared identifiers must preserve string values.")
+            elif decoded_schema.field(field.name).type != field.type:
+                raise ValueError("Declared projection dtypes disagree with physical storage types.")
+        after = path.stat()
+        if (before.st_size, before.st_mtime_ns, before.st_ino) != (after.st_size, after.st_mtime_ns, after.st_ino):
+            raise ValueError("Validated Parquet changed during scoped loading.")
+        if file_sha256(directory / "provenance.json") != anchor:
+            raise ValueError("Validated provenance changed during scoped loading.")
+        return ValidatedProjection(frame, provenance, anchor, {
+            "start_date": start, "end_date": end, "columns": list(columns),
+            "parent_data_hash_verification": "whole_file_sha256_verified",
+        })
+    except (KeyError, TypeError, AssertionError, OSError, pa.ArrowException) as exc:
+        raise ValueError("Invalid or unreadable validated projection.") from exc
 
 
 def _publish(staging: Path, destination: Path) -> None:

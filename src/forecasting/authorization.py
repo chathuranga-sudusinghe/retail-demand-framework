@@ -148,7 +148,7 @@ def resolve_execution(repository: Path | RepositoryLayout = DEFAULT_LAYOUT) -> E
             raise ExecutionBlocked("Execution record is consumed: the approved run directory already exists.")
         dataset = layout.dataset
         if not dataset.is_file():
-            raise ExecutionBlocked("Approved dataset is missing from data/raw/supply_chain_dataset1.csv.")
+            raise ExecutionBlocked("Approved validated dataset is missing from the fixed validated Parquet handoff.")
         # Detect replacement while parsing; the retained bytes are exactly those reviewed.
         if path.read_bytes() != payload:
             raise ExecutionBlocked("Execution record changed while resolving it.")

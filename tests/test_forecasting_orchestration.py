@@ -541,7 +541,7 @@ def test_candidate_diagnostic_interrupt_preserves_original_failure(tmp_path, mon
 
 @pytest.mark.parametrize("use_context", [False, True])
 def test_alternate_layout_is_used_consistently_without_global_root_patching(
-    tmp_path, monkeypatch, prepared_folds, use_context,
+    tmp_path, monkeypatch, use_context,
 ):
     from dataclasses import asdict
     layout = RepositoryLayout(tmp_path / "alternate-repository")
@@ -550,11 +550,12 @@ def test_alternate_layout_is_used_consistently_without_global_root_patching(
         destination = layout.repository_path(relative)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes((REPOSITORY / relative).read_bytes())
-    source = panel()
-    layout.dataset.parent.mkdir(parents=True)
-    source.to_csv(layout.dataset, index=False)
+    from forecasting_handoff_helpers import panel as handoff_panel, publish_forecasting_handoff
+    source = handoff_panel()
+    prepared_folds = {fold.number: prepare_fold(source, fold.number) for fold in VALIDATION_FOLDS}
+    publish_forecasting_handoff(layout.root, source)
     approved = replace(
-        authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=())),
+        authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=()), data=source),
         protocol_hash=file_hash(layout.protocol), source_hashes=source_hashes(layout.root),
     )
     layout.execution_record.parent.mkdir(parents=True)

@@ -15,11 +15,11 @@ python -m src.forecasting.experiment
 
 Current code locations — legacy runtime description, not active execution guidance:
 
-- Dataset: `data/raw/supply_chain_dataset1.csv`.
+- Dataset: `data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet`.
 - Reviewed local record: `data/processed/forecasting/validation_authorization.json`.
 - Legacy output: `outputs/revised-forecasting/<exact-approved-run-id>/` (removed; migration required).
 
-The existing ValidationAuthorization fields now live in authorization.py, with direct compatibility exports from execution.py and metadata.py. Issue #106 separates package responsibilities while preserving the legacy runtime/input/storage behavior. The reviewed record supplies the exact ID, ordered scope and human references. No approval is generated, no hashes are refreshed, and no latest-file discovery occurs. Missing/malformed/stale records, missing datasets, duplicate required CSV headers and consumed run directories fail before estimator construction. A failed directory cannot be resumed/reused; another run requires separate review. Approval references are a local workflow guard, not cryptographic identity.
+The existing ValidationAuthorization fields now live in authorization.py, with direct compatibility exports from execution.py and metadata.py. Issue #106 separates package responsibilities. Issue #108 replaces raw CSV input with the approved validation-scoped Parquet handoff and adds the Phase 4 preparation lifecycle below; experiment storage and retention remain pending migration. The reviewed record supplies the exact ID, ordered scope and human references. No approval is generated, no hashes are refreshed, and no latest-file discovery occurs. Missing/malformed/stale records, missing datasets, invalid validated handoff metadata/schema and consumed run directories fail before estimator construction. A failed directory cannot be resumed/reused; another run requires separate review. Approval references are a local workflow guard, not cryptographic identity.
 
 ## Responsibilities
 
@@ -27,7 +27,8 @@ The existing ValidationAuthorization fields now live in authorization.py, with d
 |---|---|
 | paths.py | Fixed repository-relative locations; no import-time writes. |
 | authorization.py | Strict record/scope loading, human approval checks and execution-context resolution. |
-| execution.py | Current four-column CSV loading; direct legacy authorization exports. |
+| execution.py | Scoped validated Parquet input and strict four-column forecasting projection; direct legacy authorization exports. |
+| model_ready.py | One-fold preparation, separate features/targets, fitted preprocessing, model-ready Parquet publication and verified readback. |
 | experiment.py | Thin CLI/runtime entrypoint: arguments, authorization resolution, input loading and orchestration dispatch. |
 | orchestration.py | Candidate planning, preparation/execution coordination, validation lifecycle, independent recovery and final-evaluation blocking. |
 | persistence.py | Authorization snapshots, checkpoints, model-index coordination, result-set persistence and manifest-last finalization; delegates low-level artifact/model I/O. |
@@ -39,6 +40,78 @@ The existing ValidationAuthorization fields now live in authorization.py, with d
 | metadata.py | Git/source/protocol/input/feature/runtime/build/environment provenance. |
 | reporting/progress | Read-only reporting, verified completed consumption, UTC phase events. |
 | integrity.py | Readback schemas/counts/keys/metrics/selection/model links, hashes and completion verification. |
+
+## Phase 4 model-ready preparation — Issue #108
+
+The preparation lifecycle is:
+
+```text
+validated.parquet -> scoped forecasting projection -> existing fold/origin features
+  -> separate horizon targets -> existing training-only fitted preprocessing
+  -> model-ready Parquet datasets + preparation metadata
+```
+
+`execution.load_projection` selects only `SKU_ID`, `Warehouse_ID`, `Date` and
+`Units_Sold`, using Arrow date filters before decoding demand. A selected fold
+loads January 1 through its frozen validation end; the reserved December 3–30
+period is excluded. Existing `prepare_fold` owns all feature, cumulative 1/7/14/28-day
+target, eligibility and preprocessing semantics. No estimator is constructed or
+trained. `Date` in features/targets is the first target day, one day after the
+forecast origin. Historical labels must finish by the training cutoff.
+
+`model_ready.prepare_model_ready` accepts one validation fold and an explicit
+representation ID. It writes an exclusive local version under
+`data/processed/model-ready/<representation_id>/`:
+
+```text
+projection.parquet
+origin-features.parquet
+h<1|7|14|28>/
+  training-features.parquet
+  training-targets.parquet
+  validation-targets.parquet
+  <existing-model-family>/
+    preprocessing.json
+    training-matrix.parquet
+    origin-matrix.parquet
+model-ready.json
+```
+
+Each fold has 54 Parquet files, 20 fitted-state JSON files and one preparation
+metadata file. Features and encoded matrices contain no targets or `Units_Sold`;
+target tables contain only native keys and one horizon target. Matrix keys are
+identity columns, excluded from the physical predictor list. Preprocessing
+state is fitted only on eligible historical training features, independently
+per horizon; the unchanged primary/shared and supportive transformations are reused.
+
+Metadata records versions, scope/origin/cutoffs, eligibility/population fingerprints,
+ordered schemas, physical predictor names, file sizes/hashes, implementation and
+protocol hashes, and parent validated provenance/source receipts. The complete
+parent Parquet SHA-256 is recomputed from actual file bytes and compared with
+the published receipt before Arrow consumption. Byte hashing does not decode or
+evaluate reserved outcomes; date filters restrict decoded data. Parent metadata
+hashes, Parquet footer schema/population, file size and scoped logical data are
+checked again before publication. Protocol, feature-contract, Git state and source
+hashes come from the repository layout supplied to preparation.
+
+Files and restored transformations are read back exactly. `model-ready.json` is
+written last; incomplete versions are rejected and existing IDs cannot be reused.
+`read_model_ready` verifies hashes, schemas, key alignment, frozen chronology and
+restored matrix values without fitting or reopening parent outcomes. Its optional
+external metadata hash anchors the preparation record. Human review remains pending;
+preparation metadata grants no experiment or final-evaluation authorization.
+
+After implementation review and explicit authorization for real preparation, the
+project owner can use this command shape (not executed for Issue #108):
+
+```bash
+python -m src.forecasting.model_ready --representation-id <reviewed-id> --fold <1-4>
+```
+
+Final/refit stages are rejected before input access. Phase 5 run-storage migration
+and Phase 6 model retention are outside this change; the experiment entrypoint
+above remains blocked pending those reviewed changes. No research results or run
+artifacts are generated by this preparation lifecycle.
 
 ## Lifecycle
 
@@ -79,8 +152,8 @@ Machine-readable evidence belongs in `artifacts/forecasting/<run_id>/`, selected
 reusable model/state bundles in `models/forecasting/<run_id>/`, reviewed findings
 in `reports/forecasting/<run_id>.md`, and temporary candidates in the storage
 policy's run-scoped temporary location. Data handoffs retain the lifecycle's
-scope/view/feature/preprocessing order; no full training matrix export is approved
-by this reconciliation. Existing module responsibilities above describe current
+scope/view/feature/preprocessing order; Issue #108 now implements validation-scoped
+model-ready matrices separately from run-storage migration. Existing module responsibilities above describe current
 code; they must be updated after accepted migration rather than inventing new APIs.
 
 The [Issue #94 protocol amendment](protocol.md#issue-94-operational-alignment--implementation-boundary)
