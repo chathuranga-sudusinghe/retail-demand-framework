@@ -1,4 +1,4 @@
-name: CI
+name: CI Quality
 
 on:
   pull_request:
@@ -16,7 +16,8 @@ on:
       - "docs/team/**/*.md"
 
 jobs:
-  test:
+  quality:
+    name: Fast quality checks
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +45,3 @@ jobs:
 
       - name: Type-check forecasting source
         run: python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
-
-      - name: Run tests
-        run: python -m pytest -q
