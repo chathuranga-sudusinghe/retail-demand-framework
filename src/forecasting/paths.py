@@ -16,7 +16,7 @@ def confined_path(directory: Path, relative: str) -> Path:
 
 @dataclass(frozen=True)
 class RepositoryLayout:
-    """Immutable repository root with the project's existing operational layout."""
+    """Immutable repository root and approved forecasting storage locations."""
 
     root: Path
 
@@ -40,8 +40,21 @@ class RepositoryLayout:
         return self.root / "docs" / "forecasting-feature-engineering.md"
 
     @property
+    def artifact_root(self) -> Path:
+        return self.root / "artifacts" / "forecasting"
+
+    @property
+    def model_root(self) -> Path:
+        return self.root / "models" / "forecasting"
+
+    @property
+    def draft_report_root(self) -> Path:
+        return self.root / "reports" / "forecasting" / "drafts"
+
+    @property
     def output_root(self) -> Path:
-        return self.root / "outputs" / "revised-forecasting"
+        """Compatibility alias for machine-readable run evidence."""
+        return self.artifact_root
 
     def repository_path(self, relative: str) -> Path:
         """Resolve other declared repository inputs, without accessing their contents."""
@@ -50,34 +63,66 @@ class RepositoryLayout:
             raise ValueError("Repository reference escapes its root.")
         return path
 
-    def run_directory(self, run_id: str) -> Path:
+    def _run_directory(self, root: Path, run_id: str) -> Path:
         if not isinstance(run_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", run_id):
             raise ValueError("run_id must be a safe, nonempty local directory name.")
-        output = self.output_root
-        resolved_output = output.resolve()
-        if not resolved_output.is_relative_to(self.root):
-            raise ValueError("Output directory must stay inside the repository.")
-        if resolved_output != output:
-            raise ValueError("Forecasting output root must not redirect to another directory.")
-        result = output / run_id
-        if not result.resolve().is_relative_to(resolved_output):
-            raise ValueError("Run directory must stay inside the forecasting output root.")
-        return result
+        return self._owned_path(root / run_id)
+
+    def _owned_path(self, path: Path) -> Path:
+        """Reject symlink redirection and existing non-directory ancestors."""
+        relative = path.relative_to(self.root)
+        current = self.root
+        for component in relative.parts:
+            if current.exists() and not current.is_dir():
+                raise ValueError("Forecasting storage ancestors must be directories.")
+            current = current / component
+            if current.is_symlink():
+                raise ValueError("Forecasting storage must not redirect through a symlink.")
+        if path.resolve() != path:
+            raise ValueError("Forecasting storage must stay at its declared repository location.")
+        return path
+
+    def run_directory(self, run_id: str) -> Path:
+        """Canonical artifact-run anchor; resolution never creates directories."""
+        return self._run_directory(self.artifact_root, run_id)
+
+    def model_run_directory(self, run_id: str) -> Path:
+        return self._run_directory(self.model_root, run_id)
+
+    def draft_report_directory(self, run_id: str) -> Path:
+        return self._run_directory(self.draft_report_root, run_id)
+
+    @classmethod
+    def from_artifact_directory(cls, directory: Path) -> "RepositoryLayout":
+        """Resolve only an absolute canonical artifacts/forecasting/<run_id> anchor."""
+        if (not directory.is_absolute() or directory.parent.name != "forecasting"
+                or directory.parent.parent.name != "artifacts"):
+            raise ValueError("A canonical forecasting artifact run directory is required.")
+        layout = cls(directory.parents[2])
+        if directory != layout.run_directory(directory.name):
+            raise ValueError("A canonical forecasting artifact run directory is required.")
+        return layout
 
     @staticmethod
     def validation_model_directory(directory: Path) -> Path:
-        return confined_path(directory, "models/validation")
+        layout = RepositoryLayout.from_artifact_directory(directory)
+        return layout._owned_path(layout.model_run_directory(directory.name) / "validation")
 
     @staticmethod
     def candidate_model_directory(
         directory: Path, model: str, horizon: int, configuration_id: str, fold_id: int,
     ) -> Path:
+        layout = RepositoryLayout.from_artifact_directory(directory)
         base = RepositoryLayout.validation_model_directory(directory)
-        return confined_path(directory, (base / model / f"h{horizon}" / configuration_id / f"fold-{fold_id}").relative_to(directory).as_posix())
+        path = confined_path(base, f"{model}/h{horizon}/{configuration_id}/fold-{fold_id}")
+        return layout._owned_path(path)
 
     @staticmethod
     def preprocessing_state_directory(directory: Path, model: str, horizon: int, fold_id: int) -> Path:
-        return confined_path(directory, f"models/preprocessing/{model}/h{horizon}/fold-{fold_id}")
+        layout = RepositoryLayout.from_artifact_directory(directory)
+        base = layout.model_run_directory(directory.name)
+        path = confined_path(base, f"preprocessing/{model}/h{horizon}/fold-{fold_id}")
+        return layout._owned_path(path)
 
 
 DEFAULT_LAYOUT = RepositoryLayout(REPOSITORY)

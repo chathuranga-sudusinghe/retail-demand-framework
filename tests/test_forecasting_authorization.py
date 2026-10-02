@@ -28,7 +28,7 @@ def test_resolves_exact_reviewed_id_and_consumed_run(tmp_path, monkeypatch):
     context = authorization_module.resolve_execution(tmp_path)
     assert context.authorization.run_id == approved.run_id
     assert context.authorization_path == path and context.dataset_path == dataset
-    destination = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    destination = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     destination.mkdir(parents=True)
     with pytest.raises(authorization_module.ExecutionBlocked, match="consumed"):
         authorization_module.resolve_execution(tmp_path)
@@ -135,4 +135,101 @@ def test_scope_json_roundtrip_and_no_approval_record_is_generated_by_runner(tmp_
     loaded = ValidationAuthorization.from_json(path)
     assert loaded == original
     loaded.validate(REPOSITORY, loaded.run_id)
-    assert not list((REPOSITORY / "outputs/revised-forecasting").glob("synthetic-unit-test*"))
+    layout = RepositoryLayout(REPOSITORY)
+    for directory in (layout.run_directory(loaded.run_id), layout.model_run_directory(loaded.run_id),
+                      layout.draft_report_directory(loaded.run_id)):
+        assert not directory.exists()
+
+
+@pytest.mark.parametrize("method", ["run_directory", "model_run_directory", "draft_report_directory"])
+@pytest.mark.parametrize("kind", ["empty_directory", "partial_directory", "file"])
+def test_any_existing_run_location_blocks_before_dataset_check(tmp_path, monkeypatch, method, kind):
+    approved, record = local_record(tmp_path, monkeypatch)
+    payload = record.read_bytes()
+    layout = RepositoryLayout(tmp_path)
+    destination = getattr(layout, method)(approved.run_id)
+    destination.parent.mkdir(parents=True)
+    if kind == "file":
+        destination.write_bytes(b"original evidence")
+    else:
+        destination.mkdir()
+        if kind == "partial_directory":
+            (destination / "partial.tmp").write_bytes(b"interrupted evidence")
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    original_is_file = type(layout.dataset).is_file
+    def check_file(path):
+        if path == layout.dataset:
+            raise AssertionError("Consumed storage must block before the dataset check")
+        return original_is_file(path)
+    with monkeypatch.context() as guard:
+        guard.setattr(type(layout.dataset), "is_file", check_file)
+        with pytest.raises(ExecutionBlocked, match="consumed"):
+            authorization_module.resolve_execution(layout)
+    assert record.read_bytes() == payload
+    assert before == {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    assert not (layout.run_directory(approved.run_id) / "run_manifest.json").exists()
+
+
+@pytest.mark.parametrize("method", ["run_directory", "model_run_directory", "draft_report_directory"])
+@pytest.mark.parametrize("target_kind", ["inside", "outside", "missing"])
+def test_redirected_run_locations_block_before_dataset_check(tmp_path, monkeypatch, method, target_kind):
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    approved, record = local_record(repository, monkeypatch)
+    payload = record.read_bytes()
+    layout = RepositoryLayout(repository)
+    destination = getattr(layout, method)(approved.run_id)
+    destination.parent.mkdir(parents=True)
+    target = (repository if target_kind == "inside" else tmp_path) / "redirected"
+    if target_kind != "missing":
+        target.mkdir()
+    destination.symlink_to(target, target_is_directory=True)
+    before = set(tmp_path.rglob("*"))
+    original_is_file = type(layout.dataset).is_file
+    def check_file(path):
+        if path == layout.dataset:
+            raise AssertionError("Redirected storage must block before the dataset check")
+        return original_is_file(path)
+    with monkeypatch.context() as guard:
+        guard.setattr(type(layout.dataset), "is_file", check_file)
+        with pytest.raises(ExecutionBlocked, match="invalid or redirected") as caught:
+            authorization_module.resolve_execution(layout)
+    assert isinstance(caught.value.__cause__, ValueError)
+    assert record.read_bytes() == payload
+    assert set(tmp_path.rglob("*")) == before
+    if target.exists():
+        assert not list(target.iterdir())
+
+
+@pytest.mark.parametrize("relative,method", [
+    ("artifacts", "run_directory"),
+    ("artifacts/forecasting", "run_directory"),
+    ("models", "model_run_directory"),
+    ("models/forecasting", "model_run_directory"),
+    ("reports", "draft_report_directory"),
+    ("reports/forecasting", "draft_report_directory"),
+    ("reports/forecasting/drafts", "draft_report_directory"),
+])
+def test_non_directory_storage_ancestor_blocks_before_dataset_check(tmp_path, monkeypatch, relative, method):
+    approved, record = local_record(tmp_path, monkeypatch)
+    payload = record.read_bytes()
+    layout = RepositoryLayout(tmp_path)
+    destination = getattr(layout, method)(approved.run_id)
+    blocker = tmp_path / relative
+    blocker.parent.mkdir(parents=True, exist_ok=True)
+    blocker.write_bytes(b"original file")
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    original_is_file = type(layout.dataset).is_file
+    def check_file(path):
+        if path == layout.dataset:
+            raise AssertionError("Invalid storage ancestors must block before the dataset check")
+        return original_is_file(path)
+    with monkeypatch.context() as guard:
+        guard.setattr(type(layout.dataset), "is_file", check_file)
+        with pytest.raises(ExecutionBlocked, match="invalid or redirected") as caught:
+            authorization_module.resolve_execution(layout)
+    assert isinstance(caught.value.__cause__, ValueError)
+    assert "ancestors must be directories" in str(caught.value.__cause__)
+    assert record.read_bytes() == payload
+    assert before == {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    assert not destination.exists()
