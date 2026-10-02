@@ -79,22 +79,36 @@ def json_text(value: Any) -> str:
 
 def require_mutable_run(directory: Path) -> None:
     """Use the completion manifest as the shared persistence boundary."""
-    if (directory / "run_manifest.json").exists():
+    layout = RepositoryLayout.from_artifact_directory(directory)
+    manifest = layout._owned_path(directory / "run_manifest.json")
+    if manifest.exists():
         raise FileExistsError("A published run cannot be modified.")
 
 
 class ArtifactWriter:
-    """Own exactly one newly created run directory; previous runs are untouchable."""
+    """Own one artifact anchor and its model/draft directories; never reuse a run."""
 
     def __init__(self, repository: Path | RepositoryLayout, run_id: str):
         self.layout = RepositoryLayout(repository) if isinstance(repository, Path) else repository
         self.repository = self.layout.root
         self.directory = self.layout.run_directory(run_id)
-        self.directory.parent.mkdir(parents=True, exist_ok=True)
-        self.directory.mkdir(exist_ok=False)
+        self.model_directory = self.layout.model_run_directory(run_id)
+        self.report_directory = self.layout.draft_report_directory(run_id)
+        directories = (self.directory, self.model_directory, self.report_directory)
+        for directory in directories:
+            if directory.exists():
+                raise FileExistsError("Forecasting run storage already exists.")
+        for directory in directories:
+            directory.parent.mkdir(parents=True, exist_ok=True)
+            directory.mkdir(exist_ok=False)
 
     def _require_mutable(self) -> None:
         require_mutable_run(self.directory)
+
+    def _path(self, name: str) -> Path:
+        directory = (self.layout.draft_report_directory(self.directory.name)
+                     if name == "comparison.md" else self.layout.run_directory(self.directory.name))
+        return self.layout._owned_path(directory / name)
 
     def write_json(self, name: str, value: Any) -> None:
         self._require_mutable()
@@ -102,9 +116,10 @@ class ArtifactWriter:
                         "authorization.json", "run_manifest.json"):
             raise ValueError("Unknown JSON artifact.")
         encoded = json_text(value)
-        temporary = self.directory / (name + ".tmp")
+        path = self._path(name)
+        temporary = self.layout._owned_path(path.with_name(name + ".tmp"))
         temporary.write_text(encoded, encoding="utf-8")
-        temporary.replace(self.directory / name)
+        temporary.replace(path)
 
     def write_csv(self, name: str, rows: list[dict[str, Any]]) -> None:
         self._require_mutable()
@@ -114,7 +129,8 @@ class ArtifactWriter:
             if set(row) != set(columns):
                 raise ValueError(f"Artifact {name} does not match the frozen schema.")
             json_value(row)
-        temporary = self.directory / (name + ".tmp")
+        path = self._path(name)
+        temporary = self.layout._owned_path(path.with_name(name + ".tmp"))
         with temporary.open("w", newline="", encoding="utf-8") as stream:
             writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
             writer.writeheader()
@@ -126,22 +142,23 @@ class ArtifactWriter:
                     elif isinstance(value, list):
                         values[key] = json.dumps(value, allow_nan=False, separators=(",", ":"))
                 writer.writerow(values)
-        temporary.replace(self.directory / name)
+        temporary.replace(path)
 
     def write_comparison(self, text: str) -> None:
         self._require_mutable()
-        temporary = self.directory / "comparison.md.tmp"
+        path = self._path("comparison.md")
+        temporary = self.layout._owned_path(path.with_name("comparison.md.tmp"))
         temporary.write_text(text, encoding="utf-8")
-        temporary.replace(self.directory / "comparison.md")
+        temporary.replace(path)
 
     def manifest(self) -> list[dict[str, Any]]:
         records = []
         for name in ARTIFACT_NAMES:
-            path = self.directory / name
+            path = self._path(name)
             exists = path.is_file()
             # A manifest cannot hash the full file that contains that same hash.
             # All other artifact hashes are complete byte hashes.
-            records.append({"artifact_path": str(path.relative_to(self.repository)),
+            records.append({"artifact_path": path.relative_to(self.repository).as_posix(),
                             "artifact_hash": file_hash(path) if exists and name != "run_metadata.json" else None,
                             "artifact_status": "self_reference" if exists and name == "run_metadata.json" else (
                                 "written" if exists else "not_written"),
