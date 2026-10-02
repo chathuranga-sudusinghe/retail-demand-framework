@@ -10,7 +10,7 @@ def test_fixed_paths_and_no_import_side_effects(tmp_path, monkeypatch):
     importlib.reload(paths)
     assert not list(tmp_path.iterdir())
     assert paths.REPOSITORY.name == "retail-demand-framework"
-    assert paths.approved_dataset(tmp_path) == tmp_path / "data/raw/supply_chain_dataset1.csv"
+    assert paths.approved_dataset(tmp_path) == tmp_path / "data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet"
     assert paths.execution_record(tmp_path) == tmp_path / "data/processed/forecasting/validation_authorization.json"
     assert paths.run_directory(tmp_path, "reviewed-01") == tmp_path / "outputs/revised-forecasting/reviewed-01"
 
@@ -37,7 +37,7 @@ def test_layout_is_immutable_and_preserves_default_and_alternate_paths(tmp_path)
     with pytest.raises(FrozenInstanceError):
         layout.root = tmp_path / "changed"
     for current in (paths.DEFAULT_LAYOUT, layout):
-        assert current.dataset == current.root / "data/raw/supply_chain_dataset1.csv"
+        assert current.dataset == current.root / "data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet"
         assert current.execution_record == current.root / "data/processed/forecasting/validation_authorization.json"
         assert current.protocol == current.root / "docs/protocol.md"
         assert current.feature_contract == current.root / "docs/forecasting-feature-engineering.md"

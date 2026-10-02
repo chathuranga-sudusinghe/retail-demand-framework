@@ -116,7 +116,7 @@ with patch("src.forecasting.models.construct_estimator", forbidden), \
      patch.object(Path, "mkdir", forbidden), \
      patch.object(Path, "write_text", forbidden), \
      patch.object(Path, "write_bytes", forbidden):
-    for name in ("progress", "reporting", "authorization", "execution", "persistence", "orchestration", "experiment"):
+    for name in ("progress", "reporting", "authorization", "execution", "model_ready", "persistence", "orchestration", "experiment"):
         importlib.import_module("src.forecasting." + name)
 forbidden.assert_not_called()
 """

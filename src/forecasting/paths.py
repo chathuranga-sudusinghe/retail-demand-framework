@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 
 REPOSITORY = Path(__file__).resolve().parents[2]
+VALIDATED_DATASET_RELATIVE_PATH = Path("data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet")
 
 
 def confined_path(directory: Path, relative: str) -> Path:
@@ -24,7 +25,7 @@ class RepositoryLayout:
 
     @property
     def dataset(self) -> Path:
-        return self.root / "data" / "raw" / "supply_chain_dataset1.csv"
+        return self.root / VALIDATED_DATASET_RELATIVE_PATH
 
     @property
     def execution_record(self) -> Path:
