@@ -144,8 +144,15 @@ def resolve_execution(repository: Path | RepositoryLayout = DEFAULT_LAYOUT) -> E
         payload = path.read_bytes()
         approved = ValidationAuthorization.from_json(path)
         approved.validate(layout.root, approved.run_id)
-        if layout.run_directory(approved.run_id).exists():
-            raise ExecutionBlocked("Execution record is consumed: the approved run directory already exists.")
+        try:
+            directories = (layout.run_directory(approved.run_id),
+                           layout.model_run_directory(approved.run_id),
+                           layout.draft_report_directory(approved.run_id))
+            consumed = any(directory.exists() or directory.is_symlink() for directory in directories)
+        except (OSError, ValueError) as exc:
+            raise ExecutionBlocked("Forecasting run locations are invalid or redirected.") from exc
+        if consumed:
+            raise ExecutionBlocked("Execution record is consumed: an approved run storage location already exists.")
         dataset = layout.dataset
         if not dataset.is_file():
             raise ExecutionBlocked("Approved validated dataset is missing from the fixed validated Parquet handoff.")
