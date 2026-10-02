@@ -3,8 +3,11 @@ from __future__ import annotations
 
 import csv
 import json
+from os.path import relpath
 from pathlib import Path
 from typing import Any, Iterable
+
+from src.forecasting.paths import RepositoryLayout
 
 PRIMARY = ("xgboost", "lightgbm", "catboost")
 NAMES = {"xgboost": "XGBoost", "lightgbm": "LightGBM", "catboost": "CatBoost",
@@ -24,10 +27,19 @@ def _table(columns: Iterable[str], rows: Iterable[Iterable[Any]]) -> list[str]:
 
 def comparison_text(directory: Path, *, require_verified: bool = True) -> str:
     """Render stored values/status/ties only; no means, differences or winners computed."""
+    layout = RepositoryLayout.from_artifact_directory(directory)
+    report_directory = layout.draft_report_directory(directory.name)
+
+    def evidence_link(label: str, name: str) -> str:
+        relative = Path(relpath(directory / name, report_directory)).as_posix()
+        return f"[{label}]({relative})"
+
     if require_verified:
         from src.forecasting.integrity import verify_completed
         verify_completed(directory)
     metadata = json.loads((directory / "run_metadata.json").read_text(encoding="utf-8"))
+    if metadata["run_id"] != directory.name:
+        raise ValueError("Report identity differs from the artifact run.")
     selected = json.loads((directory / "selected_configurations.json").read_text(encoding="utf-8"))
     with (directory / "configuration_summary.csv").open(newline="", encoding="utf-8") as stream:
         summaries = list(csv.DictReader(stream))
@@ -55,7 +67,8 @@ def comparison_text(directory: Path, *, require_verified: bool = True) -> str:
              f"- Git commit SHA: {_cell(metadata.get('git_commit_sha'))}",
              f"- Evaluation stage: {_cell(metadata['evaluation_stage'])}",
              f"- Run status at rendering: {_cell(metadata['run_status'])}",
-             "- Completion authority: [run manifest](run_manifest.json); metadata alone does not establish completion.",
+             "- Completion authority: " + evidence_link("run manifest", "run_manifest.json") +
+             "; metadata alone does not establish completion.",
              "- Validation folds: 1, 2, 3, 4 (frozen protocol plan).",
              "- Recorded fold IDs: " + (", ".join(sorted({r["fold_id"] for r in folds})) or "none; not executed"),
              "- Authorised horizons (days): " + ", ".join(map(str, scope["horizons"]))]
@@ -66,9 +79,9 @@ def comparison_text(directory: Path, *, require_verified: bool = True) -> str:
         lines += [f"Failure: {_cell(metadata['failure_reason'])}", ""]
     lines += ["WAPE (Weighted Absolute Percentage Error) values are stored ratios. All displayed metrics are copied",
               "from the result artifacts; no metric, tie or selection is recalculated here.",
-              "[Run metadata](run_metadata.json) · [Configuration summary](configuration_summary.csv) ·",
-              "[Selected configurations](selected_configurations.json) · [Fold metrics](fold_metrics.csv) ·",
-              "[Predictions](predictions.csv) · [Eligibility counts](eligibility_counts.csv)", "",
+              evidence_link("Run metadata", "run_metadata.json") + " · " + evidence_link("Configuration summary", "configuration_summary.csv") + " ·",
+              evidence_link("Selected configurations", "selected_configurations.json") + " · " + evidence_link("Fold metrics", "fold_metrics.csv") + " ·",
+              evidence_link("Predictions", "predictions.csv") + " · " + evidence_link("Eligibility counts", "eligibility_counts.csv"), "",
               "## Selected-configuration matrix", ""]
     lines += _table(("Horizon", "XGBoost", "LightGBM", "CatBoost"),
                     ([f"{h}-day", *(selected_id(h, m) for m in PRIMARY)] for h in (1, 7, 14, 28)))
@@ -104,7 +117,8 @@ def comparison_text(directory: Path, *, require_verified: bool = True) -> str:
                              "review_status": "pending_human_review"}]
                 for row in rows:
                     record = {**row, "fold_count": row.get("valid_fold_count"),
-                              "artifact_paths": "[summary](configuration_summary.csv); [folds](fold_metrics.csv); [predictions](predictions.csv)"}
+                              "artifact_paths": "; ".join(evidence_link(label, name) for label, name in (
+                                  ("summary", "configuration_summary.csv"), ("folds", "fold_metrics.csv"), ("predictions", "predictions.csv")))}
                     rendered.append([record.get(column) for column in columns])
             lines += _table(columns, rendered)
             if role == "primary":
