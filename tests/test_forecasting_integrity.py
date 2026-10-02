@@ -1,9 +1,12 @@
 """Fault injection against complete synthetic mocked bundles; no research runs."""
 import csv
 import json
+from pathlib import Path
+from unittest.mock import Mock
 import pytest
 from src.forecasting import orchestration, integrity, model_artifacts, reporting
 from src.forecasting.artifacts import ArtifactWriter, file_hash
+from src.forecasting.paths import RepositoryLayout
 from test_forecasting_orchestration import (authorization, install_synthetic_runner_mocks,
                                          panel, scope)
 from test_forecasting_orchestration import prepared_folds as _prepared_folds
@@ -27,23 +30,40 @@ def test_completed_bundle_manifest_counts_hashes_and_readonly_reporting(complete
                       "configuration_summaries": 3, "models_replayed": 4}
     manifest = json.loads((complete_bundle / "run_manifest.json").read_text())
     assert manifest["metadata_hash"] == file_hash(complete_bundle / "run_metadata.json")
-    before = {p: p.read_bytes() for p in complete_bundle.rglob("*") if p.is_file()}
+    layout = RepositoryLayout.from_artifact_directory(complete_bundle)
+    assert manifest["manifest_version"] == 2
+    assert manifest["run_id"] == complete_bundle.name
+    assert {entry["owner"] for entry in manifest["artifacts"]} == {"artifacts", "models", "reports"}
+    paths = {layout.root / entry["path"] for entry in manifest["artifacts"]}
+    assert complete_bundle / "run_manifest.json" not in paths
+    assert layout.draft_report_directory(complete_bundle.name) / "comparison.md" in paths
+    metadata = json.loads((complete_bundle / "run_metadata.json").read_text())
+    assert len(metadata["model_artifacts"]) == result["models_replayed"] == 4
+    for record in metadata["model_artifacts"]:
+        for key in ("model", "descriptor", "preprocessor", "origin_features"):
+            assert layout.root / record[f"{key}_path"] in paths
+    assert paths == {p for root in storage_directories(complete_bundle).values()
+                     for p in root.rglob("*") if p.is_file() and p != complete_bundle / "run_manifest.json"}
+    before = {p: p.read_bytes() for p in paths | {complete_bundle / "run_manifest.json"}}
     assert "pending human review" in reporting.comparison_text(complete_bundle)
     assert before == {p: p.read_bytes() for p in before}
 
 
 @pytest.mark.parametrize("name", ["run_manifest.json", "predictions.csv", "fold_metrics.csv", "comparison.md", "run.log", "authorization.json"])
 def test_missing_artifact_rejected(complete_bundle, name):
-    (complete_bundle / name).unlink()
+    layout = RepositoryLayout.from_artifact_directory(complete_bundle)
+    parent = layout.draft_report_directory(complete_bundle.name) if name == "comparison.md" else complete_bundle
+    (parent / name).unlink()
     with pytest.raises(integrity.IntegrityError):
         integrity.verify_completed(complete_bundle)
     with pytest.raises(integrity.IntegrityError):
         reporting.comparison_text(complete_bundle)
 
 
-@pytest.mark.parametrize("name", ["run_metadata.json", "fold_metrics.csv", "predictions.csv", "run.log"])
+@pytest.mark.parametrize("name", ["run_metadata.json", "fold_metrics.csv", "predictions.csv", "run.log", "comparison.md"])
 def test_corrupt_artifact_rejected(complete_bundle, name):
-    path = complete_bundle / name
+    root = storage_directories(complete_bundle)["reports"] if name == "comparison.md" else complete_bundle
+    path = root / name
     path.write_bytes(path.read_bytes() + b"corrupt")
     with pytest.raises(integrity.IntegrityError):
         integrity.verify_completed(complete_bundle)
@@ -61,9 +81,10 @@ def test_semantic_corruption_rejected_even_before_hash_manifest(complete_bundle,
         integrity.verify_scientific(complete_bundle)
 
 
-def test_missing_model_descriptor_rejected(complete_bundle):
+@pytest.mark.parametrize("kind", ["model", "descriptor", "preprocessor", "origin_features"])
+def test_missing_model_evidence_rejected(complete_bundle, kind):
     metadata = json.loads((complete_bundle / "run_metadata.json").read_text())
-    (complete_bundle / metadata["model_artifacts"][0]["descriptor_path"]).unlink()
+    model_artifacts.safe_path(complete_bundle, metadata["model_artifacts"][0][f"{kind}_path"]).unlink()
     with pytest.raises(integrity.IntegrityError):
         integrity.verify_scientific(complete_bundle)
 
@@ -78,16 +99,18 @@ def test_replay_mismatch_rejected(complete_bundle, monkeypatch):
         integrity.verify_scientific(complete_bundle)
 
 
-@pytest.mark.parametrize("point", ["startup", "report", "manifest", "model", "interrupt", "verification"])
+@pytest.mark.parametrize("point", ["startup", "report", "manifest", "model", "model_after_write", "interrupt", "verification"])
 def test_failure_never_publishes_completion_and_preserves_original(tmp_path, monkeypatch, prepared_folds, point):
     install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds)
     approved = authorization(supplied_scope=scope(primary=(), supportive=("ridge",), horizons=(1,), baselines=()))
     original = KeyboardInterrupt("controlled interrupt") if point == "interrupt" else OSError("controlled original")
     def fail(*args, **kwargs):
+        if point == "model_after_write":
+            args[-1].write_text("partial synthetic model")
         raise original
     if point == "report":
         monkeypatch.setattr(ArtifactWriter, "write_comparison", fail)
-    elif point == "model":
+    elif point in ("model", "model_after_write"):
         monkeypatch.setattr(model_artifacts, "_save_estimator", fail)
     elif point == "interrupt":
         monkeypatch.setattr(orchestration, "fit_estimator", fail)
@@ -103,7 +126,7 @@ def test_failure_never_publishes_completion_and_preserves_original(tmp_path, mon
     with pytest.raises(type(original)) as caught:
         orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     assert caught.value is original
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     assert not (directory / "run_manifest.json").exists()
     with pytest.raises(integrity.IntegrityError):
         integrity.verify_completed(directory)
@@ -111,8 +134,22 @@ def test_failure_never_publishes_completion_and_preserves_original(tmp_path, mon
         metadata = json.loads((directory / "run_metadata.json").read_text())
         assert metadata["run_status"] == ("interrupted" if point == "interrupt" else "failed")
         assert metadata["selection_records"] == [] and metadata["completed_at_utc"] is None
-        if point == "model":
+        if point in ("model", "model_after_write"):
             assert metadata["completed_counts"]["supportive_fits"] == 1
+        if point in ("report", "manifest", "verification"):
+            assert len(metadata["model_artifacts"]) == 4
+            for record in metadata["model_artifacts"]:
+                for key in ("model", "descriptor", "preprocessor", "origin_features"):
+                    assert file_hash(model_artifacts.safe_path(directory, record[f"{key}_path"])) == record[f"{key}_hash"]
+    roots = storage_directories(directory)
+    assert all(root.is_dir() and not (root / "run_manifest.json").exists() for root in roots.values())
+    if point == "model_after_write":
+        leftovers = list(roots["models"].rglob("model.tmp.joblib"))
+        assert len(leftovers) == 1 and leftovers[0].read_text() == "partial synthetic model"
+    before = {p: p.read_bytes() for root in roots.values() for p in root.rglob("*") if p.is_file()}
+    with pytest.raises(FileExistsError):
+        ArtifactWriter(tmp_path, approved.run_id)
+    assert before == {p: p.read_bytes() for p in before}
 
 
 def test_manifest_is_last_write_and_requires_verification(tmp_path, monkeypatch, prepared_folds):
@@ -178,7 +215,7 @@ def test_changed_source_at_finalization_blocks_manifest(tmp_path, monkeypatch, p
     monkeypatch.setattr(type(approved), "validate", validate)
     with pytest.raises(PermissionError, match="changed source"):
         orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     assert not (directory / "run_manifest.json").exists()
     assert json.loads((directory / "run_metadata.json").read_text())["run_status"] == "failed"
 
@@ -236,3 +273,187 @@ def test_unexpected_replay_programming_error_is_not_hidden(complete_bundle, monk
     with pytest.raises(type(error)) as caught:
         integrity.verify_scientific(complete_bundle)
     assert caught.value is error
+
+
+def storage_directories(directory):
+    layout = RepositoryLayout.from_artifact_directory(directory)
+    return {"artifacts": layout.run_directory(directory.name),
+            "models": layout.model_run_directory(directory.name),
+            "reports": layout.draft_report_directory(directory.name)}
+
+
+@pytest.mark.parametrize("kind", ["model", "descriptor", "preprocessor", "origin_features"])
+def test_corrupt_model_evidence_rejected_across_owners(complete_bundle, monkeypatch, kind):
+    metadata = json.loads((complete_bundle / "run_metadata.json").read_text())
+    path = model_artifacts.safe_path(complete_bundle, metadata["model_artifacts"][0][f"{kind}_path"])
+    path.write_bytes(path.read_bytes() + b"corrupt")
+    loader = Mock(side_effect=AssertionError("Corrupt model evidence cannot be loaded"))
+    monkeypatch.setattr(model_artifacts, "_load_estimator", loader)
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_scientific(complete_bundle)
+    loader.assert_not_called()
+
+
+@pytest.mark.parametrize("owner,extra", [
+    (owner, extra) for owner in ("artifacts", "models", "reports")
+    for extra in ("extra.json", "unfinished.tmp", "model.tmp.joblib", "empty-directory", "run_manifest.json")
+    if (owner, extra) != ("artifacts", "run_manifest.json")
+])
+def test_extra_and_unfinished_evidence_blocks_completion_and_manifest_build(complete_bundle, owner, extra):
+    root = storage_directories(complete_bundle)[owner]
+    path = root / extra
+    if extra == "empty-directory":
+        path.mkdir()
+    else:
+        path.write_text("unexpected run-owned evidence")
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+    manifest_path = complete_bundle / "run_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    metadata = json.loads((complete_bundle / "run_metadata.json").read_text())
+    manifest_path.unlink()
+    with pytest.raises(integrity.IntegrityError):
+        integrity.build_manifest(complete_bundle, metadata, manifest["integrity_result"])
+    assert path.exists() and not manifest_path.exists()
+
+
+@pytest.mark.parametrize("owner", ["artifacts", "models", "reports"])
+def test_cross_run_manifest_reference_rejected_with_matching_bytes_and_hash(complete_bundle, owner):
+    layout = RepositoryLayout.from_artifact_directory(complete_bundle)
+    path = complete_bundle / "run_manifest.json"
+    manifest = json.loads(path.read_text())
+    entry = next(record for record in manifest["artifacts"] if record["owner"] == owner)
+    original = layout.root / entry["path"]
+    entry["path"] = entry["path"].replace(f"/{complete_bundle.name}/", "/other-run/")
+    other = layout.root / entry["path"]
+    other.parent.mkdir(parents=True, exist_ok=True)
+    other.write_bytes(original.read_bytes())
+    assert file_hash(other) == entry["sha256"]
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(integrity.IntegrityError, match="declared run owner"):
+        integrity.verify_completed(complete_bundle)
+
+
+@pytest.mark.parametrize("mutation", ["wrong_owner", "unknown_owner", "legacy_path", "missing_entry", "duplicate_entry", "version_1"])
+def test_invalid_completion_manifest_contract_is_rejected(complete_bundle, mutation):
+    path = complete_bundle / "run_manifest.json"
+    manifest = json.loads(path.read_text())
+    entry = manifest["artifacts"][0]
+    if mutation == "wrong_owner":
+        entry["owner"] = "models"
+    elif mutation == "unknown_owner":
+        entry["owner"] = "data"
+    elif mutation == "legacy_path":
+        entry["path"] = "run_metadata.json"
+    elif mutation == "missing_entry":
+        manifest["artifacts"].pop()
+    elif mutation == "duplicate_entry":
+        manifest["artifacts"].append(entry.copy())
+    else:
+        manifest["manifest_version"] = 1
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+
+
+@pytest.mark.parametrize("kind", ["model", "descriptor", "preprocessor", "origin_features"])
+@pytest.mark.parametrize("destination", ["other_run", "wrong_owner", "wrong_fold"])
+def test_model_reference_requires_exact_run_owner_and_candidate_fold(complete_bundle, monkeypatch, kind, destination):
+    path = complete_bundle / "run_metadata.json"
+    metadata = json.loads(path.read_text())
+    record = metadata["model_artifacts"][0]
+    if destination == "other_run":
+        record[f"{kind}_path"] = record[f"{kind}_path"].replace(f"/{complete_bundle.name}/", "/other-run/")
+    elif destination == "wrong_owner":
+        record[f"{kind}_path"] = (complete_bundle / Path(record[f"{kind}_path"]).name).relative_to(
+            RepositoryLayout.from_artifact_directory(complete_bundle).root).as_posix()
+    else:
+        record[f"{kind}_path"] = record[f"{kind}_path"].replace("fold-1/", "fold-2/")
+    path.write_text(json.dumps(metadata))
+    loader = Mock(side_effect=AssertionError("Misowned model evidence cannot be loaded"))
+    monkeypatch.setattr(model_artifacts, "_load_estimator", loader)
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_scientific(complete_bundle)
+    loader.assert_not_called()
+
+
+@pytest.mark.parametrize("owner", ["artifacts", "models", "reports", "manifest"])
+def test_symlinked_evidence_rejected_even_with_identical_bytes(complete_bundle, owner):
+    layout = RepositoryLayout.from_artifact_directory(complete_bundle)
+    if owner == "manifest":
+        path = complete_bundle / "run_manifest.json"
+    else:
+        manifest = json.loads((complete_bundle / "run_manifest.json").read_text())
+        entry = next(record for record in manifest["artifacts"] if record["owner"] == owner)
+        path = layout.root / entry["path"]
+    external = layout.root / "unowned-evidence"
+    external.write_bytes(path.read_bytes())
+    path.unlink()
+    path.symlink_to(external)
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+
+
+@pytest.mark.parametrize("owner", ["artifacts", "models", "reports"])
+@pytest.mark.parametrize("condition", ["symlink", "non_directory"])
+def test_invalid_run_storage_ancestor_rejected(complete_bundle, owner, condition):
+    root = storage_directories(complete_bundle)[owner]
+    retained = root.parent / "retained-run"
+    root.rename(retained)
+    if condition == "symlink":
+        root.symlink_to(retained, target_is_directory=True)
+    else:
+        root.write_text("not a directory")
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+    assert retained.is_dir()
+
+
+@pytest.mark.parametrize("owner", ["models", "reports"])
+def test_only_artifact_anchor_manifest_can_establish_completion(complete_bundle, owner):
+    root = storage_directories(complete_bundle)[owner]
+    manifest_path = complete_bundle / "run_manifest.json"
+    (root / "run_manifest.json").write_bytes(manifest_path.read_bytes())
+    manifest_path.unlink()
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+    with pytest.raises(integrity.IntegrityError):
+        reporting.comparison_text(complete_bundle)
+
+
+@pytest.mark.parametrize("record", ["metadata", "manifest"])
+def test_completion_identity_must_match_artifact_anchor(complete_bundle, record):
+    manifest_path = complete_bundle / "run_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    if record == "metadata":
+        path = complete_bundle / "run_metadata.json"
+        metadata = json.loads(path.read_text())
+        metadata["run_id"] = "other-run"
+        path.write_text(json.dumps(metadata))
+        manifest["metadata_hash"] = file_hash(path)
+        with pytest.raises(integrity.IntegrityError, match="Run identity"):
+            integrity.verify_scientific(complete_bundle)
+    else:
+        manifest["run_id"] = "other-run"
+    manifest_path.write_text(json.dumps(manifest))
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)
+
+
+def test_published_manifest_cannot_be_rebuilt(complete_bundle):
+    metadata = json.loads((complete_bundle / "run_metadata.json").read_text())
+    manifest = json.loads((complete_bundle / "run_manifest.json").read_text())
+    with pytest.raises(integrity.IntegrityError, match="cannot be rebuilt"):
+        integrity.build_manifest(complete_bundle, metadata, manifest["integrity_result"])
+
+
+def test_artifact_receipt_cannot_redirect_draft_report(complete_bundle):
+    path = complete_bundle / "run_metadata.json"
+    metadata = json.loads(path.read_text())
+    entry = next(row for row in metadata["artifact_manifest"] if row["artifact_path"].endswith("/comparison.md"))
+    entry["artifact_path"] = entry["artifact_path"].replace(f"/{complete_bundle.name}/", "/other-run/")
+    path.write_text(json.dumps(metadata))
+    with pytest.raises(integrity.IntegrityError, match="Artifact receipts"):
+        integrity.verify_scientific(complete_bundle)

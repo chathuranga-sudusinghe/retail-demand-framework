@@ -203,6 +203,12 @@ def test_report_required_summary_matrices_and_horizon_evidence(saved_evidence):
     assert "| xgboost | primary | GBM002 |" in text
     assert "| xgboost | GBM002 | 4 | 0.0123456789012345" in text
     assert "LightGBM configuration ties: none recorded." in text
+    saved_evidence.write_comparison(text)
+    draft = saved_evidence.layout.draft_report_directory(saved_evidence.directory.name) / "comparison.md"
+    assert draft.read_text() == text
+    assert "pending human review" in text and "pending_human_review" in text
+    assert not (saved_evidence.directory / "comparison.md").exists()
+    assert not (saved_evidence.directory / "run_manifest.json").exists()
 
 
 def test_report_reads_artifacts_without_recalculation_or_changes(saved_evidence, monkeypatch):
@@ -213,9 +219,9 @@ def test_report_reads_artifacts_without_recalculation_or_changes(saved_evidence,
     monkeypatch.setattr(selection, "summarize_configurations", forbidden)
     monkeypatch.setattr(selection, "select_primary", forbidden)
     directory = saved_evidence.directory
-    before = {path.name: path.read_bytes() for path in directory.iterdir()}
+    before = {path: path.read_bytes() for path in saved_evidence.repository.rglob("*") if path.is_file()}
     text = reporting.comparison_text(directory, require_verified=False)
-    assert {path.name: path.read_bytes() for path in directory.iterdir()} == before
+    assert {path: path.read_bytes() for path in saved_evidence.repository.rglob("*") if path.is_file()} == before
     assert reporting.comparison_text(directory, require_verified=False) == text
     forbidden.assert_not_called()
     # Change a recorded display value, not a computed value: the report must follow the CSV.

@@ -246,8 +246,8 @@ def test_mocked_full_plan_writes_exact_artifacts_metadata_and_same_candidate_pop
     constructed, fitting, writes = install_synthetic_runner_mocks(monkeypatch, tmp_path, prepared_folds)
     approved = authorization()
     directory = orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
-    assert directory == tmp_path / "outputs/revised-forecasting" / approved.run_id
-    assert set(p.name for p in directory.iterdir()) == set(ARTIFACT_NAMES) | {"run.log", "run_manifest.json", "authorization.json", "models"}
+    assert directory == RepositoryLayout(tmp_path).run_directory(approved.run_id)
+    assert set(p.name for p in directory.iterdir()) == (set(ARTIFACT_NAMES) - {"comparison.md"}) | {"run.log", "run_manifest.json", "authorization.json"}
     assert len(constructed) == len(fitting) == 1184  # 1,152 mocked primary + 32 mocked supportive.
     assert writes[0] == ("run_metadata.json", "preflight")
     assert writes[-1] == ("run_manifest.json", None)
@@ -305,7 +305,7 @@ def test_mocked_full_plan_writes_exact_artifacts_metadata_and_same_candidate_pop
         else:
             assert entry["artifact_hash"] == file_hash(path) and entry["artifact_status"] == "written"
     assert not any(r["human_review_reference"] for r in metadata["selection_records"])
-    text = (directory / "comparison.md").read_text()
+    text = (RepositoryLayout.from_artifact_directory(directory).draft_report_directory(directory.name) / "comparison.md").read_text()
     assert "December 3–16" in text and "full-year EDA" in text
     assert "Primary model tie" in text and "Fold-level primary WAPE comparison" in text
     assert "fold differences" not in text
@@ -348,7 +348,7 @@ def test_failed_fit_retains_diagnostics_and_never_selects_partial_fold_evidence(
     approved = authorization(supplied_scope=scope(primary=("xgboost",), supportive=(), horizons=(1,), baselines=()))
     with pytest.raises(ValueError, match="Synthetic controlled fit failure"):
         orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     metadata = json.loads((directory / "run_metadata.json").read_text())
     assert len(constructed) == 6  # No retry or continued search after failure.
     assert metadata["run_status"] == "failed"
@@ -410,7 +410,7 @@ def test_input_mismatch_is_blocked_before_preparation_and_preserves_failed_manif
     with pytest.raises(ExecutionBlocked, match="authorised input view"):
         orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     prep.assert_not_called()
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     metadata = json.loads((directory / "run_metadata.json").read_text())
     assert metadata["run_status"] == "failed"
     assert not metadata["candidate_records"]
@@ -431,13 +431,13 @@ def test_preflight_missing_outcome_persists_calendar_diagnostics_without_any_fit
     with pytest.raises(ValueError, match="target population"):
         orchestration.run_validation(source, run_id=approved.run_id, authorization=approved)
     constructor.assert_not_called()
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     diagnostics = json.loads((directory / "diagnostics.json").read_text())
     assert diagnostics["eligibility_diagnostics"][0]["Date"] == "2024-04-01"
     metadata = json.loads((directory / "run_metadata.json").read_text())
     assert metadata["run_status"] == "failed"
     assert metadata["selection_records"] == []
-    assert "Run status at rendering: failed" in (directory / "comparison.md").read_text()
+    assert "Run status at rendering: failed" in (RepositoryLayout.from_artifact_directory(directory).draft_report_directory(directory.name) / "comparison.md").read_text()
 
 
 def test_exact_csv_column_order_is_checked_against_the_frozen_protocol():
@@ -502,7 +502,7 @@ def test_candidate_logging_failure_preserves_original_and_recovery(
         orchestration.run_validation(panel(), run_id=approved.run_id, authorization=approved)
     assert caught.value is original
     assert f"Candidate failure logging failed: {type(logging_error).__name__}." in original.__notes__
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     metadata = json.loads((directory / "run_metadata.json").read_text())
     assert metadata["failure_type"] == "ValueError"
     assert metadata["failure_reason"] == str(original)
@@ -535,7 +535,7 @@ def test_candidate_diagnostic_interrupt_preserves_original_failure(tmp_path, mon
     assert caught.value is original
     assert interrupted_writes == ["diagnostics.json"]
     assert "Candidate diagnostic persistence failed: KeyboardInterrupt." in original.__notes__
-    directory = tmp_path / "outputs/revised-forecasting" / approved.run_id
+    directory = RepositoryLayout(tmp_path).run_directory(approved.run_id)
     assert not (directory / "run_manifest.json").exists()
 
 
@@ -592,7 +592,10 @@ def test_alternate_layout_is_used_consistently_without_global_root_patching(
     assert (directory / "authorization.json").is_file()
     assert layout.validation_model_directory(directory).is_dir()
     assert layout.preprocessing_state_directory(directory, "ridge", 1, 1).is_dir()
-    assert not (REPOSITORY / "outputs/revised-forecasting" / approved.run_id).exists()
+    assert (layout.draft_report_directory(approved.run_id) / "comparison.md").is_file()
+    assert not RepositoryLayout(REPOSITORY).run_directory(approved.run_id).exists()
+    assert not RepositoryLayout(REPOSITORY).model_run_directory(approved.run_id).exists()
+    assert not RepositoryLayout(REPOSITORY).draft_report_directory(approved.run_id).exists()
 
 
 def test_context_layout_conflict_is_rejected_before_run_creation(tmp_path):
