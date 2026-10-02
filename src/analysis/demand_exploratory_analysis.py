@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -138,7 +138,7 @@ def make_figures(df: pd.DataFrame, tables: dict[str, pd.DataFrame]) -> dict[str,
     axes[1].set(title="Daily mean at native grain", ylabel="Units / SKU-warehouse-day", xlabel="Date (2024)")
     figures["daily-demand"] = fig
     fig, ax = plt.subplots(figsize=(10, 4), layout="constrained")
-    ax.hist(df.Units_Sold, bins=np.arange(df.Units_Sold.min() - .5, df.Units_Sold.max() + 1.5), color="#23688c", edgecolor="white")
+    ax.hist(df.Units_Sold, bins=np.arange(df.Units_Sold.min() - .5, df.Units_Sold.max() + 1.5).tolist(), color="#23688c", edgecolor="white")
     ax.set(title="Units_Sold distribution — all native observations", xlabel="Units sold / SKU-warehouse-day", ylabel="Number of observations")
     figures["demand-distribution"] = fig
     fig, axes = plt.subplots(2, 1, figsize=(11, 7), layout="constrained")
@@ -160,8 +160,8 @@ def make_figures(df: pd.DataFrame, tables: dict[str, pd.DataFrame]) -> dict[str,
         fig.colorbar(im, ax=ax, label="Mean demand index")
         figures[f"{label}-monthly-patterns"] = fig
     fig, ax = plt.subplots(figsize=(11, 5), layout="constrained")
-    for (name, group), marker in zip(tables["warehouse_monthly"].groupby("Warehouse_ID"), ["o", "s", "^", "D", "x"], strict=False):
-        ax.plot(labels, group["mean"], marker=marker, label=name)
+    for (name, warehouse_data), marker in zip(tables["warehouse_monthly"].groupby("Warehouse_ID"), ["o", "s", "^", "D", "x"], strict=False):
+        ax.plot(labels, warehouse_data["mean"], marker=marker, label=name)
     ax.set(title="Warehouse monthly mean demand", xlabel="Month (2024)", ylabel="Units / SKU-warehouse-day")
     ax.legend(ncol=5)
     figures["warehouse-monthly-means"] = fig
@@ -218,7 +218,7 @@ def main() -> None:
 
 def markdown_table(table: pd.DataFrame) -> str:
     """Small report tables without an additional tabulate dependency."""
-    def fmt(value: object) -> str:
+    def fmt(value: Any) -> str:
         if pd.isna(value):
             return "—"
         if isinstance(value, (float, np.floating)):
@@ -232,9 +232,13 @@ def markdown_table(table: pd.DataFrame) -> str:
 def interpretations(tables: dict[str, pd.DataFrame]) -> dict[str, str]:
     """Data-bound prose shared by notebook and Markdown report."""
     m, d, s = tables["monthly"], tables["daily"], tables["series"]
-    high, low = m.loc[m["mean"].idxmax()], m.loc[m["mean"].idxmin()]
-    peak, trough = d.loc[d.total.idxmax()], d.loc[d.total.idxmin()]
+    high, low = m.loc[cast(Any, m["mean"].idxmax())], m.loc[cast(Any, m["mean"].idxmin())]
+    peak, trough = d.loc[cast(Any, d.total.idxmax())], d.loc[cast(Any, d.total.idxmin())]
     p = tables["promotion"].set_index("Promotion_Flag")
+    promotion_rows = cast(int, p.loc[1, "rows"])
+    nonpromotion_rows = cast(int, p.loc[0, "rows"])
+    promotion_mean = cast(float, p.loc[1, "mean"])
+    nonpromotion_mean = cast(float, p.loc[0, "mean"])
     lag = tables["lag_summary"].set_index("lag_days")
     zero_count = round((s.rows * s.zero_share).sum())
     result = {
@@ -242,7 +246,7 @@ def interpretations(tables: dict[str, pd.DataFrame]) -> dict[str, str]:
         "monthly": f"The highest monthly mean is {high['month']} ({high['mean']:.3f} units per SKU-warehouse-day); the lowest is {low['month']} ({low['mean']:.3f}), a {high['mean'] / low['mean']:.2f}× ratio. Monthly totals reflect month length as well as demand level. These are observed within-year patterns, not evidence of recurring annual seasonality.",
         "extremes": f"The largest daily total is {int(peak.total):,} on {peak.Date:%Y-%m-%d}; the smallest is {int(trough.total):,} on {trough.Date:%Y-%m-%d}. The extreme tables rank observations, not statistical anomalies or records to remove. Large day-to-day moves are retained and have no inferred holiday explanation.",
         "rolling": "Trailing 7- and 14-day averages summarize the displayed day and preceding days. The first 6 and 13 outputs respectively are undefined because a full window is required. These retrospective EDA summaries are not forecasting features; smoothing alone is not evidence of predictive skill.",
-        "promotion": f"Promotion rows number {int(p.loc[1, 'rows']):,}, with mean demand {p.loc[1, 'mean']:.3f}; non-promotion rows number {int(p.loc[0, 'rows']):,}, with mean {p.loc[0, 'mean']:.3f}. The unadjusted difference is {p.loc[1, 'mean'] - p.loc[0, 'mean']:.3f} units ({100 * (p.loc[1, 'mean'] / p.loc[0, 'mean'] - 1):.2f}%). Monthly and within-series comparisons provide descriptive context, not causal identification or permission to use future promotion flags.",
+        "promotion": f"Promotion rows number {int(promotion_rows):,}, with mean demand {promotion_mean:.3f}; non-promotion rows number {int(nonpromotion_rows):,}, with mean {nonpromotion_mean:.3f}. The unadjusted difference is {promotion_mean - nonpromotion_mean:.3f} units ({100 * (promotion_mean / nonpromotion_mean - 1):.2f}%). Monthly and within-series comparisons provide descriptive context, not causal identification or permission to use future promotion flags.",
         "lags": f"Median level correlations at lags 1, 7, 14 and 28 are {lag.loc[1, 'median']:.3f}, {lag.loc[7, 'median']:.3f}, {lag.loc[14, 'median']:.3f} and {lag.loc[28, 'median']:.3f}. After first differencing, medians at lags 7, 14 and 28 are {lag.loc[7, 'differenced_median']:.3f}, {lag.loc[14, 'differenced_median']:.3f} and {lag.loc[28, 'differenced_median']:.3f}. Broad level movement may contribute substantially to raw dependence; lag 7 is not uniquely elevated. Differencing is a diagnostic, not an approved preprocessing choice. Its negative lag-1 correlation can arise mechanically. No final lag set is selected.",
         "validation_design": "Historical EDA design context, superseded by the current forecasting methodology: the original wording below records then-approved horizons and intended holdout protection, not current instructions. The monthly and quarterly summaries show differing demand levels across the observed year. Expanding-window evaluation origins spaced across the year could therefore test materially different demand levels and transitions, whereas adjacent origins could cover similar periods. This is evidence to consider, not proof of differing model performance. Later design must balance initial history, the approved 1-/7-/14-day horizons, available future outcomes, possible overlap between evaluation windows, and an untouched final holdout. Full-year EDA has already exposed broad future-period patterns, so this influence on validation design must be disclosed. No fold dates, final split, seasonal regimes or models are defined here.",
     }
