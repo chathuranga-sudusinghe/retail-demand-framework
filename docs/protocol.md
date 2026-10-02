@@ -1,8 +1,8 @@
 # Revised forecasting experiment protocol — Issue #65
 
-**Status:** GATE 1 SCIENTIFIC PROTOCOL HUMAN-APPROVED / FROZEN — NO NEW EXECUTION AUTHORIZATION
+**Status:** SCIENTIFIC PROTOCOL HUMAN-APPROVED / FROZEN — NO NEW EXECUTION AUTHORIZATION
 
-**Operational alignment:** Issue #94 documentation reconciliation for human review; approved Issues #92/#93 supply architecture authorities. Runtime migration remains unimplemented.
+**Operational alignment:** Issues #92/#93 supply the architecture authorities. Issue #111 implements Phase 5 split storage; Issue #116 documents manifest and model descriptor contract version 2. No new execution authorization is granted. The dated approval-control labels and earlier amendments remain historical records; current storage operations use human review, implementation acceptance, explicit run authorization and reserved final evaluation blocked.
 
 **Prepared:** 2026-09-29
 
@@ -26,8 +26,8 @@ protocol only; experiment execution remains **NOT AUTHORISED**.
 ## 1. Authority, scope and current implementation
 
 `docs/protocol.md` is the consolidated, human-approved and frozen forecasting
-validation experiment protocol. Gate 1 is complete on the explicit project-owner
-approval recorded above. Accepted runner implementation and specific run
+validation experiment protocol. Human review and protocol freeze are complete on
+the explicit project-owner approval recorded above. Accepted runner implementation and specific run
 authorisation remain required; protocol approval does not grant execution approval.
 
 The current research authority is
@@ -80,9 +80,9 @@ The configuration layer declares parameters without constructing estimators.
 Estimator orchestration, metrics, baselines and the runner are now implemented;
 Issue #89 was merged through PR #90. The owner confirms validation has occurred;
 [methodology provenance](forecasting-methodology-revision.md) records the evidence
-availability boundary. The unchanged runner does not implement the approved
-storage layout. No new command is authorized by this reconciliation. The deferred
-Gate 6 policy in Section 18 and
+availability boundary. Phase 5 now implements the approved split storage layout;
+its operational contract is recorded below. No new command is authorized by this
+documentation. The deferred final refit/preprocessing policy in Section 18 and
 [AGENTS.md](../AGENTS.md), Sections 17–19, remain binding.
 
 ## 2. Frozen target, predictor information and ordering
@@ -606,9 +606,11 @@ fully unseen. Final evidence must not feed back into accepted decisions.
 
 ## 13. Machine-readable reproducibility metadata
 
-`run_metadata.json` uses the Gate 1-approved schema version `issue-65-v2`.
-Preserve a manifest before computation and record completion/failure without
-overwriting another run. The following keys/groups are required:
+`run_metadata.json` uses the human-approved schema version `issue-65-v2`.
+Persist preflight metadata before computation and record completion/failure
+without overwriting another run. Its `artifact_manifest` contains receipts;
+the artifact-side `run_manifest.json` is the sole completion authority and is
+written last, as specified in [the Phase 5 contract](#phase-5-storage-contract). The following keys/groups are required:
 
 | Group | Required machine-readable keys |
 |---|---|
@@ -680,20 +682,22 @@ no full source row or future operational predictor is included.
 
 ## 15. Stable output artifacts
 
-Use a new local ignored `artifacts/forecasting/<run_id>/` evidence directory
-under the approved [storage policy](artifact-storage-policy.md). Retained reusable
-model/preprocessor bundles belong in `models/forecasting/<run_id>/`; reviewed
-findings belong in `reports/forecasting/<run_id>.md` under the
-[reporting contract](../reports/README.md). Completed evidence is immutable and
-must reference its model/state dependencies across these locations. Never
-overwrite another run or relabel historical evidence.
+Phase 5 uses `artifacts/forecasting/<run_id>/` for machine-readable evidence and
+the sole completion authority, `run_manifest.json`, written last.
+Every successful learned model, descriptor, fitted preprocessing state and replay
+input belongs in `models/forecasting/<run_id>/`. The generated comparison belongs
+in `reports/forecasting/drafts/<run_id>/comparison.md` and remains pending human
+review. Later reviewed findings use `reports/forecasting/<run_id>.md` under the
+[reporting contract](../reports/README.md). Completed evidence across these owners
+is immutable; never overwrite another run or relabel historical evidence.
 
-These are the active architecture requirements for the next accepted implementation,
-not the unchanged runner's executable layout. Scientific table schemas below remain
-unchanged. No full raw/processed dataset or training matrix is copied into the run
-bundle. Separately approved validated/engineered handoffs follow the lifecycle and
-storage authorities; this amendment does not authorize new exports or protected
-outcome access. See the Issue #94 implementation boundary below.
+The implemented [Phase 5 contract](#phase-5-storage-contract) uses manifest contract
+version 2 and model descriptor contract version 2. All-model persistence/replay
+continues; selective retention/pruning is deferred to Phase 6. Scientific table
+schemas below remain unchanged. No full raw/processed dataset or training matrix
+is copied into run storage. `data/processed/...` ownership, approved Phase 4
+handoffs and `data/processed/forecasting/validation_authorization.json` remain
+unchanged. This documentation authorizes no new exports or protected outcome access.
 
 | Artifact | Required purpose |
 |---|---|
@@ -703,7 +707,7 @@ outcome access. See the Issue #94 implementation boundary below.
 | `selected_configurations.json` | Primary selections/ties and human freeze references, fixed supportive declarations, and explicit baseline policies/exclusions |
 | `predictions.csv` | Section 14 keyed pair-level audit records |
 | `eligibility_counts.csv` | Per-pair history/label/intersection and exclusion diagnostics |
-| `comparison.md` | Generated evidence summary/draft: separate horizon/role tables, magnitude/direction/fold-consistency discussion, approval gaps and final-exposure disclosure; not a reviewed report |
+| `comparison.md` | Generated evidence summary at `reports/forecasting/drafts/<run_id>/comparison.md`: separate horizon/role tables, magnitude/direction/fold-consistency discussion, approval gaps and final-exposure disclosure; pending human review |
 
 `fold_metrics.csv` required column order:
 
@@ -775,6 +779,12 @@ review requirements or authorize publication. Record the reviewed handoff in the
 
 ## 16. Experiment-stage gates
 
+Historical approval-control labels from the frozen protocol are retained below.
+The human controls remain required. Current Phase 5 operations use human review,
+implementation acceptance, explicit run authorization, selection freeze and
+reserved final evaluation blocked; these terms do not grant or remove approval.
+See [the current storage contract](#phase-5-storage-contract).
+
 | Gate | Required explicit human control | Authority granted |
 |---|---|---|
 | 1 | **Complete:** project owner reviewed and explicitly approved/froze the full validation protocol on 2026-09-29; approval reference is recorded above | Validation-protocol freeze only; experiment execution NOT AUTHORISED; final refit deferred to Gate 6 |
@@ -794,7 +804,8 @@ The gates above remain controls for each applicable revision/run. The completed
 Gate 1 freeze does not authorize future execution. Storage/retention migration
 requires implementation acceptance and a new source/protocol-bound specific
 record; past authorization does not transfer. Final refit/preprocessing remains
-deferred to Gate 6. See runner operations for the legacy runtime boundary.
+deferred to Gate 6 under the historical labels above. See runner operations for
+the implemented Phase 5 storage contract.
 
 ## 17. Issue #52 relationship and historical provenance
 
@@ -871,6 +882,8 @@ fits, scores or experiments are executed by this document update.
 
 ## Issue #89 operational/artifact amendment — historical accepted runtime contract
 
+Historical operational snapshot: the original amendment below is preserved as provenance. Current Phase 5 paths and contract versions are documented in [the Phase 5 storage contract](#phase-5-storage-contract); all-model persistence/replay remains operative.
+
 This amendment records the all-fit/single-bundle contract implemented in PR #90.
 Its original operational requirements below are preserved as provenance and
 unchanged runtime behavior. Issue #94 supersedes its storage direction for future
@@ -888,6 +901,8 @@ Authorization/model/state files and finalized logs are hashed by run_manifest.js
 Source/tests, direct joblib/threadpoolctl pins and this amendment change approval-bound hashes. Earlier authorization cannot authorize changed code without renewed human review and a matching reviewed record. Writing this amendment neither executes nor approves an experiment. Gate 6 remains blocked.
 
 ## Issue #94 operational alignment — implementation boundary
+
+Historical implementation boundary: the text below records the Issue #94 state before Phase 5 migration. [The Phase 5 storage contract](#phase-5-storage-contract) supersedes its migration-pending statements; selective retention/pruning remains deferred to Phase 6.
 
 This operational amendment connects merged Issues #92/#93 without changing
 Sections 2–12 scientific definitions, horizons, folds, metrics, model roles,
@@ -942,3 +957,71 @@ must update paths, metadata/model persistence, cross-location integrity and test
 resolve the exact retention set/schema and persisted-handoff permissions, obtain
 human acceptance and issue new matching specific authorization. Documentation
 acceptance alone does not complete that work, approve experiments or unblock Gate 6.
+
+## Phase 5 storage contract
+
+Issues #111/#116 document the implemented storage migration only. The scientific
+schema remains `issue-65-v2` and the protocol version remains
+`issue-65-matched-frozen-1`; targets, features, folds, model parameters,
+metrics, selection and preprocessing behavior are unchanged.
+
+```text
+artifacts/forecasting/<run_id>/
+  machine-readable evidence, authorization snapshot, logs and diagnostics
+  run_manifest.json
+
+models/forecasting/<run_id>/
+  persisted models and descriptors
+  fitted preprocessing state and origin replay inputs
+
+reports/forecasting/drafts/<run_id>/
+  comparison.md
+```
+
+`ArtifactWriter.directory` remains the artifact-run anchor. `RepositoryLayout`
+resolves model and draft locations from that anchor with the same exact run ID.
+Source and approved processed/model-ready handoffs keep their
+`data/processed/...` ownership, including the Phase 4 lifecycle. The reviewed
+authorization-record location remains
+`data/processed/forecasting/validation_authorization.json`.
+
+Manifest contract version 2 (`manifest_version: 2`) records repository-relative
+`path`, explicit `owner` (`artifacts`, `models`, `reports`) and `sha256` for
+each finalized run-owned file. The sole completion authority is
+`artifacts/forecasting/<run_id>/run_manifest.json`, written last after scientific
+reconciliation, all-model replay, log closure and final metadata. It covers all
+machine-readable evidence, model/descriptor/preprocessing/replay dependencies
+and the generated comparison; it does not hash itself. Metadata receipts,
+model-side files and draft reports do not establish completion.
+
+Model descriptor contract version 2 (`descriptor_version: 2`) binds
+repository-relative model, preprocessing and origin-input references under the
+same `models/forecasting/<run_id>/`. Descriptors link source provenance back to
+artifact-side metadata. Exact candidate/family/horizon/configuration/fold ownership,
+hashes, saved preprocessing and every persisted model's prediction replay are
+verified without refitting. Native serialization formats and fitted-state format
+remain unchanged. Historical version-1 compatibility/migration is not implemented.
+
+Phase 5 retains and replays every successful learned validation fit, including
+unselected and tied configurations; baseline formula provenance remains unchanged.
+All candidate configuration, metric, prediction, eligibility and selection
+evidence remains retained. Selective model retention/pruning is deferred to
+Phase 6 and requires separate human approval and implementation.
+
+Completed consumers use `verify_completed` with the canonical artifact-run anchor.
+Missing, extra, corrupted, redirected, cross-run or unfinished run-owned evidence
+blocks completed consumption. Failed/interrupted runs publish no completion
+manifest. Partial evidence remains in its owning directories; there is no
+automatic cleanup, retry, resume or reuse of a consumed run ID.
+
+The generated `comparison.md` is ignored draft evidence, pending human review.
+Its evidence links resolve from the draft directory to the artifact-run anchor.
+Later reviewed research reporting and figures follow
+[reports/README.md](../reports/README.md) in separate locations. Completion does
+not establish human review, configuration freeze, publication or final-run
+authorization. Reserved final evaluation remains blocked.
+
+This documentation changes approval-bound protocol bytes. A future run requires
+human implementation acceptance and a matching specific run authorization; no
+approval record or hash is generated/refreshed here. The earlier operational
+amendments remain historical provenance and authorize no experiment or cleanup.
