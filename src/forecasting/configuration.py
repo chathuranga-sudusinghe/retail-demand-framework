@@ -111,20 +111,22 @@ def primary_model_parameters(
             "random_state": 42,
             "device_type": "cpu",
         }
-    return {
-        **common,
-        "iterations": configuration.boosting_iterations,
-        "depth": configuration.max_depth,
-        "loss_function": "RMSE",
-        "bootstrap_type": "Bernoulli",
-        "sampling_unit": "Object",
-        "sampling_frequency": "PerTree",
-        "task_type": "CPU",
-        "grow_policy": "SymmetricTree",
-        "rsm": 1.0,
-        "use_best_model": False,
-        "random_seed": 42,
-    }
+    if model == "catboost":
+        return {
+            **common,
+            "iterations": configuration.boosting_iterations,
+            "depth": configuration.max_depth,
+            "loss_function": "RMSE",
+            "bootstrap_type": "Bernoulli",
+            "sampling_unit": "Object",
+            "sampling_frequency": "PerTree",
+            "task_type": "CPU",
+            "grow_policy": "SymmetricTree",
+            "rsm": 1.0,
+            "use_best_model": False,
+            "random_seed": 42,
+        }
+    raise ValueError("Unsupported primary model.")
 
 
 def supportive_model_parameters(model: SupportiveModel) -> ModelParameters:
