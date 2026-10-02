@@ -7,6 +7,13 @@ on:
   push:
     branches:
       - main
+    # Keep PR checks unconditional; skip only presentation docs on main pushes.
+    paths-ignore:
+      - README.md
+      - CONTRIBUTING.md
+      - "docs/literature/**/*.md"
+      - "docs/meetings/**/*.md"
+      - "docs/team/**/*.md"
 
 jobs:
   test:
@@ -14,27 +21,26 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12.3"
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
 
       - name: Install dependencies
         run: python -m pip install -r requirements-dev.txt
-
-      - name: Verify imports
-        run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
 
       - name: Check dependency consistency
         run: python -m pip check
 
       - name: Lint forecasting source and tests
         run: ruff check src/forecasting tests/test_forecasting_*.py
+
+      - name: Verify imports
+        run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
 
       - name: Type-check forecasting source
         run: python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
