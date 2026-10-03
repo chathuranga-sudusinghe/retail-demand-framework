@@ -1,10 +1,6 @@
 # Research Design
 
-Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
-
-> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
-
-> **Documentation alignment — 2026-09-29:** The project owner has approved the 1/7/14/28-day forecasting design and [frozen feature contract](forecasting-feature-engineering.md). This alignment records that human instruction, not new experiment evidence or separate supervisor approval. [Revision and provenance](forecasting-methodology-revision.md) records remaining approval boundaries.
+This document owns the research questions, hypotheses, rationale and inference boundaries. Exact forecasting methods belong in the [protocol](protocol.md); completed numerical interpretation belongs in [final evaluation](forecasting-final-evaluation.md). The forecasting study is complete as confirmed by the owner; the integrated group hypothesis and downstream components are not declared complete.
 
 ## 1. Purpose
 
@@ -46,7 +42,7 @@ No statistical-significance procedure is approved for RQ2. The four temporal fol
 
 Do not average or rank performance across horizons into a single composite. Model ordering may differ by horizon; report those differences rather than collapsing them into an overall winner.
 
-[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved revised direction. The protocol is frozen/approved; changed implementation acceptance and each specific run remain separately gated.
+[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved revised direction. The protocol and DR-014 selection/refit decision are frozen; further implementation or experiment execution requires separate human approval.
 
 ## 3. Source and analytical unit
 
@@ -98,246 +94,31 @@ The forecasting component may examine:
 
 ## 6. Forecasting feature engineering
 
-Feature engineering converts the approved SKU-warehouse-day demand history into model inputs that represent recent demand memory, short-term demand behaviour, and calendar effects without exposing the model to future information.
-
-### 6.1 Frozen predictor contract
-
-The [authoritative feature specification](forecasting-feature-engineering.md) freezes exactly **14 conceptual predictors: two categorical context predictors and twelve engineered numerical predictors**, in the same order for the primary XGBoost, LightGBM and CatBoost models and supportive Ridge/Random Forest benchmarks across horizons 1/7/14/28.
-
-- Context: `SKU_ID`, `Warehouse_ID`.
-- Calendar: `dow_sin`, `dow_cos`, derived from the first target day, origin + 1.
-- Demand memory: `lag_1`, `lag_7`, `lag_14`.
-- Recent level/dispersion: mean and sample standard deviation (`ddof=1`) over complete 7-, 14- and 28-day histories ending at the origin.
-- Direction: `rolling_slope_14` over the ordered fourteen-day history.
-
-The whole vector requires **28 complete consecutive daily observations per SKU–warehouse**. All inputs use only origin-available information; no realised demand inside a forecast window updates the vector. Training rows require complete horizon labels ending by their fitting cutoff. Learned preprocessing fits only eligible training rows.
-
-### 6.2 Representation and raw-field boundaries
-
-Within each fold/horizon, the primary XGBoost, LightGBM and CatBoost models use the same fitted SKU category vocabulary, the same fitted warehouse category vocabulary and the same physical feature column order: full one-hot SKU_ID, full one-hot Warehouse_ID (all fitted levels retained), followed by the same twelve unscaled numerical engineered predictors. Under full 50-SKU / 5-warehouse training coverage, this gives 50 + 5 + 12 = **67 physical columns**. Native categorical handling is excluded from the primary comparison. Supportive Ridge/Random Forest may reuse this encoding; only Ridge standardises numerical predictors. Category vocabularies are fitted only on eligible training rows. IDs are nominal categories, never continuous measurements.
-
-`Date` supplies alignment/calendar construction; `Units_Sold` supplies past demand and outcome labels. The eleven other raw fields are excluded from the forecasting predictor matrix, including promotion, price and inventory variables. They may retain descriptive or downstream roles. A human-readable weekday label may be derived downstream; it is not a predictor.
-
-Raw weekday, weekday dummies, month/quarter and annual/holiday encodings, lag 28, medians, additional windows and unapproved composites are excluded. Exact formulas, ordering, exclusions and availability rules live in the feature specification. The earlier DR-003/Issue #52 catalogues and reviewed alternatives are superseded provenance, not active choices or an ablation plan.
+The [final feature/preprocessing contract](forecasting-feature-engineering.md) is the sole definition of the fourteen predictors, exact order/formulas, origin-time availability, complete 28-day history, common one-hot representation and training-only fitting. Identities supply pooled series context; cyclic weekday, lags, local level/dispersion and slope encode known calendar and past demand. Excluded calendars, promotion plans, inventory states and source forecasts are not reopened by final results.
 
 ## 7. Forecast horizon
 
-Under the human-approved forecasting design, the project evaluates four decision-support forecast horizons while retaining the approved daily SKU-warehouse analytical grain:
-
-- **1-day horizon** — immediate next-day demand for each SKU-warehouse series;
-- **7-day horizon** — cumulative demand over the next 7 days;
-- **14-day horizon** — cumulative demand over the next 14 days;
-- **28-day horizon** — cumulative demand over the next four weeks / approximately monthly planning, not an exact calendar month.
-
-These horizons are selected as project-specific planning horizons rather than universal retail replenishment rules.
-
-The external inventory literature supports periodic-review inventory systems in which stock is reviewed and replenishment decisions are made at defined review intervals, and it shows that review-period choice interacts with demand, supply variability, and lead time (Silver and Robb, 2008; Lee and Schwarz, 2009). In the verified project dataset, `Supplier_Lead_Time_Days` ranges from 2 to 14 days. The 1-, 7- and 14-day views cover immediate, weekly and lead-time-scale forecasting. Human review adds 28 days for four-week / approximately monthly planning, not an exact calendar month. Supplier lead time alone does not justify this addition. Downstream 28-day use remains subject to component-owner approval.
-
-The daily analytical grain and the forecast horizon are different concepts:
-
-```text
-analytical grain = one SKU + one warehouse + one day
-forecast horizon = how far ahead demand is predicted
-```
-
-A 7-day, 14-day or 28-day demand view must preserve the SKU-warehouse identity and the cumulative-demand meaning recorded in revised DR-004.
-
-[DR-008 — Multi-Step Forecasting Strategy](decisions/DR-008-multi-step-forecasting-strategy.md) selects **direct horizon-specific forecasting** as the primary strategy. Separate horizon targets are predicted directly from information available at the forecast origin:
-
-- 1-day next-day demand;
-- 7-day cumulative demand;
-- 14-day cumulative demand; and
-- 28-day cumulative demand.
-
-Earlier predictions are not fed into later horizon predictions. The 7-, 14- and 28-day cumulative outputs do not imply a daily forecast path. This alignment between training target, evaluation horizon, and downstream cumulative demand avoids recursive error propagation, but it is a project-specific choice rather than a claim that direct forecasting is universally superior.
+Approved direct targets cover 1/7/14/28 days from one origin. The 28-day quantity is four-week planning, not an exact month or supplier-specific lead time. [DR-004](decisions/DR-004-forecast-horizons.md) gives rationale; the [protocol](protocol.md#2-frozen-target-predictor-information-and-ordering) defines target meaning. Downstream h=28 use remains separately subject to component-owner/human approval.
 
 ## 8. Forecasting approach
 
-[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) supersedes the primary learned-model roles in DR-007, the single-boosting choice in DR-009 and the primary grids in DR-010. Their earlier bodies remain historical provenance.
-
-| Evidence role | Models | Purpose |
-|---|---|---|
-| Primary controlled RQ2 comparison | XGBoost Regressor, LightGBM Regressor, CatBoost Regressor | Compare boosting implementations under matched external settings. |
-| Supportive benchmarks | Ridge Regression, Random Forest Regressor | Linear and non-linear contextual reference evidence; excluded from determining the RQ2 answer. |
-| Simple forecast baselines | Naive, Seasonal Naive (period 7) | Retain DR-007's exact 1/7/14-day definitions; the frozen protocol records approved 28-day extensions. |
-
-The primary models share the dataset, Units_Sold target, SKU-warehouse-day grain, frozen predictor information and physical representation, eligible training/evaluation rows, horizons, four folds, metrics, canonical grid, search procedure and fixed seed 42. The principal experimental variable is the gradient-boosting implementation. Equal external settings do not imply identical internal tree-growing algorithms, model capacity, sampling draws or parameter effects. No model is presumed superior.
-
-### 8.1 Matched primary search
-
-| Canonical parameter | Values |
-|---|---|
-| learning_rate | [0.03, 0.05, 0.10] |
-| boosting_iterations | [100, 300] |
-| max_depth | [4, 8] |
-| subsample | [0.8, 1.0] |
-
-There are **24 configurations per primary model × horizon**, enumerated in deterministic Cartesian-product order. Four horizons × three models × 24 configurations × four folds = **1,152 planned primary validation fits**; this is workload planning, not executed evidence. Seed 42 is fixed and mapped to each API. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) specifies canonical configuration identities, API mappings, documented subsampling-enabling controls and numeric runtime controls resolved in the frozen protocol. Issue #65 is aligned and frozen; changed implementation and specific execution remain separately reviewed. Protocol approval and experiment execution remain separately gated. Record canonical and effective library parameters separately. No additional tuning dimension is approved.
-
-Each configuration uses the same four chronological folds. Mean fold WAPE is primary; fold stability and MAE/RMSE/Bias must also be reviewed separately by horizon. Search spaces must not adapt to results, and the final interval cannot inform selection. No random K-fold or cross-horizon composite is permitted.
-
-The frozen protocol owns the approved fixed supportive Ridge/Random Forest configurations and untuned baseline formulas. Historical 5/12 grids are not reused. Common primary representation and model APIs are implemented; PR #90 merged operational orchestration. Lifecycle and storage migration remain separate implementation work.
+RQ2 compares XGBoost, LightGBM and CatBoost under shared inputs, chronological populations and a matched external grid. Matching settings does not make internal tree algorithms, capacity or sampled rows identical. Ridge/Random Forest are fixed supportive references; Naive/Seasonal Naive are contextual baselines. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the approved roles/rationale; [protocol](protocol.md#7-matched-primary-grid-fixed-controls-and-deterministic-ordering) owns exact settings.
 
 ## 9. Validation design
 
-Use four expanding-window chronological folds, with one fixed forecast origin
-at the training cutoff for every SKU–warehouse and horizon. There is no updating
-with realised demand inside a validation window. All dates are inclusive and
-calendar-day counts precede feature warm-up and complete-target exclusions.
+Use expanding historical training and four fixed-origin 28-day windows, preserving chronological order. April high demand, July decline, October low demand and November–early December recovery provide broader observed temporal coverage than three folds. Four is a project-specific choice, not a statistically optimal or independent replication count. Increasing folds increases workload/selection exposure; it does not permit fitting on their future outcomes.
 
-| Fold | Training start | Training end / origin | Training days | Validation start | Validation end | Validation days |
-|---|---|---|---:|---|---|---:|
-| 1 | 2024-01-01 | 2024-03-31 | 91 | 2024-04-01 | 2024-04-28 | 28 |
-| 2 | 2024-01-01 | 2024-06-30 | 182 | 2024-07-01 | 2024-07-28 | 28 |
-| 3 | 2024-01-01 | 2024-09-30 | 274 | 2024-10-01 | 2024-10-28 | 28 |
-| 4 | 2024-01-01 | 2024-11-04 | 309 | 2024-11-05 | 2024-12-02 | 28 |
+The [protocol](protocol.md#3-temporal-boundaries) owns exact dates, target completeness, eligibility and fixed-origin behavior. Configurations/model choices were frozen before the final December 2-origin evaluation in [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md). No final-result-driven reselection is allowed.
 
-**Revised final evaluation:** 2024-12-03 to 2024-12-30 inclusive, 28 days;
-forecast origin 2024-12-02. No December 31 observation is invented.
-
-### Evidence and the three-fold alternative
-
-Historical EDA reports March/April means of 29.8834/29.8391, July 17.4084,
-September/October 10.1739/10.2708 and November 13.0807 units per native observation.
-The saved notebook's monthly/quarterly tables and retrospective daily chart
-support high levels, decline, low demand and recovery within this simulated year;
-they do not establish recurring annual seasonality or formal demand regimes.
-
-Three folds were considered and remain methodologically feasible: April high
-demand, July decline and October low demand. They omit separate recovery validation.
-**Four folds provide broader validation evidence across distinct observed temporal
-demand conditions while preserving expanding-window chronological evaluation.**
-The recovery-period evidence in November–early December was considered useful
-for this one-year dataset. November 5 is the latest complete 28-day placement
-before the revised final interval, not an EDA-established change point.
-
-Four is a project-specific human choice, not statistically optimal. Expanding
-folds share training history and are not independent replicates. More folds
-increase computational workload and validation-selection exposure; validation
-folds do not make models learn more patterns. Training length and evaluation
-conditions change together, so differences cannot automatically be attributed
-to demand conditions alone. Fold 3/4 origins are only 35 days apart, with seven
-unscored days between their validation windows.
-
-### Target completeness, warm-up and non-overlap
-
-At each cutoff, next-day and cumulative 7-, 14- and 28-day targets fit completely
-inside its 28-day evaluation window. In this project's selected fixed-origin
-protocol, a 28-day validation window is not treated as 28 forecast origins;
-one origin and one target per series/horizon are used.
-All training labels must end by their training cutoff. Features use only history
-available at the row's own origin; scalers/learned transformations fit only training
-rows. Never use realised future demand or target labels as predictors.
-
-The four validation windows do not overlap each other or the revised final interval.
-Earlier validation outcomes may enter later training only once historical to the
-later cutoff. Unscored gaps may enter later training; no final-evaluation observations
-may enter fitting or subsequent selection. Missing/incomplete outcomes remain
-unavailable, not zero, shortened labels or reasons to borrow later dates.
-
-A 28-day feature warm-up is feasible even in the initial 91-day history. With a
-complete 28-day look-back and horizon h, eligibility is N − 28 − h + 1 rows per
-series before other exclusions: 63/57/50/36 for h=1/7/14/28 in fold 1. This is
-feasibility, not a guarantee of model adequacy. The frozen feature contract requires this complete 28-day history for every learned model and horizon.
-
-### Final-evaluation provenance and protection
-
-The revised 28-day final evaluation window is reserved from all subsequent
-feature, model and hyperparameter decisions and fitting. However, December 3–16
-had prior validation exposure under the earlier 14-day methodology, so the revised
-window is not fully unseen from the historical research process. Full-year
-historical EDA also inspected those dates. Final forecasting results must not feed
-back into selection, and this prior exposure must be disclosed in reporting.
-
-The September 22 boundaries are retained as historical provenance in DR-005; the earlier Issue #52 protocol and results are not the revised study baseline.
+Selected validation predictions are out of sample for fitting but participated in configuration selection. The December 3–30 final interval is reserved from subsequent decisions, not historically fully unseen: December 3–16 had prior validation exposure and full-year EDA inspected it. The first final execution also revealed outcomes before failing integrity completion; the corrected run kept the frozen scope. [Final results](forecasting-final-evaluation.md#9-limitations) carries these disclosures.
 
 ## 10. Approved forecasting metrics and model-selection policy
 
-[DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md) selects **Weighted Absolute Percentage Error (WAPE)** as the primary forecasting model-selection metric. Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and Forecast Bias / Mean Forecast Error are supporting metrics that must be reviewed before final selection.
+WAPE is the primary horizon-specific comparison/selection metric; MAE, RMSE and signed Bias support interpretation. WAPE expresses aggregate absolute error relative to aggregate actual demand and avoids per-observation percentage division, but a zero aggregate denominator remains undefined and low totals affect its interpretation. MAPE is not a primary metric because zero/low demand makes it unstable.
 
-For the equations below:
+[Protocol](protocol.md#8-metric-formulas-and-aggregation) owns formulas, zero-denominator status and arithmetic four-fold means. Do not pool/weight fold metrics or build a cross-horizon composite. Within-model exact ties retain all IDs with a deterministic administrative representative; primary-model ties stay ties. No significance procedure, near-tie tolerance or universal stability threshold is defined.
 
-- $y_i$ is actual demand;
-- $\hat{y}_i$ is forecast demand; and
-- $n$ is the number of observations.
-
-### Mean Absolute Error (MAE)
-
-$$
-\mathrm{MAE} =
-\frac{1}{n}
-\sum_{i=1}^{n}
-\left|y_i-\hat{y}_i\right|
-$$
-
-### Root Mean Squared Error (RMSE)
-
-$$
-\mathrm{RMSE} =
-\sqrt{
-\frac{1}{n}
-\sum_{i=1}^{n}
-\left(y_i-\hat{y}_i\right)^2
-}
-$$
-
-### Weighted Absolute Percentage Error (WAPE)
-
-$$
-\mathrm{WAPE} =
-\frac{
-\sum_{i=1}^{n}
-\left|y_i-\hat{y}_i\right|
-}{
-\sum_{i=1}^{n}
-\left|y_i\right|
-}
-$$
-
-### Forecast Bias / Mean Forecast Error
-
-$$
-\mathrm{Bias} =
-\frac{1}{n}
-\sum_{i=1}^{n}
-\left(\hat{y}_i-y_i\right)
-$$
-
-### Metric roles and interpretation
-
-| Metric | What it measures | Ideal / best value | Better direction | Role in this research |
-| --- | --- | ---: | --- | --- |
-| MAE | Average absolute forecast error in demand units. | 0 | Lower is better. | Supporting measure of typical error magnitude. |
-| RMSE | Square-root of the average squared error; larger errors receive more weight because errors are squared. | 0 | Lower is better. | Supporting measure that highlights relatively large errors. |
-| WAPE | Total absolute error relative to total absolute actual demand. | 0 or 0% | Lower is better. | Primary model-comparison and selection metric. |
-| Bias | Average signed error, calculated as forecast minus actual demand. | 0 | Closer to 0 is better. | Supporting measure of systematic overforecasting or underforecasting. |
-
-Positive bias indicates systematic overforecasting, while negative bias indicates systematic underforecasting. A value near zero indicates little net directional error, but positive and negative errors can cancel, so bias must not be interpreted alone.
-
-### Why WAPE is primary
-
-MAE and RMSE are scale-dependent and remain expressed in demand units. Because SKU-warehouse series may operate at different demand scales, WAPE provides a clearer main relative comparison by normalising total absolute error against total actual demand.
-
-This choice is specific to the approved project design. It does not establish that WAPE is universally superior for every forecasting problem, and no universal quality bands such as “WAPE below 10% is good” are adopted. Model quality must be judged relative to the same baseline models, folds, horizons, and evaluation design. WAPE is undefined when the sum of absolute actual demand is zero; any such case must be reported explicitly rather than silently divided by zero.
-
-### Fold and horizon evaluation policy
-
-Every candidate model must be evaluated on the same four DR-005 validation folds for each horizon included in the current methodology at execution time. For each model and each horizon independently:
-
-1. calculate MAE, RMSE, WAPE, and Bias separately for every fold;
-2. calculate the arithmetic mean of each metric across the four folds;
-3. use mean WAPE across folds as the primary model-selection statistic; and
-4. review supporting mean MAE, RMSE, and Bias together with the individual fold results.
-
-Comparisons are made separately for each horizon included in the current methodology at execution time. Metrics must not be averaged or weighted across the 1-day, 7-day, 14-day, and 28-day horizons into one overall score.
-
-The selected model will be the candidate with the lowest mean WAPE across the validation folds included in the current methodology at execution time for the relevant horizon, subject to acceptable fold-to-fold stability and supporting-metric review. Selection must not be based on one fold alone. A candidate with low mean WAPE but highly unstable fold results must be discussed rather than automatically described as robust. No arbitrary numerical stability threshold is introduced by this decision.
-
-Results from the revised final evaluation interval are used only after model selection and must not be used to revise the selected model, features, hyperparameters, metric policy, or other selection decisions.
-
-### Mean Absolute Percentage Error (MAPE)
-
-MAPE is not part of the primary approved model-selection policy. It may be reported only as an optional supplementary metric with appropriate safeguards where actual demand is zero or near zero.
+The approved [DR-014 freeze](decisions/DR-014-forecasting-selection-and-final-refit.md) and [final report](forecasting-final-evaluation.md) supply the completed model decision and performance progression. Forecasting errors do not establish inventory-risk or replenishment effectiveness.
 
 ## 11. Secondary forecasting hypothesis
 
@@ -435,4 +216,4 @@ Important threats include:
 - model and inventory thresholds may be sensitive to the chosen evaluation period;
 - performance on the simulated dataset does not establish production effectiveness in a real company.
 
-These limitations must be considered in method selection and conclusions.
+Additional forecasting-specific threats include prior final-period validation/EDA exposure, the failed first final execution after outcome access, dependent histories/overlapping labels, selection-conditioned validation evidence and the single final origin. No formal significance test was performed. These limitations remain explicit in [final evaluation](forecasting-final-evaluation.md#9-limitations).

@@ -2,68 +2,13 @@
 
 **Date:** 2026-10-03 (Asia/Colombo)
 
-**Status:** Scientific freeze and refit policy approved under Issue #130; Phase 1
-merged in PR #133 and accepted under Issue #131. Historical-only preflight passed
-on 2026-10-03. The real final run `final-20261003-01` executed once, revealed
-reserved outcomes and failed during final replay verification. PR #141 corrected
-the verified replay-layout defect. The owner explicitly authorized
-`final-20261003-02` as a defect-correction rerun on 2026-10-03, with unchanged
-scientific scope. Revised execution controls and its local authorization are
-prepared for review; the corrected run has not been executed.
+**Status:** Owner-approved scientific freeze and final-refit policy; retained validation and corrected final evaluation completed and integrity verified, as confirmed by the owner under Issue #131. This documentation cleanup changes no decision content.
 
 **Owner:** Chathuranga — forecasting methodology and output meaning.
 
-**Related issue:** [#130 — Phase 1: Freeze forecasting decisions and implement final evaluation](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/130)
+**Related issues:** [#130](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/130) (freeze/refit approval) and [#131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131) (final evaluation and repository refinement).
 
-**Approval provenance:** The project owner's explicit Issue #130 instruction dated
-2026-10-03, beginning "Proceed with Issue #130 Phase 1 implementation", approves
-the separate final-evaluation architecture, confirms the exact research scope,
-and supplies the frozen configurations, producer mapping and final refit policy
-below. The same instruction requires documentation review before runtime code
-and forbids real final evaluation, commits and pushes. This record documents
-that human instruction; it does not supply implementation acceptance or execution
-permission. No separate supervisor/group approval is asserted. Any required
-supervisor confirmation remains a human/team responsibility.
-
-**Subsequent review provenance — 2026-10-03:** The owner explicitly approved
-Documentation Step 1 under Issue #130. Phase 1 was then merged through
-[PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133).
-In the subsequent explicit Issue #131 instruction, the owner accepted the
-implemented final-evaluation runtime and recorded test/integrity evidence as
-conforming to the approved DR-014 scope, refit/preprocessing policy, frozen
-28-candidate scope, producer mapping and predict-before-reveal protections.
-This acceptance establishes implementation readiness only, not final-run
-authorization. This approving instruction was supplied in the owner-agent conversation;
-it is not asserted to be a GitHub Issue comment or an additional supervisor/group
-approval. A separate explicit one-time final-run authorization is still required
-under [Issue #131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131).
-
-## Execution-governance amendment — Issue #131 / 2026-10-03
-
-The owner's explicit Issue #131 instruction in the owner-agent conversation,
-beginning "Yes. Explicitly authorize the corrected final evaluation rerun",
-authorizes `final-20261003-02` following the verified implementation defect in
-`final-20261003-01`. The owner subsequently approved implementation of these
-scoped governance changes. This is human authority, not an AI-generated approval,
-a GitHub approval comment or a separate supervisor/group approval.
-
-Result-driven retries, model search, retuning, reselection, candidate substitution
-and scientific methodology changes remain prohibited. A corrected rerun caused
-solely by a verified implementation/execution defect is permitted only after the
-defect is fixed, with a new explicitly approved run ID, unused storage and the
-same frozen scientific scope. There is no automatic retry or resume. Preserve the
-failed run, its predictions, observations, metrics, status and diagnostics exactly.
-Reports must disclose the failed execution, correction and prior outcome exposure.
-This authorizes only `final-20261003-02`; no further run is authorized automatically.
-
-Source hashes, Git commit identities and implementation fingerprints are
-provenance metadata only. They do not grant, revoke or bind execution permission.
-Explicit human approval, reviewed scientific-document bindings, exact scope,
-validation evidence, historical input identity, pinned environment, chronology
-and overwrite protection remain execution controls. Recorded model/evidence
-hashes still enforce artifact integrity; this amendment does not relax them.
-The frozen tables, targets, features, configurations, seeds, metrics, temporal
-policy, validation anchor and producer mapping below remain unchanged.
+**Approval provenance:** The owner's explicit 2026-10-03 Issue #130 instruction approved the scientific scope, configurations, producer mapping and fresh-refit policy below. Documentation Step 1 and the separate runtime were subsequently accepted by the owner under Issue #131. The owner separately authorized corrected final run final-20261003-02 after a verified implementation defect in final-20261003-01. These approvals were supplied in the owner-agent conversation; no additional GitHub comment, supervisor or group approval is asserted.
 
 ## Context and evidence binding
 
@@ -97,7 +42,7 @@ The SHA-256 of the inspected manifest bytes is:
 The manifest records passed integrity checks for 1,216 evaluations, 304,000
 predictions, 304 configuration summaries and 1,184 model replays. These are
 retained completion claims, not a new verification or research run performed
-while drafting this record. Future final authorization must bind this exact
+while drafting this record. Any separately authorized final run must bind this exact
 manifest hash and successfully verify the completed validation bundle.
 Missing, changed or unverifiable evidence blocks final consumption; never
 refresh this anchor automatically or regenerate evidence under the original ID.
@@ -196,8 +141,7 @@ approvals, including any required 28-day inventory use approval, remain separate
    evidence. Publish no successful completion. Do not retry automatically,
    replace a failed candidate, or use scores to debug, retune or choose another
    candidate. Only a verified implementation/execution defect may support a
-   separately approved corrected rerun after its fix, under the execution-governance
-   amendment above; never resume or overwrite the failed run.
+   separately approved corrected rerun after its fix, under the separate explicit defect-correction approval; never resume or overwrite the failed run.
 10. Final-model handoff must identify each fresh model, fitted preprocessing,
     origin inputs, model/configuration/horizon, training population, hashes and
     provenance. A completed final bundle is evaluation evidence; downstream
@@ -227,26 +171,6 @@ effectiveness in a real retailer.
 
 ## Impact and remaining human controls
 
-The existing validation runner, folds, features, targets, metrics, 24-configuration
-primary grid, selection rules and completed evidence remain unchanged.
-Implementation uses a separate final-evaluation path and a separate
-`final_artifacts.py` persistence/integrity boundary, reusing shared scientific
-functions where appropriate. Validation is not routed through model-ready exports.
+The scientific freeze, validation evidence anchor, targets, features, grid, metrics, seeds and producer mapping are unchanged. Validation and final evaluation use separate persistence/integrity paths. [Runner operations](../forecasting-runner.md) owns execution controls; [final results](../forecasting-final-evaluation.md) owns current interpretation and disclosure of prior outcome exposure.
 
-The [final-evaluation guide](../forecasting-final-evaluation.md) documents the
-runtime ordering and revised execution controls. Scientific approval,
-implementation acceptance, historical-only preflight and exact specific-run
-authorization remain distinct. The historical-only preflight passed on 2026-10-03
-with outcome `READY FOR AUTHORIZATION PREPARATION`; retained validation,
-environment/dependency and historical eligibility/origin/baseline checks passed.
-No estimator was fitted or reserved outcome decoded during that preflight.
-
-Subsequently, `final-20261003-01` executed once and accessed reserved outcomes.
-It remains a failed historical run following the replay-verifier implementation
-defect corrected in [PR #141](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/141).
-The owner has explicitly authorized `final-20261003-02` as the corrected rerun.
-Its authorization must match the reviewed scientific-document bytes and retained
-evidence; implementation hashes and Git identity are recorded only as provenance.
-These changes fit no model, read no reserved outcomes and execute no final run.
-Review of the revised implementation/documentation precedes the owner's manual
-execution. Downstream acceptance and research-report review remain separate.
+The earlier final run accessed outcomes before failing integrity completion. The corrected run retained the exact frozen 28-evaluation scope. Preserve both historical bundles and their recorded hashes; do not resume, overwrite or refresh an authorization/evidence record. A document or completed run does not authorize another experiment. Final-result-driven reselection remains prohibited. Downstream handoff acceptance, component approvals and human review of this consolidated narrative remain separate.

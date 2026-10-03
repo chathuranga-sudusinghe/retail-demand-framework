@@ -1,11 +1,5 @@
 # COMP1884 Group Project Overview
 
-Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
-
-> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
-
-> **Current documentation alignment — Issue #94:** The current human-approved forecasting design uses 1/7/14/28-day outputs and the [frozen feature contract](forecasting-feature-engineering.md). The frozen protocol resolves the 28-day baseline formulas. [Revision and provenance](forecasting-methodology-revision.md) distinguishes the frozen/approved protocol from accepted Issue #89 implementation, run-specific authorization and separate downstream/component approvals. No experiment execution or separate supervisor approval is asserted.
-
 ## 1. Project identity
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
@@ -48,26 +42,19 @@ To investigate how data-driven demand forecasting can be integrated with invento
 - **RQ3:** How can forecasting outputs and inventory-state variables be combined to identify stockout, overstock, and replenishment risks?
 - **RQ4:** How can uncertainty, transparency, governance, and human oversight guide the responsible use of the resulting decision-support outputs?
 
-### RQ2-specific hypothesis
+Research hypotheses, rationale and inference boundaries are defined in [research design](research-design.md); exact forecasting methods are in the [protocol](protocol.md).
 
-**H0_RQ2:** Under the matched experimental conditions, XGBoost, LightGBM, and CatBoost show comparable demand-forecasting performance across the evaluated horizons.
+## 8. Integrated system architecture
 
-**H1_RQ2:** Under the matched experimental conditions, demand-forecasting performance differs among XGBoost, LightGBM, and CatBoost across the evaluated horizons.
+~~~text
+Local source -> shared validation/preparation
+  -> demand forecasting at SKU–warehouse–day grain
+  -> origin-aligned inventory-risk/replenishment analysis
+  -> responsible decision-support record
+  -> shared API delivery, approved visuals and prototype
+~~~
 
-These are comparative research hypotheses, not statistical-significance hypotheses. Interpret RQ2 descriptively and comparatively for each horizon: compare arithmetic mean WAPE across the four temporal folds, inspect all four fold-level results, and discuss magnitude, direction, fold consistency and supporting MAE, RMSE and Bias. Clearly defined relative differences may also be reported. No significance procedure or universal numerical decision threshold is approved; the folds are not independent experimental replicates. A small aggregate difference driven mainly by one fold is not strong evidence of a general performance difference. Do not mechanically accept/reject H0_RQ2 using an arbitrary threshold or create a cross-horizon composite/overall winner; report any horizon-dependent model ordering. See [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md).
-
-## 8. Research contribution
-
-The contribution is not simply to find the forecasting model with the lowest error. The primary forecasting grain has been fixed by DR-002 as `SKU_ID + Warehouse_ID + Date`, preserving the warehouse-specific context required by downstream inventory analysis. The group product will connect:
-
-```text
-Historical supply-chain data
-    -> demand forecasting
-    -> forecast error / uncertainty
-    -> inventory-state and replenishment analysis
-    -> inventory-risk / replenishment output
-    -> responsible decision support
-```
+[Shared data foundation](workflows/shared-data-foundation.md) connects component representations. [Integration readiness](integration-contract-readiness.md) distinguishes completed forecasting evidence from prospective exports and unresolved downstream contracts. Forecast error is retrospective evaluation evidence; an uncertainty method is a separate decision and cannot be inferred from it.
 
 ## 9. Shared product
 
@@ -131,20 +118,7 @@ Integration may use each reviewed output as it becomes available; the implementa
 
 ## 12. Dataset
 
-The selected source is the **High-Dimensional Supply Chain Inventory Dataset** on Kaggle. It is a simulated dataset designed to represent daily SKU-level supply-chain operations.
-
-The source contains sales, inventory levels, supplier lead times, reorder points, replenishment quantities, promotions, stockout indicators, costs/prices, and a source-provided demand-forecast field.
-
-The project will build its own forecast from historical sales using `Units_Sold` as the target at the approved `SKU_ID + Warehouse_ID + Date` grain. The source-provided `Demand_Forecast` must not be used in a way that causes target leakage. `Stockout_Flag` is zero-variance and cannot be used as a stockout target or validation label.
-
-See:
-
-- `docs/dataset.md`
-- `docs/decisions/DR-001-dataset-selection.md`
-- `docs/decisions/DR-002-forecasting-analytical-unit.md`
-- `reports/temporal-demand-profile.md`
-- `docs/literature/literature-review.md`
-- `docs/references.md`
+The simulated High-Dimensional Supply Chain Inventory Dataset supplies historical sales and inventory context. [Dataset identity/schema/limitations](dataset.md) owns its field meanings and quality profile. Forecasting uses historical Units_Sold; Stockout_Flag is zero-variance and cannot validate stockout predictions. Source Demand_Forecast is excluded from normal forecasting features/targets.
 
 ## 13. Scope
 
@@ -178,3 +152,9 @@ performance within the simulated dataset
 !=
 proven performance in a real retailer
 ```
+
+## 15. Current delivery state
+
+Forecasting preparation, training/development, validation, freeze, final evaluation and integrity verification are complete as confirmed by the owner. The [final report](forecasting-final-evaluation.md) links unchanged numerical evidence and the [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) producer mapping. Final ordering does not change that mapping.
+
+The integrated group product remains in progress. Inventory-risk/replenishment, responsible decision-support semantics, approved uncertainty/human-review logic and prospective API/export acceptance require their component owners' work and review. This overview does not approve unresolved DR-012 or 28-day downstream use.

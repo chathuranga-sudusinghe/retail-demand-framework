@@ -1,17 +1,12 @@
 # Research and Project Progress Log
 
-**Status:** Retained validation and historical-only preflight milestones are
-recorded. The first real final execution `final-20261003-01` failed during replay
-verification after outcome access. PR #141 corrected the verified defect. The
-owner explicitly authorized corrected run `final-20261003-02` on 2026-10-03, with
-unchanged scientific scope; it has not been executed. Execution-control changes
-and its local authorization are prepared for review.
+**Current status:** Forecasting research, retained validation and corrected final evaluation are complete; integrity verification is confirmed by the owner. Entries below are dated administrative history, not current execution instructions or a second methods/results authority. Current interpretation is in [final evaluation](forecasting-final-evaluation.md).
 
 ## Purpose and boundaries
 
 Maintain a lightweight chronological record of material research discussions, member changes, implementation milestones, Issue/Pull Request progress, experiment/validation events, blockers and next actions. Record what happened and link the evidence; do not make this a second source of research decisions or an automatically generated activity feed.
 
-[Meeting records](meetings/README.md) own meeting details. [Decision Records](decisions/README.md) own formal decisions/rationale and approval status. [Research briefs](research/) retain component research discussion, [collaboration workflow](collaboration-workflow.md) owns contribution/review procedure, [reports](../reports/README.md) own reviewed findings, and [methodology revision](forecasting-methodology-revision.md) owns forecasting historical boundaries. Issue #92's [lifecycle](workflows/shared-data-foundation.md) and [storage policy](artifact-storage-policy.md) remain authoritative. Entries link those records rather than copying them.
+[Meeting records](meetings/README.md) own meeting details. [Decision Records](decisions/README.md) own formal decisions/rationale and approval status. [Research briefs](research/) retain component research discussion, [collaboration workflow](../CONTRIBUTING.md) owns contribution/review procedure, [reports](../reports/README.md) own reviewed findings, and [final results and limitations](forecasting-final-evaluation.md#9-limitations) owns forecasting historical boundaries. Issue #92's [lifecycle](workflows/shared-data-foundation.md) and [storage policy](artifact-storage-policy.md) remain authoritative. Entries link those records rather than copying them.
 
 ## Recording rules
 
@@ -20,7 +15,7 @@ Maintain a lightweight chronological record of material research discussions, me
 - Record discussions/proposals as such. Distinguish implemented, validated, reviewed, approved, merged and blocked states using evidence. A planned fit budget is not an executed experiment; a passing test is not a research result or approval.
 - Cite the Issue/PR URL, meeting, Decision Record, report or exact run/completion evidence supporting the entry. Human approval claims need the actual approving reference; an AI summary or this log alone cannot authorize anything.
 - Record member/role changes only with explicit human approval and link the governing membership/ownership update. Do not silently alter component responsibilities.
-- For experiments, record exact run ID/stage, authorization reference, completion/failure status and evidence/report links. Do not insert dataset records, credentials, full logs or model payloads. Execution remains subject to protocol gates.
+- For experiments, record exact run ID/stage, authorization reference, completion/failure status and evidence/report links. Do not insert dataset records, credentials, full logs or model payloads. Execution remains subject to the protocol’s specific run authorization requirements.
 - Backfill history only from explicit evidence. Distinguish retrospective recording from a contemporaneous entry; identify gaps without reconstructing undocumented discussions. Do not backdate later decisions into earlier meetings.
 - Correct factual mistakes with a dated correction linked to the affected entry; keep the earlier record traceable. Later status changes receive a new dated update rather than silently rewriting history.
 
@@ -71,7 +66,7 @@ The following is a template, not an event:
 
 - Recorded: 2026-10-03; component owner: Chathuranga.
 - Type/status: final execution and implementation correction; `final-20261003-01` remains `failed`, with no completion manifest.
-- Event/outcome: the owner ran the frozen 28 evaluations once; reserved outcomes were accessed. Final verification failed because replay omitted the C-contiguous matrix copy used during original prediction.
+- Event/outcome: the owner ran the frozen 28 evaluations once; reserved outcomes were accessed. Final integrity verification failed because of a verified replay implementation defect.
 - Evidence: owner-supplied Issue #131 execution/error report; retained [diagnostics](../artifacts/forecasting/final-20261003-01/diagnostics.json); [PR #141](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/141). The read-only investigation found exact replay of all twenty saved learned models with matching layout and reconciliation of all 28 retained metric records.
 - Boundaries: preserve the failed artifact/model/draft bundle exactly. This entry claims no completed final run, recovery promotion or newly executed experiment.
 
@@ -79,7 +74,22 @@ The following is a template, not an event:
 
 - Recorded: 2026-10-03; component owner: Chathuranga.
 - Type/status: owner execution-governance decision; exact run `final-20261003-02` explicitly authorized, not yet executed.
-- Approval reference: the owner's Issue #131 instruction in the owner-agent conversation beginning "Yes. Explicitly authorize the corrected final evaluation rerun", followed by approval to implement the scoped changes on `research/issue-131-corrected-final-run`. See [DR-014 execution-governance amendment](decisions/DR-014-forecasting-selection-and-final-refit.md#execution-governance-amendment--issue-131--2026-10-03).
+- Approval reference: the owner's Issue #131 instruction in the owner-agent conversation beginning "Yes. Explicitly authorize the corrected final evaluation rerun", followed by approval to implement the scoped changes on `research/issue-131-corrected-final-run`. See [DR-014 approval provenance](decisions/DR-014-forecasting-selection-and-final-refit.md).
 - Decision: a corrected rerun caused solely by a verified implementation/execution defect may proceed after its fix, with unchanged scientific scope, a new explicitly approved ID and unused storage. Result-driven retries, search, retuning, reselection, substitution and methodology changes remain prohibited.
 - Controls: source/Git/implementation hashes record provenance only; scientific-document, data, scope, pinned-runtime, predict-before-reveal, artifact-integrity and overwrite safeguards remain enforced.
 - Next action: review the revised controls, documentation and local authorization, then the owner manually executes the corrected run. Preserve/disclose the first failed execution and prior outcome exposure; downstream and research-report acceptance remain separate.
+
+### 2026-10-03 — Corrected final evaluation completed
+
+- Recorded retrospectively: 2026-10-04; component owner: Chathuranga.
+- Type/status: forecasting completion milestone; the owner confirms preparation/development, validation, freeze, final evaluation and final integrity verification are complete.
+- Evidence: [validation comparison](../reports/forecasting/validation-20261002-01/comparison.md), [final-20261003-02 comparison](../reports/forecasting/final-20261003-02/comparison.md), [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md).
+- Authority: explicit owner instructions supplied for Issue #131 final repository refinement; no new experiment, ignored-outcome access or bundle verification is performed by this entry.
+- Boundaries: corrected final scope and producer mapping stayed frozen; first-run outcome exposure remains disclosed. Downstream and prospective handoff decisions stay separate.
+
+### 2026-10-04 — Final documentation consolidation prepared for review
+
+- Type/status: documentation maintenance under Issue #131; uncommitted review draft.
+- Outcome: canonical methods/features/operations/results/storage and contribution ownership consolidated; redundant temporary guides retired after preserving material caveats and contributor guidance.
+- Evidence: [final report](forecasting-final-evaluation.md), [protocol](protocol.md), [feature contract](forecasting-feature-engineering.md), [runner](forecasting-runner.md), [CONTRIBUTING](../CONTRIBUTING.md).
+- Review/next action: owner review of the documentation and compatibility-check handoff before any commit/push. No scientific decision, execution or Git finalization is authorized by this entry.
