@@ -1,6 +1,6 @@
 # Forecasting runner — Issue #89 orchestration
 
-The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #111 implements Phase 5 run storage; Issue #116 documents that contract. Phase 1 final runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight and exact one-time final-run authorization remain pending; final evaluation has not been executed. No new experiment or reserved-outcome access is authorized. Selective retention/pruning is deferred to Phase 6.
+The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #111 implements Phase 5 run storage; Issue #116 documents that contract. Phase 1 final runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization remains pending; final evaluation has not been executed. No new experiment or reserved-outcome access is authorized. Selective retention/pruning is deferred to Phase 6.
 
 ## Existing entrypoint — explicit run authorization required
 
@@ -259,15 +259,18 @@ The validation entrypoint, including `--stage final_evaluation`, stays blocked.
 owner-approved scientific freeze, 28-candidate scope, separate producer mapping
 and fresh estimator/preprocessing refit policy. PR #133 merged the separate final
 runtime; the owner explicitly accepted implementation readiness under Issue #131
-on 2026-10-03. Historical-only preflight and exact one-time final-run authorization
-remain pending. Final evaluation has not been executed.
+on 2026-10-03. Historical-only preflight completed successfully on 2026-10-03:
+`READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization
+remains pending. No real `final_authorization.json` exists, no final-run bindings
+are frozen, and no reserved-final outcomes were accessed. Final evaluation has
+not been executed.
 
 The implemented argument-free command is `python -m src.forecasting.final_evaluation`;
 it reads `data/processed/forecasting/final_authorization.json`. This is the real
 evaluation command, not a preflight or validation command. Do not create that
 record or execute the command without separate explicit one-time authorization.
-Complete documentation/status review and historical-only preflight before
-calculating or freezing final-run authorization bindings.
+Exact final-run authorization bindings must be recalculated only after this
+preflight-status update is reviewed and merged.
 The [final-evaluation guide](forecasting-final-evaluation.md) documents ordering,
 record requirements and storage. Consume completed final evidence with
 `src.forecasting.final_artifacts.verify_final_completed` at its artifact anchor;
