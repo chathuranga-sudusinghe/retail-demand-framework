@@ -5,8 +5,11 @@
 **Status:** Scientific freeze and refit policy approved by the project owner under
 Issue #130; Documentation Step 1 approved. Phase 1 runtime merged in PR #133 and
 explicitly accepted by the owner under Issue #131 on 2026-10-03. Historical-only
-preflight and exact one-time final-run authorization remain pending. Final
-evaluation has not been executed. Implementation acceptance establishes readiness
+preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`.
+Exact one-time final-run authorization remains pending. No real
+`final_authorization.json` exists, final-run bindings are not frozen, and no
+reserved-final outcomes were accessed. Final evaluation has not been executed.
+Implementation acceptance establishes readiness
 only; it grants no authorization-record creation, reserved-outcome access or run
 execution.
 
@@ -204,7 +207,14 @@ functions where appropriate. Validation is not routed through model-ready export
 The [final-evaluation guide](../forecasting-final-evaluation.md) documents the
 merged and accepted runtime ordering and authorization requirements. Scientific
 approval, merged implementation, implementation acceptance, historical-only
-preflight and exact one-time final-run authorization remain distinct. Preflight
-and specific final-run authorization are pending; final evaluation has not been
-executed. These status corrections create no authorization record, calculate or
-freeze no final-run bindings and execute no experiment.
+preflight and exact one-time final-run authorization remain distinct. The Issue #131
+historical-only preflight completed successfully on 2026-10-03 with outcome
+`READY FOR AUTHORIZATION PREPARATION`; specific final-run authorization remains
+pending. Retained validation verification, environment/dependency matching and
+historical eligibility/origin/baseline checks passed. The frozen 28-candidate
+scope and producer mapping remained unchanged. No estimator was fitted or
+reserved-final outcome accessed. Final evaluation has not been executed.
+Exact final-run authorization bindings must be recalculated only after this
+preflight-status update is reviewed and merged. These corrections create no
+authorization record, calculate or freeze no final-run bindings and execute no
+experiment.

@@ -1,9 +1,10 @@
 # Research and Project Progress Log
 
 **Status:** Merged Issue #93 progress-log authority; evidence-backed forecasting
-validation and implementation-readiness milestones recorded on 2026-10-03. Final
-preflight and exact one-time authorization remain pending; final evaluation has
-not been executed.
+validation and implementation-readiness milestones recorded on 2026-10-03.
+Historical-only preflight completed successfully on 2026-10-03:
+`READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization
+remains pending; final evaluation has not been executed.
 
 ## Purpose and boundaries
 
@@ -55,3 +56,12 @@ The following is a template, not an event:
 - Scientific approval: the owner approved DR-014 scope/refit policy and Documentation Step 1 under Issue #130; configurations and the separate producer mapping remain unchanged.
 - Implementation acceptance: the owner's explicit Issue #131 instruction in the owner-agent conversation accepts the merged runtime and its recorded evidence as conforming to DR-014. [DR-014 subsequent-review provenance](decisions/DR-014-forecasting-selection-and-final-refit.md) records that reference; this is implementation readiness only, not final-run authorization. No GitHub approval comment or additional supervisor/group approval is asserted.
 - Blocker/next action: review the [Issue #131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131) documentation/status corrections, then separately proceed with historical-only preflight. Exact one-time final-run authorization remains pending; no real authorization record or final-run bindings are created/frozen by this update, no reserved outcomes are accessed, and final evaluation has not been executed.
+
+### 2026-10-03 — Historical-only final-evaluation preflight completed
+
+- Recorded: 2026-10-03; component owner: Chathuranga.
+- Type/status: preflight milestone; completed successfully with outcome `READY FOR AUTHORIZATION PREPARATION`.
+- Evidence: the read-only [Issue #131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131) preflight result in the owner-agent conversation, subsequently confirmed by the owner's explicit status-update instruction. The checkout was clean at [PR #139](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/139) merge commit `13e11d6648f56e5f5140950896f0f8c29a4d557f`.
+- Checks: retained `validation-20261002-01` verification passed; environment/dependencies matched; proposed final-run storage was unused; historical eligibility, origin and baseline checks passed. The frozen 28-candidate scope and [DR-014 producer mapping](decisions/DR-014-forecasting-selection-and-final-refit.md) remained unchanged.
+- Boundaries: no estimator was fitted, no reserved-final outcomes were accessed, no real `final_authorization.json` exists, no final-run bindings are frozen, and final evaluation has not been executed. This milestone is not one-time final-run authorization.
+- Next action: review and merge this preflight-status update before recalculating exact final-run authorization bindings. Proposed run ID `final-20261003-01` remains unauthorized; exact one-time final-run authorization is still pending.

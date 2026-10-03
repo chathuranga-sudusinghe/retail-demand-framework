@@ -47,8 +47,12 @@ Do not modify immutable machine evidence to match prose. Correct the report tran
 ## Final-evaluation evidence — Issues #130/#131
 
 The separate final runtime merged in PR #133 has explicit owner implementation
-acceptance under Issue #131. Historical-only preflight and exact one-time final-run
-authorization are pending; final evaluation has not been executed.
+acceptance under Issue #131. Historical-only preflight completed successfully on
+2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run
+authorization remains pending. No real `final_authorization.json` exists, no
+final-run bindings are frozen, and no reserved-final outcomes were accessed.
+Final evaluation has not been executed. Exact final-run authorization bindings
+must be recalculated only after this preflight-status update is reviewed and merged.
 [DR-014](../docs/decisions/DR-014-forecasting-selection-and-final-refit.md) records
 the approved scientific scope and acceptance provenance.
 

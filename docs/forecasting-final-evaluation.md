@@ -2,10 +2,13 @@
 
 **Status — 2026-10-03 / Issue #131:** DR-014 scientific freeze/refit policy and
 Documentation Step 1 are owner-approved. Phase 1 runtime is merged in PR #133 and
-explicitly accepted by the owner under Issue #131. Historical-only preflight and
-exact one-time final-run authorization are pending; final evaluation has not been
-executed. No real authorization-record creation, reserved-outcome access or final
-run execution is authorized.
+explicitly accepted by the owner under Issue #131. Historical-only preflight
+completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`.
+Exact one-time final-run authorization remains pending. No real
+`final_authorization.json` exists, final-run bindings are not frozen, and no
+reserved-final outcomes were accessed. Final evaluation has not been executed.
+No real authorization-record creation, reserved-outcome access or final run
+execution is authorized.
 
 [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the
 owner-supplied human freeze, exact candidate scope, separate producer mapping and
@@ -43,13 +46,21 @@ Issue #130. PR #133 merged the Phase 1 runtime; the owner explicitly accepted th
 implementation and its recorded test/integrity evidence under Issue #131 on
 2026-10-03. That acceptance confirms implementation readiness only.
 
-Historical-only preflight remains pending: verify retained completed validation
-evidence, environment and unused storage, then check historical provenance,
-horizon-specific eligible populations and origin/baseline completeness using only
-history through December 2, without estimator fitting or reserved-outcome access.
-Preflight does not authorize a final run. Complete and review all required
-documentation/status corrections before calculating or freezing any final-run
-authorization bindings.
+The Issue #131 historical-only preflight completed successfully on 2026-10-03
+with outcome `READY FOR AUTHORIZATION PREPARATION`. Retained
+`validation-20261002-01` verification passed; environment/dependencies matched;
+proposed final-run storage was unused; historical eligibility, origin and baseline
+checks passed. Only the approved native projection through December 2 was
+decoded. The existing deterministic preparation helper calculated preprocessing
+statistics in memory without estimator fitting or persistence. The frozen
+28-candidate scope and DR-014 producer mapping remained unchanged. No
+reserved-final outcomes were accessed.
+
+Preflight does not authorize a final run. Proposed run ID `final-20261003-01`
+remains unauthorized. No real `final_authorization.json` exists and no final-run
+bindings are frozen. Exact final-run authorization bindings must be recalculated
+only after this preflight-status update is reviewed and merged. Temporary
+preflight hash calculations are not frozen authorization bindings.
 
 Only a separate explicit one-time authorization for an exact real final run
 permits creation of its real authorization record and subsequent execution. No
@@ -209,7 +220,8 @@ records successful read-only verification of the completed validation bundle:
 saved-model replays. These are recorded Phase 1 checks, not checks rerun during
 this documentation correction or final research results. Implementation acceptance
 is established by the owner's subsequent Issue #131 instruction, not by test
-results alone. Historical-only preflight remains a separate pending step.
+results alone. Historical-only preflight subsequently completed successfully on
+2026-10-03; its completion does not supply one-time final-run authorization.
 
 Every final report must disclose that the dataset is simulated, December 3–16
 had earlier validation exposure, and full-year exploratory data analysis inspected
