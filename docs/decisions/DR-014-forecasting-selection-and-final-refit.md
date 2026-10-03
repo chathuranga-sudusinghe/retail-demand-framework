@@ -2,9 +2,13 @@
 
 **Date:** 2026-10-03 (Asia/Colombo)
 
-**Status:** Human freeze and refit policy supplied explicitly by the project owner;
-this documentation awaits owner review. Runtime implementation, implementation
-acceptance and specific final-run authorization remain outstanding.
+**Status:** Scientific freeze and refit policy approved by the project owner under
+Issue #130; Documentation Step 1 approved. Phase 1 runtime merged in PR #133 and
+explicitly accepted by the owner under Issue #131 on 2026-10-03. Historical-only
+preflight and exact one-time final-run authorization remain pending. Final
+evaluation has not been executed. Implementation acceptance establishes readiness
+only; it grants no authorization-record creation, reserved-outcome access or run
+execution.
 
 **Owner:** Chathuranga — forecasting methodology and output meaning.
 
@@ -19,6 +23,19 @@ and forbids real final evaluation, commits and pushes. This record documents
 that human instruction; it does not supply implementation acceptance or execution
 permission. No separate supervisor/group approval is asserted. Any required
 supervisor confirmation remains a human/team responsibility.
+
+**Subsequent review provenance — 2026-10-03:** The owner explicitly approved
+Documentation Step 1 under Issue #130. Phase 1 was then merged through
+[PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133).
+In the subsequent explicit Issue #131 instruction, the owner accepted the
+implemented final-evaluation runtime and recorded test/integrity evidence as
+conforming to the approved DR-014 scope, refit/preprocessing policy, frozen
+28-candidate scope, producer mapping and predict-before-reveal protections.
+This acceptance establishes implementation readiness only, not final-run
+authorization. This approving instruction was supplied in the owner-agent conversation;
+it is not asserted to be a GitHub Issue comment or an additional supervisor/group
+approval. A separate explicit one-time final-run authorization is still required
+under [Issue #131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131).
 
 ## Context and evidence binding
 
@@ -184,8 +201,10 @@ Implementation uses a separate final-evaluation path and a separate
 `final_artifacts.py` persistence/integrity boundary, reusing shared scientific
 functions where appropriate. Validation is not routed through model-ready exports.
 
-The [final-evaluation guide](../forecasting-final-evaluation.md) defines the
-planned operational ordering and authorization binding. Documentation review,
-runtime implementation review, implementation acceptance and exact final-run
-authorization remain distinct. This documentation-only step executes no
-experiment and creates no execution authorization.
+The [final-evaluation guide](../forecasting-final-evaluation.md) documents the
+merged and accepted runtime ordering and authorization requirements. Scientific
+approval, merged implementation, implementation acceptance, historical-only
+preflight and exact one-time final-run authorization remain distinct. Preflight
+and specific final-run authorization are pending; final evaluation has not been
+executed. These status corrections create no authorization record, calculate or
+freeze no final-run bindings and execute no experiment.

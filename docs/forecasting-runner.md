@@ -1,6 +1,6 @@
 # Forecasting runner — Issue #89 orchestration
 
-The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #111 implements Phase 5 run storage; Issue #116 documents that contract. No new experiment is authorized; reserved final evaluation remains blocked. Selective retention/pruning is deferred to Phase 6.
+The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #111 implements Phase 5 run storage; Issue #116 documents that contract. Phase 1 final runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight and exact one-time final-run authorization remain pending; final evaluation has not been executed. No new experiment or reserved-outcome access is authorized. Selective retention/pruning is deferred to Phase 6.
 
 ## Existing entrypoint — explicit run authorization required
 
@@ -252,12 +252,25 @@ git diff --check
 
 Tests use synthetic panels/mock fits and small controlled native smoke tests. They never read the project dataset and are not research comparison evidence. The complete candidate plan uses mocks, never the real 1,152-fit workload.
 
-The existing final entry, including `--stage final_evaluation`, stays blocked.
+## Separate final-evaluation runtime — Issues #130/#131
+
+The validation entrypoint, including `--stage final_evaluation`, stays blocked.
 [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the
-owner-supplied human freeze, exact candidate scope, separate producer mapping and
-fresh estimator/preprocessing refit policy. The
-[final-evaluation guide](forecasting-final-evaluation.md) describes the planned
-separate path; documentation review, runtime implementation acceptance and exact
-final-run authorization remain outstanding. No final run, deployment promotion
-or downstream methodology is authorized. Disclose earlier December 3–16
-validation and full-year EDA exposure.
+owner-approved scientific freeze, 28-candidate scope, separate producer mapping
+and fresh estimator/preprocessing refit policy. PR #133 merged the separate final
+runtime; the owner explicitly accepted implementation readiness under Issue #131
+on 2026-10-03. Historical-only preflight and exact one-time final-run authorization
+remain pending. Final evaluation has not been executed.
+
+The implemented argument-free command is `python -m src.forecasting.final_evaluation`;
+it reads `data/processed/forecasting/final_authorization.json`. This is the real
+evaluation command, not a preflight or validation command. Do not create that
+record or execute the command without separate explicit one-time authorization.
+Complete documentation/status review and historical-only preflight before
+calculating or freezing final-run authorization bindings.
+The [final-evaluation guide](forecasting-final-evaluation.md) documents ordering,
+record requirements and storage. Consume completed final evidence with
+`src.forecasting.final_artifacts.verify_final_completed` at its artifact anchor;
+validation continues to use its existing `verify_completed` and fold schemas.
+No final run, deployment promotion or downstream methodology is authorized.
+Disclose earlier December 3–16 validation and full-year EDA exposure.

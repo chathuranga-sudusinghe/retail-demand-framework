@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
+> **Current forecasting status — 2026-10-03 / Issue #131:** Retained validation evidence is `validation-20261002-01`. [DR-014](DR-014-forecasting-selection-and-final-refit.md) records the approved scientific freeze/refit policy. Phase 1 runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight and exact one-time final-run authorization remain pending; final evaluation has not been executed. Implementation acceptance grants no authorization-record creation, reserved-outcome access or run execution.
 
 > **Documentation alignment — 2026-09-29:** The project owner has approved the current forecasting design and [frozen fourteen-predictor contract](../forecasting-feature-engineering.md). Original decision dates remain provenance. [Current approval and provenance](../forecasting-methodology-revision.md) records separate protocol, baseline and downstream gates; experiments remain NOT authorised.
 
@@ -34,9 +34,9 @@ Each decision record should include:
 - [DR-011 — Responsible Decision-Support Output Structure](DR-011-decision-support-output-structure.md)
 - [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Proposed for group approval.
 - [DR-013 — Matched Gradient-Boosting RQ2 Comparison](DR-013-matched-gradient-boosting-comparison.md) — Current matched primary RQ2 comparison authority.
-- [DR-014 — Forecasting Selection and Final Refit](DR-014-forecasting-selection-and-final-refit.md) — Owner-supplied human freeze, exact final candidate scope, separate producer mapping and refit policy; documentation review and final-run authorization remain separate.
+- [DR-014 — Forecasting Selection and Final Refit](DR-014-forecasting-selection-and-final-refit.md) — Owner-approved scientific freeze/refit policy and Documentation Step 1; Phase 1 merged in PR #133 and explicitly accepted under Issue #131. Historical-only preflight and exact one-time final-run authorization remain pending; final evaluation has not been executed.
 
-Issue #65 has a human-approved/frozen scientific protocol. PR #90 merged Issue #89 orchestration. Issue #94 aligns operational documentation; accepted migration and matching specific authorization remain required before further execution.
+Issue #65 has a human-approved/frozen scientific protocol. PR #90 merged Issue #89 orchestration; current storage is documented in [runner operations](../forecasting-runner.md). PR #133 implementation acceptance under Issue #131 establishes readiness only. It does not authorize a real final authorization record, reserved-outcome access or execution. Complete documentation/status review and historical-only preflight before calculating or freezing final-run authorization bindings.
 
 RQ2 subordinate hypotheses and interpretation are approved as comparative and descriptive under DR-013: use horizon-specific arithmetic mean WAPE, all four fold-level results and supporting metrics; discuss magnitude, direction and fold consistency. No significance procedure or universal numerical decision threshold is approved, and no cross-horizon composite/overall winner is introduced.
 
@@ -45,7 +45,7 @@ RQ2 subordinate hypotheses and interpretation are approved as comparative and de
 Examples include:
 
 - exact retained-model set/audit exceptions and archive responsibilities under the storage policy;
-- final-evaluation implementation acceptance and specific final-run authorization under DR-014;
+- exact one-time final-run authorization under DR-014/Issue #131, after pending historical-only preflight;
 - separate downstream 28-day approval (forecasting baseline formulas are already approved);
 - demand-regime definitions;
 - uncertainty representation;

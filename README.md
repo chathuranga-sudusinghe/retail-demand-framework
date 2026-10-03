@@ -4,7 +4,7 @@ Repository-wide authorities: [data lifecycle](docs/workflows/shared-data-foundat
 
 > **Issue #66 revision — 2026-09-29:** [DR-013](docs/decisions/DR-013-matched-gradient-boosting-comparison.md) records the revised primary XGBoost/LightGBM/CatBoost comparison; Ridge/Random Forest are supportive. Issue #62 remains the provenance for the earlier preprocessing contract. The revised protocol under Issue #65 is frozen/approved (Gate 1), implementation is complete (Gate 2), and PR #76 is human-reviewed/accepted and merged (Gate 3). See the current gate status below.
 
-> **Current documentation alignment — Issue #94:** The forecasting feature contract and scientific protocol remain frozen. Issue #89 is merged through PR #90; validation has occurred, with evidence availability documented in the [methodology revision](docs/forecasting-methodology-revision.md). Issues #92/#93 are authoritative for repository-wide lifecycle, storage, MLOps, reporting and progress. Runtime migration and future experiment approvals remain separate.
+> **Historical documentation alignment — Issue #94:** The forecasting feature contract and scientific protocol remain frozen. Issue #89 is merged through PR #90; validation has occurred, with evidence availability documented in the [methodology revision](docs/forecasting-methodology-revision.md). Issues #92/#93 are authoritative for repository-wide lifecycle, storage, MLOps, reporting and progress. Runtime migration and future experiment approvals remain separate.
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
@@ -224,8 +224,8 @@ src/inventory_risk/  Inventory-risk implementation
 src/visualization/   Shared analytical visualisation code
 src/decision_support/Decision-support implementation
 tests/              Automated tests
-artifacts/          Machine-readable run evidence (approved layout; migration pending)
-models/             Reusable model/state bundles (approved layout; migration pending)
+artifacts/          Machine-readable run evidence (implemented forecasting layout)
+models/             Reusable model/state bundles (implemented forecasting layout)
 reports/            Human-reviewed research findings and lightweight figures
 ```
 
@@ -245,6 +245,6 @@ Third-party datasets, software libraries, frameworks, and other external materia
 
 Research design was revised and approved under Issue #66. XGBoost, LightGBM and CatBoost are the primary controlled RQ2 models; Ridge and Random Forest are supportive benchmarks. The fourteen conceptual predictors, four horizons, temporal folds and WAPE-led evaluation policy remain unchanged. The primary models use a common full one-hot representation and a matched 24-configuration grid.
 
-Gate 1 is frozen/approved. PR #76 accepted the preceding runner and PR #90 merged Issue #89 orchestration. The owner confirms a real validation run occurred; the retained authorization record identifies `validation-20261001-01`. Its removed machine bundle cannot be reverified from this checkout; see [methodology provenance](docs/forecasting-methodology-revision.md). No selection freeze or final-evaluation approval is inferred. Issue #78's unexecuted run remains historical only.
+The scientific protocol remains frozen/approved. Current retained validation evidence is `validation-20261002-01`; [DR-014](docs/decisions/DR-014-forecasting-selection-and-final-refit.md) records its exact manifest anchor and the owner-approved scientific freeze/refit policy. The removed `validation-20261001-01` bundle and Issue #78's unexecuted run remain historical provenance in the [methodology record](docs/forecasting-methodology-revision.md).
 
-Issues #92/#93 define the approved architecture. The runner still implements the removed storage layout and all-fit persistence; [runner operations](docs/forecasting-runner.md) and [protocol operational alignment](docs/protocol.md#issue-94-operational-alignment--implementation-boundary) explain the implementation boundary. Do not run unchanged code to recreate the removed directory. New hashes, reviewed implementation and specific authorization are required before another experiment. Gate 6 and downstream approvals remain separate.
+Issues #92/#93 define the approved architecture; the implemented forecasting storage contract is documented in [runner operations](docs/forecasting-runner.md). Phase 1 final runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131 on 2026-10-03. Historical-only preflight and exact one-time final-run authorization remain pending; final evaluation has not been executed. Implementation acceptance does not authorize creation of a real final authorization record, reserved-outcome access or execution. Complete Issue #131 documentation/status review and historical-only preflight before calculating or freezing any final-run authorization bindings. See the [final-evaluation guide](docs/forecasting-final-evaluation.md); downstream approvals remain separate.
