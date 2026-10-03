@@ -353,3 +353,282 @@ def test_reconciled_metrics_cannot_change_without_prediction_changes(synthetic_r
     path.write_text(json_text(rows))
     with pytest.raises(artifacts.FinalIntegrityError, match="metrics differ"):
         artifacts.verify_final_scientific(directory)
+
+
+class LayoutCheckedEstimator(SyntheticEstimator):
+    """Exercise each prediction API; Ridge uses real linear algebra without fit."""
+
+    def __init__(self, model, calls, phase, value=0.0):
+        super().__init__(value)
+        self.model, self.calls, self.phase = model, calls, phase
+
+    def predict(self, matrix, **kwargs):
+        assert matrix.flags.c_contiguous
+        assert matrix.dtype == np.float64
+        expected = ({"num_threads": 1} if self.model == "lightgbm" else
+                    {"thread_count": 1} if self.model == "catboost" else {})
+        assert kwargs == (expected if self.phase == "replay" else {})
+        self.calls.append((self.model, self.phase))
+        if self.model == "ridge":
+            from sklearn.linear_model import Ridge
+
+            # Set synthetic persisted coefficients directly: never call fit.
+            ridge = Ridge()
+            ridge.coef_ = np.linspace(-0.3, 0.3, matrix.shape[1])
+            ridge.intercept_ = self.value
+            ridge.n_features_in_ = matrix.shape[1]
+            return ridge.predict(matrix)
+        return super().predict(matrix, **kwargs)
+
+
+def test_final_original_and_replay_use_c_order_for_all_learned_models(synthetic_runner, monkeypatch):
+    from sklearn.linear_model import Ridge
+    from src.forecasting.preprocessing import ForecastPreprocessor
+
+    calls, transformed_layouts = [], []
+    transform = ForecastPreprocessor.transform
+
+    def fortran_transform(self, features):
+        frame = transform(self, features)
+        matrix = np.asfortranarray(frame.to_numpy(dtype=float))
+        result = pd.DataFrame(matrix, columns=frame.columns, index=frame.index, copy=False)
+        pd.testing.assert_frame_equal(result, frame)
+        assert result.to_numpy(dtype=float).flags.f_contiguous
+        assert not result.to_numpy(dtype=float).flags.c_contiguous
+        transformed_layouts.append(self.model)
+        return result
+
+    monkeypatch.setattr(ForecastPreprocessor, "transform", fortran_transform)
+    monkeypatch.setattr(Ridge, "fit", Mock(side_effect=AssertionError("No real model fitting")))
+    monkeypatch.setattr(final, "construct_estimator", lambda model, configuration:
+                        LayoutCheckedEstimator(model, calls, "original"))
+    monkeypatch.setattr(artifacts, "_load_estimator", lambda model, path:
+                        LayoutCheckedEstimator(model, calls, "replay", read_json(path)["synthetic_value"]))
+    directory = final.run_final_evaluation(synthetic_runner["layout"])
+    assert artifacts.verify_final_completed(directory)["models_replayed"] == 20
+    for model in ("xgboost", "lightgbm", "catboost", "ridge", "random_forest"):
+        assert model in transformed_layouts
+        assert calls.count((model, "original")) == 4
+        assert calls.count((model, "replay")) == 8
+
+
+def failed_bundle_files(fixture):
+    layout, directory = fixture["layout"], fixture["directory"]
+    roots = (directory, layout.model_run_directory(directory.name), layout.draft_report_directory(directory.name))
+    return sorted(p for folder in roots for p in folder.rglob("*") if p.is_file())
+
+
+def failed_bundle_hashes(fixture):
+    root = fixture["layout"].root
+    return {p.relative_to(root).as_posix(): file_hash(p) for p in failed_bundle_files(fixture)}
+
+
+@pytest.fixture
+def failed_final_bundle(synthetic_runner, monkeypatch):
+    fixture = synthetic_runner
+    load = artifacts._load_estimator
+    with monkeypatch.context() as scoped:
+        scoped.setattr(artifacts, "_load_estimator", lambda model, path:
+                       SyntheticEstimator(-999) if model == "ridge" else load(model, path))
+        with pytest.raises(artifacts.FinalIntegrityError, match="Final model replay differs"):
+            final.run_final_evaluation(fixture["layout"])
+    fixture["directory"] = fixture["layout"].run_directory("synthetic-final")
+    fixture["evidence_hashes"] = failed_bundle_hashes(fixture)
+    return fixture
+
+
+def test_failed_final_recovery_is_read_only_and_does_not_complete(failed_final_bundle, monkeypatch):
+    import builtins
+    from pathlib import Path
+    from src.forecasting import models, preprocessing
+
+    fixture, forbidden = failed_final_bundle, Mock(side_effect=AssertionError("Forbidden recovery operation"))
+    directory = fixture["directory"]
+    before = {p: p.read_bytes() for p in failed_bundle_files(fixture)}
+    path_open, builtin_open = Path.open, builtins.open
+
+    def check_open(path, mode):
+        assert not any(c in mode for c in "wax+")
+        if isinstance(path, (str, Path)):
+            assert not Path(path).resolve().is_relative_to(fixture["layout"].root / "data")
+
+    def open_path(self, mode="r", *args, **kwargs):
+        check_open(self, mode)
+        return path_open(self, mode, *args, **kwargs)
+
+    def open_builtin(file, mode="r", *args, **kwargs):
+        check_open(file, mode)
+        return builtin_open(file, mode, *args, **kwargs)
+
+    for module, names in ((final, ("run_final_evaluation", "construct_estimator", "fit_estimator",
+                                  "read_final_history", "read_reserved_outcomes", "read_validated_projection")),
+                          (models, ("construct_estimator", "fit_estimator")),
+                          (preprocessing, ("fit_preprocessor", "fit_primary_preprocessors")),
+                          (artifacts.FinalArtifactWriter, ("__init__", "write_json", "write_text", "event", "persist_model")),
+                          (artifacts, ("finalize_final_run",))):
+        for name in names:
+            monkeypatch.setattr(module, name, forbidden)
+    monkeypatch.setattr(Path, "open", open_path)
+    monkeypatch.setattr(builtins, "open", open_builtin)
+    result = artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=fixture["evidence_hashes"])
+    assert result == {
+        "status": "recovery_verified", "verification_kind": "failed_final_evidence", "run_id": directory.name,
+        "original_run_status": "failed", "final_run_completed": False,
+        "original_diagnostics": read_json(directory / "diagnostics.json"),
+        "scientific_verification": {"status": "passed", "evaluations": 28, "learned_refits": 20,
+                                    "baseline_evaluations": 8, "predictions": 56, "models_replayed": 20},
+        "evidence_hashes": fixture["evidence_hashes"],
+    }
+    forbidden.assert_not_called()
+    assert before == {p: p.read_bytes() for p in failed_bundle_files(fixture)}
+    assert read_json(directory / "run_metadata.json")["run_status"] == "failed"
+    assert not (directory / "run_manifest.json").exists()
+    with pytest.raises(artifacts.FinalIntegrityError, match="Unfinished"):
+        artifacts.verify_final_scientific(directory)
+    with pytest.raises(artifacts.FinalIntegrityError):
+        artifacts.verify_final_completed(directory)
+
+
+@pytest.mark.parametrize("name", [
+    "predictions.json", "prediction_receipt.json", "observations.json", "metrics.json", "run.log", "comparison.md",
+    "model", "descriptor", "preprocessor", "origin_features",
+])
+def test_failed_final_recovery_rejects_changed_bytes_before_model_loading(failed_final_bundle, monkeypatch, name):
+    fixture, directory = failed_final_bundle, failed_final_bundle["directory"]
+    if name in ("model", "descriptor", "preprocessor", "origin_features"):
+        record = read_json(directory / "candidates.json")[0]["model_artifact"]
+        path = fixture["layout"].root / record[name + "_path"]
+    elif name == "comparison.md":
+        path = fixture["layout"].draft_report_directory(directory.name) / name
+    else:
+        path = directory / name
+    path.write_bytes(path.read_bytes() + b" ")
+    before = {p: p.read_bytes() for p in failed_bundle_files(fixture)}
+    loader = Mock(side_effect=AssertionError("Changed evidence must block model loading"))
+    monkeypatch.setattr(artifacts, "_load_estimator", loader)
+    with pytest.raises(artifacts.FinalIntegrityError, match="caller-held inventory"):
+        artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=fixture["evidence_hashes"])
+    loader.assert_not_called()
+    assert before == {p: p.read_bytes() for p in failed_bundle_files(fixture)}
+
+
+@pytest.mark.parametrize("name", ["predictions.json", "observations.json", "metrics.json", "model"])
+def test_failed_final_recovery_reconciles_evidence_even_with_a_replaced_inventory(failed_final_bundle, name):
+    fixture, directory = failed_final_bundle, failed_final_bundle["directory"]
+    if name == "model":
+        record = read_json(directory / "candidates.json")[0]["model_artifact"]
+        path = fixture["layout"].root / record["model_path"]
+        path.write_bytes(path.read_bytes() + b" ")
+    else:
+        path = directory / name
+        rows = read_json(path)
+        field = {"predictions.json": "prediction", "observations.json": "observed_target", "metrics.json": "mae"}[name]
+        rows[0][field] += 1
+        path.write_text(json_text(rows))
+    with pytest.raises(artifacts.FinalIntegrityError):
+        artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=failed_bundle_hashes(fixture))
+
+
+def test_failed_final_recovery_rejects_coordinated_observation_and_metric_changes(failed_final_bundle):
+    fixture, directory = failed_final_bundle, failed_final_bundle["directory"]
+    observations = read_json(directory / "observations.json")
+    observations[0]["observed_target"] += 1
+    (directory / "observations.json").write_text(json_text(observations))
+    actuals = {(r["horizon"], r["SKU_ID"], r["Warehouse_ID"]): r["observed_target"] for r in observations}
+    predictions, metrics = read_json(directory / "predictions.json"), read_json(directory / "metrics.json")
+    for metric in metrics:
+        rows = [r for r in predictions if (r["model"], r["horizon"], r["configuration_id"]) ==
+                (metric["model"], metric["horizon"], metric["configuration_id"])]
+        metric.update(final.forecasting_metrics([actuals[r["horizon"], r["SKU_ID"], r["Warehouse_ID"]] for r in rows],
+                                               [r["prediction"] for r in rows]))
+    (directory / "metrics.json").write_text(json_text(metrics))
+    with pytest.raises(artifacts.FinalIntegrityError, match="caller-held inventory"):
+        artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=fixture["evidence_hashes"])
+
+
+@pytest.mark.parametrize("mutation", ["status", "completion", "integrity", "timestamp", "manifest", "operation",
+                                      "exception", "reason", "candidate", "count", "extra_file", "missing_hash"])
+def test_failed_final_recovery_requires_exact_retained_failure(failed_final_bundle, mutation):
+    fixture, directory = failed_final_bundle, failed_final_bundle["directory"]
+    metadata, diagnostics = read_json(directory / "run_metadata.json"), read_json(directory / "diagnostics.json")
+    if mutation in ("status", "completion", "integrity", "timestamp"):
+        field, value = {"status": ("run_status", "running"), "completion": ("completed_at_utc", "synthetic"),
+                        "integrity": ("integrity_result", {}), "timestamp": ("failed_at_utc", None)}[mutation]
+        metadata[field] = value
+        (directory / "run_metadata.json").write_text(json_text(metadata))
+    elif mutation in ("operation", "exception", "reason", "candidate", "count"):
+        field, value = {"operation": ("operation", "fresh_estimator_fit"), "exception": ("exception_type", "ValueError"),
+                        "reason": ("failure_reason", "Other failure"), "candidate": ("candidate", {}),
+                        "count": ("completed_predictions", 55)}[mutation]
+        diagnostics[field] = value
+        (directory / "diagnostics.json").write_text(json_text(diagnostics))
+    elif mutation == "manifest":
+        (directory / "run_manifest.json").write_text("{}")
+    elif mutation == "extra_file":
+        (directory / "unexpected.tmp").write_text("synthetic")
+    hashes = failed_bundle_hashes(fixture)
+    if mutation == "missing_hash":
+        del hashes[next(iter(hashes))]
+    with pytest.raises(artifacts.FinalIntegrityError):
+        artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=hashes)
+
+
+def test_failed_final_recovery_keeps_exact_prediction_equality(failed_final_bundle, monkeypatch):
+    load = artifacts._load_estimator
+
+    def changed_prediction(model, path):
+        estimator = load(model, path)
+        if model == "ridge":
+            estimator.value = float(np.nextafter(estimator.value, np.inf))
+        return estimator
+
+    monkeypatch.setattr(artifacts, "_load_estimator", changed_prediction)
+    with pytest.raises(artifacts.FinalIntegrityError, match="replay differs"):
+        artifacts.verify_failed_final_recovery(failed_final_bundle["directory"],
+                                               expected_evidence_hashes=failed_final_bundle["evidence_hashes"])
+
+
+def test_failed_final_recovery_uses_original_snapshots_not_current_source(failed_final_bundle):
+    fixture = failed_final_bundle
+    source = fixture["layout"].root / "src/forecasting/final_artifacts.py"
+    source.write_text(source.read_text() + "\n# Synthetic verifier revision\n")
+    fixture["record"].unlink()  # Recovery never opens the current authorization or data tree.
+    result = artifacts.verify_failed_final_recovery(fixture["directory"],
+                                                    expected_evidence_hashes=fixture["evidence_hashes"])
+    assert result["status"] == "recovery_verified"
+    assert result["evidence_hashes"] == fixture["evidence_hashes"]
+
+
+def test_saved_ridge_replays_original_c_order_predictions_without_fit(tmp_path, monkeypatch):
+    from sklearn.linear_model import Ridge
+    from src.forecasting.model_artifacts import _load_estimator, _save_estimator
+
+    prepared = final.prepare_final_training(historical_panel())
+    state = prepared.populations[1].preprocessors["ridge"]
+    matrix = np.asfortranarray(state.transform(prepared.origin).to_numpy(dtype=float))
+    assert matrix.flags.f_contiguous and not matrix.flags.c_contiguous
+    monkeypatch.setattr(Ridge, "fit", Mock(side_effect=AssertionError("No real model fitting")))
+    ridge = Ridge()
+    ridge.coef_ = np.linspace(-0.3, 0.3, matrix.shape[1])
+    ridge.intercept_ = 4.0
+    ridge.n_features_in_ = matrix.shape[1]
+    original = ridge.predict(matrix.copy())
+    path = tmp_path / "synthetic-ridge.joblib"
+    _save_estimator(ridge, "ridge", path)
+    restored = _load_estimator("ridge", path)
+    np.testing.assert_array_equal(restored.predict(matrix.copy(order="C")), original)
+
+
+def test_failed_final_recovery_rejects_changes_during_verification(failed_final_bundle, monkeypatch):
+    fixture, directory = failed_final_bundle, failed_final_bundle["directory"]
+    verify = artifacts._verify_final_scientific
+
+    def change_after_scientific_checks(*args):
+        result = verify(*args)
+        path = directory / "run.log"
+        path.write_bytes(path.read_bytes() + b" ")
+        return result
+
+    monkeypatch.setattr(artifacts, "_verify_final_scientific", change_after_scientific_checks)
+    with pytest.raises(artifacts.FinalIntegrityError, match="changed during recovery"):
+        artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=fixture["evidence_hashes"])

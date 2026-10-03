@@ -351,11 +351,23 @@ def verify_sealed_predictions(directory: Path, receipt_hash: str) -> list[dict[s
 
 
 def verify_final_scientific(directory: Path) -> dict[str, Any]:
-    """Reconcile final metrics and replay all saved models; never fit or reopen data."""
+    """Reconcile consumable final evidence; failed runs require a separate audit."""
     try:
         auth, metadata = _snapshot(directory)
         if metadata["run_status"] not in {"finalizing", "verified_completed"}:
             raise FinalIntegrityError("Unfinished final run cannot be consumed.")
+        return _verify_final_scientific(directory, auth, metadata)
+    except FinalIntegrityError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+        raise FinalIntegrityError("Invalid final scientific evidence.") from exc
+
+
+def _verify_final_scientific(
+    directory: Path, auth: FinalAuthorization, metadata: dict[str, Any],
+) -> dict[str, Any]:
+    """Reconcile final metrics and replay all saved models; never fit or reopen data."""
+    try:
         rows = verify_sealed_predictions(directory, metadata["prediction_receipt_hash"])
         observations, metrics, records = (read_json(directory / name) for name in
                                          ("observations.json", "metrics.json", "candidates.json"))
@@ -382,7 +394,7 @@ def verify_final_scientific(directory: Path) -> dict[str, Any]:
                 origin = pd.DataFrame(read_json(paths["origin_features"]))
                 state = restore_preprocessor(read_json(paths["preprocessor"]))
                 estimator = _load_estimator(c.model, paths["model"])
-                matrix = state.transform(origin).to_numpy(dtype=float)
+                matrix = state.transform(origin).to_numpy(dtype=float).copy(order="C")
                 with threadpool_limits(limits=1):
                     if c.model == "lightgbm":
                         replay = estimator.predict(matrix, num_threads=1)
@@ -401,10 +413,56 @@ def verify_final_scientific(directory: Path) -> dict[str, Any]:
         raise FinalIntegrityError("Invalid final scientific evidence.") from exc
 
 
-def _final_files(directory: Path) -> dict[Path, str]:
+def verify_failed_final_recovery(
+    directory: Path, *, expected_evidence_hashes: dict[str, str],
+) -> dict[str, Any]:
+    """Audit a retained replay failure without fitting, parent reads or writes.
+
+    The caller must independently retain/review the full repository-relative
+    SHA-256 inventory, including observations, metrics and failure diagnostics.
+    These post-reveal files have no completion manifest; reconciliation alone
+    cannot detect coordinated replacement. This function never creates that
+    inventory, updates original source bindings or publishes completion.
+    """
+    try:
+        layout = RepositoryLayout.from_artifact_directory(directory)
+        auth, metadata = _snapshot(directory)
+        diagnostics = read_json(layout._owned_path(directory / "diagnostics.json"))
+        if (metadata["run_status"] != "failed" or metadata["completed_at_utc"] is not None
+                or metadata["integrity_result"] is not None or not metadata["failed_at_utc"]
+                or layout._owned_path(directory / "run_manifest.json").exists()
+                or set(diagnostics) != {"operation", "candidate", "exception_type", "failure_reason", "completed_predictions"}
+                or diagnostics["operation"] != "final_verification" or diagnostics["candidate"] is not None
+                or diagnostics["exception_type"] != "FinalIntegrityError"
+                or diagnostics["failure_reason"] != "Final model replay differs from sealed predictions."):
+            raise FinalIntegrityError("Recovery requires retained final replay failure evidence.")
+        files = _final_files(directory, include_diagnostics=True)
+        hashes = {r["path"]: r["sha256"] for r in _receipts(directory, files)}
+        if not isinstance(expected_evidence_hashes, dict) or hashes != expected_evidence_hashes:
+            raise FinalIntegrityError("Failed final evidence differs from the caller-held inventory.")
+        result = _verify_final_scientific(directory, auth, metadata)
+        if (type(diagnostics["completed_predictions"]) is not int
+                or diagnostics["completed_predictions"] != result["predictions"]):
+            raise FinalIntegrityError("Failure diagnostics differ from the sealed prediction population.")
+        after = {r["path"]: r["sha256"] for r in
+                 _receipts(directory, _final_files(directory, include_diagnostics=True))}
+        if after != hashes:
+            raise FinalIntegrityError("Failed final evidence changed during recovery verification.")
+        return {"status": "recovery_verified", "verification_kind": "failed_final_evidence",
+                "run_id": directory.name, "original_run_status": "failed", "final_run_completed": False,
+                "original_diagnostics": diagnostics, "scientific_verification": result, "evidence_hashes": hashes}
+    except FinalIntegrityError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+        raise FinalIntegrityError("Invalid failed final recovery evidence.") from exc
+
+
+def _final_files(directory: Path, *, include_diagnostics: bool = False) -> dict[Path, str]:
     layout = RepositoryLayout.from_artifact_directory(directory)
     files = _sealed_files(directory, read_json(directory / "candidates.json"))
     files.update({layout._owned_path(directory / name): "artifacts" for name in ARTIFACT_NAMES})
+    if include_diagnostics:
+        files[layout._owned_path(directory / "diagnostics.json")] = "artifacts"
     files[layout._owned_path(layout.draft_report_directory(directory.name) / "comparison.md")] = "reports"
     found: dict[Path, str] = {}
     for owner, folder in _roots(layout, directory.name).items():
