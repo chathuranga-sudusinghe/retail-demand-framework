@@ -31,10 +31,10 @@ evidence, not human acceptance of findings. The sole completion authority is
 `artifacts/forecasting/<run_id>/run_manifest.json`, written last after verification,
 all-model replay, log closure and final metadata. Manifest contract version 2
 covers the artifact, model and generated draft locations with repository-relative
-paths, explicit owners and SHA-256 hashes; model descriptor contract version 2
-binds repository-relative model/state/replay references to the same run.
+paths, explicit owners and SHA-256 hashes; validation model descriptor contract version 2
+binds repository-relative model/state/replay references to the same validation run.
 
-Consume completed evidence through `verify_completed` at the artifact-run anchor,
+Consume completed validation evidence through `verify_completed` at the artifact-run anchor,
 as documented in [runner operations](../docs/forecasting-runner.md). Missing,
 failed, incomplete or inconsistent evidence cannot support a completed-experiment
 claim. Phase 5 retains and replays every successful learned fit; selective model
@@ -43,6 +43,34 @@ retention/pruning is deferred to Phase 6.
 The generated `comparison.md` remains draft/pending human review even after verified completion. Later reviewed interpretation is written separately; a completed generated draft remains immutable under its artifact-side manifest. Label report review status explicitly as draft/pending human review, reviewed or superseded, with author, revision date and actual reviewer/date/reference when available. This is a report label, not a replacement for machine schema/status fields. Leave unreceived approval explicitly pending. Report review, configuration freeze and final-run authorization are separate statuses.
 
 Do not modify immutable machine evidence to match prose. Correct the report transparently, or reference a separately reviewed corrected evidence version. Superseded findings retain their original run/protocol identity and correction history.
+
+## Final-evaluation evidence — Issues #130/#131
+
+The separate final runtime merged in PR #133 has explicit owner implementation
+acceptance under Issue #131. Historical-only preflight and exact one-time final-run
+authorization are pending; final evaluation has not been executed.
+[DR-014](../docs/decisions/DR-014-forecasting-selection-and-final-refit.md) records
+the approved scientific scope and acceptance provenance.
+
+Completed final evidence uses `src.forecasting.final_artifacts.verify_final_completed`
+at `artifacts/forecasting/<final_run_id>/`, with the same manifest-last, three-owner
+storage boundary. Its final model descriptors use `descriptor_version: 1` and
+`artifact_kind: final_refit`; these are a separate final schema, not legacy
+validation descriptors. Final predictions/metrics are JSON records with one
+fixed origin and no fold IDs, validation selection or four-fold aggregates.
+The [final-evaluation guide](../docs/forecasting-final-evaluation.md) documents
+exact evidence and model locations.
+
+Apply the sections below to final reporting by showing all 28 frozen candidates
+by horizon, their single-origin final metrics, eligibility and model/state replay
+evidence. Cite the approved DR-014 configurations and separate producer mapping;
+final scores do not trigger reselection. Fold metrics, configuration summaries and
+selection records remain validation evidence when comparing with the frozen
+validation interpretation. Keep Seasonal Naive's validation advantage at 14 and
+28 days visible and disclose the prior December 3–16 validation and full-year EDA
+exposure. Write reviewed interpretation separately at `reports/forecasting/<final_run_id>.md`;
+completed generated evidence remains immutable and report review remains pending
+until explicitly supplied.
 
 ## Required forecasting-report sections
 

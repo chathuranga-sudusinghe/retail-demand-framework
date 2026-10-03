@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Current operational alignment — Issue #94:** Issue #89 is closed and its orchestration implementation was merged in [PR #90](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/90). See the methodology revision record for validation-run provenance and evidence availability. Merged Issues #92/#93 define the lifecycle/storage/MLOps authorities; runtime migration remains separate. No new experiment or final evaluation is authorized.
+> **Current forecasting status — 2026-10-03 / Issue #131:** Retained validation evidence is `validation-20261002-01`. [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the approved scientific freeze/refit policy. Phase 1 runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight and exact one-time final-run authorization remain pending; final evaluation has not been executed. Implementation acceptance grants no authorization-record creation, reserved-outcome access or run execution.
 
 ## Authority and scope
 
@@ -58,26 +58,28 @@ The final ordered features, formulas, categorical representation and common hori
 
 The following remain separate:
 
-- implementation/test acceptance of the new lifecycle/storage architecture and a new specific-run authorization;
-- validation evidence review, horizon-specific selection freeze and Gate 6 final refit/evaluation approval;
+- pending historical-only preflight and exact one-time final-run authorization under Issue #131;
+- implementation-readiness acceptance, already established for merged PR #133, versus permission to create a real final authorization record or execute final evaluation;
 - DR-012 group approval and **component-owner/human approval for 28-day downstream use**;
 - uncertainty, human-review rules, numerical replenishment and final integration contracts.
 
 Issue #62/PR #64 supplied the earlier features, targets, folds and preprocessing. Later primary alignment and PR #76 supplied common one-hot representations, models, metrics and the runner. Issue #89 extended operational orchestration and was merged through PR #90. That acceptance does not implement Issues #92/#93 storage boundaries or authorize a new run.
 
-Issue #65 now has a human-approved/frozen protocol. Supportive settings, 28-day baseline formulas and numeric runtime controls are resolved there. Protocol approval, changed implementation acceptance and specific-run authorization remain separate.
+Issue #65 now has a human-approved/frozen protocol. Supportive settings, 28-day baseline formulas and numeric runtime controls are resolved there. Protocol approval, implementation acceptance and specific-run authorization are separate controls. Implementation acceptance for PR #133 is now established; historical-only preflight and exact one-time final-run authorization remain pending.
 
-## Validation-run provenance and current evidence availability
+## Historical validation provenance — Issue #94
 
 The project owner's Issue #94 instruction confirms that a real forecasting validation
 run has occurred; active documentation must not describe the repository as never run.
-The retained local record `data/processed/forecasting/validation_authorization.json`
-identifies `validation-20261001-01`, validation-only scope, implementation acceptance
+The local record inspected for that Issue #94 alignment,
+`data/processed/forecasting/validation_authorization.json`,
+identified `validation-20261001-01`, validation-only scope, implementation acceptance
 reference PR #90 and specific owner authorization dated 2026-10-01. PR #90 is merged.
 The authorization record is permission/provenance, not proof of completed execution.
 
-The former generated directory was intentionally removed. This checkout has no
-corresponding completion manifest, metric/prediction tables or model bundle available
+The former generated directory was intentionally removed. At that Issue #94
+inspection, this checkout had no corresponding completion manifest,
+metric/prediction tables or model bundle available
 for independent verification; no archive, score, reviewed result or selection freeze
 is inferred. Locating retained original evidence and confirming completion/review are
 human follow-up requirements before a report can substantiate findings. Do not
@@ -86,12 +88,31 @@ against the changed protocol/document hashes. This note records the supplied sta
 and inspected authorization only; it does not approve another experiment.
 
 Merged Issues #92/#93 govern future lifecycle, storage, MLOps and report/progress
-handoffs. Issue #94 aligns documentation while the code remains on the legacy layout.
+handoffs. Issue #94 aligned documentation while the code then remained on the legacy layout.
 No storage migration erases prior final-period exposure or changes scientific rules.
+
+## Current retained validation and final readiness — 2026-10-03
+
+The retained completed validation run is `validation-20261002-01`, distinct from
+the removed earlier run above. [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md)
+records its exact completion-manifest SHA-256 and frozen scientific decisions.
+PR #133 records successful verification of 1,216 evaluations, 304,000 predictions,
+304 configuration summaries and 1,184 saved-model replays. This correction records
+that existing evidence; it does not rerun validation or claim a new verification.
+
+The owner approved DR-014 and Documentation Step 1 under Issue #130. The separate
+final runtime was merged in PR #133 and explicitly accepted under Issue #131 on
+2026-10-03, including its recorded test/integrity evidence. That acceptance is
+implementation readiness only. Historical-only preflight and exact one-time
+final-run authorization remain pending; no real authorization record or bindings
+are created/frozen by this update, and final evaluation has not been executed.
+See [final operations](forecasting-final-evaluation.md) for the protected ordering.
+The accepted storage layout is described in [runner operations](forecasting-runner.md);
+older migration-pending statements above describe the earlier Issue #94 state.
 
 ## Computational scope
 
-The primary matched grid has 24 configurations per model × horizon. **24 × 3 primary models × 4 horizons × 4 folds = 1,152 planned primary validation fits**. These are planned workload counts, not executed results. The fixed supportive Ridge Regression / Random Forest configurations are approved in the frozen protocol. Historical 5/12 configuration grids are not automatically reused. Supportive fits and later final refits are excluded from 1,152.
+The primary matched grid has 24 configurations per model × horizon. **24 × 3 primary models × 4 horizons × 4 folds = 1,152 planned primary validation fits**. This formula records the frozen primary-validation workload design; completed-run evidence is reported separately above and must not be inferred from the formula alone. The fixed supportive Ridge Regression / Random Forest configurations are approved in the frozen protocol. Historical 5/12 configuration grids are not automatically reused. Supportive fits and later final refits are excluded from 1,152.
 
 Simple baselines remain untuned: the protocol approves both formulas over four horizons, giving 32 planned baseline evaluations. Planned counts are not completion evidence; no baseline is silently removed or redefined.
 

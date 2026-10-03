@@ -1,6 +1,9 @@
 # Research and Project Progress Log
 
-**Status:** Merged Issue #93 progress-log authority. No historical events or approvals have been added.
+**Status:** Merged Issue #93 progress-log authority; evidence-backed forecasting
+validation and implementation-readiness milestones recorded on 2026-10-03. Final
+preflight and exact one-time authorization remain pending; final evaluation has
+not been executed.
 
 ## Purpose and boundaries
 
@@ -38,4 +41,17 @@ The following is a template, not an event:
 
 ## Chronological entries
 
-No verified event entries have yet been populated. Populate only with verified events and explicit evidence through the normal human review workflow. Creating this format does not approve a member change, research decision, experiment or Git operation.
+### 2026-10-02 — Retained forecasting validation completion
+
+- Recorded retrospectively: 2026-10-03; component owner: Chathuranga.
+- Type/status: validation event; retained manifest records `verified_completed` for `validation-20261002-01`, completed at `2026-10-02T17:38:14.247307+00:00`.
+- Evidence: [exact completion manifest](../artifacts/forecasting/validation-20261002-01/run_manifest.json); [DR-014 evidence identity and manifest SHA-256](decisions/DR-014-forecasting-selection-and-final-refit.md#context-and-evidence-binding). PR #133 records successful verification of 1,216 evaluations, 304,000 predictions, 304 configuration summaries and 1,184 model replays. This entry performs no new verification or validation run.
+- Approval reference: retained run metadata records "Owner explicit validation-run authorization, 2026-10-02"; permission and verified completion are separate evidence.
+
+### 2026-10-03 — Final runtime merged and explicitly accepted
+
+- Recorded: 2026-10-03; component owner: Chathuranga.
+- Type/status: implementation milestone; [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) merged Phase 1 at `2026-10-03T07:52:20Z`. Its recorded checks include 75 focused synthetic tests, 1,061 full-suite tests, Ruff, MyPy, dependency consistency and diff checks, plus completed-validation verification.
+- Scientific approval: the owner approved DR-014 scope/refit policy and Documentation Step 1 under Issue #130; configurations and the separate producer mapping remain unchanged.
+- Implementation acceptance: the owner's explicit Issue #131 instruction in the owner-agent conversation accepts the merged runtime and its recorded evidence as conforming to DR-014. [DR-014 subsequent-review provenance](decisions/DR-014-forecasting-selection-and-final-refit.md) records that reference; this is implementation readiness only, not final-run authorization. No GitHub approval comment or additional supervisor/group approval is asserted.
+- Blocker/next action: review the [Issue #131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131) documentation/status corrections, then separately proceed with historical-only preflight. Exact one-time final-run authorization remains pending; no real authorization record or final-run bindings are created/frozen by this update, no reserved outcomes are accessed, and final evaluation has not been executed.
