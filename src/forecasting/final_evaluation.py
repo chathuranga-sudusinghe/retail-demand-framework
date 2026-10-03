@@ -192,9 +192,10 @@ def run_final_evaluation(layout: RepositoryLayout = DEFAULT_LAYOUT) -> Path:
         operation = "runtime_preflight"
         writer.event(operation)
         runtime = environment_metadata(layout.root)
-        if runtime["source_hashes"] != authorization.source_hashes or runtime["library_versions"] != authorization.library_versions:
-            raise ExecutionBlocked("Final runtime provenance differs from authorization.")
+        if runtime["library_versions"] != authorization.library_versions:
+            raise ExecutionBlocked("Final runtime environment differs from authorization.")
         metadata["runtime"] = runtime
+        metadata["source_hashes"] = runtime["source_hashes"]  # Actual execution provenance, independent of permission.
         operation = "historical_preparation"
         writer.event(operation)
         history = read_final_history(context)

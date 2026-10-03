@@ -196,12 +196,14 @@ def _snapshot(directory: Path) -> tuple[FinalAuthorization, dict[str, Any]]:
             or file_hash(directory / "policy.md") != auth.policy_hash
             or metadata["authorization_hash"] != file_hash(directory / "authorization.json")):
         raise FinalIntegrityError("Final snapshot identity or reviewed freeze differs.")
-    for key in ("freeze_hash", "policy_hash", "protocol_hash", "feature_contract_hash", "source_hashes",
+    for key in ("freeze_hash", "policy_hash", "protocol_hash", "feature_contract_hash",
                 "input_view_hash", "validated_provenance_hash", "python_version", "library_versions",
                 "producer_mapping", "temporal_policy", "validation_run_id", "validation_manifest_sha256",
                 "requirements_hash", "approval_references"):
         if metadata[key] != json_value(getattr(auth, key)):
             raise FinalIntegrityError("Final metadata differs from retained authorization.")
+    if metadata["source_hashes"] != metadata["runtime"]["source_hashes"]:
+        raise FinalIntegrityError("Final recorded runtime source provenance differs from metadata.")
     if metadata["scope"] != candidate_payload(auth.candidates):
         raise FinalIntegrityError("Final metadata scope differs.")
     return auth, metadata

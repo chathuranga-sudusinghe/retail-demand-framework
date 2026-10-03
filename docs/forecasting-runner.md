@@ -1,6 +1,6 @@
 # Forecasting runner — Issue #89 orchestration
 
-The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #111 implements Phase 5 run storage; Issue #116 documents that contract. Phase 1 final runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization remains pending; final evaluation has not been executed. No new experiment or reserved-outcome access is authorized. Selective retention/pruning is deferred to Phase 6.
+The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #111 implements Phase 5 run storage; Issue #116 documents that contract. Phase 1 final runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. The real `final-20261003-01` execution revealed reserved outcomes and failed during final replay verification. PR #141 fixed the verified implementation defect. The owner explicitly authorized `final-20261003-02` as a defect-correction rerun with the same frozen 28 evaluations and producer mapping; it has not been executed. The original failed bundle remains preserved. Source/Git hashes are provenance only; scientific bindings, explicit specific-run approval and overwrite protection remain enforced. Result-driven retries, search, retuning, reselection and candidate substitution remain prohibited. Selective retention/pruning is deferred to Phase 6.
 
 ## Existing entrypoint — explicit run authorization required
 
@@ -260,17 +260,21 @@ owner-approved scientific freeze, 28-candidate scope, separate producer mapping
 and fresh estimator/preprocessing refit policy. PR #133 merged the separate final
 runtime; the owner explicitly accepted implementation readiness under Issue #131
 on 2026-10-03. Historical-only preflight completed successfully on 2026-10-03:
-`READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization
-remains pending. No real `final_authorization.json` exists, no final-run bindings
-are frozen, and no reserved-final outcomes were accessed. Final evaluation has
-not been executed.
+`READY FOR AUTHORIZATION PREPARATION`. Subsequently `final-20261003-01` ran once,
+accessed reserved outcomes and failed during replay verification; retain its
+artifact/model/draft bundle and failed status unchanged. PR #141 fixed the
+verified C/Fortran replay-layout defect. The owner explicitly authorized
+`final-20261003-02` as a defect-correction rerun with unchanged scientific scope.
 
-The implemented argument-free command is `python -m src.forecasting.final_evaluation`;
-it reads `data/processed/forecasting/final_authorization.json`. This is the real
-evaluation command, not a preflight or validation command. Do not create that
-record or execute the command without separate explicit one-time authorization.
-Exact final-run authorization bindings must be recalculated only after this
-preflight-status update is reviewed and merged.
+The argument-free command `python -m src.forecasting.final_evaluation` reads
+`data/processed/forecasting/final_authorization.json`. It performs real refits and
+outcome reveal and must be run manually by the owner after review. Source/Git
+hashes record provenance and do not bind permission; scientific-document, data,
+scope, pinned environment and unused-storage checks remain enforced. A defect
+rerun requires a new explicit approval and unused ID. Performance-driven retries,
+search, retuning, reselection, substitutions, automatic retries and resumption
+remain prohibited. The corrected run has not been executed.
+
 The [final-evaluation guide](forecasting-final-evaluation.md) documents ordering,
 record requirements and storage. Consume completed final evidence with
 `src.forecasting.final_artifacts.verify_final_completed` at its artifact anchor;

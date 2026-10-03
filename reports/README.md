@@ -47,12 +47,20 @@ Do not modify immutable machine evidence to match prose. Correct the report tran
 ## Final-evaluation evidence — Issues #130/#131
 
 The separate final runtime merged in PR #133 has explicit owner implementation
-acceptance under Issue #131. Historical-only preflight completed successfully on
-2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run
-authorization remains pending. No real `final_authorization.json` exists, no
-final-run bindings are frozen, and no reserved-final outcomes were accessed.
-Final evaluation has not been executed. Exact final-run authorization bindings
-must be recalculated only after this preflight-status update is reviewed and merged.
+acceptance under Issue #131; historical-only preflight passed on 2026-10-03.
+The real `final-20261003-01` execution revealed reserved outcomes and failed
+during final replay verification. Preserve its machine evidence, failed status
+and diagnostics unchanged. PR #141 corrected the verified implementation defect.
+The owner explicitly authorized `final-20261003-02` as a defect-correction rerun
+with unchanged scientific scope; the corrected run has not been executed.
+Source/Git hashes are provenance only; scientific bindings and evidence-integrity
+checks remain enforced. No result-driven retry, retuning or reselection is allowed.
+
+Corrected-run reports must disclose the failed first execution, the verified
+defect and correction, and prior final-outcome access. A recovery audit is
+separate verification evidence and does not rewrite the failed run as completed.
+No final research comparison is established by these documentation/code changes.
+
 [DR-014](../docs/decisions/DR-014-forecasting-selection-and-final-refit.md) records
 the approved scientific scope and acceptance provenance.
 

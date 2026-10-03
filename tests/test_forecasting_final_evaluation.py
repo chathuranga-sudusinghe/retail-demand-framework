@@ -50,7 +50,7 @@ def synthetic_runner(final_context, monkeypatch):
             data = historical_panel()
         else:
             assert kwargs["start"] == "2024-12-03" and kwargs["end"] == "2024-12-30"
-            directory = layout.run_directory("synthetic-final")
+            directory = layout.run_directory(fixture["payload"]["run_id"])
             receipt = read_json(directory / "run_metadata.json")["prediction_receipt_hash"]
             assert len(artifacts.verify_sealed_predictions(directory, receipt)) == 56
             assert len(fits) == 20
@@ -632,3 +632,66 @@ def test_failed_final_recovery_rejects_changes_during_verification(failed_final_
     monkeypatch.setattr(artifacts, "_verify_final_scientific", change_after_scientific_checks)
     with pytest.raises(artifacts.FinalIntegrityError, match="changed during recovery"):
         artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=fixture["evidence_hashes"])
+
+
+def test_actual_runtime_source_and_git_are_provenance_not_permission(synthetic_runner, monkeypatch):
+    fixture = synthetic_runner
+    actual_sources = dict(fixture["payload"]["source_hashes"])
+    actual_sources["src/forecasting/final_artifacts.py"] = "b" * 64
+    monkeypatch.setattr(final, "environment_metadata", lambda root: {
+        "source_hashes": actual_sources, "library_versions": fixture["payload"]["library_versions"],
+        "git_commit_sha": "synthetic-current-commit", "git_branch": "synthetic-correction", "git_dirty": True,
+    })
+    directory = final.run_final_evaluation(fixture["layout"])
+    metadata = read_json(directory / "run_metadata.json")
+    retained_auth = read_json(directory / "authorization.json")
+    assert retained_auth["source_hashes"] == fixture["payload"]["source_hashes"] != actual_sources
+    assert metadata["source_hashes"] == metadata["runtime"]["source_hashes"] == actual_sources
+    assert metadata["runtime"]["git_commit_sha"] == "synthetic-current-commit"
+    assert metadata["runtime"]["git_dirty"] is True
+    first = read_json(directory / "candidates.json")[0]["model_artifact"]
+    descriptor = read_json(fixture["layout"].root / first["descriptor_path"])
+    assert descriptor["provenance"]["source_hashes"] == actual_sources
+    assert artifacts.verify_final_completed(directory)["evaluations"] == 28
+
+
+def test_runtime_environment_mismatch_still_blocks_before_history_or_fit(synthetic_runner, monkeypatch):
+    fixture = synthetic_runner
+    versions = dict(fixture["payload"]["library_versions"], numpy="0")
+    monkeypatch.setattr(final, "environment_metadata", lambda root: {
+        "source_hashes": fixture["payload"]["source_hashes"], "library_versions": versions,
+    })
+    with pytest.raises(ExecutionBlocked, match="runtime environment"):
+        final.run_final_evaluation(fixture["layout"])
+    assert "historical_read" not in fixture["events"]
+    assert not fixture["fits"]
+    assert "synthetic_outcome_read" not in fixture["events"]
+
+
+def test_recorded_execution_provenance_must_remain_internally_consistent(synthetic_runner):
+    directory = final.run_final_evaluation(synthetic_runner["layout"])
+    path = directory / "run_metadata.json"
+    metadata = read_json(path)
+    metadata["source_hashes"]["src/forecasting/final_artifacts.py"] = "b" * 64
+    path.write_text(json_text(metadata))
+    with pytest.raises(artifacts.FinalIntegrityError, match="runtime source provenance"):
+        artifacts.verify_final_scientific(directory)
+
+
+def test_explicit_corrected_run_preserves_prior_failed_storage_and_frozen_scope(synthetic_runner):
+    fixture, layout = synthetic_runner, synthetic_runner["layout"]
+    previous = layout.run_directory("synthetic-final")
+    previous.mkdir(parents=True)
+    evidence = previous / "retained.txt"
+    evidence.write_text("Synthetic historical failure")
+    before = evidence.read_bytes()
+    fixture["payload"]["run_id"] = "synthetic-corrected"
+    fixture["payload"]["approval_references"]["specific_final_run"] = "Synthetic explicit defect-correction approval"
+    fixture["record"].write_text(json_text(fixture["payload"]))
+    directory = final.run_final_evaluation(layout)
+    assert directory.name == "synthetic-corrected"
+    result = artifacts.verify_final_completed(directory)
+    assert result["evaluations"] == 28 and result["models_replayed"] == 20 and result["baseline_evaluations"] == 8
+    assert read_json(directory / "run_metadata.json")["producer_mapping"] == fixture["payload"]["producer_mapping"]
+    assert evidence.read_bytes() == before
+    assert not (previous / "run_manifest.json").exists()

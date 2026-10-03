@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Current forecasting status — 2026-10-03 / Issue #131:** Retained validation evidence is `validation-20261002-01`. [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the approved scientific freeze/refit policy. Phase 1 runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization remains pending; final evaluation has not been executed. Implementation acceptance grants no authorization-record creation, reserved-outcome access or run execution.
+> **Current forecasting status — 2026-10-03 / Issue #131:** Retained validation evidence is `validation-20261002-01`. [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the approved scientific freeze/refit policy. Phase 1 runtime is merged in [PR #133](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/133) and explicitly accepted by the owner under Issue #131. Historical-only preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. The real `final-20261003-01` execution revealed reserved outcomes and failed during final replay verification. PR #141 fixed the verified implementation defect. The owner explicitly authorized `final-20261003-02` as a defect-correction rerun with the same frozen 28 evaluations and producer mapping; it has not been executed. The original failed bundle remains preserved. Source/Git hashes are provenance only; scientific bindings, explicit specific-run approval and overwrite protection remain enforced. Result-driven retries, search, retuning, reselection and candidate substitution remain prohibited.
 
 ## Authority and scope
 
@@ -58,14 +58,14 @@ The final ordered features, formulas, categorical representation and common hori
 
 The following remain separate:
 
-- completed historical-only preflight versus pending exact one-time final-run authorization under Issue #131;
+- completed historical-only preflight versus exact specific-run authorization; the owner has now explicitly authorized corrected run `final-20261003-02` under Issue #131;
 - implementation-readiness acceptance, already established for merged PR #133, versus permission to create a real final authorization record or execute final evaluation;
 - DR-012 group approval and **component-owner/human approval for 28-day downstream use**;
 - uncertainty, human-review rules, numerical replenishment and final integration contracts.
 
 Issue #62/PR #64 supplied the earlier features, targets, folds and preprocessing. Later primary alignment and PR #76 supplied common one-hot representations, models, metrics and the runner. Issue #89 extended operational orchestration and was merged through PR #90. That acceptance does not implement Issues #92/#93 storage boundaries or authorize a new run.
 
-Issue #65 now has a human-approved/frozen protocol. Supportive settings, 28-day baseline formulas and numeric runtime controls are resolved there. Protocol approval, implementation acceptance and specific-run authorization are separate controls. Implementation acceptance for PR #133 is now established; historical-only preflight completed successfully on 2026-10-03 with outcome `READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization remains pending.
+Issue #65 now has a human-approved/frozen protocol. Supportive settings, 28-day baseline formulas and numeric runtime controls are resolved there. Protocol approval, implementation acceptance and specific-run authorization are separate controls. Implementation acceptance for PR #133 is now established; historical-only preflight completed successfully on 2026-10-03 with outcome `READY FOR AUTHORIZATION PREPARATION`. The owner has subsequently explicitly authorized `final-20261003-02` as a defect-correction rerun; implementation identities are provenance only and scientific safeguards remain enforced.
 
 ## Historical validation provenance — Issue #94
 
@@ -108,10 +108,18 @@ on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. Retained validation
 verification, environment/dependency matching and historical eligibility/origin/
 baseline checks passed; the frozen 28-candidate scope and DR-014 producer mapping
 remained unchanged. No estimator was fitted or reserved-final outcome accessed.
-Exact one-time final-run authorization remains pending; no real
-`final_authorization.json` exists and no final-run bindings are frozen. Final
-evaluation has not been executed. Exact final-run authorization bindings must be
-recalculated only after this preflight-status update is reviewed and merged.
+Those statements describe the historical preflight, before final execution.
+Subsequently the owner authorized `final-20261003-01`, which ran once, revealed
+reserved outcomes and failed during final replay verification. Its retained
+bundle remains failed and unchanged; it is not completed final evidence.
+[PR #141](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/141)
+fixed the verified prediction-layout defect. The owner's explicit Issue #131
+governance amendment authorizes `final-20261003-02` as the corrected rerun with
+the same scientific scope. It has not been executed. Source/Git/implementation
+identities are provenance only. Scientific bindings and overwrite protection
+remain enforced; result-driven retries, search, retuning, reselection and
+substitution remain prohibited. Preserve and disclose prior final-outcome access.
+
 See [final operations](forecasting-final-evaluation.md) for the protected ordering.
 The accepted storage layout is described in [runner operations](forecasting-runner.md);
 older migration-pending statements above describe the earlier Issue #94 state.

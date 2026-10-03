@@ -99,7 +99,7 @@ def test_authorization_hashes_must_be_well_formed(final_context, field):
 
 @pytest.mark.parametrize("mutation", [
     "missing", "extra", "duplicate", "reordered", "configuration", "horizon", "role", "producer", "false_permission",
-    "boolean_worker", "threads", "dates", "references", "reference_pending", "environment", "source",
+    "boolean_worker", "threads", "dates", "references", "reference_pending", "environment",
 ])
 def test_malformed_or_different_scope_authorization_is_blocked(final_context, mutation):
     payload = json.loads(json_text(final_context["payload"]))
@@ -133,8 +133,6 @@ def test_malformed_or_different_scope_authorization_is_blocked(final_context, mu
         payload["approval_references"]["specific_final_run"] = "pending"
     elif mutation == "environment":
         payload["library_versions"]["numpy"] = "0"
-    elif mutation == "source":
-        payload["source_hashes"]["src/forecasting/final_evaluation.py"] = "b" * 64
     final_context["record"].write_text(json_text(payload))
     with pytest.raises(ExecutionBlocked):
         authority.resolve_final_execution(final_context["layout"])
@@ -143,9 +141,8 @@ def test_malformed_or_different_scope_authorization_is_blocked(final_context, mu
 @pytest.mark.parametrize("path", [
     authority.FREEZE_PATH, authority.POLICY_PATH, "docs/protocol.md",
     "docs/forecasting-feature-engineering.md", "requirements.txt",
-    "src/forecasting/final_evaluation.py",
 ])
-def test_changed_approved_document_or_source_blocks_execution(final_context, path):
+def test_changed_approved_scientific_document_blocks_execution(final_context, path):
     with (final_context["layout"].root / path).open("a") as stream:
         stream.write("\n# synthetic change\n")
     with pytest.raises(ExecutionBlocked):
@@ -202,3 +199,47 @@ def test_rebinding_current_feature_contract_cannot_replace_completed_validation_
     fixture["record"].write_text(json_text(payload))
     with pytest.raises(ExecutionBlocked, match="completed validation"):
         authority.resolve_final_execution(fixture["layout"])
+
+
+@pytest.mark.parametrize("provenance_change", ["source_bytes", "recorded_source"])
+def test_source_provenance_does_not_bind_final_execution_permission(final_context, provenance_change):
+    fixture = final_context
+    if provenance_change == "source_bytes":
+        path = fixture["layout"].root / "src/forecasting/final_artifacts.py"
+        path.write_text(path.read_text() + "\n# Synthetic implementation correction\n")
+    else:
+        fixture["payload"]["source_hashes"]["src/forecasting/final_artifacts.py"] = "b" * 64
+        fixture["record"].write_text(json_text(fixture["payload"]))
+    context = authority.resolve_final_execution(fixture["layout"])
+    context.revalidate()
+    assert context.authorization.candidates == fixture["freeze"].candidates
+    assert context.authorization.producer_mapping == fixture["freeze"].producer_mapping
+
+
+def test_source_change_after_resolution_does_not_revoke_scientific_authorization(final_context):
+    context = authority.resolve_final_execution(final_context["layout"])
+    path = final_context["layout"].root / "src/forecasting/final_evaluation.py"
+    path.write_text(path.read_text() + "\n# Synthetic correction\n")
+    context.revalidate()
+
+
+@pytest.mark.parametrize("owner", ["artifacts", "models", "reports"])
+def test_defect_rerun_requires_an_unused_new_id_and_keeps_frozen_scope(final_context, owner):
+    fixture, layout = final_context, final_context["layout"]
+    previous = {"artifacts": layout.run_directory, "models": layout.model_run_directory,
+                "reports": layout.draft_report_directory}[owner]("synthetic-final")
+    previous.mkdir(parents=True)
+    evidence = previous / "retained.txt"
+    evidence.write_text("Synthetic failed historical evidence")
+    before = evidence.read_bytes()
+    with pytest.raises(ExecutionBlocked, match="consumed"):
+        authority.resolve_final_execution(layout)
+    fixture["payload"]["run_id"] = "synthetic-corrected"
+    fixture["payload"]["approval_references"]["specific_final_run"] = "Synthetic explicit defect-correction approval"
+    fixture["record"].write_text(json_text(fixture["payload"]))
+    context = authority.resolve_final_execution(layout)
+    assert context.authorization.run_id == "synthetic-corrected"
+    assert context.authorization.candidates == fixture["freeze"].candidates
+    assert context.authorization.producer_mapping == fixture["freeze"].producer_mapping
+    assert evidence.read_bytes() == before
+    assert not layout.run_directory("synthetic-corrected").exists()

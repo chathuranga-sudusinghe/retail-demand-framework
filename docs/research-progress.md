@@ -1,10 +1,11 @@
 # Research and Project Progress Log
 
-**Status:** Merged Issue #93 progress-log authority; evidence-backed forecasting
-validation and implementation-readiness milestones recorded on 2026-10-03.
-Historical-only preflight completed successfully on 2026-10-03:
-`READY FOR AUTHORIZATION PREPARATION`. Exact one-time final-run authorization
-remains pending; final evaluation has not been executed.
+**Status:** Retained validation and historical-only preflight milestones are
+recorded. The first real final execution `final-20261003-01` failed during replay
+verification after outcome access. PR #141 corrected the verified defect. The
+owner explicitly authorized corrected run `final-20261003-02` on 2026-10-03, with
+unchanged scientific scope; it has not been executed. Execution-control changes
+and its local authorization are prepared for review.
 
 ## Purpose and boundaries
 
@@ -65,3 +66,20 @@ The following is a template, not an event:
 - Checks: retained `validation-20261002-01` verification passed; environment/dependencies matched; proposed final-run storage was unused; historical eligibility, origin and baseline checks passed. The frozen 28-candidate scope and [DR-014 producer mapping](decisions/DR-014-forecasting-selection-and-final-refit.md) remained unchanged.
 - Boundaries: no estimator was fitted, no reserved-final outcomes were accessed, no real `final_authorization.json` exists, no final-run bindings are frozen, and final evaluation has not been executed. This milestone is not one-time final-run authorization.
 - Next action: review and merge this preflight-status update before recalculating exact final-run authorization bindings. Proposed run ID `final-20261003-01` remains unauthorized; exact one-time final-run authorization is still pending.
+
+### 2026-10-03 — First final execution failed; replay defect corrected
+
+- Recorded: 2026-10-03; component owner: Chathuranga.
+- Type/status: final execution and implementation correction; `final-20261003-01` remains `failed`, with no completion manifest.
+- Event/outcome: the owner ran the frozen 28 evaluations once; reserved outcomes were accessed. Final verification failed because replay omitted the C-contiguous matrix copy used during original prediction.
+- Evidence: owner-supplied Issue #131 execution/error report; retained [diagnostics](../artifacts/forecasting/final-20261003-01/diagnostics.json); [PR #141](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/141). The read-only investigation found exact replay of all twenty saved learned models with matching layout and reconciliation of all 28 retained metric records.
+- Boundaries: preserve the failed artifact/model/draft bundle exactly. This entry claims no completed final run, recovery promotion or newly executed experiment.
+
+### 2026-10-03 — Defect-correction rerun explicitly authorized
+
+- Recorded: 2026-10-03; component owner: Chathuranga.
+- Type/status: owner execution-governance decision; exact run `final-20261003-02` explicitly authorized, not yet executed.
+- Approval reference: the owner's Issue #131 instruction in the owner-agent conversation beginning "Yes. Explicitly authorize the corrected final evaluation rerun", followed by approval to implement the scoped changes on `research/issue-131-corrected-final-run`. See [DR-014 execution-governance amendment](decisions/DR-014-forecasting-selection-and-final-refit.md#execution-governance-amendment--issue-131--2026-10-03).
+- Decision: a corrected rerun caused solely by a verified implementation/execution defect may proceed after its fix, with unchanged scientific scope, a new explicitly approved ID and unused storage. Result-driven retries, search, retuning, reselection, substitution and methodology changes remain prohibited.
+- Controls: source/Git/implementation hashes record provenance only; scientific-document, data, scope, pinned-runtime, predict-before-reveal, artifact-integrity and overwrite safeguards remain enforced.
+- Next action: review the revised controls, documentation and local authorization, then the owner manually executes the corrected run. Preserve/disclose the first failed execution and prior outcome exposure; downstream and research-report acceptance remain separate.
