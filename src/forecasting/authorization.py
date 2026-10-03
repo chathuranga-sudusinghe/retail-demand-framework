@@ -147,6 +147,7 @@ def resolve_execution(repository: Path | RepositoryLayout = DEFAULT_LAYOUT) -> E
         try:
             directories = (layout.run_directory(approved.run_id),
                            layout.model_run_directory(approved.run_id),
+                           layout.report_directory(approved.run_id),
                            layout.draft_report_directory(approved.run_id))
             consumed = any(directory.exists() or directory.is_symlink() for directory in directories)
         except (OSError, ValueError) as exc:

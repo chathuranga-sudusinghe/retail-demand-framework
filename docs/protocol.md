@@ -686,7 +686,7 @@ Phase 5 uses `artifacts/forecasting/<run_id>/` for machine-readable evidence and
 the sole completion authority, `run_manifest.json`, written last.
 Every successful learned model, descriptor, fitted preprocessing state and replay
 input belongs in `models/forecasting/<run_id>/`. The generated comparison belongs
-in `reports/forecasting/drafts/<run_id>/comparison.md` and remains pending human
+in `reports/forecasting/<run_id>/comparison.md` and remains pending human
 review. Later reviewed findings use `reports/forecasting/<run_id>.md` under the
 [reporting contract](../reports/README.md). Completed evidence across these owners
 is immutable; never overwrite another run or relabel historical evidence.
@@ -707,7 +707,7 @@ unchanged. This documentation authorizes no new exports or protected outcome acc
 | `selected_configurations.json` | Primary selections/ties and human freeze references, fixed supportive declarations, and explicit baseline policies/exclusions |
 | `predictions.csv` | Section 14 keyed pair-level audit records |
 | `eligibility_counts.csv` | Per-pair history/label/intersection and exclusion diagnostics |
-| `comparison.md` | Generated evidence summary at `reports/forecasting/drafts/<run_id>/comparison.md`: separate horizon/role tables, magnitude/direction/fold-consistency discussion, approval gaps and final-exposure disclosure; pending human review |
+| `comparison.md` | Generated evidence summary at `reports/forecasting/<run_id>/comparison.md`: separate horizon/role tables, magnitude/direction/fold-consistency discussion, approval gaps and final-exposure disclosure; pending human review |
 
 `fold_metrics.csv` required column order:
 
@@ -974,12 +974,12 @@ models/forecasting/<run_id>/
   persisted models and descriptors
   fitted preprocessing state and origin replay inputs
 
-reports/forecasting/drafts/<run_id>/
+reports/forecasting/<run_id>/
   comparison.md
 ```
 
 `ArtifactWriter.directory` remains the artifact-run anchor. `RepositoryLayout`
-resolves model and draft locations from that anchor with the same exact run ID.
+resolves model and comparison-report locations from that anchor with the same exact run ID.
 Source and approved processed/model-ready handoffs keep their
 `data/processed/...` ownership, including the Phase 4 lifecycle. The reviewed
 authorization-record location remains
@@ -1014,8 +1014,13 @@ blocks completed consumption. Failed/interrupted runs publish no completion
 manifest. Partial evidence remains in its owning directories; there is no
 automatic cleanup, retry, resume or reuse of a consumed run ID.
 
-The generated `comparison.md` is ignored draft evidence, pending human review.
-Its evidence links resolve from the draft directory to the artifact-run anchor.
+The generated `comparison.md` is trackable research evidence for a verified
+completed run; interpretation review remains separate. Its evidence links resolve
+from the canonical report directory to the artifact-run anchor. Temporary/preview
+outputs use `reports/forecasting/drafts/`. Historical completed manifests retain
+their exact original draft-path receipts and files; tracked copies do not rewrite
+those immutable bundles. This is a storage-path correction only; scientific
+schemas, metrics, selection and methodology remain unchanged.
 Later reviewed research reporting and figures follow
 [reports/README.md](../reports/README.md) in separate locations. Completion does
 not establish human review, configuration freeze, publication or final-run

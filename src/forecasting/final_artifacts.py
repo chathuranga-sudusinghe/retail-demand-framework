@@ -58,8 +58,21 @@ def candidate_keys(run_id: str, candidate: FinalCandidate) -> dict[str, Any]:
 
 
 def _roots(layout: RepositoryLayout, run_id: str) -> dict[str, Path]:
-    return {"artifacts": layout.run_directory(run_id), "models": layout.model_run_directory(run_id),
-            "reports": layout.draft_report_directory(run_id)}
+    directory = layout.run_directory(run_id)
+    manifest = layout._owned_path(directory / "run_manifest.json")
+    report = layout.comparison_path(run_id)
+    if manifest.exists():
+        references = [r["path"] for r in read_json(manifest)["files"] if r["owner"] == "reports"]
+        if len(references) != 1:
+            raise FinalIntegrityError("Completion requires exactly one comparison receipt.")
+        report = layout.comparison_path(run_id, retained_reference=references[0])
+    elif not report.parent.exists() and layout.draft_report_directory(run_id).exists():
+        # Retained failed bundles predate canonical report storage and have no manifest.
+        metadata = read_json(directory / "run_metadata.json")
+        if metadata["run_status"] == "failed":
+            report = layout._owned_path(layout.draft_report_directory(run_id) / "comparison.md")
+    return {"artifacts": directory, "models": layout.model_run_directory(run_id),
+            "reports": report.parent}
 
 
 def _path(directory: Path, owner: str, relative: str) -> Path:
@@ -113,7 +126,7 @@ class FinalArtifactWriter:
     def path(self, name: str) -> Path:
         if name not in WRITABLE_NAMES:
             raise ValueError("Unknown final artifact.")
-        base = self.layout.draft_report_directory(self.directory.name) if name == "comparison.md" else self.directory
+        base = self.layout.report_directory(self.directory.name) if name == "comparison.md" else self.directory
         return self.layout._owned_path(base / name)
 
     def write_text(self, name: str, text: str) -> None:
@@ -465,7 +478,7 @@ def _final_files(directory: Path, *, include_diagnostics: bool = False) -> dict[
     files.update({layout._owned_path(directory / name): "artifacts" for name in ARTIFACT_NAMES})
     if include_diagnostics:
         files[layout._owned_path(directory / "diagnostics.json")] = "artifacts"
-    files[layout._owned_path(layout.draft_report_directory(directory.name) / "comparison.md")] = "reports"
+    files[layout._owned_path(_roots(layout, directory.name)["reports"] / "comparison.md")] = "reports"
     found: dict[Path, str] = {}
     for owner, folder in _roots(layout, directory.name).items():
         for p in folder.rglob("*"):
@@ -482,7 +495,7 @@ def finalize_final_run(writer: FinalArtifactWriter, metadata: dict[str, Any], *,
     metadata["run_status"] = "finalizing"
     writer.write_json("run_metadata.json", metadata)
     metrics = read_json(writer.path("metrics.json"))
-    lines = ["# Final forecasting comparison", "", "Generated draft; pending human review.", "",
+    lines = ["# Final forecasting comparison", "", "Generated research evidence; pending human interpretation review.", "",
              "All frozen candidates are reported; the downstream producer mapping is separate.",
              "Seasonal Naive outperformed learned models in validation at 14 and 28 days.",
              "Simulated data; December 3–16 had prior validation exposure and full-year EDA inspected the final interval.",

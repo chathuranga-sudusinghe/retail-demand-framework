@@ -204,7 +204,7 @@ def test_report_required_summary_matrices_and_horizon_evidence(saved_evidence):
     assert "| xgboost | GBM002 | 4 | 0.0123456789012345" in text
     assert "LightGBM configuration ties: none recorded." in text
     saved_evidence.write_comparison(text)
-    draft = saved_evidence.layout.draft_report_directory(saved_evidence.directory.name) / "comparison.md"
+    draft = saved_evidence.layout.report_directory(saved_evidence.directory.name) / "comparison.md"
     assert draft.read_text() == text
     assert "pending human review" in text and "pending_human_review" in text
     assert not (saved_evidence.directory / "comparison.md").exists()

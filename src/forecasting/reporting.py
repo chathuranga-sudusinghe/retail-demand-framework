@@ -28,7 +28,7 @@ def _table(columns: Iterable[str], rows: Iterable[Iterable[Any]]) -> list[str]:
 def comparison_text(directory: Path, *, require_verified: bool = True) -> str:
     """Render stored values/status/ties only; no means, differences or winners computed."""
     layout = RepositoryLayout.from_artifact_directory(directory)
-    report_directory = layout.draft_report_directory(directory.name)
+    report_directory = layout.report_directory(directory.name)
 
     def evidence_link(label: str, name: str) -> str:
         relative = Path(relpath(directory / name, report_directory)).as_posix()

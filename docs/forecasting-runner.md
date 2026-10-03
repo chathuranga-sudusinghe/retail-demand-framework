@@ -18,7 +18,7 @@ Current locations:
 - Reviewed local record: `data/processed/forecasting/validation_authorization.json` (unchanged).
 - Artifact-run anchor: `artifacts/forecasting/<run_id>/`.
 - All persisted model/state bundles: `models/forecasting/<run_id>/`.
-- Generated draft comparison: `reports/forecasting/drafts/<run_id>/comparison.md`.
+- Generated comparison evidence: `reports/forecasting/<run_id>/comparison.md`.
 
 Historical provenance only: the former `outputs/revised-forecasting/<exact-approved-run-id>/`
 single bundle is no longer a runtime destination. Its removal does not establish
@@ -164,14 +164,14 @@ models/forecasting/<run_id>/
     state.json
     origin_features.json
 
-reports/forecasting/drafts/<run_id>/
+reports/forecasting/<run_id>/
   comparison.md
 ```
 
 Manifest contract version 2 (`manifest_version: 2`) records repository-relative
 file paths, explicit owners (`artifacts`, `models`, `reports`) and SHA-256 hashes.
 It covers finalized machine evidence, metadata, authorization, logs, every
-persisted model/descriptor, preprocessing state, replay inputs and the draft
+persisted model/descriptor, preprocessing state, replay inputs and the
 comparison. It excludes the completion manifest itself. Metadata's
 `artifact_manifest` contains receipts, not completion authority.
 
@@ -223,8 +223,10 @@ deletion, temporary-candidate retention policy, cleanup or historical conversion
 Complete configuration, metric, prediction, eligibility and selection evidence
 remains retained for all evaluated candidates.
 
-`comparison.md` is generated draft evidence, labelled pending human review.
-Its links resolve from `reports/forecasting/drafts/<run_id>/` to machine-readable
+`comparison.md` is research evidence for a verified completed run, with human
+interpretation review labelled separately. Temporary/preview reports use
+`reports/forecasting/drafts/`, outside the authoritative report path.
+Its links resolve from `reports/forecasting/<run_id>/` to machine-readable
 evidence at the artifact anchor, including the sole completion manifest. Report
 creation and verified completion do not establish human review, interpretation
 acceptance, configuration freeze or final-run authorization.
@@ -232,9 +234,10 @@ acceptance, configuration freeze or final-run authorization.
 Later human-reviewed findings and approved figures follow
 [reports/README.md](../reports/README.md), at `reports/forecasting/<run_id>.md` and
 `reports/figures/forecasting/<run_id>/`. Keep those reviewed outputs separate from
-the ignored generated draft. Completed draft evidence stays immutable alongside
-its artifact/model dependencies. Data handoffs and the Phase 4 preparation
-lifecycle retain their existing ownership.
+the generated comparison. Completed comparison evidence stays immutable alongside
+its artifact/model dependencies. Historical completed bundles keep their original
+draft report and exact receipt paths; the tracked copy does not replace or rewrite that immutable evidence.
+Data handoffs and the Phase 4 preparation lifecycle retain their existing ownership.
 
 ## Failure and interruption
 

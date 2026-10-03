@@ -86,16 +86,16 @@ def require_mutable_run(directory: Path) -> None:
 
 
 class ArtifactWriter:
-    """Own one artifact anchor and its model/draft directories; never reuse a run."""
+    """Own one artifact anchor and its model/report directories; never reuse a run."""
 
     def __init__(self, repository: Path | RepositoryLayout, run_id: str):
         self.layout = RepositoryLayout(repository) if isinstance(repository, Path) else repository
         self.repository = self.layout.root
         self.directory = self.layout.run_directory(run_id)
         self.model_directory = self.layout.model_run_directory(run_id)
-        self.report_directory = self.layout.draft_report_directory(run_id)
+        self.report_directory = self.layout.report_directory(run_id)
         directories = (self.directory, self.model_directory, self.report_directory)
-        for directory in directories:
+        for directory in (*directories, self.layout.draft_report_directory(run_id)):
             if directory.exists():
                 raise FileExistsError("Forecasting run storage already exists.")
         for directory in directories:
@@ -106,7 +106,7 @@ class ArtifactWriter:
         require_mutable_run(self.directory)
 
     def _path(self, name: str) -> Path:
-        directory = (self.layout.draft_report_directory(self.directory.name)
+        directory = (self.layout.report_directory(self.directory.name)
                      if name == "comparison.md" else self.layout.run_directory(self.directory.name))
         return self.layout._owned_path(directory / name)
 

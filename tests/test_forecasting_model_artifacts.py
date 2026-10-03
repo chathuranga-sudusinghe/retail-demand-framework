@@ -184,12 +184,13 @@ def test_public_json_persistence_rejects_completed_run_without_temporary_files(t
     assert snapshot_files(tmp_path) == before
 
 
-@pytest.mark.parametrize("owner", ["artifact", "model", "report"])
+@pytest.mark.parametrize("owner", ["artifact", "model", "report", "draft"])
 def test_writer_rejects_existing_run_storage_without_creating_other_directories(tmp_path, owner):
     layout = RepositoryLayout(tmp_path)
     directories = {"artifact": layout.run_directory("synthetic"),
                    "model": layout.model_run_directory("synthetic"),
-                   "report": layout.draft_report_directory("synthetic")}
+                   "report": layout.report_directory("synthetic"),
+                   "draft": layout.draft_report_directory("synthetic")}
     directories[owner].mkdir(parents=True)
     sentinel = directories[owner] / "retained.txt"
     sentinel.write_text("previous evidence")
@@ -199,7 +200,7 @@ def test_writer_rejects_existing_run_storage_without_creating_other_directories(
     assert all(not path.exists() for key, path in directories.items() if key != owner)
 
 
-def test_draft_report_location_links_receipts_and_pending_review(tmp_path):
+def test_authoritative_report_location_links_receipts_and_pending_review(tmp_path):
     from test_forecasting_observability import saved_evidence
     writer = saved_evidence.__wrapped__(tmp_path)
     for name in ("predictions.csv", "eligibility_counts.csv"):
@@ -209,6 +210,8 @@ def test_draft_report_location_links_receipts_and_pending_review(tmp_path):
     assert snapshot_files(writer.repository) == before
     writer.write_comparison(text)
     path = writer.report_directory / "comparison.md"
+    assert path == writer.layout.root / f"reports/forecasting/{writer.directory.name}/comparison.md"
+    assert not writer.layout.draft_report_directory(writer.directory.name).exists()
     assert path.read_text() == text
     assert not (writer.directory / "comparison.md").exists()
     assert "pending human review" in text and "pending_human_review" in text

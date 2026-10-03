@@ -5,7 +5,7 @@ import pytest
 from src.forecasting import paths
 
 
-RUN_METHODS = ("run_directory", "model_run_directory", "draft_report_directory")
+RUN_METHODS = ("run_directory", "model_run_directory", "report_directory", "draft_report_directory")
 
 
 def test_fixed_paths_and_no_import_side_effects(tmp_path, monkeypatch):
@@ -31,6 +31,9 @@ def test_layout_is_immutable_and_preserves_default_and_alternate_paths(tmp_path)
         assert current.feature_contract == current.root / "docs/forecasting-feature-engineering.md"
         assert current.artifact_root == current.root / "artifacts/forecasting"
         assert current.model_root == current.root / "models/forecasting"
+        assert current.report_root == current.root / "reports/forecasting"
+        assert current.report_directory("reviewed-01") == current.report_root / "reviewed-01"
+        assert current.comparison_path("reviewed-01") == current.report_root / "reviewed-01/comparison.md"
         assert current.draft_report_root == current.root / "reports/forecasting/drafts"
         assert current.output_root == current.artifact_root
         directory = current.run_directory("reviewed-01")
@@ -84,10 +87,13 @@ def test_normal_run_paths_preserve_existing_files_without_creating_any(tmp_path,
     ("models", "model_run_directory"),
     ("models/forecasting", "model_run_directory"),
     ("models/forecasting/reviewed", "model_run_directory"),
+    ("reports", "report_directory"),
+    ("reports/forecasting", "report_directory"),
     ("reports", "draft_report_directory"),
     ("reports/forecasting", "draft_report_directory"),
     ("reports/forecasting/drafts", "draft_report_directory"),
     ("reports/forecasting/drafts/reviewed", "draft_report_directory"),
+    ("reports/forecasting/reviewed", "report_directory"),
 ])
 @pytest.mark.parametrize("target_kind", ["inside", "outside", "missing"])
 def test_storage_components_reject_symlink_redirection_without_writes(tmp_path, relative, method, target_kind):
@@ -201,6 +207,8 @@ def test_repository_reference_cannot_escape_root(tmp_path):
     ("artifacts/forecasting", "run_directory"),
     ("models", "model_run_directory"),
     ("models/forecasting", "model_run_directory"),
+    ("reports", "report_directory"),
+    ("reports/forecasting", "report_directory"),
     ("reports", "draft_report_directory"),
     ("reports/forecasting", "draft_report_directory"),
     ("reports/forecasting/drafts", "draft_report_directory"),
@@ -214,3 +222,20 @@ def test_existing_non_directory_storage_ancestor_rejected_without_writes(tmp_pat
         getattr(paths.RepositoryLayout(tmp_path), method)("reviewed")
     assert set(tmp_path.rglob("*")) == before
     assert blocker.read_bytes() == b"original file"
+
+
+def test_comparison_paths_keep_authoritative_and_legacy_evidence_separate(tmp_path):
+    layout = paths.RepositoryLayout(tmp_path)
+    current = "reports/forecasting/reviewed/comparison.md"
+    legacy = "reports/forecasting/drafts/reviewed/comparison.md"
+    assert layout.comparison_path("reviewed") == tmp_path / current
+    assert layout.comparison_path("reviewed", retained_reference=current) == tmp_path / current
+    assert layout.comparison_path("reviewed", retained_reference=legacy) == tmp_path / legacy
+    assert not layout.comparison_path("reviewed").is_relative_to(layout.draft_report_root)
+    with pytest.raises(ValueError, match="reserved drafts"):
+        layout.report_directory("drafts")
+    for reference in ("../outside/comparison.md", current.replace("reviewed", "other"),
+                      legacy.replace("/drafts/", "/drafts/../"), current.replace("comparison.md", "extra.md")):
+        with pytest.raises(ValueError, match="Comparison reference"):
+            layout.comparison_path("reviewed", retained_reference=reference)
+    assert not list(tmp_path.iterdir())

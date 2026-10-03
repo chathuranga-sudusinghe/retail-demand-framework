@@ -305,7 +305,7 @@ def test_mocked_full_plan_writes_exact_artifacts_metadata_and_same_candidate_pop
         else:
             assert entry["artifact_hash"] == file_hash(path) and entry["artifact_status"] == "written"
     assert not any(r["human_review_reference"] for r in metadata["selection_records"])
-    text = (RepositoryLayout.from_artifact_directory(directory).draft_report_directory(directory.name) / "comparison.md").read_text()
+    text = (RepositoryLayout.from_artifact_directory(directory).report_directory(directory.name) / "comparison.md").read_text()
     assert "December 3–16" in text and "full-year EDA" in text
     assert "Primary model tie" in text and "Fold-level primary WAPE comparison" in text
     assert "fold differences" not in text
@@ -437,7 +437,7 @@ def test_preflight_missing_outcome_persists_calendar_diagnostics_without_any_fit
     metadata = json.loads((directory / "run_metadata.json").read_text())
     assert metadata["run_status"] == "failed"
     assert metadata["selection_records"] == []
-    assert "Run status at rendering: failed" in (RepositoryLayout.from_artifact_directory(directory).draft_report_directory(directory.name) / "comparison.md").read_text()
+    assert "Run status at rendering: failed" in (RepositoryLayout.from_artifact_directory(directory).report_directory(directory.name) / "comparison.md").read_text()
 
 
 def test_exact_csv_column_order_is_checked_against_the_frozen_protocol():
@@ -592,10 +592,10 @@ def test_alternate_layout_is_used_consistently_without_global_root_patching(
     assert (directory / "authorization.json").is_file()
     assert layout.validation_model_directory(directory).is_dir()
     assert layout.preprocessing_state_directory(directory, "ridge", 1, 1).is_dir()
-    assert (layout.draft_report_directory(approved.run_id) / "comparison.md").is_file()
+    assert (layout.report_directory(approved.run_id) / "comparison.md").is_file()
     assert not RepositoryLayout(REPOSITORY).run_directory(approved.run_id).exists()
     assert not RepositoryLayout(REPOSITORY).model_run_directory(approved.run_id).exists()
-    assert not RepositoryLayout(REPOSITORY).draft_report_directory(approved.run_id).exists()
+    assert not RepositoryLayout(REPOSITORY).report_directory(approved.run_id).exists()
 
 
 def test_context_layout_conflict_is_rejected_before_run_creation(tmp_path):
