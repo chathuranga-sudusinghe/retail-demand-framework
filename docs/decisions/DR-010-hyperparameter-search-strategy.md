@@ -1,6 +1,6 @@
 # DR-010 — Forecasting Hyperparameter-Search Strategy
 
-> **Current status cross-reference — Issue #94:** [The frozen protocol](../protocol.md) resolves prior pending supportive settings, baseline and runtime decisions. Issue #89 was merged through PR #90. [Runner operations](../forecasting-runner.md) distinguish approved storage policy from unchanged runtime behavior. Original decision/development wording below remains historical provenance; this status note changes no decision or authorizes any run.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Status:** PRIMARY SEARCH DESIGN SUPERSEDED BY DR-013
 
@@ -12,11 +12,11 @@ The primary models use the same four matched hyperparameter dimensions and value
 
 **24 × 3 primary models × 4 horizons × 4 folds = 1,152 planned primary validation fits.**
 
-These are planned counts, not executed evidence. Canonical configuration identities, API mappings, fixed seed policy, representation and pending runtime controls remain governed by DR-013.
+These are planned counts, not executed evidence. Canonical configuration identities, API mappings, fixed seed policy, representation are governed by DR-013; fixed runtime controls are resolved in the final protocol.
 
-The supportive Ridge Regression / Random Forest configuration policy remains pending separate human approval. No supportive configuration policy is selected by this record. Naive and Seasonal Naive remain separate untuned baselines under the retained provisions in [DR-007](DR-007-forecasting-model-set.md).
+The supportive Ridge/Random Forest configurations are fixed in the approved protocol; the historical grids below are non-operative. No supportive configuration policy is selected by this record. Naive and Seasonal Naive remain separate untuned baselines under the retained provisions in [DR-007](DR-007-forecasting-model-set.md).
 
-The earlier primary grids and fit-count plan are preserved only in the historical block below. This record authorises no experiment execution; protocol approval, implementation acceptance and specific run authorisation remain separate human gates.
+The earlier primary grids and fit-count plan are preserved only in the historical block below. This record authorises no experiment execution; protocol approval, implementation acceptance and specific run authorisation remain separate human approval boundaries.
 
 ## Historical original decision body
 
@@ -26,8 +26,6 @@ The earlier primary grids and fit-count plan are preserved only in the historica
 <summary>Show superseded historical DR-010 body</summary>
 
 # DR-010 — Forecasting Hyperparameter-Search Strategy
-
-> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-23
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline

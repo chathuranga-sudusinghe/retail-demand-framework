@@ -4,8 +4,8 @@
 **Prepares:** Issue #86 (later integration implementation; remains open)
 **Owner:** Tinosh Gamage — System Integration and Prototype Engineering
 **Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
-**Prepared:** 2026-10-01, against `main` at merge commit `738ec59` (PR #90)
-**Status:** Documentation only. No adapter, schema, API, chart, test or experiment is created or approved by this document.
+**Updated:** 2026-10-04 for completed forecasting evidence and current run storage.
+**Status:** Forecasting research completed and integrity verified as confirmed by the owner; prospective handoff and downstream/API contracts remain subject to their existing reviews. This map creates no schema or analytical approval.
 
 ---
 
@@ -46,7 +46,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 | Source | What it supplies for this map |
 |---|---|
 | [AGENTS.md](../AGENTS.md) | Ownership boundaries, research-decision rule, dataset rule, experiment execution rule |
-| [docs/protocol.md](protocol.md) | Frozen forecasting validation protocol (`issue-65-matched-frozen-1`), artifact schemas, gates |
+| [docs/protocol.md](protocol.md) | Frozen forecasting validation protocol (`issue-65-matched-frozen-1`), artifact schemas, human approval boundaries |
 | [src/forecasting/artifacts.py](../src/forecasting/artifacts.py) | Exact implemented artifact column names and schema version |
 | [src/forecasting/targets.py](../src/forecasting/targets.py) | Exact meaning of horizon targets and their row alignment |
 | [src/forecasting/experiment.py](../src/forecasting/experiment.py) | How origin and target dates are written for validation records |
@@ -64,27 +64,11 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 
 ## 3. Forecasting artifacts — actual implemented field names
 
-> **Important:** Everything in this section exists in **source code** as a schema. A validation-only run was previously authorised and executed, but its generated local evidence was later intentionally deleted during the architecture reset. No currently retained/reviewable validation bundle is available for downstream integration (see Blocker B1).
+Retained validation run validation-20261002-01 and final evaluation run final-20261003-02 are completed evidence, with integrity verification confirmed by the owner. Numerical sources are indexed in [reports](../reports/README.md); current findings are in [final evaluation](forecasting-final-evaluation.md). The removed earlier validation run remains historical and is not the current evidence source.
 
-All names below are copied exactly from [src/forecasting/artifacts.py](../src/forecasting/artifacts.py). Schema version: `issue-65-v2`. Protocol version: `issue-65-matched-frozen-1`.
+### 3.1 Run output files and storage
 
-### 3.1 Run output files
-
-The currently implemented historical/legacy runtime writes to the local, git-ignored directory `outputs/revised-forecasting/<run_id>/` ([paths.py](../src/forecasting/paths.py)). Downstream integration must not treat this path as a stable future contract. Issue #98 is refactoring active storage toward the approved repository responsibilities: `data/`, `models/`, `artifacts/` and `reports/`.
-
-The legacy runtime file set is:
-
-```text
-run_metadata.json
-fold_metrics.csv
-configuration_summary.csv
-selected_configurations.json
-predictions.csv
-eligibility_counts.csv
-comparison.md
-```
-
-Issue #89 was merged through PR #90, the merged state against which this document was prepared. Subsequent architecture refactoring is tracked under Issue #98. The merged #89 implementation adds `authorization.json`, `run.log`, `run_manifest.json`, failure `diagnostics.json`, and validation model/state files. `run_manifest.json` is published **last** and is the only completion evidence; metadata alone is not ([forecasting-runner.md](forecasting-runner.md)).
+Machine-readable evidence and sole completion manifest are in artifacts/forecasting/<run_id>/; models/preprocessing/replay inputs are in models/forecasting/<run_id>/; tracked comparison snapshots are reports/forecasting/<run_id>/comparison.md. [Storage policy](artifact-storage-policy.md) owns exact layouts, versions and historical receipt compatibility; [runner operations](forecasting-runner.md) owns stage-specific verification. No output is independently opened or verified by this documentation update.
 
 ### 3.2 `predictions.csv` columns, grouped by purpose
 
@@ -100,21 +84,17 @@ Issue #89 was merged through PR #90, the merged state against which this documen
 | **Status** | `prediction_status`, `target_status`, `eligibility_status` | Implemented / frozen |
 | **Retrospective outcome** | `observed_target` | Implemented / frozen — retrospective only |
 
-### 3.3 Other forecasting artifacts
+### 3.3 Other artifacts and separate final schema
 
-| Artifact | Exact columns / keys | Role |
-|---|---|---|
-| `fold_metrics.csv` | `run_id`, `evaluation_stage`, `evidence_role`, `model`, `horizon`, `configuration_id`, `canonical_config_id`, `fold_id`, `training_start`, `training_end`, `forecast_origin`, `target_start_date`, `target_end_date`, `n_predictions`, `wape`, `mae`, `rmse`, `bias`, `wape_denominator`, `metric_status`, `failure_reason` | Retrospective evaluation |
-| `configuration_summary.csv` | `run_id`, `evaluation_stage`, `evidence_role`, `model`, `horizon`, `configuration_id`, `canonical_config_id`, `expected_fold_count`, `valid_fold_count`, `n_predictions`, `mean_wape`, `mean_mae`, `mean_rmse`, `mean_bias`, `metric_status`, `failure_reason`, `selected_configuration`, `selection_status`, `review_status` | Retrospective evaluation / selection |
-| `eligibility_counts.csv` | `run_id`, `evaluation_stage`, `evidence_role`, `model`, `horizon`, `fold_id`, `SKU_ID`, `Warehouse_ID`, `raw_row_count`, `feature_eligible_count`, `label_eligible_count`, `training_row_count`, `expected_origin_count`, `scored_origin_count`, `exclusion_reason`, `reason_count`, `overlapping_reasons` | Diagnostics |
-| `run_metadata.json` | Run identity (`run_id`, `schema_version`, `protocol_version`, `protocol_hash`, …), source/environment (`git_commit_sha`, `library_versions`, …), approvals, candidate, representation, eligibility, metric and selection records ([protocol.md §13](protocol.md)) | Provenance |
-| `selected_configurations.json` | `selections`, `supportive_configurations`, `baseline_policies` ([protocol.md §15](protocol.md)) | Selection provenance |
+[Protocol §13–15](protocol.md#13-machine-readable-reproducibility-metadata) is the canonical validation metadata/CSV schema. Validation field names above refer to predictions.csv, not a universal downstream/API record.
+
+The separate final runtime uses candidates.json, sealed predictions.json/prediction_receipt.json, observations.json and metrics.json under schema issue-130-final-v1. [Final persistence source](../src/forecasting/final_artifacts.py) owns the exact JSON contract. All twenty fresh learned models, preprocessing and replay inputs are retained. The DR-014 producer mapping identifies the intended four prospective producers; it does not make retrospective observations/errors prospective inputs.
 
 ### 3.4 Allowed provenance values (from protocol and source)
 
 | Field | Values |
 |---|---|
-| `evaluation_stage` | `validation`, `final_evaluation` (final evaluation is blocked until Gate 6) |
+| `evaluation_stage` | `validation`, `final_evaluation` (separate completed stages; no final-result-driven reselection) |
 | `evidence_role` | `primary`, `supportive`, `simple_baseline` |
 | `model` | `xgboost`, `lightgbm`, `catboost` (primary); `ridge`, `random_forest` (supportive); `naive`, `seasonal_naive` (simple baselines) |
 | `configuration_id` | `GBM001`–`GBM024` (primary); `fixed` (supportive); `not_tuned` (baselines) |
@@ -156,7 +136,7 @@ Worked examples from the frozen dates ([protocol.md §3, §12](protocol.md)):
 |---|---|---|---|---|
 | Validation fold 1 | 2024-03-31 | 28 | 2024-04-01 | 2024-04-28 |
 | Validation fold 4 | 2024-11-04 | 7 | 2024-11-05 | 2024-11-11 |
-| Final evaluation (blocked until Gate 6) | 2024-12-02 | 1 / 7 / 14 / 28 | 2024-12-03 | 2024-12-03 / 09 / 16 / 30 |
+| Final evaluation (completed) | 2024-12-02 | 1 / 7 / 14 / 28 | 2024-12-03 | 2024-12-03 / 09 / 16 / 30 |
 
 ---
 
@@ -180,7 +160,7 @@ Rules recorded in sources:
 - The retrospective margin is evaluation evidence and must not become a prospective review input (DR-012 §7).
 - The API must not use future outcome information in prospective views ([system integration workflow](workflows/system-integration-and-prototype.md)).
 
-**Current state:** every implemented forecasting artifact is a **retrospective validation** artifact (`evaluation_stage = validation`). `final_evaluation` is blocked until Gate 6. **No prospective forecast-input artifact is defined in current source** (see Blocker B2).
+**Current state:** completed validation and separate final-evaluation artifacts are retrospective research evidence. A reviewed prospective forecast-input export/API contract remains undefined (B2); completed final evidence alone does not supply that contract.
 
 ---
 
@@ -256,26 +236,23 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 
 ## 8. Readiness summary by handoff
 
-| Handoff | Implemented / frozen | Structure-only | Proposed | Unresolved |
-|---|---|---|---|---|
-| Forecasting artifacts (retrospective validation) | Column schemas, schema version, origin/horizon/target meaning, status and provenance fields | — | — | Historical validation-only execution occurred; its evidence was intentionally deleted. No currently retained/reviewable validation bundle is available |
-| Forecasting → prospective forecast input | Horizon and origin meaning | — | — | No prospective artifact defined |
-| Forecasting → inventory-risk | Grain, horizon meaning, no source `Demand_Forecast`, `Stockout_Flag` limitation | — | DR-012 exposure method and inputs | Snapshot semantics, problematic forecasts, final schema, 28-day use, `Order_Quantity` availability |
-| Inventory-risk → decision support | Advisory-only rule | DR-011 field groups | DR-012 §8 handoff content | Final schema, replenishment quantity, uncertainty, review rules, missing-value encoding |
-| Components → prototype / API | Read-only, presentation-oriented API boundary; ownership split | — | — | All interchange schemas; API response schemas |
+| Handoff | Available / frozen | Remaining acceptance or decision |
+|---|---|---|
+| Retrospective forecasting research | Completed validation/final evidence; approved configurations, fresh-refit policy and producer mapping | Preserve the reviewed final interpretation and retained evidence |
+| Prospective forecasting input/API | Meaning of keys, origin, horizons and raw forecast; DR-014 producers | Issue #132: prospective export definition, exact schemas/model-state handoff and component-owner acceptance |
+| Forecasting → inventory-risk | Grain/target meaning and documented dataset limits | Proposed DR-012 approval; origin snapshot semantics, problematic forecasts, schema, 28-day use and Order_Quantity availability |
+| Inventory-risk → responsible decision support | Advisory-only boundary and DR-011 structure-only field groups | Final schema, unavailable-state encoding, replenishment quantity, uncertainty and review rules |
+| Components → prototype/API | Ownership split and presentation-oriented boundary | Approved interchange/response schemas, adapters, tests and technical visual requirements |
 
-**Note on Issue references:** Issue #87 lists the current analytical-contract Issues as Chathuranga — forecasting validation; Didilani — #70, then #85; Dewmi — #72, then #73. Issue #78 is closed and superseded by #89 ([README.md](../README.md)). The blocker table below uses these Issue numbers as given in #87; each owner should confirm the exact Issue during review.
-
----
+Completed retrospective evidence resolves the former absence-of-validation-evidence blocker. It does not resolve prospective contract acceptance or other members' methodologies. Issue references below are existing task pointers, not freshly checked GitHub status.
 
 ## 9. Blockers
 
-Each blocker is recorded from an existing source. No solution is proposed.
+B1 (retained forecasting evidence availability) is resolved by the completed validation/final evidence. Remaining blockers retain their existing owners and approval boundaries.
 
 | ID | Blocker | Component owner | Related Issue | Required decision or deliverable |
 |---|---|---|---|---|
-| B1 | Issue #89 was merged through PR #90. A validation-only run was previously authorised and executed, but its generated local evidence was intentionally deleted during the architecture reset. No current reviewed/reusable validation evidence is available for downstream integration. The active architecture refactor is #98. | Chathuranga | #98 (active architecture refactor); #89 / PR #90 merged (#89 supersedes closed #78) | Currently retained, human-reviewed and reusable validation evidence under the architecture being refactored in #98; any new execution requires specific run authorisation |
-| B2 | No prospective forecast-input artifact is defined; implemented artifacts are retrospective validation only, and `final_evaluation` is blocked until Gate 6 (final refit / preprocessing policy deferred). | Chathuranga | Forecasting validation work; Gate 6 per [protocol.md §12, §16](protocol.md); #86 | Decision on what forecast record, if any, is handed downstream and when |
+| B2 | A completed final bundle and producer mapping exist, but a reviewed prospective forecast-input export/API contract is still undefined. | Chathuranga, with Tinosh for delivery | #132; #86 | Exact prospective record, model/preprocessor/provenance links and owner acceptance |
 | B3 | Origin inventory snapshot availability and within-day (before/after sales) semantics are undocumented. | Didilani | #51 (DR-012); #70 / #85 | Documented snapshot semantics and handling of unavailable origin snapshots |
 | B4 | DR-012 is still Proposed. | Didilani (group decision) | #51; #70 / #85 | Group approval or revision of DR-012 |
 | B5 | Handling of negative / problematic forecasts at the inventory input is open; no clipping is approved. | Didilani, with Chathuranga for forecast meaning | #70 / #85 | Explicit input-contract decision |
@@ -303,15 +280,15 @@ Each blocker is recorded from an existing source. No solution is proposed.
 
 | Work in #86 | Waits for |
 |---|---|
-| Forecast → inventory-risk adapter | B1, B2, B3, B4, B5, B6 |
+| Forecast → inventory-risk adapter | B2, B3, B4, B5, B6 |
 | Inventory-risk → decision-support adapter | B4, B7, B9, B12 |
-| Prospective forecast API endpoints | B1, B2 |
+| Prospective forecast API endpoints | B2 |
 | Any 28-day downstream view or review trigger | B8 |
 | Human-review flags or reasons in the prototype | B10 |
 | Uncertainty display | B11 |
 | Inventory-risk visual components | Didilani's approved analytical visual specification |
 | Decision-support record presentation | Dewmi's reviewed record semantics (B7, B9, B10) |
-| Any use of real run outputs | B1 and a verified `run_manifest.json` |
+| Any use of real run outputs | Stage-specific verified run_manifest.json and human acceptance of the exact handoff |
 
 ### 10.3 Start checklist for Issue #86
 

@@ -4,6 +4,10 @@ This file is a working reference register for sources used during COMP1884 plann
 
 The final academic report must convert relevant entries into the University-required citation/reference style and verify all bibliographic details before submission.
 
+## How this register is used
+
+This register supplies background sources, not recorded performance or automatic method approval. [Literature review](literature/literature-review.md) owns synthesis; [research design](research-design.md) owns rationale/hypotheses; [features](forecasting-feature-engineering.md) and [protocol](protocol.md) own exact implemented definitions; [final evaluation](forecasting-final-evaluation.md) cites retained validation/final numerical evidence and limitations. This cleanup preserves bibliographic entries without claiming a new external source verification.
+
 ## Dataset sources
 
 ### Selected dataset

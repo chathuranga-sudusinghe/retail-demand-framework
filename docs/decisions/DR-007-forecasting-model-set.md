@@ -1,6 +1,6 @@
 # DR-007 — Forecasting Model Set
 
-> **Current status cross-reference — Issue #94:** [The frozen protocol](../protocol.md) resolves prior pending supportive settings, baseline and runtime decisions. Issue #89 was merged through PR #90. [Runner operations](../forecasting-runner.md) distinguish approved storage policy from unchanged runtime behavior. Original decision/development wording below remains historical provenance; this status note changes no decision or authorizes any run.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Status:** PARTIALLY SUPERSEDED BY DR-013
 
@@ -21,7 +21,7 @@ Only the three primary implementations determine the matched RQ2 answer. Ridge a
 - **Naive baseline role:** provide a simple recent-demand benchmark by extending the latest origin-observed demand level.
 - **Seasonal Naive baseline role:** provide a weekly-repeat benchmark using the latest complete observed seven-day pattern.
 - The approved leakage-safe 1-day, 7-day and 14-day formulas below remain unchanged.
-- Both 28-day baseline formulas are approved in the frozen protocol; their execution still requires the specific authorized scope.
+- Both 28-day baseline formulas are approved in the frozen protocol; validation and final evaluation are complete, with retained evidence linked in the [final report](../forecasting-final-evaluation.md).
 
 ### Approved leakage-safe 1-day, 7-day and 14-day baseline formulas
 
@@ -49,33 +49,33 @@ The direct horizon forecasts are:
 
 These definitions keep the two baselines distinct: Naive extends the latest observed demand level, while Seasonal Naive repeats the most recent weekly pattern. Both use only information available at the forecast origin and produce the approved targets directly without feeding predictions into later steps, so they remain compatible with DR-008 direct horizon-specific evaluation.
 
-### Proposed 28-day baseline extensions — approval pending
+### Approved 28-day baseline formulas
 
-The approved exact baseline definitions
-covered only 1/7/14 days. Extending the forecasting horizon does not silently
-approve these additional baseline definitions:
+The frozen [protocol](../protocol.md#10-approved-contextual-simple-baselines)
+records the owner’s approval of both 28-day baseline extensions. The formulas
+below are resolved and remain unchanged:
 
-**Naive 28-day — APPROVAL PENDING:**
+**Approved Naive 28-day:**
 
 $$
 \widehat{Y}^{\text{Naive}}_{o,28}=28y_o
 $$
 
-**Seasonal Naive 28-day — APPROVAL PENDING:**
+**Approved Seasonal Naive 28-day:**
 
 $$
 \widehat{Y}^{\text{Seasonal Naive}}_{o,28}=4\sum_{j=0}^{6}y_{o-j}
 $$
 
-The proposed Naive baseline holds the latest observed demand level constant for
-28 days. The proposed Seasonal Naive baseline conceptually repeats the most recent
+The approved Naive baseline holds the latest observed demand level constant for
+28 days. The approved Seasonal Naive baseline conceptually repeats the most recent
 complete historical seven-day observed demand pattern across four future weeks;
 its 28-day cumulative forecast is four times that observed weekly total. Neither
-proposal uses realised future demand or claims predictive skill.
+baseline uses realised future demand or claims predictive skill.
 
-Implementation must continue to block execution of the proposed 28-day baseline
-definitions until explicit human approval. Earlier 1/7/14 definitions remain
-operational and unchanged.
+Current execution/evaluation follows the frozen protocol and retained
+validation/final evidence. Any new run requires separate specific run
+authorisation. Earlier 1/7/14 definitions remain operational and unchanged.
 
 ### Common evaluation requirements
 
@@ -86,9 +86,9 @@ For any separately authorised baseline evaluation:
 - produce direct next-day or cumulative targets under [DR-008](DR-008-multi-step-forecasting-strategy.md), with complete outcomes inside the assigned interval;
 - apply [DR-006](DR-006-forecasting-metrics-and-model-selection.md): mean WAPE across the four folds separately by horizon, supporting MAE/RMSE/Bias and fold-level evidence, with no cross-horizon composite;
 - keep final-evaluation outcomes out of fitting and all subsequent selection decisions; and
-- retain DR-013's separate primary, supportive and simple-baseline evidence roles. Naive and Seasonal Naive remain untuned; 28-day baseline execution still requires explicit approval of the proposed formulas.
+- retain DR-013's separate primary, supportive and simple-baseline evidence roles. Naive and Seasonal Naive remain untuned, with approved formulas for all four horizons.
 
-This record authorises no experiment execution. Protocol approval, implementation acceptance and specific run authorisation remain separate human gates.
+This record authorises no experiment execution. Protocol approval, implementation acceptance and specific run authorisation remain separate human approval boundaries.
 
 ## Historical original decision body
 
@@ -98,8 +98,6 @@ This record authorises no experiment execution. Protocol approval, implementatio
 <summary>Show superseded historical DR-007 body</summary>
 
 # DR-007 — Forecasting Model Set
-
-> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline

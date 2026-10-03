@@ -1,6 +1,6 @@
 # DR-011 — Responsible Decision-Support Output Structure
 
-> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved; downstream 28-day inventory interpretation, uncertainty and review rules retain separate approval boundaries. See [current approval and provenance](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved; downstream 28-day inventory interpretation, uncertainty and review rules retain separate approval boundaries. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
 **Date:** 2026-09-27
 **Status:** Accepted for structure only; upstream-dependent field contents remain provisional.
@@ -161,7 +161,7 @@ Some parts of the output structure are already supported by approved project dec
 
 | Field group | Source / owner | Current status |
 |---|---|---|
-| Identity and forecast horizon | Forecasting | Structure approved; upstream 1/7/14/28 horizons human-approved, downstream 28-day use separately gated |
+| Identity and forecast horizon | Forecasting | Structure approved; upstream 1/7/14/28 horizons human-approved, downstream 28-day use requires separate component-owner/human approval |
 | Forecast output | Forecasting | Approved in principle, subject to implementation |
 | Forecast-error / uncertainty context | Forecasting | Pending further forecasting decision |
 | Inventory-risk information | Inventory-risk / replenishment | Pending Issue #51 / DR-012 |

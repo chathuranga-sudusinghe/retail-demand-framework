@@ -1,7 +1,5 @@
 # Dataset Contract
 
-Repository-wide authorities: [data lifecycle](workflows/shared-data-foundation.md), [storage and retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [research reporting](../reports/README.md), and [continuous progress log](research-progress.md). These connect existing scientific/component contracts without replacing them.
-
 ## 1. Selected source dataset
 
 **Dataset:** High-Dimensional Supply Chain Inventory Dataset  
@@ -75,7 +73,7 @@ The [authoritative feature contract](forecasting-feature-engineering.md) disting
 
 Exclusion does not make these fields useless to the project. Origin-aligned inventory, reorder point, lead time and order activity may support downstream analysis under its separately approved methods; other fields may support descriptive/business interpretation. The zero-variance stockout field remains a limitation, and source forecasts require separate leakage-safe benchmark approval.
 
-All learned models use two categorical context and twelve engineered predictors (fourteen conceptual predictors), with complete 28-day history. Under [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md), primary XGBoost/LightGBM/CatBoost share full one-hot SKU/warehouse inputs followed by the same twelve unscaled numerical predictors, giving 67 columns under full eligible-training category coverage. Supportive Ridge/Random Forest may reuse this encoding; only Ridge scales numerical predictors. The forecast target is next-day demand or direct cumulative 7/14/28-day demand from one fixed origin.
+Exact predictor membership/order, physical encoding, availability, history and Ridge scaling belong in the [feature/preprocessing contract](forecasting-feature-engineering.md). The [protocol](protocol.md) owns direct horizon targets and experimental settings; [final evaluation](forecasting-final-evaluation.md) owns completed findings.
 
 ### 3.2 Primary modelling identifiers and target
 

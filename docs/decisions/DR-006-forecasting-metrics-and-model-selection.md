@@ -1,8 +1,6 @@
 # DR-006 — Forecasting Metrics and Model-Selection Policy
 
-> **Current status cross-reference — Issue #94:** [The frozen protocol](../protocol.md) resolves prior pending supportive settings, baseline and runtime decisions. Issue #89 was merged through PR #90. [Runner operations](../forecasting-runner.md) distinguish approved storage policy from unchanged runtime behavior. Original decision/development wording below remains historical provenance; this status note changes no decision or authorizes any run.
-
-> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
@@ -128,7 +126,7 @@ Results from the revised final evaluation interval must not be used for model fi
 - Mean values can hide fold-to-fold variation, so individual fold results must also be reviewed.
 - The policy does not define a universal WAPE quality band or guarantee performance in a real retailer.
 - The dataset is simulated and covers one observed year; the four folds cannot represent every future demand condition.
-- The original metric decision did not resolve models, features, strategy or search. DR-008, [DR-013](DR-013-matched-gradient-boosting-comparison.md) and the frozen feature contract define the direct strategy, revised primary models/grid and predictor membership, including promotion exclusion; complete runtime controls and supportive configuration policy remain pending. Uncertainty and formal demand-regime definitions remain separate.
+- The original metric decision did not resolve models, features, strategy or search. DR-008, [DR-013](DR-013-matched-gradient-boosting-comparison.md) and the frozen feature contract define the direct strategy, revised primary models/grid and predictor membership, including promotion exclusion; runtime controls and supportive configuration policy are resolved in the frozen [protocol](../protocol.md), and validation/final evaluation are complete. Uncertainty and formal demand-regime definitions remain separate.
 
 ## Impact
 
