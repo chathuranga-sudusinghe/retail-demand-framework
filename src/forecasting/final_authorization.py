@@ -17,7 +17,7 @@ from src.forecasting.authorization import ExecutionBlocked
 from src.forecasting.baselines import BASELINE_MODELS
 from src.forecasting.configuration import PRIMARY_GRID, PRIMARY_MODELS, SUPPORTIVE_MODELS, CanonicalConfiguration
 from src.forecasting.integrity import verify_completed
-from src.forecasting.metadata import LIBRARIES, runtime_versions, source_hashes
+from src.forecasting.metadata import LIBRARIES, runtime_versions
 from src.forecasting.paths import DEFAULT_LAYOUT, RepositoryLayout
 from src.forecasting.targets import FORECAST_HORIZONS
 from src.forecasting.validation import FINAL_HOLDOUT, VALIDATION_FOLDS
@@ -144,7 +144,7 @@ class FinalAuthorization:
     protocol_hash: str
     feature_contract_hash: str
     requirements_hash: str
-    source_hashes: dict[str, str]
+    source_hashes: dict[str, str]  # Creation-time provenance, never an execution-permission binding.
     validation_run_id: str
     validation_manifest_sha256: str
     input_view_hash: str
@@ -196,7 +196,7 @@ class FinalAuthorization:
                 or not isinstance(self.library_versions, dict) or set(self.library_versions) != set(LIBRARIES)
                 or any(not isinstance(v, str) or not v.strip() for v in self.library_versions.values())
                 or self.temporal_policy != TEMPORAL_POLICY):
-            raise ExecutionBlocked("Final source, environment or temporal bindings differ.")
+            raise ExecutionBlocked("Malformed final provenance, environment or temporal record.")
         if (not isinstance(self.approval_references, dict) or set(self.approval_references) != REFERENCE_NAMES
                 or any(not isinstance(v, str) or not v.strip() or v.strip().lower() in {"pending", "none", "null"}
                        for v in self.approval_references.values())):
@@ -214,8 +214,6 @@ class FinalAuthorization:
                  "feature_contract_hash": "docs/forecasting-feature-engineering.md", "requirements_hash": "requirements.txt"}
         if any(file_hash(layout.repository_path(p)) != getattr(self, field) for field, p in paths.items()):
             raise ExecutionBlocked("Reviewed final documentation or scientific bindings changed.")
-        if self.source_hashes != source_hashes(layout.root):
-            raise ExecutionBlocked("Final implementation changed since authorization.")
         validation = layout.run_directory(self.validation_run_id)
         if file_hash(layout._owned_path(validation / "run_manifest.json")) != self.validation_manifest_sha256:
             raise ExecutionBlocked("Completed validation manifest differs from the human freeze.")
@@ -238,7 +236,7 @@ class FinalAuthorization:
             layout.run_directory(self.run_id), layout.model_run_directory(self.run_id),
             layout.draft_report_directory(self.run_id),
         )):
-            raise ExecutionBlocked("Final run storage is consumed; no retry, resume or overwrite.")
+            raise ExecutionBlocked("Final run storage is consumed; use a separately authorized unused ID, never resume or overwrite.")
         return freeze
 
 

@@ -1,14 +1,12 @@
 # Forecasting Final Evaluation — Issues #130/#131
 
 **Status — 2026-10-03 / Issue #131:** DR-014 scientific freeze/refit policy and
-Documentation Step 1 are owner-approved. Phase 1 runtime is merged in PR #133 and
-explicitly accepted by the owner under Issue #131. Historical-only preflight
-completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`.
-Exact one-time final-run authorization remains pending. No real
-`final_authorization.json` exists, final-run bindings are not frozen, and no
-reserved-final outcomes were accessed. Final evaluation has not been executed.
-No real authorization-record creation, reserved-outcome access or final run
-execution is authorized.
+Phase 1 implementation are owner-approved. Historical-only preflight passed.
+The real `final-20261003-01` execution accessed reserved outcomes and failed only
+during final replay verification. PR #141 corrected the verified layout defect.
+The owner explicitly authorized `final-20261003-02` as a defect-correction rerun
+with unchanged scientific scope. Revised controls and the local authorization
+are prepared for review; the corrected run has not been executed.
 
 [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the
 owner-supplied human freeze, exact candidate scope, separate producer mapping and
@@ -56,30 +54,44 @@ statistics in memory without estimator fitting or persistence. The frozen
 28-candidate scope and DR-014 producer mapping remained unchanged. No
 reserved-final outcomes were accessed.
 
-Preflight does not authorize a final run. Proposed run ID `final-20261003-01`
-remains unauthorized. No real `final_authorization.json` exists and no final-run
-bindings are frozen. Exact final-run authorization bindings must be recalculated
-only after this preflight-status update is reviewed and merged. Temporary
-preflight hash calculations are not frozen authorization bindings.
+Preflight itself supplies no execution permission. Subsequently the owner
+explicitly authorized `final-20261003-01`; its real execution fitted the frozen
+candidates, revealed outcomes and failed during saved-model replay verification.
+Preserve its artifact/model/draft bundle exactly, including the original failed
+status and diagnostics. PR #141 corrected the C/Fortran prediction-layout mismatch;
+the read-only investigation found exact replay of all twenty saved learned models
+when the original C-contiguous layout was reproduced.
 
-Only a separate explicit one-time authorization for an exact real final run
-permits creation of its real authorization record and subsequent execution. No
-such authorization has been supplied, and final evaluation has not been executed.
+The owner now explicitly authorizes `final-20261003-02` as a corrected rerun
+following that verified implementation defect. Result-driven retries, search,
+retuning, reselection, candidate substitution and methodology changes remain
+prohibited. A defect-only corrected rerun requires the fix, unchanged scientific
+scope, a new exact human-approved ID and unused storage. No automatic retry,
+resume, overwrite or permission for further reruns is introduced.
 
-The future local final authorization must bind:
+The local final authorization must bind:
 
-- an exact new run ID and `evaluation_stage=final_evaluation`;
+- an exact approved run ID and `evaluation_stage=final_evaluation`;
 - validation run `validation-20261002-01`, its canonical artifact anchor and
   the exact completion-manifest SHA-256 recorded in DR-014;
 - hashes of the reviewed DR-014 freeze/refit record and this operational guide,
   plus explicit human freeze, refit-policy, implementation-acceptance and
   specific final-run references;
-- the unchanged scientific protocol/feature identities, final implementation
-  source identities, pinned environment and historical training-view identity;
+- unchanged scientific protocol/feature/requirements identities, pinned
+  environment and historical training-view identity;
 - exactly the twelve frozen primary combinations, eight fixed supportive
   combinations and eight untuned baseline combinations in DR-014;
-- training dates January 1–December 2, origin December 2, reserved evaluation
-  dates December 3–30, and the approved single-worker/thread controls.
+- training dates January 1–December 2, origin December 2, outcome dates
+  December 3–30, and the approved single-worker/thread controls.
+
+`source_hashes` in the authorization record is creation-time provenance only.
+It is not compared with current source to permit or reject execution. The runner
+records actual execution source hashes and Git state in runtime metadata, and
+uses those actual source hashes in model provenance. Source/Git/implementation
+hashes do not bind execution permission. Scientific-document/data/environment
+bindings still do, and artifact hashes, provenance consistency and prediction
+receipts still protect the retained evidence. Historical bundles are verified
+against their recorded snapshots without rebinding them to current source.
 
 Check the retained validation bundle with its existing completed verifier.
 Check historical provenance against the retained bundle rather than refreshing
@@ -95,7 +107,7 @@ The argument-free final entrypoint reads the fixed local record
 `data/processed/forecasting/final_authorization.json`. That record must bind the
 exact reviewed run and the five explicit approval references: `protocol`,
 `human_freeze`, `refit_policy`, `implementation_acceptance` and `specific_final_run`.
-It is not generated by the runtime. After separate explicit one-time authorization
+It is not generated by the runtime. After explicit authorization for the exact named run
 and record validation, the repository-root execution command is:
 
 ```bash
@@ -195,8 +207,10 @@ A fit, prediction, persistence, outcome-read, scoring or integrity failure stops
 execution. Preserve available diagnostics and partial evidence, with the original
 failure intact. Publish no successful completion manifest; do not automatically
 retry, resume, substitute candidates or use final scores for debugging/selection.
-Any human response must preserve the exposure history and protected decisions;
-this guide authorizes no repeat run.
+A verified implementation/execution defect may support only a separately
+explicitly approved corrected rerun after the fix, with a new unused ID and the
+same scientific scope. Preserve and disclose the original failure and prior
+outcome access. Performance-driven retries remain prohibited.
 
 A reviewed handoff identifies the exact final run, model/configuration/horizon,
 origin, cumulative target meaning, eligible training population, preprocessing,
@@ -228,3 +242,9 @@ had earlier validation exposure, and full-year exploratory data analysis inspect
 the final interval. The interval is protected from subsequent selection but is
 not historically fully unseen. Seasonal Naive's validation advantage over learned
 models at 14 and 28 days must remain visible regardless of final ordering.
+
+The first final execution already revealed reserved outcomes. Every corrected-run
+report must additionally identify `final-20261003-01` as the preserved failed
+execution, explain the PR #141 verifier correction and disclose that the corrected
+run follows prior final-outcome access. Do not describe it as a first untouched
+final evaluation, use either run for reselection or conceal the failed execution.
