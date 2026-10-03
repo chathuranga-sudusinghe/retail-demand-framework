@@ -36,7 +36,7 @@ def test_completed_bundle_manifest_counts_hashes_and_readonly_reporting(complete
     assert {entry["owner"] for entry in manifest["artifacts"]} == {"artifacts", "models", "reports"}
     paths = {layout.root / entry["path"] for entry in manifest["artifacts"]}
     assert complete_bundle / "run_manifest.json" not in paths
-    assert layout.draft_report_directory(complete_bundle.name) / "comparison.md" in paths
+    assert layout.report_directory(complete_bundle.name) / "comparison.md" in paths
     metadata = json.loads((complete_bundle / "run_metadata.json").read_text())
     assert len(metadata["model_artifacts"]) == result["models_replayed"] == 4
     for record in metadata["model_artifacts"]:
@@ -52,7 +52,7 @@ def test_completed_bundle_manifest_counts_hashes_and_readonly_reporting(complete
 @pytest.mark.parametrize("name", ["run_manifest.json", "predictions.csv", "fold_metrics.csv", "comparison.md", "run.log", "authorization.json"])
 def test_missing_artifact_rejected(complete_bundle, name):
     layout = RepositoryLayout.from_artifact_directory(complete_bundle)
-    parent = layout.draft_report_directory(complete_bundle.name) if name == "comparison.md" else complete_bundle
+    parent = layout.report_directory(complete_bundle.name) if name == "comparison.md" else complete_bundle
     (parent / name).unlink()
     with pytest.raises(integrity.IntegrityError):
         integrity.verify_completed(complete_bundle)
@@ -279,7 +279,7 @@ def storage_directories(directory):
     layout = RepositoryLayout.from_artifact_directory(directory)
     return {"artifacts": layout.run_directory(directory.name),
             "models": layout.model_run_directory(directory.name),
-            "reports": layout.draft_report_directory(directory.name)}
+            "reports": layout.report_directory(directory.name)}
 
 
 @pytest.mark.parametrize("kind", ["model", "descriptor", "preprocessor", "origin_features"])
@@ -449,7 +449,7 @@ def test_published_manifest_cannot_be_rebuilt(complete_bundle):
         integrity.build_manifest(complete_bundle, metadata, manifest["integrity_result"])
 
 
-def test_artifact_receipt_cannot_redirect_draft_report(complete_bundle):
+def test_artifact_receipt_cannot_redirect_comparison_report(complete_bundle):
     path = complete_bundle / "run_metadata.json"
     metadata = json.loads(path.read_text())
     entry = next(row for row in metadata["artifact_manifest"] if row["artifact_path"].endswith("/comparison.md"))
@@ -472,3 +472,40 @@ def test_historical_validation_verification_survives_new_final_source(complete_b
     assert result["status"] == "passed" and result["models_replayed"] == 4
     changed_sources.assert_not_called()
     assert before == {p: p.read_bytes() for p in files}
+
+
+def test_legacy_completed_report_receipts_survive_tracked_copy(complete_bundle):
+    """Synthetic historical receipts retain their old location and exact hashes."""
+    import shutil
+    layout = RepositoryLayout.from_artifact_directory(complete_bundle)
+    current = layout.comparison_path(complete_bundle.name)
+    legacy = layout.draft_report_directory(complete_bundle.name) / "comparison.md"
+    legacy.parent.mkdir(parents=True)
+    current.replace(legacy)
+    current.parent.rmdir()
+    metadata_path = complete_bundle / "run_metadata.json"
+    metadata = json.loads(metadata_path.read_text())
+    for receipt in metadata["artifact_manifest"]:
+        if receipt["artifact_path"] == current.relative_to(layout.root).as_posix():
+            receipt["artifact_path"] = legacy.relative_to(layout.root).as_posix()
+    metadata_path.write_text(json.dumps(metadata))
+    manifest_path = complete_bundle / "run_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["metadata_hash"] = file_hash(metadata_path)
+    for receipt in manifest["artifacts"]:
+        if receipt["path"] == current.relative_to(layout.root).as_posix():
+            receipt["path"] = legacy.relative_to(layout.root).as_posix()
+        if receipt["path"] == metadata_path.relative_to(layout.root).as_posix():
+            receipt["sha256"] = file_hash(metadata_path)
+    manifest_path.write_text(json.dumps(manifest))
+    expected = integrity.verify_completed(complete_bundle)
+    retained = {p: p.read_bytes() for folder in storage_directories(complete_bundle).values()
+                for p in folder.rglob("*") if p.is_file()}
+    current.parent.mkdir()
+    shutil.copyfile(legacy, current)
+    current.write_text(current.read_text().replace("../../../../artifacts/", "../../../artifacts/"))
+    assert integrity.verify_completed(complete_bundle) == expected
+    assert retained == {p: p.read_bytes() for p in retained}
+    legacy.write_text("tampered original")
+    with pytest.raises(integrity.IntegrityError):
+        integrity.verify_completed(complete_bundle)

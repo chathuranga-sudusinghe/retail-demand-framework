@@ -125,7 +125,7 @@ evidence and saved-model replay without refitting or reopening parent outcomes.
 The existing validation verifier remains `src.forecasting.integrity.verify_completed`.
 Final models live under `models/forecasting/<final_run_id>/final/<model>/h<horizon>/<configuration>/`.
 Later reviewed interpretation belongs at `reports/forecasting/<final_run_id>.md`,
-separate from the immutable generated draft.
+separate from the immutable generated comparison.
 
 ## Historical preparation and fresh refit
 
@@ -192,8 +192,12 @@ research comparison and downstream producer choice.
 
 Follow existing ownership: machine evidence under
 `artifacts/forecasting/<final_run_id>/`, fresh models/fitted state under
-`models/forecasting/<final_run_id>/`, and generated draft reporting under
-`reports/forecasting/drafts/<final_run_id>/`. The artifact-side completion
+`models/forecasting/<final_run_id>/`, and generated comparison evidence at
+`reports/forecasting/<final_run_id>/comparison.md`. Temporary/preview reports
+use `reports/forecasting/drafts/`; completed comparisons are trackable research
+evidence, with interpretation review separate. Historical completed manifests
+continue to verify their exact original draft-path receipts/files; migration
+copies the report without rewriting the retained bundle. The artifact-side completion
 manifest is the sole final completion authority. The separate final integrity
 boundary must validate final-specific evidence without weakening the existing
 validation schema or version-2 completion contract.

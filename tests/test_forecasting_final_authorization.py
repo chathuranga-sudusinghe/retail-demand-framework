@@ -223,11 +223,11 @@ def test_source_change_after_resolution_does_not_revoke_scientific_authorization
     context.revalidate()
 
 
-@pytest.mark.parametrize("owner", ["artifacts", "models", "reports"])
+@pytest.mark.parametrize("owner", ["artifacts", "models", "reports", "drafts"])
 def test_defect_rerun_requires_an_unused_new_id_and_keeps_frozen_scope(final_context, owner):
     fixture, layout = final_context, final_context["layout"]
     previous = {"artifacts": layout.run_directory, "models": layout.model_run_directory,
-                "reports": layout.draft_report_directory}[owner]("synthetic-final")
+                "reports": layout.report_directory, "drafts": layout.draft_report_directory}[owner]("synthetic-final")
     previous.mkdir(parents=True)
     evidence = previous / "retained.txt"
     evidence.write_text("Synthetic failed historical evidence")

@@ -191,7 +191,7 @@ def test_full_synthetic_final_sequence_seals_before_reveal_and_publishes_manifes
     assert len(read_json(directory / "metrics.json")) == 28
     assert read_json(directory / "run_metadata.json")["producer_mapping"] == fixture["payload"]["producer_mapping"]
     assert all(r["candidate_status"] == "completed" for r in read_json(directory / "candidates.json"))
-    assert "Seasonal Naive outperformed" in (fixture["layout"].draft_report_directory(directory.name) / "comparison.md").read_text()
+    assert "Seasonal Naive outperformed" in (fixture["layout"].report_directory(directory.name) / "comparison.md").read_text()
     files = [fixture["layout"].root / r["path"] for r in read_json(directory / "run_manifest.json")["files"]]
     before = {p: p.read_bytes() for p in [*files, directory / "run_manifest.json"]}
     artifacts.verify_final_completed(directory)
@@ -233,7 +233,7 @@ def test_extra_run_owned_files_and_post_completion_writes_are_rejected(synthetic
     fixture = synthetic_runner
     directory = final.run_final_evaluation(fixture["layout"])
     roots = {"artifacts": directory, "models": fixture["layout"].model_run_directory(directory.name),
-             "reports": fixture["layout"].draft_report_directory(directory.name)}
+             "reports": fixture["layout"].report_directory(directory.name)}
     (roots[owner] / "unexpected.tmp").write_text("synthetic")
     with pytest.raises(artifacts.FinalIntegrityError):
         artifacts.verify_final_completed(directory)
@@ -414,7 +414,8 @@ def test_final_original_and_replay_use_c_order_for_all_learned_models(synthetic_
 
 def failed_bundle_files(fixture):
     layout, directory = fixture["layout"], fixture["directory"]
-    roots = (directory, layout.model_run_directory(directory.name), layout.draft_report_directory(directory.name))
+    roots = (directory, layout.model_run_directory(directory.name),
+             layout.report_directory(directory.name), layout.draft_report_directory(directory.name))
     return sorted(p for folder in roots for p in folder.rglob("*") if p.is_file())
 
 
@@ -499,7 +500,7 @@ def test_failed_final_recovery_rejects_changed_bytes_before_model_loading(failed
         record = read_json(directory / "candidates.json")[0]["model_artifact"]
         path = fixture["layout"].root / record[name + "_path"]
     elif name == "comparison.md":
-        path = fixture["layout"].draft_report_directory(directory.name) / name
+        path = fixture["layout"].report_directory(directory.name) / name
     else:
         path = directory / name
     path.write_bytes(path.read_bytes() + b" ")
@@ -695,3 +696,47 @@ def test_explicit_corrected_run_preserves_prior_failed_storage_and_frozen_scope(
     assert read_json(directory / "run_metadata.json")["producer_mapping"] == fixture["payload"]["producer_mapping"]
     assert evidence.read_bytes() == before
     assert not (previous / "run_manifest.json").exists()
+
+
+def test_legacy_completed_final_report_survives_canonical_copy(synthetic_runner):
+    import shutil
+    layout = synthetic_runner["layout"]
+    directory = final.run_final_evaluation(layout)
+    current = layout.comparison_path(directory.name)
+    legacy = layout.draft_report_directory(directory.name) / "comparison.md"
+    legacy.parent.mkdir(parents=True)
+    current.replace(legacy)
+    current.parent.rmdir()
+    manifest_path = directory / "run_manifest.json"
+    manifest = read_json(manifest_path)
+    report = next(r for r in manifest["files"] if r["owner"] == "reports")
+    report["path"] = legacy.relative_to(layout.root).as_posix()
+    manifest_path.write_text(json_text(manifest))
+    expected = artifacts.verify_final_completed(directory)
+    paths = [layout.root / r["path"] for r in manifest["files"]] + [manifest_path]
+    retained = {p: p.read_bytes() for p in paths}
+    current.parent.mkdir()
+    shutil.copyfile(legacy, current)
+    assert artifacts.verify_final_completed(directory) == expected
+    assert retained == {p: p.read_bytes() for p in retained}
+    legacy.write_text("tampered original")
+    with pytest.raises(artifacts.FinalIntegrityError):
+        artifacts.verify_final_completed(directory)
+
+
+def test_legacy_failed_recovery_keeps_draft_evidence_unpromoted(failed_final_bundle):
+    fixture, layout = failed_final_bundle, failed_final_bundle["layout"]
+    directory = fixture["directory"]
+    current = layout.comparison_path(directory.name)
+    legacy = layout.draft_report_directory(directory.name) / "comparison.md"
+    legacy.parent.mkdir(parents=True)
+    current.replace(legacy)
+    current.parent.rmdir()
+    inventory = failed_bundle_hashes(fixture)
+    before = {p: p.read_bytes() for p in failed_bundle_files(fixture)}
+    result = artifacts.verify_failed_final_recovery(directory, expected_evidence_hashes=inventory)
+    assert result["status"] == "recovery_verified"
+    assert result["original_run_status"] == "failed"
+    assert result["final_run_completed"] is False
+    assert not current.exists()
+    assert before == {p: p.read_bytes() for p in before}

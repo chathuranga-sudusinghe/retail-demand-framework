@@ -141,7 +141,7 @@ def test_scope_json_roundtrip_and_no_approval_record_is_generated_by_runner(tmp_
         assert not directory.exists()
 
 
-@pytest.mark.parametrize("method", ["run_directory", "model_run_directory", "draft_report_directory"])
+@pytest.mark.parametrize("method", ["run_directory", "model_run_directory", "report_directory", "draft_report_directory"])
 @pytest.mark.parametrize("kind", ["empty_directory", "partial_directory", "file"])
 def test_any_existing_run_location_blocks_before_dataset_check(tmp_path, monkeypatch, method, kind):
     approved, record = local_record(tmp_path, monkeypatch)
@@ -170,7 +170,7 @@ def test_any_existing_run_location_blocks_before_dataset_check(tmp_path, monkeyp
     assert not (layout.run_directory(approved.run_id) / "run_manifest.json").exists()
 
 
-@pytest.mark.parametrize("method", ["run_directory", "model_run_directory", "draft_report_directory"])
+@pytest.mark.parametrize("method", ["run_directory", "model_run_directory", "report_directory", "draft_report_directory"])
 @pytest.mark.parametrize("target_kind", ["inside", "outside", "missing"])
 def test_redirected_run_locations_block_before_dataset_check(tmp_path, monkeypatch, method, target_kind):
     repository = tmp_path / "repository"

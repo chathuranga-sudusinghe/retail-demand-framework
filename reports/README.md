@@ -6,8 +6,11 @@
 
 reports/ holds human-readable research findings and approved figures under the [Issue #92 storage policy](../docs/artifact-storage-policy.md). Machine-readable run evidence and model bundles retain the responsibilities defined there; this guide does not redefine storage or change runner outputs.
 
-Phase 5 generates local, ignored draft evidence at
-`reports/forecasting/drafts/<run_id>/comparison.md`. Machine-readable evidence
+The runtime writes generated comparison evidence directly to
+`reports/forecasting/<run_id>/comparison.md`. For a verified completed run this
+is trackable research evidence. `reports/forecasting/drafts/` is reserved for
+temporary, preview, incomplete, failed or other non-authoritative outputs.
+Machine-readable evidence
 lives in `artifacts/forecasting/<run_id>/`; all successful learned models,
 descriptors, preprocessing state and replay inputs live in
 `models/forecasting/<run_id>/`. `data/processed/...` ownership and the current
@@ -20,7 +23,7 @@ reports/forecasting/<run_id>.md
 reports/figures/forecasting/<run_id>/
 ~~~
 
-Use the exact evidence run ID; identify validation versus final evaluation in the report. These later reviewed-report locations are separate from the generated draft; this documentation creates no run or research report. Existing [demand EDA](demand-eda.md) and [temporal profile](temporal-demand-profile.md) keep their historical scope and names.
+Use the exact evidence run ID; identify validation versus final evaluation in the report. These later reviewed-report locations are separate from the generated comparison; this documentation creates no run or research report. Existing [demand EDA](demand-eda.md) and [temporal profile](temporal-demand-profile.md) keep their historical scope and names.
 
 Chathuranga owns forecasting interpretation and coordinates review under the [collaboration workflow](../docs/collaboration-workflow.md). Component owners review any statements about their analytical area; report authors and technical renderers do not acquire another member's ownership. Publication/commits follow existing human approval rules.
 
@@ -30,7 +33,7 @@ Generated metrics, predictions, metadata, selection records and comparisons are
 evidence, not human acceptance of findings. The sole completion authority is
 `artifacts/forecasting/<run_id>/run_manifest.json`, written last after verification,
 all-model replay, log closure and final metadata. Manifest contract version 2
-covers the artifact, model and generated draft locations with repository-relative
+covers the artifact, model and comparison-report locations with repository-relative
 paths, explicit owners and SHA-256 hashes; validation model descriptor contract version 2
 binds repository-relative model/state/replay references to the same validation run.
 
@@ -40,7 +43,7 @@ failed, incomplete or inconsistent evidence cannot support a completed-experimen
 claim. Phase 5 retains and replays every successful learned fit; selective model
 retention/pruning is deferred to Phase 6.
 
-The generated `comparison.md` remains draft/pending human review even after verified completion. Later reviewed interpretation is written separately; a completed generated draft remains immutable under its artifact-side manifest. Label report review status explicitly as draft/pending human review, reviewed or superseded, with author, revision date and actual reviewer/date/reference when available. This is a report label, not a replacement for machine schema/status fields. Leave unreceived approval explicitly pending. Report review, configuration freeze and final-run authorization are separate statuses.
+The generated `comparison.md` is research evidence after verified completion; human interpretation review remains separate. Later reviewed interpretation is written separately; the completed comparison remains immutable under its artifact-side manifest. Label report review status explicitly as draft/pending human review, reviewed or superseded, with author, revision date and actual reviewer/date/reference when available. This is a report label, not a replacement for machine schema/status fields. Leave unreceived approval explicitly pending. Report review, configuration freeze and final-run authorization are separate statuses.
 
 Do not modify immutable machine evidence to match prose. Correct the report transparently, or reference a separately reviewed corrected evidence version. Superseded findings retain their original run/protocol identity and correction history.
 
@@ -84,6 +87,23 @@ exposure. Write reviewed interpretation separately at `reports/forecasting/<fina
 completed generated evidence remains immutable and report review remains pending
 until explicitly supplied.
 
+## Completed comparison location migration
+
+The owner identifies these completed runs as authoritative evidence:
+
+- [Validation comparison](forecasting/validation-20261002-01/comparison.md).
+- [Final comparison](forecasting/final-20261003-02/comparison.md).
+
+These reports are copied from the retained historical draft locations without
+rerunning experiments, recomputing metrics or changing scientific content. Only
+validation Markdown links lose one `../` to preserve their original targets;
+the final copy is byte-identical. Original report bytes and completion manifests
+remain unchanged, and historical verification follows their exact recorded
+report receipts. Those retained originals are compatibility evidence, not the
+canonical destination for new completed comparisons. Historical generated
+review/status wording in the copies remains as recorded at rendering time.
+`final-20261003-01` remains failed and is not promoted out of `drafts/`.
+
 ## Required forecasting-report sections
 
 | Section | Required content |
@@ -107,12 +127,12 @@ For RQ2, keep comparisons descriptive by horizon under the existing rules; do no
 
 Link the actual metadata, completion manifest, fold metrics, configuration summaries, selection records, prediction and eligibility evidence from which the report was derived. Include exact identities/hashes or archive references needed to locate supporting evidence. Local ignored files may be unavailable to a GitHub reader: state that limitation and how an authorized reviewer can retrieve them. The former `outputs/` layout is historical provenance only; do not add fake links to absent archives or recreate removed historical paths. If evidence cannot be located/verified, mark availability explicitly and do not claim verification.
 
-Generated draft links resolve from `reports/forecasting/drafts/<run_id>/` to
-`artifacts/forecasting/<run_id>/`. For example, the draft's metadata link is
-`../../../../artifacts/forecasting/<run_id>/run_metadata.json`. Metadata/model
+Canonical comparison links resolve from `reports/forecasting/<run_id>/` to
+`artifacts/forecasting/<run_id>/`. For example, its metadata link is
+`../../../artifacts/forecasting/<run_id>/run_metadata.json`. Metadata/model
 references use repository-relative paths; links in later reviewed reports must
 resolve relative to those reports' own locations.
 
 Before human acceptance, check that tables/figures reconcile with evidence; roles, dates, units, horizons and counts are correct; ties/unavailable results are visible; review/freeze status is supported; limitations and reproduction references are present. Any derived reporting calculation must state its calculation and source values and remain within approved methods. New scientific analysis requires separate review.
 
-Only reviewed lightweight findings/figures are eligible for version control under the storage policy; drafting does not authorize publication. Keep full generated datasets, prediction tables and binaries local. Record the report-review milestone in the [research progress log](../docs/research-progress.md) with its supporting human reference.
+Completed lightweight comparisons and reviewed findings/figures are eligible for version control under the storage policy; drafting does not authorize publication. Keep full generated datasets, prediction tables and binaries local. Record the report-review milestone in the [research progress log](../docs/research-progress.md) with its supporting human reference.

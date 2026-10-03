@@ -234,7 +234,7 @@ class FinalAuthorization:
             raise ExecutionBlocked("Final authorization environment differs from the pinned runtime.")
         if require_unused and any(p.exists() for p in (
             layout.run_directory(self.run_id), layout.model_run_directory(self.run_id),
-            layout.draft_report_directory(self.run_id),
+            layout.report_directory(self.run_id), layout.draft_report_directory(self.run_id),
         )):
             raise ExecutionBlocked("Final run storage is consumed; use a separately authorized unused ID, never resume or overwrite.")
         return freeze
