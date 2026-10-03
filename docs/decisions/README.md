@@ -34,6 +34,7 @@ Each decision record should include:
 - [DR-011 — Responsible Decision-Support Output Structure](DR-011-decision-support-output-structure.md)
 - [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Proposed for group approval.
 - [DR-013 — Matched Gradient-Boosting RQ2 Comparison](DR-013-matched-gradient-boosting-comparison.md) — Current matched primary RQ2 comparison authority.
+- [DR-014 — Forecasting Selection and Final Refit](DR-014-forecasting-selection-and-final-refit.md) — Owner-supplied human freeze, exact final candidate scope, separate producer mapping and refit policy; documentation review and final-run authorization remain separate.
 
 Issue #65 has a human-approved/frozen scientific protocol. PR #90 merged Issue #89 orchestration. Issue #94 aligns operational documentation; accepted migration and matching specific authorization remain required before further execution.
 
@@ -44,7 +45,7 @@ RQ2 subordinate hypotheses and interpretation are approved as comparative and de
 Examples include:
 
 - exact retained-model set/audit exceptions and archive responsibilities under the storage policy;
-- final estimator/preprocessor refit policy and selection freeze under the protocol;
+- final-evaluation implementation acceptance and specific final-run authorization under DR-014;
 - separate downstream 28-day approval (forecasting baseline formulas are already approved);
 - demand-regime definitions;
 - uncertainty representation;
