@@ -457,3 +457,18 @@ def test_artifact_receipt_cannot_redirect_draft_report(complete_bundle):
     path.write_text(json.dumps(metadata))
     with pytest.raises(integrity.IntegrityError, match="Artifact receipts"):
         integrity.verify_scientific(complete_bundle)
+
+
+def test_historical_validation_verification_survives_new_final_source(complete_bundle, monkeypatch):
+    """Replay retained validation snapshots without rebinding them to final code."""
+    from src.forecasting import metadata
+
+    files = {p for directory in storage_directories(complete_bundle).values()
+             for p in directory.rglob("*") if p.is_file()}
+    before = {p: p.read_bytes() for p in files}
+    changed_sources = Mock(return_value={"src/forecasting/final_evaluation.py": "f" * 64})
+    monkeypatch.setattr(metadata, "source_hashes", changed_sources)
+    result = integrity.verify_completed(complete_bundle)
+    assert result["status"] == "passed" and result["models_replayed"] == 4
+    changed_sources.assert_not_called()
+    assert before == {p: p.read_bytes() for p in files}

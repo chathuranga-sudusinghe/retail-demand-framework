@@ -252,4 +252,12 @@ git diff --check
 
 Tests use synthetic panels/mock fits and small controlled native smoke tests. They never read the project dataset and are not research comparison evidence. The complete candidate plan uses mocks, never the real 1,152-fit workload.
 
-The final entry, including `--stage final_evaluation`, stays blocked. Final estimator/preprocessor policy and execution need separate approval; no fold-4 reuse, all-history refit, deployment promotion or downstream rule is assumed. Disclose earlier December 3–16 validation and full-year EDA exposure.
+The existing final entry, including `--stage final_evaluation`, stays blocked.
+[DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the
+owner-supplied human freeze, exact candidate scope, separate producer mapping and
+fresh estimator/preprocessing refit policy. The
+[final-evaluation guide](forecasting-final-evaluation.md) describes the planned
+separate path; documentation review, runtime implementation acceptance and exact
+final-run authorization remain outstanding. No final run, deployment promotion
+or downstream methodology is authorized. Disclose earlier December 3–16
+validation and full-year EDA exposure.
