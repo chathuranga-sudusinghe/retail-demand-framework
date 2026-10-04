@@ -37,9 +37,9 @@ class DecisionSupportRecord:
 
     def __post_init__(self) -> None:
         """Validate responsible decision-support semantics."""
-        if self.human_review_status == "review_required" and not self.human_review_reasons:
+        if not self.human_review_reasons:
             raise ValueError(
-                "human_review_reasons must be provided when review is required."
+                "human_review_reasons must be provided for human_review_status"
             )
 
 
@@ -64,4 +64,9 @@ class DecisionSupportRecord:
                 raise ValueError(
                     f"{field_name} is unavailable and requires an explicit reason "
                     "in unavailable_fields"
+                )
+
+            if not self.component_provenance:
+                raise ValueError(
+                    "component_provenance must be provided or explicitly marked unavailable"
                 )

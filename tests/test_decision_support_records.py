@@ -16,6 +16,16 @@ def test_default_human_review_status_is_not_assessed():
     "replenishment_recommendation": "Replenishment recommendation not supplied for this test.",
     "uncertainty_or_error": "Uncertainty information not supplied for this test.",
 },
+        forecast_demand=0.0,
+        forecast_provenance="forecasting",
+        inventory_risk_evidence=False,
+        inventory_risk_provenance="inventory_risk",
+        replenishment_recommendation=0,
+        uncertainty_or_error=0.0,
+        component_provenance={
+    "forecast": "forecasting",
+    "inventory_risk": "inventory_risk",
+},
     )
 
     assert record.human_review_status == "not_assessed"
@@ -38,6 +48,16 @@ def test_not_assessed_must_have_reason():
             warehouse_id="WH-01",
             forecast_origin="2026-10-01",
             forecast_horizon="7-day",
+            forecast_demand=0.0,
+            forecast_provenance="forecasting",
+            inventory_risk_evidence=False,
+            inventory_risk_provenance="inventory_risk",
+            replenishment_recommendation=0,
+            uncertainty_or_error=0.0,
+            component_provenance={
+            "forecast": "forecasting",
+            "inventory_risk": "inventory_risk",
+},
             human_review_status="not_assessed",
             human_review_reasons=[],
         )
@@ -71,6 +91,11 @@ def test_missing_component_provenance_is_rejected():
             forecast_origin="2026-10-01",
             forecast_horizon="7-day",
             forecast_demand=25.0,
+            forecast_provenance="forecasting",
+            inventory_risk_evidence={"risk": "low"},
+            inventory_risk_provenance="inventory_risk",
+            replenishment_recommendation=10,
+            uncertainty_or_error=1.5,
             component_provenance={},
         )
 
@@ -94,3 +119,76 @@ def test_identity_origin_and_horizon_are_preserved():
     assert record.warehouse_id == "WH-01"
     assert record.forecast_origin == "2026-10-01"
     assert record.forecast_horizon == "7-day"
+
+    def test_component_provenance_is_preserved():
+        provenance = {
+            "forecast": "forecasting",
+            "inventory_risk": "inventory_risk",
+        }
+
+        record = DecisionSupportRecord(
+            sku_id="SKU-001",
+            warehouse_id="WH-01",
+            forecast_origin="2026-10-01",
+            forecast_horizon="7-day",
+            forecast_demand=25.0,
+            forecast_provenance="forecasting",
+            inventory_risk_evidence=False,
+            inventory_risk_provenance="inventory_risk",
+            replenishment_recommendation=0,
+            uncertainty_or_error=0.0,
+            component_provenance=provenance,
+        )
+
+        assert record.component_provenance == provenance
+        assert record.forecast_provenance == "forecasting"
+        assert record.inventory_risk_provenance == "inventory_risk"
+
+    def test_assumptions_and_limitations_are_preserved():
+        assumptions = ["Forecast assumes normal trading conditions."]
+        limitations = ["Promotion effects are not modelled."]
+
+        record = DecisionSupportRecord(
+            sku_id="SKU-001",
+            warehouse_id="WH-01",
+            forecast_origin="2026-10-01",
+            forecast_horizon="7-day",
+            forecast_demand=25.0,
+            forecast_provenance="forecasting",
+            inventory_risk_evidence=False,
+            inventory_risk_provenance="inventory_risk",
+            replenishment_recommendation=0,
+            uncertainty_or_error=0.0,
+            assumptions=assumptions,
+            limitations=limitations,
+            component_provenance={
+                "forecast": "forecasting",
+                "inventory_risk": "inventory_risk",
+            },
+        )
+
+        assert record.assumptions == assumptions
+        assert record.limitations == limitations
+
+    def test_zero_and_false_values_are_not_treated_as_missing():
+        record = DecisionSupportRecord(
+            sku_id="SKU-001",
+            warehouse_id="WH-01",
+            forecast_origin="2026-10-01",
+            forecast_horizon="7-day",
+            forecast_demand=0.0,
+            forecast_provenance="forecasting",
+            inventory_risk_evidence=False,
+            inventory_risk_provenance="inventory_risk",
+            replenishment_recommendation=0,
+            uncertainty_or_error=0.0,
+            component_provenance={
+                "forecast": "forecasting",
+                "inventory_risk": "inventory_risk",
+            },
+        )
+
+        assert record.forecast_demand == 0.0
+        assert record.inventory_risk_evidence is False
+        assert record.replenishment_recommendation == 0
+        assert record.uncertainty_or_error == 0.0
