@@ -44,7 +44,7 @@ class DecisionSupportRecord:
 
 
 
-        allowed_statuses = {"not_assessed", "review_required", "no_additional_review"}
+        allowed_statuses = {"not_assessed", "review_required"}
         if self.human_review_status not in allowed_statuses:
             raise ValueError(
                 f"Unsupported human_review_status: {self.human_review_status}"
@@ -66,7 +66,7 @@ class DecisionSupportRecord:
                     "in unavailable_fields"
                 )
 
-            if not self.component_provenance:
-                raise ValueError(
-                    "component_provenance must be provided or explicitly marked unavailable"
-                )
+        if not self.component_provenance:
+            raise ValueError(
+                "component_provenance must be provided or explicitly marked unavailable"
+            )
