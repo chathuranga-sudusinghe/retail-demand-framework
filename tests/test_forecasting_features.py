@@ -1,4 +1,5 @@
 """Synthetic Issue #62 contract tests; retained target/fold boundary coverage."""
+
 from datetime import date
 
 import numpy as np
@@ -6,10 +7,19 @@ import pandas as pd
 import pytest
 
 from src.forecasting.features import (
-    CATEGORICAL_FEATURE_COLUMNS, CONCEPTUAL_FEATURE_COLUMNS, FEATURE_COLUMNS,
-    build_features, build_origin_features, feature_eligibility, prepare_demand,
+    CATEGORICAL_FEATURE_COLUMNS,
+    CONCEPTUAL_FEATURE_COLUMNS,
+    FEATURE_COLUMNS,
+    build_features,
+    build_origin_features,
+    feature_eligibility,
+    prepare_demand,
 )
-from src.forecasting.targets import FORECAST_HORIZONS, TARGET_COLUMNS, build_horizon_targets
+from src.forecasting.targets import (
+    FORECAST_HORIZONS,
+    TARGET_COLUMNS,
+    build_horizon_targets,
+)
 from src.forecasting.validation import FINAL_HOLDOUT, VALIDATION_FOLDS, split_fold
 
 
@@ -50,31 +60,67 @@ def series_rows(features: pd.DataFrame, sku: str, warehouse: str) -> pd.DataFram
 
 # Literal expectations are independent of the implementation catalogue.
 EXPECTED_NUMERICAL = (
-    "dow_sin", "dow_cos", "lag_1", "lag_7", "lag_14",
-    "rolling_mean_7", "rolling_std_7", "rolling_mean_14", "rolling_std_14",
-    "rolling_mean_28", "rolling_std_28", "rolling_slope_14",
+    "dow_sin",
+    "dow_cos",
+    "lag_1",
+    "lag_7",
+    "lag_14",
+    "rolling_mean_7",
+    "rolling_std_7",
+    "rolling_mean_14",
+    "rolling_std_14",
+    "rolling_mean_28",
+    "rolling_std_28",
+    "rolling_slope_14",
 )
 EXPECTED_CONCEPTUAL = (
-    "SKU_ID", "Warehouse_ID", "dow_sin", "dow_cos", "lag_1", "lag_7", "lag_14",
-    "rolling_mean_7", "rolling_std_7", "rolling_mean_14", "rolling_std_14",
-    "rolling_mean_28", "rolling_std_28", "rolling_slope_14",
+    "SKU_ID",
+    "Warehouse_ID",
+    "dow_sin",
+    "dow_cos",
+    "lag_1",
+    "lag_7",
+    "lag_14",
+    "rolling_mean_7",
+    "rolling_std_7",
+    "rolling_mean_14",
+    "rolling_std_14",
+    "rolling_mean_28",
+    "rolling_std_28",
+    "rolling_slope_14",
 )
 EXCLUDED_RAW = (
-    "Supplier_ID", "Region", "Inventory_Level", "Supplier_Lead_Time_Days",
-    "Reorder_Point", "Order_Quantity", "Unit_Cost", "Unit_Price",
-    "Promotion_Flag", "Stockout_Flag", "Demand_Forecast",
+    "Supplier_ID",
+    "Region",
+    "Inventory_Level",
+    "Supplier_Lead_Time_Days",
+    "Reorder_Point",
+    "Order_Quantity",
+    "Unit_Cost",
+    "Unit_Price",
+    "Promotion_Flag",
+    "Stockout_Flag",
+    "Demand_Forecast",
 )
 
 
 def make_crossed_panel(periods=40):
     rows = []
     for sku, warehouse, base, slope in (
-        ("A", "W1", 1, 1), ("A", "W2", 100, 2),
-        ("B", "W1", 1000, 3), ("B", "W2", 10000, 4),
+        ("A", "W1", 1, 1),
+        ("A", "W2", 100, 2),
+        ("B", "W1", 1000, 3),
+        ("B", "W2", 10000, 4),
     ):
         for offset, day in enumerate(pd.date_range("2024-01-01", periods=periods)):
-            rows.append({"Date": day, "SKU_ID": sku, "Warehouse_ID": warehouse,
-                         "Units_Sold": base + offset * slope})
+            rows.append(
+                {
+                    "Date": day,
+                    "SKU_ID": sku,
+                    "Warehouse_ID": warehouse,
+                    "Units_Sold": base + offset * slope,
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -83,24 +129,52 @@ def test_literal_frozen_membership_and_order_exclude_the_historical_catalogue():
     assert FEATURE_COLUMNS == EXPECTED_NUMERICAL
     assert CONCEPTUAL_FEATURE_COLUMNS == EXPECTED_CONCEPTUAL
     assert CATEGORICAL_FEATURE_COLUMNS == ("SKU_ID", "Warehouse_ID")
-    assert features.columns.tolist() == ["SKU_ID", "Warehouse_ID", "Date", *EXPECTED_NUMERICAL]
+    assert features.columns.tolist() == [
+        "SKU_ID",
+        "Warehouse_ID",
+        "Date",
+        *EXPECTED_NUMERICAL,
+    ]
     assert features.loc[:, list(EXPECTED_CONCEPTUAL)].shape[1] == 14
-    assert not set(features.columns).intersection({
-        "day_of_week", "month", "quarter", "lag_28", "rolling_median_7",
-        "rolling_median_14", "rolling_median_28", *EXCLUDED_RAW, "Units_Sold",
-    })
+    assert not set(features.columns).intersection(
+        {
+            "day_of_week",
+            "month",
+            "quarter",
+            "lag_28",
+            "rolling_median_7",
+            "rolling_median_14",
+            "rolling_median_28",
+            *EXCLUDED_RAW,
+            "Units_Sold",
+        }
+    )
 
 
 def test_all_seven_weekday_values_and_cyclic_wraparound():
     features = series_rows(build_features(make_panel()), "A", "W1").iloc[:7]
-    expected_sin = [0, 0.7818314824680298, 0.9749279121818236, 0.4338837391175582,
-                    -0.4338837391175582, -0.9749279121818236, -0.7818314824680298]
-    expected_cos = [1, 0.6234898018587336, -0.2225209339563144, -0.9009688679024191,
-                    -0.9009688679024191, -0.2225209339563144, 0.6234898018587336]
+    expected_sin = [
+        0,
+        0.7818314824680298,
+        0.9749279121818236,
+        0.4338837391175582,
+        -0.4338837391175582,
+        -0.9749279121818236,
+        -0.7818314824680298,
+    ]
+    expected_cos = [
+        1,
+        0.6234898018587336,
+        -0.2225209339563144,
+        -0.9009688679024191,
+        -0.9009688679024191,
+        -0.2225209339563144,
+        0.6234898018587336,
+    ]
     np.testing.assert_allclose(features.dow_sin, expected_sin, atol=1e-15)
     np.testing.assert_allclose(features.dow_cos, expected_cos, atol=1e-15)
     points = features[["dow_sin", "dow_cos"]].to_numpy()
-    np.testing.assert_allclose((points ** 2).sum(axis=1), 1)
+    np.testing.assert_allclose((points**2).sum(axis=1), 1)
     assert np.linalg.norm(points[6] - points[0]) == pytest.approx(
         np.linalg.norm(points[1] - points[0])
     )
@@ -109,7 +183,9 @@ def test_all_seven_weekday_values_and_cyclic_wraparound():
 
 def test_origin_weekday_and_lags_use_first_target_day_not_origin():
     # Origin Jan 28 is Sunday; first target day Jan 29 is Monday.
-    row = series_rows(build_origin_features(make_panel(28), origin="2024-01-28"), "A", "W1").iloc[0]
+    row = series_rows(
+        build_origin_features(make_panel(28), origin="2024-01-28"), "A", "W1"
+    ).iloc[0]
     assert row.Date == pd.Timestamp("2024-01-29")
     assert row.dow_sin == pytest.approx(0)
     assert row.dow_cos == pytest.approx(1)
@@ -134,8 +210,8 @@ def test_rolling_features_use_complete_past_windows_and_sample_std(window):
     features = series_rows(build_features(make_panel()), "A", "W1")
     historical = np.arange(1, window + 1, dtype=float)
     row = features.loc[window]
-    assert features.loc[:window - 1, f"rolling_mean_{window}"].isna().all()
-    assert features.loc[:window - 1, f"rolling_std_{window}"].isna().all()
+    assert features.loc[: window - 1, f"rolling_mean_{window}"].isna().all()
+    assert features.loc[: window - 1, f"rolling_std_{window}"].isna().all()
     assert row[f"rolling_mean_{window}"] == historical.mean()
     assert row[f"rolling_std_{window}"] == pytest.approx(historical.std(ddof=1))
     assert row[f"rolling_std_{window}"] != pytest.approx(historical.std(ddof=0))
@@ -157,7 +233,9 @@ def test_constant_and_zero_demand_have_zero_dispersion_and_slope(level):
 @pytest.mark.parametrize("slope", [2, -3, 0])
 def test_rolling_slope_14_uses_oldest_to_newest_units_per_day(slope):
     panel = make_panel()
-    panel["Units_Sold"] = panel.groupby(["SKU_ID", "Warehouse_ID"]).cumcount() * slope + 200
+    panel["Units_Sold"] = (
+        panel.groupby(["SKU_ID", "Warehouse_ID"]).cumcount() * slope + 200
+    )
     features = build_features(panel)
     first = series_rows(features, "A", "W1")
     assert first.loc[:13, "rolling_slope_14"].isna().all()
@@ -227,7 +305,9 @@ def test_fixed_origin_masks_all_post_origin_actuals_before_construction(future_v
     changed = panel.copy()
     changed["Units_Sold"] = changed.Units_Sold.astype(object)
     changed.loc[changed.Date.gt("2024-01-28"), "Units_Sold"] = future_value
-    pd.testing.assert_frame_equal(original, build_features(changed, history_end="2024-01-28"))
+    pd.testing.assert_frame_equal(
+        original, build_features(changed, history_end="2024-01-28")
+    )
     origin = series_rows(original, "A", "W1")
     assert origin.loc[28, "lag_1"] == 28
     assert pd.isna(origin.loc[29, "lag_1"])
@@ -240,27 +320,39 @@ def test_fixed_origin_rows_need_no_future_actuals_and_are_shared_across_horizons
     expected = build_origin_features(historical, origin="2024-01-28")
     with_future = make_crossed_panel(60)
     with_future.loc[with_future.Date.gt("2024-01-28"), "Units_Sold"] = 9_999_999
-    pd.testing.assert_frame_equal(expected, build_origin_features(with_future, origin="2024-01-28"))
+    pd.testing.assert_frame_equal(
+        expected, build_origin_features(with_future, origin="2024-01-28")
+    )
     assert len(expected) == 4
     assert not expected.duplicated(["SKU_ID", "Warehouse_ID"]).any()
     assert expected.Date.eq(pd.Timestamp("2024-01-29")).all()
     assert feature_eligibility(expected).all()
-    vectors = {h: expected.loc[:, list(EXPECTED_CONCEPTUAL)].copy() for h in (1, 7, 14, 28)}
+    vectors = {
+        h: expected.loc[:, list(EXPECTED_CONCEPTUAL)].copy() for h in (1, 7, 14, 28)
+    }
     for h in (7, 14, 28):
         pd.testing.assert_frame_equal(vectors[1], vectors[h])
     pd.testing.assert_frame_equal(historical, original)
 
 
-@pytest.mark.parametrize("sku,warehouse", [("A", "W1"), ("A", "W2"), ("B", "W1"), ("B", "W2")])
+@pytest.mark.parametrize(
+    "sku,warehouse", [("A", "W1"), ("A", "W2"), ("B", "W1"), ("B", "W2")]
+)
 def test_crossed_pair_histories_cannot_contaminate_other_pairs(sku, warehouse):
     panel = make_crossed_panel()
     original = build_origin_features(panel, origin="2024-02-09")
-    panel.loc[panel.SKU_ID.eq(sku) & panel.Warehouse_ID.eq(warehouse), "Units_Sold"] *= 100_000
+    panel.loc[
+        panel.SKU_ID.eq(sku) & panel.Warehouse_ID.eq(warehouse), "Units_Sold"
+    ] *= 100_000
     changed = build_origin_features(panel, origin="2024-02-09")
     others = ~(original.SKU_ID.eq(sku) & original.Warehouse_ID.eq(warehouse))
     pd.testing.assert_frame_equal(original.loc[others], changed.loc[others])
-    for pair, base, slope in [(("A", "W1"), 1, 1), (("A", "W2"), 100, 2),
-                              (("B", "W1"), 1000, 3), (("B", "W2"), 10000, 4)]:
+    for pair, base, slope in [
+        (("A", "W1"), 1, 1),
+        (("A", "W2"), 100, 2),
+        (("B", "W1"), 1000, 3),
+        (("B", "W2"), 10000, 4),
+    ]:
         row = series_rows(original, *pair).iloc[0]
         assert row.lag_1 == base + 39 * slope
         assert row.lag_7 == base + 33 * slope
@@ -276,8 +368,15 @@ def test_native_grain_and_row_count_are_preserved_without_mutating_input():
     features = build_features(panel)
     assert len(features) == len(panel)
     assert not features.duplicated(["SKU_ID", "Warehouse_ID", "Date"]).any()
-    assert set(map(tuple, features[["SKU_ID", "Warehouse_ID", "Date"]].to_numpy())) == set(
-        map(tuple, panel.assign(Date=pd.to_datetime(panel.Date))[["SKU_ID", "Warehouse_ID", "Date"]].to_numpy())
+    assert set(
+        map(tuple, features[["SKU_ID", "Warehouse_ID", "Date"]].to_numpy())
+    ) == set(
+        map(
+            tuple,
+            panel.assign(Date=pd.to_datetime(panel.Date))[
+                ["SKU_ID", "Warehouse_ID", "Date"]
+            ].to_numpy(),
+        )
     )
     pd.testing.assert_frame_equal(panel, original)
     pd.testing.assert_frame_equal(features, build_features(panel.sort_values("Date")))
@@ -295,10 +394,17 @@ def test_every_excluded_raw_field_is_ignored_even_when_mutated(column):
     assert column not in first.columns
 
 
-@pytest.mark.parametrize("column,value", [
-    ("Units_Sold", -1), ("Units_Sold", 1.5), ("Units_Sold", np.inf),
-    ("SKU_ID", " A"), ("Warehouse_ID", " "), ("Date", "2024-01-01 12:00:00"),
-])
+@pytest.mark.parametrize(
+    "column,value",
+    [
+        ("Units_Sold", -1),
+        ("Units_Sold", 1.5),
+        ("Units_Sold", np.inf),
+        ("SKU_ID", " A"),
+        ("Warehouse_ID", " "),
+        ("Date", "2024-01-01 12:00:00"),
+    ],
+)
 def test_invalid_historical_demand_and_keys_are_rejected(column, value):
     panel = make_panel()
     panel[column] = panel[column].astype(object)
@@ -339,15 +445,25 @@ def test_dr005_boundaries_are_exact_and_final_evaluation_does_not_overlap_fold_4
         (date(2024, 1, 1), date(2024, 11, 4), date(2024, 11, 5), date(2024, 12, 2)),
     )
 
-    assert tuple(
-        (fold.training.start, fold.training.end, fold.validation.start, fold.validation.end)
-        for fold in VALIDATION_FOLDS
-    ) == expected
+    assert (
+        tuple(
+            (
+                fold.training.start,
+                fold.training.end,
+                fold.validation.start,
+                fold.validation.end,
+            )
+            for fold in VALIDATION_FOLDS
+        )
+        == expected
+    )
     assert FINAL_HOLDOUT == type(FINAL_HOLDOUT)(date(2024, 12, 3), date(2024, 12, 30))
     assert VALIDATION_FOLDS[-1].validation.end < FINAL_HOLDOUT.start
 
 
-@pytest.mark.parametrize("fold_number,training_days", [(1, 91), (2, 182), (3, 274), (4, 309)])
+@pytest.mark.parametrize(
+    "fold_number,training_days", [(1, 91), (2, 182), (3, 274), (4, 309)]
+)
 def test_fold_split_uses_inclusive_boundaries_and_never_returns_holdout(
     fold_number, training_days
 ):
@@ -364,11 +480,15 @@ def test_fold_split_uses_inclusive_boundaries_and_never_returns_holdout(
     assert validation.Date.max() < pd.Timestamp(FINAL_HOLDOUT.start)
 
 
-@pytest.mark.parametrize("window", [*(fold.validation for fold in VALIDATION_FOLDS), FINAL_HOLDOUT])
+@pytest.mark.parametrize(
+    "window", [*(fold.validation for fold in VALIDATION_FOLDS), FINAL_HOLDOUT]
+)
 def test_all_four_targets_fit_exactly_inside_revised_evaluation_windows(window):
     # Synthetic data only; never evaluate real final-window outcomes.
     panel = make_panel(periods=365)
-    targets = build_horizon_targets(panel, window_start=window.start, window_end=window.end)
+    targets = build_horizon_targets(
+        panel, window_start=window.start, window_end=window.end
+    )
     assert FORECAST_HORIZONS == (1, 7, 14, 28)
     assert TARGET_COLUMNS == tuple(f"target_{h}_day" for h in (1, 7, 14, 28))
     first = series_rows(targets, "A", "W1").set_index("Date")
@@ -376,23 +496,40 @@ def test_all_four_targets_fit_exactly_inside_revised_evaluation_windows(window):
         column = f"target_{h}_day"
         start = pd.Timestamp(window.start)
         end = start + pd.Timedelta(days=h - 1)
-        actual = panel.loc[(panel.SKU_ID == "A") & panel.Date.between(str(start.date()), str(end.date())), "Units_Sold"].sum()
+        actual = panel.loc[
+            (panel.SKU_ID == "A")
+            & panel.Date.between(str(start.date()), str(end.date())),
+            "Units_Sold",
+        ].sum()
         assert first.loc[start, column] == actual
         assert first[column].notna().sum() == 28 - h + 1
         last = pd.Timestamp(window.end) - pd.Timedelta(days=h - 1)
-        assert first.loc[last, column] == panel.loc[(panel.SKU_ID == "A") & panel.Date.between(str(last.date()), str(window.end)), "Units_Sold"].sum()
+        assert (
+            first.loc[last, column]
+            == panel.loc[
+                (panel.SKU_ID == "A")
+                & panel.Date.between(str(last.date()), str(window.end)),
+                "Units_Sold",
+            ].sum()
+        )
         assert first.loc[first.index > last, column].isna().all()
 
 
 def test_28_day_targets_require_complete_outcomes_and_daily_series_continuity():
     panel = make_panel(periods=365)
     window = VALIDATION_FOLDS[0].validation
-    panel.loc[(panel.SKU_ID == "A") & (panel.Date == "2024-04-28"), "Units_Sold"] = np.nan
-    targets = build_horizon_targets(panel, window_start=window.start, window_end=window.end)
+    panel.loc[(panel.SKU_ID == "A") & (panel.Date == "2024-04-28"), "Units_Sold"] = (
+        np.nan
+    )
+    targets = build_horizon_targets(
+        panel, window_start=window.start, window_end=window.end
+    )
     assert pd.isna(series_rows(targets, "A", "W1").loc[91, "target_28_day"])
     assert pd.notna(series_rows(targets, "B", "W2").loc[91, "target_28_day"])
     incomplete = make_panel(periods=365)
-    incomplete = incomplete.loc[~((incomplete.SKU_ID == "A") & (incomplete.Date == "2024-04-28"))]
+    incomplete = incomplete.loc[
+        ~((incomplete.SKU_ID == "A") & (incomplete.Date == "2024-04-28"))
+    ]
     with pytest.raises(ValueError):
         split_fold(incomplete, 1)
 
@@ -400,9 +537,20 @@ def test_28_day_targets_require_complete_outcomes_and_daily_series_continuity():
 @pytest.mark.parametrize("fold", VALIDATION_FOLDS)
 def test_28_day_training_targets_never_cross_the_training_cutoff(fold):
     panel = make_panel(periods=365)
-    targets = build_horizon_targets(panel, window_start=fold.training.start, window_end=fold.training.end)
+    targets = build_horizon_targets(
+        panel, window_start=fold.training.start, window_end=fold.training.end
+    )
     valid = targets.loc[targets.target_28_day.notna()]
-    assert (valid.Date + pd.Timedelta(days=27)).le(pd.Timestamp(fold.training.end)).all()
+    assert (
+        (valid.Date + pd.Timedelta(days=27)).le(pd.Timestamp(fold.training.end)).all()
+    )
     changed = panel.copy()
-    changed.loc[pd.to_datetime(changed.Date).gt(pd.Timestamp(fold.training.end)), "Units_Sold"] = 999999
-    pd.testing.assert_frame_equal(targets, build_horizon_targets(changed, window_start=fold.training.start, window_end=fold.training.end))
+    changed.loc[
+        pd.to_datetime(changed.Date).gt(pd.Timestamp(fold.training.end)), "Units_Sold"
+    ] = 999999
+    pd.testing.assert_frame_equal(
+        targets,
+        build_horizon_targets(
+            changed, window_start=fold.training.start, window_end=fold.training.end
+        ),
+    )

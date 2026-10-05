@@ -1,9 +1,12 @@
 """Descriptive inventory summaries consume shared validated synthetic data."""
+
 import pandas as pd
 
 from src.analysis.inventory_alignment_analysis import (
-    profile_cross_warehouse_variation, profile_inventory_ranges,
-    profile_native_grain, profile_warehouse_coverage,
+    profile_cross_warehouse_variation,
+    profile_inventory_ranges,
+    profile_native_grain,
+    profile_warehouse_coverage,
 )
 
 
@@ -26,6 +29,11 @@ def test_inventory_variation_ranges_and_no_mutation(panel):
     assert variation.loc["Inventory_Level", "variation_share"] == 1
     assert variation.loc["Reorder_Point", "variation_share"] == 0
     ranges = profile_inventory_ranges(frame).set_index("variable")
-    assert ranges.loc["Inventory_Level", ["min", "median", "mean", "max"]].tolist() == [100, 150, 150, 200]
+    assert ranges.loc["Inventory_Level", ["min", "median", "mean", "max"]].tolist() == [
+        100,
+        150,
+        150,
+        200,
+    ]
     assert ranges.loc["Order_Quantity", "zero_share"] == 1
     pd.testing.assert_frame_equal(frame, original)

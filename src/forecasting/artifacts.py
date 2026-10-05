@@ -1,4 +1,5 @@
 """Exact protocol v2 artifact schemas, exclusive run creation and JSON safety."""
+
 from __future__ import annotations
 
 import csv
@@ -16,34 +17,108 @@ from src.forecasting.paths import RepositoryLayout
 SCHEMA_VERSION = "issue-65-v2"
 PROTOCOL_VERSION = "issue-65-matched-frozen-1"
 FOLD_COLUMNS = (
-    "run_id", "evaluation_stage", "evidence_role", "model", "horizon", "configuration_id",
-    "canonical_config_id", "fold_id", "training_start", "training_end", "forecast_origin",
-    "target_start_date", "target_end_date", "n_predictions", "wape", "mae", "rmse", "bias",
-    "wape_denominator", "metric_status", "failure_reason",
+    "run_id",
+    "evaluation_stage",
+    "evidence_role",
+    "model",
+    "horizon",
+    "configuration_id",
+    "canonical_config_id",
+    "fold_id",
+    "training_start",
+    "training_end",
+    "forecast_origin",
+    "target_start_date",
+    "target_end_date",
+    "n_predictions",
+    "wape",
+    "mae",
+    "rmse",
+    "bias",
+    "wape_denominator",
+    "metric_status",
+    "failure_reason",
 )
 SUMMARY_COLUMNS = (
-    "run_id", "evaluation_stage", "evidence_role", "model", "horizon", "configuration_id",
-    "canonical_config_id", "expected_fold_count", "valid_fold_count", "n_predictions",
-    "mean_wape", "mean_mae", "mean_rmse", "mean_bias", "metric_status", "failure_reason",
-    "selected_configuration", "selection_status", "review_status",
+    "run_id",
+    "evaluation_stage",
+    "evidence_role",
+    "model",
+    "horizon",
+    "configuration_id",
+    "canonical_config_id",
+    "expected_fold_count",
+    "valid_fold_count",
+    "n_predictions",
+    "mean_wape",
+    "mean_mae",
+    "mean_rmse",
+    "mean_bias",
+    "metric_status",
+    "failure_reason",
+    "selected_configuration",
+    "selection_status",
+    "review_status",
 )
 PREDICTION_COLUMNS = (
-    "run_id", "evaluation_stage", "evidence_role", "fold_id", "model", "horizon",
-    "configuration_id", "canonical_config_id", "SKU_ID", "Warehouse_ID", "training_start",
-    "training_end", "forecast_origin", "target_start_date", "target_end_date", "prediction",
-    "observed_target", "prediction_status", "target_status", "eligibility_status",
-    "selected_configuration", "selection_status", "representation_id",
+    "run_id",
+    "evaluation_stage",
+    "evidence_role",
+    "fold_id",
+    "model",
+    "horizon",
+    "configuration_id",
+    "canonical_config_id",
+    "SKU_ID",
+    "Warehouse_ID",
+    "training_start",
+    "training_end",
+    "forecast_origin",
+    "target_start_date",
+    "target_end_date",
+    "prediction",
+    "observed_target",
+    "prediction_status",
+    "target_status",
+    "eligibility_status",
+    "selected_configuration",
+    "selection_status",
+    "representation_id",
 )
 ELIGIBILITY_COLUMNS = (
-    "run_id", "evaluation_stage", "evidence_role", "model", "horizon", "fold_id", "SKU_ID",
-    "Warehouse_ID", "raw_row_count", "feature_eligible_count", "label_eligible_count",
-    "training_row_count", "expected_origin_count", "scored_origin_count", "exclusion_reason",
-    "reason_count", "overlapping_reasons",
+    "run_id",
+    "evaluation_stage",
+    "evidence_role",
+    "model",
+    "horizon",
+    "fold_id",
+    "SKU_ID",
+    "Warehouse_ID",
+    "raw_row_count",
+    "feature_eligible_count",
+    "label_eligible_count",
+    "training_row_count",
+    "expected_origin_count",
+    "scored_origin_count",
+    "exclusion_reason",
+    "reason_count",
+    "overlapping_reasons",
 )
-CSV_SCHEMAS = {"fold_metrics.csv": FOLD_COLUMNS, "configuration_summary.csv": SUMMARY_COLUMNS,
-               "predictions.csv": PREDICTION_COLUMNS, "eligibility_counts.csv": ELIGIBILITY_COLUMNS}
-ARTIFACT_NAMES = ("run_metadata.json", "fold_metrics.csv", "configuration_summary.csv",
-                  "selected_configurations.json", "predictions.csv", "eligibility_counts.csv", "comparison.md")
+CSV_SCHEMAS = {
+    "fold_metrics.csv": FOLD_COLUMNS,
+    "configuration_summary.csv": SUMMARY_COLUMNS,
+    "predictions.csv": PREDICTION_COLUMNS,
+    "eligibility_counts.csv": ELIGIBILITY_COLUMNS,
+}
+ARTIFACT_NAMES = (
+    "run_metadata.json",
+    "fold_metrics.csv",
+    "configuration_summary.csv",
+    "selected_configurations.json",
+    "predictions.csv",
+    "eligibility_counts.csv",
+    "comparison.md",
+)
 
 
 def file_hash(path: Path) -> str:
@@ -65,7 +140,11 @@ def json_value(value: Any) -> Any:
     if isinstance(value, np.generic):
         return json_value(value.item())
     if isinstance(value, datetime):
-        return value.date().isoformat() if value.tzinfo is None and value.time() == datetime.min.time() else value.isoformat()
+        return (
+            value.date().isoformat()
+            if value.tzinfo is None and value.time() == datetime.min.time()
+            else value.isoformat()
+        )
     if isinstance(value, date):
         return value.isoformat()
     if isinstance(value, float) and not np.isfinite(value):
@@ -74,7 +153,10 @@ def json_value(value: Any) -> Any:
 
 
 def json_text(value: Any) -> str:
-    return json.dumps(json_value(value), indent=2, allow_nan=False, ensure_ascii=False) + "\n"
+    return (
+        json.dumps(json_value(value), indent=2, allow_nan=False, ensure_ascii=False)
+        + "\n"
+    )
 
 
 def require_mutable_run(directory: Path) -> None:
@@ -89,7 +171,9 @@ class ArtifactWriter:
     """Own one artifact anchor and its model/report directories; never reuse a run."""
 
     def __init__(self, repository: Path | RepositoryLayout, run_id: str):
-        self.layout = RepositoryLayout(repository) if isinstance(repository, Path) else repository
+        self.layout = (
+            RepositoryLayout(repository) if isinstance(repository, Path) else repository
+        )
         self.repository = self.layout.root
         self.directory = self.layout.run_directory(run_id)
         self.model_directory = self.layout.model_run_directory(run_id)
@@ -106,14 +190,22 @@ class ArtifactWriter:
         require_mutable_run(self.directory)
 
     def _path(self, name: str) -> Path:
-        directory = (self.layout.report_directory(self.directory.name)
-                     if name == "comparison.md" else self.layout.run_directory(self.directory.name))
+        directory = (
+            self.layout.report_directory(self.directory.name)
+            if name == "comparison.md"
+            else self.layout.run_directory(self.directory.name)
+        )
         return self.layout._owned_path(directory / name)
 
     def write_json(self, name: str, value: Any) -> None:
         self._require_mutable()
-        if name not in ("run_metadata.json", "selected_configurations.json", "diagnostics.json",
-                        "authorization.json", "run_manifest.json"):
+        if name not in (
+            "run_metadata.json",
+            "selected_configurations.json",
+            "diagnostics.json",
+            "authorization.json",
+            "run_manifest.json",
+        ):
             raise ValueError("Unknown JSON artifact.")
         encoded = json_text(value)
         path = self._path(name)
@@ -140,7 +232,9 @@ class ArtifactWriter:
                     if isinstance(value, bool):
                         values[key] = "true" if value else "false"
                     elif isinstance(value, list):
-                        values[key] = json.dumps(value, allow_nan=False, separators=(",", ":"))
+                        values[key] = json.dumps(
+                            value, allow_nan=False, separators=(",", ":")
+                        )
                 writer.writerow(values)
         temporary.replace(path)
 
@@ -158,10 +252,24 @@ class ArtifactWriter:
             exists = path.is_file()
             # A manifest cannot hash the full file that contains that same hash.
             # All other artifact hashes are complete byte hashes.
-            records.append({"artifact_path": path.relative_to(self.repository).as_posix(),
-                            "artifact_hash": file_hash(path) if exists and name != "run_metadata.json" else None,
-                            "artifact_status": "self_reference" if exists and name == "run_metadata.json" else (
-                                "written" if exists else "not_written"),
-                            "diagnostic_paths": [str((self.directory / "diagnostics.json").relative_to(self.repository))]
-                            if (self.directory / "diagnostics.json").exists() else []})
+            records.append(
+                {
+                    "artifact_path": path.relative_to(self.repository).as_posix(),
+                    "artifact_hash": file_hash(path)
+                    if exists and name != "run_metadata.json"
+                    else None,
+                    "artifact_status": "self_reference"
+                    if exists and name == "run_metadata.json"
+                    else ("written" if exists else "not_written"),
+                    "diagnostic_paths": [
+                        str(
+                            (self.directory / "diagnostics.json").relative_to(
+                                self.repository
+                            )
+                        )
+                    ]
+                    if (self.directory / "diagnostics.json").exists()
+                    else [],
+                }
+            )
         return records

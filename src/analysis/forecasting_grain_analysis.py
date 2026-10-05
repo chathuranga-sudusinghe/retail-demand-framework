@@ -182,23 +182,17 @@ def _series_summary(
     series_stats["zero_demand_share"] = zero_share
 
     mean_nonzero = series_stats["mean_demand"].replace(0, np.nan)
-    series_stats["coefficient_of_variation"] = (
-        series_stats["std_demand"] / mean_nonzero
-    )
+    series_stats["coefficient_of_variation"] = series_stats["std_demand"] / mean_nonzero
 
     # Short-lag dependence is descriptive only; it is not model selection.
     lag1_values = grouped["demand"].apply(lambda s: s.autocorr(lag=1))
     series_stats["lag1_autocorrelation"] = lag1_values
 
     date_counts = grouped[time_col].nunique()
-    span_days = grouped[time_col].agg(
-        lambda s: int((s.max() - s.min()).days) + 1
-    )
+    span_days = grouped[time_col].agg(lambda s: int((s.max() - s.min()).days) + 1)
 
     expected_step_days = 7 if unit_name == "sku_week" else 1
-    expected_observations = (
-        (span_days - 1) // expected_step_days + 1
-    ).astype(int)
+    expected_observations = ((span_days - 1) // expected_step_days + 1).astype(int)
 
     completeness = (date_counts / expected_observations).clip(upper=1.0)
     series_stats["temporal_completeness"] = completeness
@@ -223,16 +217,16 @@ def _series_summary(
             "median_temporal_completeness": [
                 float(series_stats["temporal_completeness"].median())
             ],
-            "median_mean_demand": [
-                float(series_stats["mean_demand"].median())
-            ],
+            "median_mean_demand": [float(series_stats["mean_demand"].median())],
         }
     )
 
     return result
 
 
-def profile_candidate_units(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
+def profile_candidate_units(
+    df: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     """Build and compare the three candidate analytical units."""
     sku_day = build_sku_day(df)
     sku_warehouse_day = build_sku_warehouse_day(df)
@@ -329,7 +323,9 @@ def parse_args() -> argparse.Namespace:
         default=Path("data/processed/temporal_profile"),
         help="Directory for generated local profiling summaries.",
     )
-    parser.add_argument("--start", required=True, help="Explicitly authorized scope start")
+    parser.add_argument(
+        "--start", required=True, help="Explicitly authorized scope start"
+    )
     parser.add_argument("--end", required=True, help="Explicitly authorized scope end")
     return parser.parse_args()
 

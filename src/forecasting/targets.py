@@ -1,4 +1,5 @@
 """Separate observed-outcome labels for DR-004; never forecasting features."""
+
 from __future__ import annotations
 
 from datetime import date
@@ -6,7 +7,11 @@ from datetime import date
 import pandas as pd
 
 from src.forecasting.features import (
-    KEY_COLUMNS, SERIES_COLUMNS, TARGET_COLUMN, calendar_date, prepare_demand,
+    KEY_COLUMNS,
+    SERIES_COLUMNS,
+    TARGET_COLUMN,
+    calendar_date,
+    prepare_demand,
 )
 
 FORECAST_HORIZONS = (1, 7, 14, 28)
@@ -14,7 +19,9 @@ TARGET_COLUMNS = tuple(f"target_{h}_day" for h in FORECAST_HORIZONS)
 
 
 def build_horizon_targets(
-    data: pd.DataFrame, *, window_start: str | date | pd.Timestamp,
+    data: pd.DataFrame,
+    *,
+    window_start: str | date | pd.Timestamp,
     window_end: str | date | pd.Timestamp,
 ) -> pd.DataFrame:
     """Return keys and cumulative outcomes starting at each row's Date.

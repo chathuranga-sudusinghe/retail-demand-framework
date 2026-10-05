@@ -175,7 +175,9 @@ def parse_args() -> argparse.Namespace:
         default=Path("data/processed/temporal_profile"),
         help="Directory for generated local profiling summaries.",
     )
-    parser.add_argument("--start", required=True, help="Explicitly authorized scope start")
+    parser.add_argument(
+        "--start", required=True, help="Explicitly authorized scope start"
+    )
     parser.add_argument("--end", required=True, help="Explicitly authorized scope end")
     return parser.parse_args()
 

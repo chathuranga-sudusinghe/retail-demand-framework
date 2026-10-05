@@ -67,7 +67,13 @@ def test_evaluation_reports_documented_counts_rates_and_margin_evidence():
     summary = result["summary"].iloc[0]
     cases = result["cases"].set_index("SKU_ID")
 
-    assert (summary["N"], summary["TP"], summary["TN"], summary["FP"], summary["FN"]) == (4, 1, 1, 1, 1)
+    assert (
+        summary["N"],
+        summary["TP"],
+        summary["TN"],
+        summary["FP"],
+        summary["FN"],
+    ) == (4, 1, 1, 1, 1)
     assert summary["origin_known_at_or_below_count"] == 1
     assert summary["initially_above_threshold_count"] == 4
     assert summary["event_prevalence"] == 0.5
@@ -81,7 +87,9 @@ def test_evaluation_reports_documented_counts_rates_and_margin_evidence():
     assert cases.loc["TN", "confusion_cell"] == "TN"
     assert cases.loc["FP", "confusion_cell"] == "FP"
     assert cases.loc["FN", "confusion_cell"] == "FN"
-    assert cases.loc["KNOWN", "origin_exposure_state"] == "already_at_or_below_threshold"
+    assert (
+        cases.loc["KNOWN", "origin_exposure_state"] == "already_at_or_below_threshold"
+    )
     assert cases.loc["KNOWN", "comparison_case"] == "origin_known_at_or_below_threshold"
     assert cases.loc["TP", "predicted_margin"] == 0
     assert cases.loc["TP", "retrospective_margin"] == 0
@@ -91,7 +99,15 @@ def test_evaluation_reports_documented_counts_rates_and_margin_evidence():
 def test_28_day_keeps_origin_evidence_but_does_not_calculate_downstream_crossing():
     result = evaluate_inventory_risk(
         pd.DataFrame(
-            [make_row("S28", horizon=28, target_end_date="2024-01-29", prediction=50, observed=50)]
+            [
+                make_row(
+                    "S28",
+                    horizon=28,
+                    target_end_date="2024-01-29",
+                    prediction=50,
+                    observed=50,
+                )
+            ]
         )
     )
     case = result["cases"].iloc[0]
@@ -101,7 +117,10 @@ def test_28_day_keeps_origin_evidence_but_does_not_calculate_downstream_crossing
     assert case["forecast_exposure_state"] == "unavailable"
     assert case["retrospective_exposure_state"] == "unavailable"
     assert case["confusion_cell"] is pd.NA or pd.isna(case["confusion_cell"])
-    assert "28_day_downstream_use_requires_separate_approval" in case["evaluation_unavailable_reasons"]
+    assert (
+        "28_day_downstream_use_requires_separate_approval"
+        in case["evaluation_unavailable_reasons"]
+    )
     assert summary["N"] == 0
     assert summary["unavailable_case_count"] == 1
     assert summary["forecast_unavailable_or_gated_count"] == 1
@@ -118,13 +137,18 @@ def test_unavailable_snapshot_is_retained_and_not_scored():
     assert case["SKU_ID"] == "NO_SNAPSHOT"
     assert case["origin_exposure_state"] == "unavailable"
     assert case["comparison_case"] == "unavailable"
-    assert "origin_snapshot_not_available_at_forecast_origin" in case["evaluation_unavailable_reasons"]
+    assert (
+        "origin_snapshot_not_available_at_forecast_origin"
+        in case["evaluation_unavailable_reasons"]
+    )
     assert summary["N"] == 0
     assert summary["unavailable_case_count"] == 1
 
 
 def test_undefined_denominators_are_reported_as_unavailable():
-    result = evaluate_inventory_risk(pd.DataFrame([make_row("ONLY_TP", prediction=10, observed=10)]))
+    result = evaluate_inventory_risk(
+        pd.DataFrame([make_row("ONLY_TP", prediction=10, observed=10)])
+    )
     summary = result["summary"].iloc[0]
 
     assert summary["precision"] == 1
@@ -154,7 +178,9 @@ def test_metrics_with_no_retrospective_crossing_have_explicit_undefined_rates():
 
 def test_metrics_are_separate_for_horizons_and_forecast_origins():
     rows = [
-        make_row("H1", horizon=1, target_end_date="2024-01-02", prediction=10, observed=10),
+        make_row(
+            "H1", horizon=1, target_end_date="2024-01-02", prediction=10, observed=10
+        ),
         make_row("H7", horizon=7, prediction=9, observed=9),
         make_row(
             "NEXT_ORIGIN",
@@ -174,8 +200,12 @@ def test_metrics_are_separate_for_horizons_and_forecast_origins():
 
 
 def test_source_forecast_and_stockout_flag_do_not_change_evaluation():
-    first = make_row("S1", Demand_Forecast=0, Stockout_Flag=0, prediction=10, observed=10)
-    second = make_row("S2", Demand_Forecast=10000, Stockout_Flag=0, prediction=10, observed=10)
+    first = make_row(
+        "S1", Demand_Forecast=0, Stockout_Flag=0, prediction=10, observed=10
+    )
+    second = make_row(
+        "S2", Demand_Forecast=10000, Stockout_Flag=0, prediction=10, observed=10
+    )
     result = evaluate_inventory_risk(pd.DataFrame([first, second]))
 
     assert result["summary"].loc[0, "TP"] == 2
@@ -231,8 +261,12 @@ def assert_invalid_case_is_not_scored(result, reason):
         ("Reorder_Point", "reorder_point_missing_or_invalid"),
     ],
 )
-@pytest.mark.parametrize("value", [None, float("nan"), pd.NA, float("inf"), float("-inf"), "invalid"])
-def test_mixed_invalid_numeric_values_never_enter_confusion_counts(column, reason, value):
+@pytest.mark.parametrize(
+    "value", [None, float("nan"), pd.NA, float("inf"), float("-inf"), "invalid"]
+)
+def test_mixed_invalid_numeric_values_never_enter_confusion_counts(
+    column, reason, value
+):
     invalid_row = make_row("INVALID")
     invalid_row[column] = value
     result = evaluate_inventory_risk(pd.DataFrame([make_row("VALID"), invalid_row]))
@@ -252,10 +286,16 @@ def test_mixed_invalid_numeric_values_never_enter_confusion_counts(column, reaso
 @pytest.mark.parametrize("column", ["Inventory_Level", "Reorder_Point"])
 @pytest.mark.parametrize("value", [-1, 1.5])
 def test_invalid_inventory_counts_preserve_preparation_failure_reasons(column, value):
-    invalid_row = make_row("INVALID", unavailable_information_reasons=["upstream warning", ""])
+    invalid_row = make_row(
+        "INVALID", unavailable_information_reasons=["upstream warning", ""]
+    )
     invalid_row[column] = value
     result = evaluate_inventory_risk(pd.DataFrame([make_row("VALID"), invalid_row]))
-    reason = "inventory_level_missing_or_invalid" if column == "Inventory_Level" else "reorder_point_missing_or_invalid"
+    reason = (
+        "inventory_level_missing_or_invalid"
+        if column == "Inventory_Level"
+        else "reorder_point_missing_or_invalid"
+    )
     invalid = assert_invalid_case_is_not_scored(result, reason)
 
     assert "upstream warning" in invalid["preparation_unavailable_reasons"]
@@ -266,13 +306,22 @@ def test_invalid_inventory_counts_preserve_preparation_failure_reasons(column, v
     assert pd.isna(invalid["retrospective_margin"])
 
 
-@pytest.mark.parametrize("horizon", [None, float("nan"), pd.NA, float("inf"), float("-inf"), "invalid", 0, 2, 1.5])
+@pytest.mark.parametrize(
+    "horizon",
+    [None, float("nan"), pd.NA, float("inf"), float("-inf"), "invalid", 0, 2, 1.5],
+)
 def test_mixed_invalid_horizons_never_enter_confusion_counts(horizon):
-    result = evaluate_inventory_risk(pd.DataFrame([
-        make_row("VALID"),
-        make_row("INVALID", horizon=horizon),
-    ]))
-    invalid = assert_invalid_case_is_not_scored(result, "unsupported_or_invalid_forecast_horizon")
+    result = evaluate_inventory_risk(
+        pd.DataFrame(
+            [
+                make_row("VALID"),
+                make_row("INVALID", horizon=horizon),
+            ]
+        )
+    )
+    invalid = assert_invalid_case_is_not_scored(
+        result, "unsupported_or_invalid_forecast_horizon"
+    )
 
     assert invalid["forecast_exposure_state"] == "unavailable"
     assert invalid["retrospective_exposure_state"] == "unavailable"
@@ -283,17 +332,45 @@ def test_mixed_invalid_horizons_never_enter_confusion_counts(horizon):
 @pytest.mark.parametrize(
     ("column", "value", "reason", "exposure_column", "margin_column"),
     [
-        ("prediction_status", pd.NA, "forecast_prediction_status_not_available", "forecast_exposure_state", "predicted_margin"),
-        ("eligibility_status", pd.NA, "forecast_eligibility_status_not_eligible", "forecast_exposure_state", "predicted_margin"),
-        ("target_status", pd.NA, "retrospective_target_status_not_complete", "retrospective_exposure_state", "retrospective_margin"),
-        ("target_status", "incomplete", "retrospective_target_status_not_complete", "retrospective_exposure_state", "retrospective_margin"),
+        (
+            "prediction_status",
+            pd.NA,
+            "forecast_prediction_status_not_available",
+            "forecast_exposure_state",
+            "predicted_margin",
+        ),
+        (
+            "eligibility_status",
+            pd.NA,
+            "forecast_eligibility_status_not_eligible",
+            "forecast_exposure_state",
+            "predicted_margin",
+        ),
+        (
+            "target_status",
+            pd.NA,
+            "retrospective_target_status_not_complete",
+            "retrospective_exposure_state",
+            "retrospective_margin",
+        ),
+        (
+            "target_status",
+            "incomplete",
+            "retrospective_target_status_not_complete",
+            "retrospective_exposure_state",
+            "retrospective_margin",
+        ),
     ],
 )
-def test_missing_or_incomplete_status_never_enters_confusion_counts(column, value, reason, exposure_column, margin_column):
-    records = pd.DataFrame([
-        make_row("VALID"),
-        make_row("INVALID", **{column: value}),
-    ])
+def test_missing_or_incomplete_status_never_enters_confusion_counts(
+    column, value, reason, exposure_column, margin_column
+):
+    records = pd.DataFrame(
+        [
+            make_row("VALID"),
+            make_row("INVALID", **{column: value}),
+        ]
+    )
     records[column] = records[column].astype("string")
     if value is pd.NA:
         assert records.loc[1, column] is pd.NA
@@ -304,7 +381,10 @@ def test_missing_or_incomplete_status_never_enters_confusion_counts(column, valu
     assert invalid["observed_target"] == 10
     assert invalid[exposure_column] == "unavailable"
     assert pd.isna(invalid[margin_column])
-    assert "realised_horizon_demand_unavailable" not in invalid["evaluation_unavailable_reasons"]
+    assert (
+        "realised_horizon_demand_unavailable"
+        not in invalid["evaluation_unavailable_reasons"]
+    )
 
 
 @pytest.mark.parametrize(
@@ -318,11 +398,17 @@ def test_missing_or_incomplete_status_never_enters_confusion_counts(column, valu
     ],
 )
 def test_invalid_retrospective_interval_produces_no_crossing_or_margin(updates):
-    result = evaluate_inventory_risk(pd.DataFrame([
-        make_row("VALID"),
-        make_row("INVALID", **updates),
-    ]))
-    invalid = assert_invalid_case_is_not_scored(result, "forecast_target_interval_does_not_match_origin_and_horizon")
+    result = evaluate_inventory_risk(
+        pd.DataFrame(
+            [
+                make_row("VALID"),
+                make_row("INVALID", **updates),
+            ]
+        )
+    )
+    invalid = assert_invalid_case_is_not_scored(
+        result, "forecast_target_interval_does_not_match_origin_and_horizon"
+    )
 
     assert invalid["observed_target"] == 10
     assert invalid["target_status"] == "complete"

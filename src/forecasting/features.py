@@ -4,6 +4,7 @@ Date is the FIRST target day t=o+1. Demand inputs end at origin o, within
 SKU_ID + Warehouse_ID. No data is filled, no files are read/written and no
 model is fitted. Use build_origin_features for one reusable fixed-origin row.
 """
+
 from __future__ import annotations
 
 from datetime import date
@@ -22,8 +23,11 @@ MINIMUM_HISTORY_DAYS = 28
 FEATURE_COLUMNS = (
     *CALENDAR_FEATURES,
     *(f"lag_{lag}" for lag in LAGS),
-    *(f"rolling_{stat}_{window}" for window in ROLLING_WINDOWS
-      for stat in ("mean", "std")),
+    *(
+        f"rolling_{stat}_{window}"
+        for window in ROLLING_WINDOWS
+        for stat in ("mean", "std")
+    ),
     "rolling_slope_14",
 )
 CONCEPTUAL_FEATURE_COLUMNS = (*CATEGORICAL_FEATURE_COLUMNS, *FEATURE_COLUMNS)
@@ -38,12 +42,16 @@ def calendar_date(value: str | date | pd.Timestamp) -> pd.Timestamp:
     except (TypeError, ValueError) as exc:
         raise ValueError("Invalid calendar boundary.") from exc
     if pd.isna(result) or result.tzinfo is not None or result != result.normalize():
-        raise ValueError("A boundary must be a nonmissing timezone-naive calendar date.")
+        raise ValueError(
+            "A boundary must be a nonmissing timezone-naive calendar date."
+        )
     return result
 
 
 def prepare_demand(
-    data: pd.DataFrame, *, require_daily: bool = True,
+    data: pd.DataFrame,
+    *,
+    require_daily: bool = True,
     history_end: str | date | pd.Timestamp | None = None,
 ) -> pd.DataFrame:
     """Copy, validate and sort the four-column daily demand view.
@@ -72,18 +80,25 @@ def prepare_demand(
             lambda x: isinstance(x, str) and bool(x.strip()) and x == x.strip()
         )
         if not valid.all():
-            raise ValueError(f"{column} must contain nonblank, unpadded text identifiers.")
+            raise ValueError(
+                f"{column} must contain nonblank, unpadded text identifiers."
+            )
     if pd.api.types.is_numeric_dtype(frame.Date.dtype):
         raise ValueError("Date must contain calendar dates, not numeric timestamps.")
     try:
         frame["Date"] = pd.to_datetime(frame.Date, format="%Y-%m-%d", errors="raise")
     except (TypeError, ValueError) as exc:
         raise ValueError("Date must contain valid YYYY-MM-DD calendar dates.") from exc
-    if (frame.Date.isna().any() or frame.Date.dt.tz is not None
-            or frame.Date.ne(frame.Date.dt.normalize()).any()):
+    if (
+        frame.Date.isna().any()
+        or frame.Date.dt.tz is not None
+        or frame.Date.ne(frame.Date.dt.normalize()).any()
+    ):
         raise ValueError("Date must be nonmissing, timezone-naive and at midnight.")
     if frame.duplicated(list(KEY_COLUMNS)).any():
-        raise ValueError("Duplicate native keys; no aggregation or deduplication applied.")
+        raise ValueError(
+            "Duplicate native keys; no aggregation or deduplication applied."
+        )
     if history_end is not None:
         cutoff = calendar_date(history_end)
         frame[TARGET_COLUMN] = frame[TARGET_COLUMN].where(frame.Date.le(cutoff))
@@ -92,19 +107,26 @@ def prepare_demand(
     except (TypeError, ValueError) as exc:
         raise ValueError("Units_Sold must be numeric or missing.") from exc
     observed = demand.dropna().to_numpy(dtype=float)
-    if (not np.isfinite(observed).all() or (observed < 0).any()
-            or np.not_equal(observed, np.floor(observed)).any()):
+    if (
+        not np.isfinite(observed).all()
+        or (observed < 0).any()
+        or np.not_equal(observed, np.floor(observed)).any()
+    ):
         raise ValueError("Observed Units_Sold must be finite nonnegative whole units.")
     frame[TARGET_COLUMN] = demand
     frame = frame.sort_values(list(KEY_COLUMNS)).reset_index(drop=True)
     gaps = frame.groupby(list(SERIES_COLUMNS), observed=True).Date.diff().dropna()
     if require_daily and gaps.ne(pd.Timedelta(days=1)).any():
-        raise ValueError("Each series must be daily without gaps; no missing dates filled.")
+        raise ValueError(
+            "Each series must be daily without gaps; no missing dates filled."
+        )
     return frame
 
 
 def build_features(
-    data: pd.DataFrame, *, history_end: str | date | pd.Timestamp | None = None,
+    data: pd.DataFrame,
+    *,
+    history_end: str | date | pd.Timestamp | None = None,
 ) -> pd.DataFrame:
     """Return keys plus exactly twelve ordered numerical engineered features.
 
@@ -126,7 +148,8 @@ def build_features(
     result["dow_cos"] = np.cos(phase)
 
     lookup = pd.Series(
-        history.to_numpy(), index=pd.MultiIndex.from_frame(frame.loc[:, list(KEY_COLUMNS)])
+        history.to_numpy(),
+        index=pd.MultiIndex.from_frame(frame.loc[:, list(KEY_COLUMNS)]),
     )
     for lag in LAGS:
         lag_keys = result.loc[:, list(KEY_COLUMNS)].copy()
@@ -155,7 +178,9 @@ def build_features(
     day_indices = np.arange(14, dtype=float) - 6.5
     denominator = np.dot(day_indices, day_indices)
     result["rolling_slope_14"] = groups.transform(
-        lambda s: s.shift(1).rolling(14, min_periods=14).apply(
+        lambda s: s.shift(1)
+        .rolling(14, min_periods=14)
+        .apply(
             lambda values: np.dot(day_indices, values - values.mean()) / denominator,
             raw=True,
         )
@@ -181,12 +206,16 @@ def feature_eligibility(features: pd.DataFrame) -> pd.Series:
     except (TypeError, ValueError) as exc:
         raise ValueError("Engineered predictors must be numerical or missing.") from exc
     return pd.Series(
-        np.isfinite(numerical).all(axis=1), index=features.index, name="feature_eligible",
+        np.isfinite(numerical).all(axis=1),
+        index=features.index,
+        name="feature_eligible",
     )
 
 
 def build_origin_features(
-    data: pd.DataFrame, *, origin: str | date | pd.Timestamp,
+    data: pd.DataFrame,
+    *,
+    origin: str | date | pd.Timestamp,
 ) -> pd.DataFrame:
     """Return one row at Date=origin+1 per pair present at/before origin.
 
@@ -202,6 +231,9 @@ def build_origin_features(
     target_rows["Date"] = cutoff + pd.Timedelta(days=1)
     target_rows[TARGET_COLUMN] = np.nan
     features = build_features(
-        pd.concat([history, target_rows], ignore_index=True), history_end=cutoff,
+        pd.concat([history, target_rows], ignore_index=True),
+        history_end=cutoff,
     )
-    return features.loc[features.Date.eq(cutoff + pd.Timedelta(days=1))].reset_index(drop=True)
+    return features.loc[features.Date.eq(cutoff + pd.Timedelta(days=1))].reset_index(
+        drop=True
+    )

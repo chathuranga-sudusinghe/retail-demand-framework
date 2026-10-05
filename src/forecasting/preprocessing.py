@@ -13,6 +13,7 @@ XGBoost, LightGBM and CatBoost share the same unscaled full one-hot path.
 Unknown prediction identities raise: no all-zero identity block, new category,
 numeric ID interpretation or silent missing-category conversion is introduced.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
@@ -23,11 +24,17 @@ import numpy as np
 import pandas as pd
 
 from src.forecasting.configuration import (
-    PRIMARY_MODELS, SUPPORTIVE_MODELS, ModelName, PrimaryModel,
+    PRIMARY_MODELS,
+    SUPPORTIVE_MODELS,
+    ModelName,
+    PrimaryModel,
 )
 from src.forecasting.features import (
-    CATEGORICAL_FEATURE_COLUMNS, CONCEPTUAL_FEATURE_COLUMNS, FEATURE_COLUMNS,
-    calendar_date, feature_eligibility,
+    CATEGORICAL_FEATURE_COLUMNS,
+    CONCEPTUAL_FEATURE_COLUMNS,
+    FEATURE_COLUMNS,
+    calendar_date,
+    feature_eligibility,
 )
 from src.forecasting.targets import FORECAST_HORIZONS
 
@@ -36,15 +43,20 @@ ModelRepresentation = ModelName
 
 def _predictors(features: pd.DataFrame) -> pd.DataFrame:
     """Select only frozen inputs; never pass alignment, labels or source extras."""
-    feature_eligibility(features)  # Validate the numerical schema, including duplicates.
+    feature_eligibility(
+        features
+    )  # Validate the numerical schema, including duplicates.
     result = features.loc[:, list(CONCEPTUAL_FEATURE_COLUMNS)].copy()
     for column in CATEGORICAL_FEATURE_COLUMNS:
         valid = result[column].map(
-            lambda value: isinstance(value, str) and bool(value.strip())
+            lambda value: isinstance(value, str)
+            and bool(value.strip())
             and value == value.strip()
         )
         if not valid.all():
-            raise ValueError(f"{column} must contain nonblank, unpadded text categories.")
+            raise ValueError(
+                f"{column} must contain nonblank, unpadded text categories."
+            )
     result[list(FEATURE_COLUMNS)] = result.loc[:, list(FEATURE_COLUMNS)].astype(float)
     return result
 
@@ -87,9 +99,11 @@ class ForecastPreprocessor:
     @property
     def physical_feature_names(self) -> tuple[str, ...]:
         return (
-            *(f"{column}={category}"
-              for column, categories in self.category_vocabularies.items()
-              for category in categories),
+            *(
+                f"{column}={category}"
+                for column, categories in self.category_vocabularies.items()
+                for category in categories
+            ),
             *FEATURE_COLUMNS,
         )
 
@@ -107,10 +121,14 @@ class ForecastPreprocessor:
         """
         predictors = _predictors(features)
         if not feature_eligibility(predictors).all():
-            raise ValueError("Cannot transform feature-ineligible rows; no imputation authorised.")
+            raise ValueError(
+                "Cannot transform feature-ineligible rows; no imputation authorised."
+            )
         for column, categories in self.category_vocabularies.items():
             if not predictors[column].isin(categories).all():
-                raise ValueError(f"Unknown {column} category outside eligible training vocabulary.")
+                raise ValueError(
+                    f"Unknown {column} category outside eligible training vocabulary."
+                )
         indicators = [
             predictors[column].eq(category).to_numpy(dtype=float)
             for column, categories in self.category_vocabularies.items()
@@ -122,12 +140,17 @@ class ForecastPreprocessor:
                 self.numerical_scales
             )
         matrix = np.column_stack([*indicators, numerical])
-        return pd.DataFrame(matrix, columns=self.physical_feature_names, index=features.index)
+        return pd.DataFrame(
+            matrix, columns=self.physical_feature_names, index=features.index
+        )
 
 
 def fit_preprocessor(
-    features: pd.DataFrame, model: ModelRepresentation, *,
-    training_end: str | date | pd.Timestamp, horizon: int,
+    features: pd.DataFrame,
+    model: ModelRepresentation,
+    *,
+    training_end: str | date | pd.Timestamp,
+    horizon: int,
 ) -> ForecastPreprocessor:
     """Learn representation state from eligible, outcome-bounded training rows.
 
@@ -140,7 +163,9 @@ def fit_preprocessor(
     statistics are calculated. No additional dependency or data access is needed.
     """
     if model not in (*PRIMARY_MODELS, *SUPPORTIVE_MODELS):
-        raise ValueError("model must be xgboost, lightgbm, catboost, ridge or random_forest.")
+        raise ValueError(
+            "model must be xgboost, lightgbm, catboost, ridge or random_forest."
+        )
     if type(horizon) is not int or horizon not in FORECAST_HORIZONS:
         raise ValueError("horizon must be 1, 7, 14 or 28 days.")
     cutoff = calendar_date(training_end)
@@ -153,8 +178,11 @@ def fit_preprocessor(
         dates = pd.to_datetime(features.Date, format="%Y-%m-%d", errors="raise")
     except (TypeError, ValueError) as exc:
         raise ValueError("Date must contain valid calendar dates.") from exc
-    if (dates.isna().any() or dates.dt.tz is not None
-            or dates.ne(dates.dt.normalize()).any()):
+    if (
+        dates.isna().any()
+        or dates.dt.tz is not None
+        or dates.ne(dates.dt.normalize()).any()
+    ):
         raise ValueError("Date must be nonmissing, timezone-naive and at midnight.")
     if dates.gt(cutoff).any():
         raise ValueError("Preprocessing fitting rows must not be after training_end.")
@@ -167,7 +195,8 @@ def fit_preprocessor(
     if training.empty:
         raise ValueError("No eligible training rows for preprocessing.")
     vocabularies = tuple(
-        tuple(sorted(training[column].unique())) for column in CATEGORICAL_FEATURE_COLUMNS
+        tuple(sorted(training[column].unique()))
+        for column in CATEGORICAL_FEATURE_COLUMNS
     )
     means: tuple[float, ...] = ()
     scales: tuple[float, ...] = ()
@@ -177,13 +206,21 @@ def fit_preprocessor(
         std = numerical.std(axis=0, ddof=0)
         scales = tuple(np.where(std == 0, 1.0, std))
     return ForecastPreprocessor(
-        model=model, training_end=cutoff, horizon=horizon, training_row_count=len(training),
-        vocabularies=vocabularies, numerical_means=means, numerical_scales=scales,
+        model=model,
+        training_end=cutoff,
+        horizon=horizon,
+        training_row_count=len(training),
+        vocabularies=vocabularies,
+        numerical_means=means,
+        numerical_scales=scales,
     )
 
 
 def fit_primary_preprocessors(
-    features: pd.DataFrame, *, training_end: str | date | pd.Timestamp, horizon: int,
+    features: pd.DataFrame,
+    *,
+    training_end: str | date | pd.Timestamp,
+    horizon: int,
 ) -> dict[PrimaryModel, ForecastPreprocessor]:
     """Fit one eligible-training vocabulary and share it across primary models.
 
@@ -194,7 +231,10 @@ def fit_primary_preprocessors(
     No prediction rows or model estimators are used to learn this state.
     """
     shared = fit_preprocessor(
-        features, "xgboost", training_end=training_end, horizon=horizon,
+        features,
+        "xgboost",
+        training_end=training_end,
+        horizon=horizon,
     )
     return {model: replace(shared, model=model) for model in PRIMARY_MODELS}
 
@@ -202,9 +242,13 @@ def fit_primary_preprocessors(
 def preprocessor_state(state: ForecastPreprocessor) -> dict[str, Any]:
     """Serialize fitted state without refitting or changing transformation rules."""
     return {
-        "state_version": 1, "model": state.model, "training_end": state.training_end.isoformat(),
-        "horizon": state.horizon, "training_row_count": state.training_row_count,
-        "vocabularies": state.vocabularies, "numerical_means": state.numerical_means,
+        "state_version": 1,
+        "model": state.model,
+        "training_end": state.training_end.isoformat(),
+        "horizon": state.horizon,
+        "training_row_count": state.training_row_count,
+        "vocabularies": state.vocabularies,
+        "numerical_means": state.numerical_means,
         "numerical_scales": state.numerical_scales,
         "physical_feature_names": state.physical_feature_names,
         "conceptual_feature_names": state.conceptual_feature_names,
@@ -213,24 +257,51 @@ def preprocessor_state(state: ForecastPreprocessor) -> dict[str, Any]:
 
 def restore_preprocessor(value: dict[str, Any]) -> ForecastPreprocessor:
     """Reject malformed or incompatible state; transformation never learns."""
-    if value.get("state_version") != 1 or value.get("model") not in (*PRIMARY_MODELS, *SUPPORTIVE_MODELS):
+    if value.get("state_version") != 1 or value.get("model") not in (
+        *PRIMARY_MODELS,
+        *SUPPORTIVE_MODELS,
+    ):
         raise ValueError("Unsupported preprocessing state.")
-    if type(value.get("horizon")) is not int or value["horizon"] not in FORECAST_HORIZONS:
+    if (
+        type(value.get("horizon")) is not int
+        or value["horizon"] not in FORECAST_HORIZONS
+    ):
         raise ValueError("Invalid persisted horizon.")
-    if type(value.get("training_row_count")) is not int or value["training_row_count"] <= 0:
+    if (
+        type(value.get("training_row_count")) is not int
+        or value["training_row_count"] <= 0
+    ):
         raise ValueError("Invalid persisted training population.")
     vocabularies = tuple(tuple(v) for v in value["vocabularies"])
     if len(vocabularies) != len(CATEGORICAL_FEATURE_COLUMNS) or any(
-        not v or any(not isinstance(x, str) or not x.strip() or x != x.strip() for x in v)
-        or tuple(sorted(set(v))) != v for v in vocabularies
+        not v
+        or any(not isinstance(x, str) or not x.strip() or x != x.strip() for x in v)
+        or tuple(sorted(set(v))) != v
+        for v in vocabularies
     ):
         raise ValueError("Invalid persisted category vocabulary.")
     means, scales = tuple(value["numerical_means"]), tuple(value["numerical_scales"])
     expected = len(FEATURE_COLUMNS) if value["model"] == "ridge" else 0
-    if len(means) != expected or len(scales) != expected or not np.isfinite((*means, *scales)).all() or any(s <= 0 for s in scales):
+    if (
+        len(means) != expected
+        or len(scales) != expected
+        or not np.isfinite((*means, *scales)).all()
+        or any(s <= 0 for s in scales)
+    ):
         raise ValueError("Invalid persisted numerical scaling state.")
-    state = ForecastPreprocessor(value["model"], calendar_date(value["training_end"]),
-                                 value["horizon"], value["training_row_count"], vocabularies, means, scales)
-    if list(state.physical_feature_names) != list(value["physical_feature_names"]) or list(state.conceptual_feature_names) != list(value["conceptual_feature_names"]):
+    state = ForecastPreprocessor(
+        value["model"],
+        calendar_date(value["training_end"]),
+        value["horizon"],
+        value["training_row_count"],
+        vocabularies,
+        means,
+        scales,
+    )
+    if list(state.physical_feature_names) != list(
+        value["physical_feature_names"]
+    ) or list(state.conceptual_feature_names) != list(
+        value["conceptual_feature_names"]
+    ):
         raise ValueError("Persisted feature order differs from the frozen contract.")
     return state

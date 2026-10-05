@@ -6,6 +6,7 @@ or a final cross-component schema. DR-012 remains proposed for group approval.
 The function keeps each forecast origin and horizon separate and never pools
 across origins or horizons.
 """
+
 from __future__ import annotations
 
 import pandas as pd
@@ -65,7 +66,9 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
             cases.at[index, "origin_exposure_state"] = "already_at_or_below_threshold"
             # This is origin-known evidence, not a forecast skill comparison.
             cases.at[index, "forecast_exposure_state"] = "not_needed_origin_state_known"
-            cases.at[index, "retrospective_exposure_state"] = "not_in_primary_comparison"
+            cases.at[index, "retrospective_exposure_state"] = (
+                "not_in_primary_comparison"
+            )
             cases.at[index, "comparison_case"] = "origin_known_at_or_below_threshold"
             cases.at[index, "evaluation_unavailable_reasons"] = []
             continue
@@ -90,7 +93,9 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
             cases.at[index, "forecast_exposure_state"] = (
                 "forecast_crossing" if forecast_crossing else "no_forecast_crossing"
             )
-            cases.at[index, "predicted_margin"] = buffer - float(row["_forecast_demand_value"])
+            cases.at[index, "predicted_margin"] = buffer - float(
+                row["_forecast_demand_value"]
+            )
         else:
             forecast_reason = (
                 row["downstream_use_reason"]
@@ -104,12 +109,15 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
             cases.at[index, "retrospective_exposure_state"] = (
                 "realised_crossing" if actual_crossing else "no_realised_crossing"
             )
-            cases.at[index, "retrospective_margin"] = buffer - float(row["_observed_demand_value"])
+            cases.at[index, "retrospective_margin"] = buffer - float(
+                row["_observed_demand_value"]
+            )
         else:
             actual_reason = (
                 row["downstream_use_reason"]
                 if horizon == 28
-                else row["retrospective_input_reason"] or "retrospective_exposure_not_assessed"
+                else row["retrospective_input_reason"]
+                or "retrospective_exposure_not_assessed"
             )
             reasons.extend(str(actual_reason).split(";"))
 
@@ -170,18 +178,32 @@ def _summary_for_group(group: pd.DataFrame) -> dict[str, object]:
         "TN": tn,
         "FP": fp,
         "FN": fn,
-        "origin_known_at_or_below_count": int(group["comparison_case"].eq("origin_known_at_or_below_threshold").sum()),
-        "initially_above_threshold_count": int(group["origin_exposure_state"].eq("initially_above_threshold").sum()),
+        "origin_known_at_or_below_count": int(
+            group["comparison_case"].eq("origin_known_at_or_below_threshold").sum()
+        ),
+        "initially_above_threshold_count": int(
+            group["origin_exposure_state"].eq("initially_above_threshold").sum()
+        ),
         "evaluable_paired_case_count": n,
         "unavailable_case_count": int(group["comparison_case"].eq("unavailable").sum()),
-        "forecast_unavailable_or_gated_count": int((
-            group["origin_exposure_state"].eq("initially_above_threshold")
-            & (group["forecast_input_status"].ne("available") | ~group["_horizon_days"].isin(EVALUABLE_HORIZONS))
-        ).sum()),
-        "retrospective_unavailable_or_gated_count": int((
-            group["origin_exposure_state"].eq("initially_above_threshold")
-            & (group["retrospective_input_status"].ne("available") | ~group["_horizon_days"].isin(EVALUABLE_HORIZONS))
-        ).sum()),
+        "forecast_unavailable_or_gated_count": int(
+            (
+                group["origin_exposure_state"].eq("initially_above_threshold")
+                & (
+                    group["forecast_input_status"].ne("available")
+                    | ~group["_horizon_days"].isin(EVALUABLE_HORIZONS)
+                )
+            ).sum()
+        ),
+        "retrospective_unavailable_or_gated_count": int(
+            (
+                group["origin_exposure_state"].eq("initially_above_threshold")
+                & (
+                    group["retrospective_input_status"].ne("available")
+                    | ~group["_horizon_days"].isin(EVALUABLE_HORIZONS)
+                )
+            ).sum()
+        ),
         "methodology_status": METHOD_STATUS,
     }
     for name, (value, status) in metrics.items():
@@ -209,7 +231,9 @@ def evaluate_inventory_risk(records: pd.DataFrame) -> dict[str, pd.DataFrame]:
     cases = _case_evidence(prepared)
     group_fields = [column for column in _GROUP_FIELDS if column in cases.columns]
     summary_rows: list[dict[str, object]] = []
-    for values, group in cases.groupby(group_fields, dropna=False, sort=True, observed=True):
+    for values, group in cases.groupby(
+        group_fields, dropna=False, sort=True, observed=True
+    ):
         if not isinstance(values, tuple):
             values = (values,)
         summary = dict(zip(group_fields, values, strict=True))

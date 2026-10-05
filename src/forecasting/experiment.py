@@ -2,12 +2,14 @@
 
 Imports never execute a run. Final fitting, preprocessing and evaluation remain blocked.
 """
+
 from __future__ import annotations
 
 import argparse
 
 from src.forecasting.authorization import resolve_execution
 from src.forecasting.execution import load_dataset
+
 # Preserve public runner/planning imports with direct aliases to their sole owner.
 from src.forecasting.orchestration import (
     Candidate as Candidate,
@@ -26,8 +28,12 @@ def main(argv: list[str] | None = None) -> None:
         run_final_evaluation()
     context = resolve_execution(DEFAULT_LAYOUT)
     data = load_dataset(context.dataset_path)
-    run_validation(data, run_id=context.authorization.run_id, authorization=context.authorization,
-                   execution_context=context)
+    run_validation(
+        data,
+        run_id=context.authorization.run_id,
+        authorization=context.authorization,
+        execution_context=context,
+    )
 
 
 if __name__ == "__main__":

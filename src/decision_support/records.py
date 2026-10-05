@@ -10,6 +10,7 @@ autonomous replenishment decisions.
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
+
 @dataclass
 class DecisionSupportRecord:
     """Management-facing responsible decision-support record."""
@@ -30,8 +31,8 @@ class DecisionSupportRecord:
     management_consideration: Optional[str] = None
     human_review_status: str = "not_assessed"
     human_review_reasons: list[str] = field(
-    default_factory=lambda: ["Human review has not yet been assessed."]
-)
+        default_factory=lambda: ["Human review has not yet been assessed."]
+    )
     unavailable_fields: dict[str, str] = field(default_factory=dict)
     component_provenance: dict[str, str] = field(default_factory=dict)
 
@@ -41,8 +42,6 @@ class DecisionSupportRecord:
             raise ValueError(
                 "human_review_reasons must be provided for human_review_status"
             )
-
-
 
         allowed_statuses = {"not_assessed", "review_required"}
         if self.human_review_status not in allowed_statuses:
