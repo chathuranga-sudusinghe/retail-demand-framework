@@ -2,6 +2,7 @@
 
 No features, horizon labels, fitting or scoring are generated here.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -26,14 +27,26 @@ class ValidationFold:
 
 
 VALIDATION_FOLDS = (
-    ValidationFold(1, DateWindow(date(2024, 1, 1), date(2024, 3, 31)),
-                   DateWindow(date(2024, 4, 1), date(2024, 4, 28))),
-    ValidationFold(2, DateWindow(date(2024, 1, 1), date(2024, 6, 30)),
-                   DateWindow(date(2024, 7, 1), date(2024, 7, 28))),
-    ValidationFold(3, DateWindow(date(2024, 1, 1), date(2024, 9, 30)),
-                   DateWindow(date(2024, 10, 1), date(2024, 10, 28))),
-    ValidationFold(4, DateWindow(date(2024, 1, 1), date(2024, 11, 4)),
-                   DateWindow(date(2024, 11, 5), date(2024, 12, 2))),
+    ValidationFold(
+        1,
+        DateWindow(date(2024, 1, 1), date(2024, 3, 31)),
+        DateWindow(date(2024, 4, 1), date(2024, 4, 28)),
+    ),
+    ValidationFold(
+        2,
+        DateWindow(date(2024, 1, 1), date(2024, 6, 30)),
+        DateWindow(date(2024, 7, 1), date(2024, 7, 28)),
+    ),
+    ValidationFold(
+        3,
+        DateWindow(date(2024, 1, 1), date(2024, 9, 30)),
+        DateWindow(date(2024, 10, 1), date(2024, 10, 28)),
+    ),
+    ValidationFold(
+        4,
+        DateWindow(date(2024, 1, 1), date(2024, 11, 4)),
+        DateWindow(date(2024, 11, 5), date(2024, 12, 2)),
+    ),
 )
 # FINAL_HOLDOUT is a legacy identifier temporarily retained for compatibility
 # pending downstream implementation review. It represents the revised final
@@ -42,7 +55,9 @@ VALIDATION_FOLDS = (
 FINAL_HOLDOUT = DateWindow(date(2024, 12, 3), date(2024, 12, 30))
 
 
-def split_fold(data: pd.DataFrame, fold_number: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+def split_fold(
+    data: pd.DataFrame, fold_number: int
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return copied training/validation demand rows at exact inclusive bounds.
 
     Intentionally selects only the named fold's periods and returns only keys
@@ -63,10 +78,18 @@ def split_fold(data: pd.DataFrame, fold_number: int) -> tuple[pd.DataFrame, pd.D
     pairs = frame.groupby(list(SERIES_COLUMNS), observed=True).size().index
     parts = []
     for name, window in (("training", fold.training), ("validation", fold.validation)):
-        part = frame.loc[frame.Date.between(pd.Timestamp(window.start), pd.Timestamp(window.end))].copy()
+        part = frame.loc[
+            frame.Date.between(pd.Timestamp(window.start), pd.Timestamp(window.end))
+        ].copy()
         expected = (window.end - window.start).days + 1
-        counts = part.groupby(list(SERIES_COLUMNS), observed=True).Date.nunique().reindex(pairs, fill_value=0)
+        counts = (
+            part.groupby(list(SERIES_COLUMNS), observed=True)
+            .Date.nunique()
+            .reindex(pairs, fill_value=0)
+        )
         if not counts.eq(expected).all():
-            raise ValueError(f"Incomplete {name} date coverage for DR-005 fold {fold_number}.")
+            raise ValueError(
+                f"Incomplete {name} date coverage for DR-005 fold {fold_number}."
+            )
         parts.append(part.reset_index(drop=True))
     return parts[0], parts[1]

@@ -1,15 +1,20 @@
 """Repository and run-relative locations; imports never create files."""
+
 from dataclasses import dataclass
 from pathlib import Path
 import re
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-VALIDATED_DATASET_RELATIVE_PATH = Path("data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet")
+VALIDATED_DATASET_RELATIVE_PATH = Path(
+    "data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet"
+)
 
 
 def confined_path(directory: Path, relative: str) -> Path:
     path = directory / relative
-    if Path(relative).is_absolute() or not path.resolve().is_relative_to(directory.resolve()):
+    if Path(relative).is_absolute() or not path.resolve().is_relative_to(
+        directory.resolve()
+    ):
         raise ValueError("Model reference escapes its run directory.")
     return path
 
@@ -29,7 +34,13 @@ class RepositoryLayout:
 
     @property
     def execution_record(self) -> Path:
-        return self.root / "data" / "processed" / "forecasting" / "validation_authorization.json"
+        return (
+            self.root
+            / "data"
+            / "processed"
+            / "forecasting"
+            / "validation_authorization.json"
+        )
 
     @property
     def protocol(self) -> Path:
@@ -68,7 +79,9 @@ class RepositoryLayout:
         return path
 
     def _run_directory(self, root: Path, run_id: str) -> Path:
-        if not isinstance(run_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", run_id):
+        if not isinstance(run_id, str) or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", run_id
+        ):
             raise ValueError("run_id must be a safe, nonempty local directory name.")
         return self._owned_path(root / run_id)
 
@@ -81,9 +94,13 @@ class RepositoryLayout:
                 raise ValueError("Forecasting storage ancestors must be directories.")
             current = current / component
             if current.is_symlink():
-                raise ValueError("Forecasting storage must not redirect through a symlink.")
+                raise ValueError(
+                    "Forecasting storage must not redirect through a symlink."
+                )
         if path.resolve() != path:
-            raise ValueError("Forecasting storage must stay at its declared repository location.")
+            raise ValueError(
+                "Forecasting storage must stay at its declared repository location."
+            )
         return path
 
     def run_directory(self, run_id: str) -> Path:
@@ -99,7 +116,9 @@ class RepositoryLayout:
             raise ValueError("run_id must not use the reserved drafts directory.")
         return self._run_directory(self.report_root, run_id)
 
-    def comparison_path(self, run_id: str, *, retained_reference: str | None = None) -> Path:
+    def comparison_path(
+        self, run_id: str, *, retained_reference: str | None = None
+    ) -> Path:
         """Use canonical storage, or an exact legacy path declared by retained evidence."""
         canonical = self.report_directory(run_id) / "comparison.md"
         if retained_reference is None:
@@ -108,7 +127,9 @@ class RepositoryLayout:
         for path in (canonical, legacy):
             if retained_reference == path.relative_to(self.root).as_posix():
                 return self._owned_path(path)
-        raise ValueError("Comparison reference must identify this run's canonical or legacy report.")
+        raise ValueError(
+            "Comparison reference must identify this run's canonical or legacy report."
+        )
 
     def draft_report_directory(self, run_id: str) -> Path:
         return self._run_directory(self.draft_report_root, run_id)
@@ -116,30 +137,47 @@ class RepositoryLayout:
     @classmethod
     def from_artifact_directory(cls, directory: Path) -> "RepositoryLayout":
         """Resolve only an absolute canonical artifacts/forecasting/<run_id> anchor."""
-        if (not directory.is_absolute() or directory.parent.name != "forecasting"
-                or directory.parent.parent.name != "artifacts"):
-            raise ValueError("A canonical forecasting artifact run directory is required.")
+        if (
+            not directory.is_absolute()
+            or directory.parent.name != "forecasting"
+            or directory.parent.parent.name != "artifacts"
+        ):
+            raise ValueError(
+                "A canonical forecasting artifact run directory is required."
+            )
         layout = cls(directory.parents[2])
         if directory != layout.run_directory(directory.name):
-            raise ValueError("A canonical forecasting artifact run directory is required.")
+            raise ValueError(
+                "A canonical forecasting artifact run directory is required."
+            )
         return layout
 
     @staticmethod
     def validation_model_directory(directory: Path) -> Path:
         layout = RepositoryLayout.from_artifact_directory(directory)
-        return layout._owned_path(layout.model_run_directory(directory.name) / "validation")
+        return layout._owned_path(
+            layout.model_run_directory(directory.name) / "validation"
+        )
 
     @staticmethod
     def candidate_model_directory(
-        directory: Path, model: str, horizon: int, configuration_id: str, fold_id: int,
+        directory: Path,
+        model: str,
+        horizon: int,
+        configuration_id: str,
+        fold_id: int,
     ) -> Path:
         layout = RepositoryLayout.from_artifact_directory(directory)
         base = RepositoryLayout.validation_model_directory(directory)
-        path = confined_path(base, f"{model}/h{horizon}/{configuration_id}/fold-{fold_id}")
+        path = confined_path(
+            base, f"{model}/h{horizon}/{configuration_id}/fold-{fold_id}"
+        )
         return layout._owned_path(path)
 
     @staticmethod
-    def preprocessing_state_directory(directory: Path, model: str, horizon: int, fold_id: int) -> Path:
+    def preprocessing_state_directory(
+        directory: Path, model: str, horizon: int, fold_id: int
+    ) -> Path:
         layout = RepositoryLayout.from_artifact_directory(directory)
         base = layout.model_run_directory(directory.name)
         path = confined_path(base, f"preprocessing/{model}/h{horizon}/fold-{fold_id}")

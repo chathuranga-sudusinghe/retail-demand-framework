@@ -1,4 +1,5 @@
 """Synthetic validated handoffs only; no project data or experiments."""
+
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
@@ -22,11 +23,23 @@ def source(tmp_path):
     rows = []
     for day, date in enumerate(pd.date_range("2024-01-01", periods=4)):
         for sku in ("001", "002"):
-            rows.append({**dict.fromkeys(cleaning.COLUMNS, 0), "Date": date.strftime("%Y-%m-%d"),
-                         "SKU_ID": sku, "Warehouse_ID": "01", "Supplier_ID": "NA", "Region": "001",
-                         "Units_Sold": day, "Inventory_Level": 100, "Supplier_Lead_Time_Days": 2,
-                         "Reorder_Point": 20, "Unit_Cost": 1.2345678901234567,
-                         "Unit_Price": np.nextafter(2.0, 3.0), "Demand_Forecast": -0.0})
+            rows.append(
+                {
+                    **dict.fromkeys(cleaning.COLUMNS, 0),
+                    "Date": date.strftime("%Y-%m-%d"),
+                    "SKU_ID": sku,
+                    "Warehouse_ID": "01",
+                    "Supplier_ID": "NA",
+                    "Region": "001",
+                    "Units_Sold": day,
+                    "Inventory_Level": 100,
+                    "Supplier_Lead_Time_Days": 2,
+                    "Reorder_Point": 20,
+                    "Unit_Cost": 1.2345678901234567,
+                    "Unit_Price": np.nextafter(2.0, 3.0),
+                    "Demand_Forecast": -0.0,
+                }
+            )
     path = tmp_path / "data/raw/source.csv"
     path.parent.mkdir(parents=True)
     pd.DataFrame(rows).sample(frac=1, random_state=17).to_csv(path, index=False)
@@ -34,15 +47,28 @@ def source(tmp_path):
 
 
 def receipt(source):
-    return {"identity": "synthetic", "citation": "synthetic test fixture", "snapshot_reference": "data/raw/source.csv",
-            "sha256": hashlib.sha256(source.read_bytes()).hexdigest(), "size_bytes": source.stat().st_size,
-            "receipt_reference": "synthetic-acquisition-review", "verification_method": "verified_acquisition_receipt"}
+    return {
+        "identity": "synthetic",
+        "citation": "synthetic test fixture",
+        "snapshot_reference": "data/raw/source.csv",
+        "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+        "size_bytes": source.stat().st_size,
+        "receipt_reference": "synthetic-acquisition-review",
+        "verification_method": "verified_acquisition_receipt",
+    }
 
 
 def publish(source, version="synthetic", **overrides):
-    arguments = {"repository": source.parents[2], "input_path": source, "data_version": version,
-                 "start": "2024-01-01", "end": "2024-01-04", "purpose": "synthetic tests only",
-                 "authorization_reference": "synthetic test authorization", "source_receipt": receipt(source)}
+    arguments = {
+        "repository": source.parents[2],
+        "input_path": source,
+        "data_version": version,
+        "start": "2024-01-01",
+        "end": "2024-01-04",
+        "purpose": "synthetic tests only",
+        "authorization_reference": "synthetic test authorization",
+        "source_receipt": receipt(source),
+    }
     arguments.update(overrides)
     return handoff.prepare_validated_handoff(**arguments)
 
@@ -63,9 +89,15 @@ def rehash(result, name):
 
 def test_programmatic_pipeline_exact_readback_and_provenance(source):
     before = source.read_bytes()
-    expected, audit = cleaning.build_validated_dataset(cleaning.load_raw_source(source, start="2024-01-01", end="2024-01-04"))
+    expected, audit = cleaning.build_validated_dataset(
+        cleaning.load_raw_source(source, start="2024-01-01", end="2024-01-04")
+    )
     result = publish(source)
-    actual = handoff.read_validated_handoff(source.parents[2], "synthetic", expected_provenance_sha256=result.provenance_sha256)
+    actual = handoff.read_validated_handoff(
+        source.parents[2],
+        "synthetic",
+        expected_provenance_sha256=result.provenance_sha256,
+    )
     pd.testing.assert_frame_equal(actual, expected, check_exact=True)
     assert source.read_bytes() == before
     assert list(actual.columns) == cleaning.COLUMNS
@@ -77,16 +109,27 @@ def test_programmatic_pipeline_exact_readback_and_provenance(source):
     schema = metadata(result, "schema.json")
     assert schema["schema_version"] == handoff.SCHEMA_VERSION
     assert schema["format"] == "parquet" and schema["engine"] == "pyarrow"
-    assert schema["native_key"] == cleaning.KEY and schema["row_order"] == handoff.ROW_ORDER
+    assert (
+        schema["native_key"] == cleaning.KEY
+        and schema["row_order"] == handoff.ROW_ORDER
+    )
     assert schema["columns"][0]["logical_type"] == "date32[day]"
     table = pq.ParquetFile(result.directory / "validated.parquet").read()
-    assert table.schema.names == cleaning.COLUMNS and table.schema.field("Date").type == pa.date32()
+    assert (
+        table.schema.names == cleaning.COLUMNS
+        and table.schema.field("Date").type == pa.date32()
+    )
     assert not table.schema.metadata
     provenance = metadata(result, "provenance.json")
     assert provenance["source"] == receipt(source)
-    assert provenance["human_review"] == {"status": "pending_human_review", "reference": None}
+    assert provenance["human_review"] == {
+        "status": "pending_human_review",
+        "reference": None,
+    }
     assert provenance["output"]["row_count"] == provenance["input"]["row_count"] == 8
-    assert provenance["output"]["logical_fingerprint"] == cleaning.frame_fingerprint(expected)
+    assert provenance["output"]["logical_fingerprint"] == cleaning.frame_fingerprint(
+        expected
+    )
     assert provenance["environment"]["pyarrow"] == pa.__version__
     assert provenance["code"]["source_sha256"]["src/data/data_cleaning.py"]
     persisted_audit = metadata(result, "validation-audit.json")
@@ -98,20 +141,40 @@ def test_programmatic_pipeline_exact_readback_and_provenance(source):
 
 def test_two_versions_have_same_data_and_different_preparation_identity(source):
     first, second = publish(source, "v1"), publish(source, "v2")
-    assert (first.directory / "validated.parquet").read_bytes() == (second.directory / "validated.parquet").read_bytes()
-    assert metadata(first, "provenance.json")["preparation_id"] != metadata(second, "provenance.json")["preparation_id"]
+    assert (first.directory / "validated.parquet").read_bytes() == (
+        second.directory / "validated.parquet"
+    ).read_bytes()
+    assert (
+        metadata(first, "provenance.json")["preparation_id"]
+        != metadata(second, "provenance.json")["preparation_id"]
+    )
 
 
-@pytest.mark.parametrize("version", ["", "..", "../escape", "/absolute", "a/b", "a\\b", "CON", "name."])
+@pytest.mark.parametrize(
+    "version", ["", "..", "../escape", "/absolute", "a/b", "a\\b", "CON", "name."]
+)
 def test_unsafe_version_blocks_before_source_loading(source, version, monkeypatch):
-    monkeypatch.setattr(cleaning, "load_raw_source", lambda *a, **kw: pytest.fail("loaded before metadata validation"))
+    monkeypatch.setattr(
+        cleaning,
+        "load_raw_source",
+        lambda *a, **kw: pytest.fail("loaded before metadata validation"),
+    )
     with pytest.raises(ValueError):
         publish(source, version)
 
 
-@pytest.mark.parametrize("field,value", [("sha256", "invalid"), ("sha256", "a" * 63),
-    ("size_bytes", 0), ("size_bytes", True), ("identity", ""), ("verification_method", "not_verified"),
-    ("snapshot_reference", "data/raw/another.csv")])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("sha256", "invalid"),
+        ("sha256", "a" * 63),
+        ("size_bytes", 0),
+        ("size_bytes", True),
+        ("identity", ""),
+        ("verification_method", "not_verified"),
+        ("snapshot_reference", "data/raw/another.csv"),
+    ],
+)
 def test_source_receipt_validation(source, field, value):
     supplied = receipt(source)
     supplied[field] = value
@@ -128,7 +191,9 @@ def test_source_size_mismatch_and_missing_authorization_block(source):
         publish(source, authorization_reference="")
 
 
-@pytest.mark.parametrize("defect", ["missing", "negative", "duplicate", "conflict", "gap"])
+@pytest.mark.parametrize(
+    "defect", ["missing", "negative", "duplicate", "conflict", "gap"]
+)
 def test_bad_source_blocks_without_repair_or_publication(source, defect):
     raw = pd.read_csv(source, dtype=str, keep_default_na=False)
     if defect == "missing":
@@ -156,9 +221,13 @@ def test_scope_before_validation_and_no_implicit_source_hash(source, monkeypatch
     raw.to_csv(source, index=False)
     supplied = receipt(source)
     original_hash = handoff.file_sha256
+
     def confined_hash(path):
-        assert path != source, "whole-source hashing is not authorized by scoped preparation"
+        assert path != source, (
+            "whole-source hashing is not authorized by scoped preparation"
+        )
         return original_hash(path)
+
     monkeypatch.setattr(handoff, "file_sha256", confined_hash)
     result = publish(source, end="2024-01-03", source_receipt=supplied)
     frame = handoff.read_validated_handoff(source.parents[2], "synthetic")
@@ -197,7 +266,11 @@ def test_symlink_roots_rejected(source, tmp_path, location):
     repository = source.parents[2]
     outside = tmp_path / "outside"
     outside.mkdir()
-    target = repository / "data" / location if location in {"raw", "processed"} else repository / "data/processed" / location
+    target = (
+        repository / "data" / location
+        if location in {"raw", "processed"}
+        else repository / "data/processed" / location
+    )
     if target.exists():
         if location == "raw":
             source.rename(outside / "source.csv")
@@ -234,7 +307,9 @@ def test_corrupt_parquet_rejected_even_if_manifest_rehashed(source):
         handoff.read_validated_handoff(source.parents[2], "synthetic")
 
 
-@pytest.mark.parametrize("defect", ["schema", "audit", "fingerprint", "approval", "scope", "version"])
+@pytest.mark.parametrize(
+    "defect", ["schema", "audit", "fingerprint", "approval", "scope", "version"]
+)
 def test_semantic_corruption_rejected(source, defect):
     result = publish(source)
     name = "provenance.json"
@@ -268,7 +343,11 @@ def test_external_provenance_hash_detects_otherwise_valid_metadata_change(source
     provenance["source"]["identity"] = "changed-identity"
     rewrite_json(result, "provenance.json", provenance)
     with pytest.raises(ValueError, match="external receipt"):
-        handoff.read_validated_handoff(source.parents[2], "synthetic", expected_provenance_sha256=result.provenance_sha256)
+        handoff.read_validated_handoff(
+            source.parents[2],
+            "synthetic",
+            expected_provenance_sha256=result.provenance_sha256,
+        )
 
 
 def test_row_order_corruption_is_not_sorted_into_validity(source):
@@ -288,9 +367,15 @@ def test_failure_cleans_only_owned_staging(source, monkeypatch, phase):
     other.mkdir(parents=True)
     sentinel = other / "keep.txt"
     sentinel.write_text("unrelated")
-    function = {"write": "_write_parquet", "readback": "_verify_bundle", "publish": "_publish"}[phase]
+    function = {
+        "write": "_write_parquet",
+        "readback": "_verify_bundle",
+        "publish": "_publish",
+    }[phase]
+
     def fail(*args, **kwargs):
         raise RuntimeError("injected")
+
     monkeypatch.setattr(handoff, function, fail)
     with pytest.raises(RuntimeError, match="injected"):
         publish(source)
@@ -299,15 +384,19 @@ def test_failure_cleans_only_owned_staging(source, monkeypatch, phase):
     assert not (repository / "data/processed/validated/synthetic").exists()
 
 
-def test_interrupted_final_copy_is_incomplete_not_deleted_or_reused(source, monkeypatch):
+def test_interrupted_final_copy_is_incomplete_not_deleted_or_reused(
+    source, monkeypatch
+):
     original = handoff.shutil.copyfileobj
     calls = 0
+
     def interrupt(*args, **kwargs):
         nonlocal calls
         calls += 1
         if calls == 2:
             raise RuntimeError("interrupted publication")
         return original(*args, **kwargs)
+
     monkeypatch.setattr(handoff.shutil, "copyfileobj", interrupt)
     with pytest.raises(RuntimeError):
         publish(source)
@@ -322,13 +411,38 @@ def test_interrupted_final_copy_is_incomplete_not_deleted_or_reused(source, monk
 def test_cli_executes_one_complete_stage(source, tmp_path, capsys):
     receipt_path = tmp_path / "receipt.json"
     receipt_path.write_text(json.dumps(receipt(source)))
-    handoff.main(["--repository", str(source.parents[2]), "--input", "data/raw/source.csv",
-                  "--data-version", "cli", "--start", "2024-01-01", "--end", "2024-01-04",
-                  "--purpose", "synthetic", "--authorization-reference", "test authorization",
-                  "--source-receipt", str(receipt_path)])
+    handoff.main(
+        [
+            "--repository",
+            str(source.parents[2]),
+            "--input",
+            "data/raw/source.csv",
+            "--data-version",
+            "cli",
+            "--start",
+            "2024-01-01",
+            "--end",
+            "2024-01-04",
+            "--purpose",
+            "synthetic",
+            "--authorization-reference",
+            "test authorization",
+            "--source-receipt",
+            str(receipt_path),
+        ]
+    )
     result = json.loads(capsys.readouterr().out)
     assert Path(result["directory"]).name == "cli"
-    assert len(handoff.read_validated_handoff(source.parents[2], "cli", expected_provenance_sha256=result["provenance_sha256"])) == 8
+    assert (
+        len(
+            handoff.read_validated_handoff(
+                source.parents[2],
+                "cli",
+                expected_provenance_sha256=result["provenance_sha256"],
+            )
+        )
+        == 8
+    )
 
 
 def test_cli_missing_receipt_and_invalid_scope_fail(source, tmp_path, monkeypatch):
@@ -340,7 +454,9 @@ def test_cli_missing_receipt_and_invalid_scope_fail(source, tmp_path, monkeypatc
         publish(source, start="2024-01-05", end="2024-01-01")
 
 
-@pytest.mark.parametrize("field", ["code", "environment", "missingness", "input_algorithm"])
+@pytest.mark.parametrize(
+    "field", ["code", "environment", "missingness", "input_algorithm"]
+)
 def test_required_metadata_and_missingness_corruption_rejected(source, field):
     result = publish(source)
     name = "validation-audit.json" if field == "missingness" else "provenance.json"
@@ -358,18 +474,32 @@ def test_required_metadata_and_missingness_corruption_rejected(source, field):
         handoff.read_validated_handoff(source.parents[2], "synthetic")
 
 
-@pytest.mark.parametrize("unavailable", [("citation",), ("receipt_reference",), ("citation", "receipt_reference")])
+@pytest.mark.parametrize(
+    "unavailable",
+    [("citation",), ("receipt_reference",), ("citation", "receipt_reference")],
+)
 def test_unavailable_source_provenance_persisted_as_null(source, unavailable):
     supplied = receipt(source)
     for field in unavailable:
         supplied[field] = None
     result = publish(source, source_receipt=supplied)
     assert metadata(result, "provenance.json")["source"] == supplied
-    assert len(handoff.read_validated_handoff(source.parents[2], "synthetic",
-        expected_provenance_sha256=result.provenance_sha256)) == 8
+    assert (
+        len(
+            handoff.read_validated_handoff(
+                source.parents[2],
+                "synthetic",
+                expected_provenance_sha256=result.provenance_sha256,
+            )
+        )
+        == 8
+    )
 
 
-@pytest.mark.parametrize("field", ["identity", "snapshot_reference", "sha256", "size_bytes", "verification_method"])
+@pytest.mark.parametrize(
+    "field",
+    ["identity", "snapshot_reference", "sha256", "size_bytes", "verification_method"],
+)
 def test_required_source_receipt_fields_cannot_be_null(source, field):
     supplied = receipt(source)
     supplied[field] = None
@@ -398,35 +528,79 @@ def test_no_argument_module_cli_uses_project_defaults_end_to_end(source):
         target = repository / name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(implementation / name, target)
-    completed = subprocess.run([sys.executable, "-m", "src.data.validated_handoff"],
-        cwd=repository, text=True, capture_output=True, check=True, timeout=20)
+    completed = subprocess.run(
+        [sys.executable, "-m", "src.data.validated_handoff"],
+        cwd=repository,
+        text=True,
+        capture_output=True,
+        check=True,
+        timeout=20,
+    )
     result = json.loads(completed.stdout)
-    directory = repository / "data/processed/validated/supply-chain-dataset1-validated-v1"
+    directory = (
+        repository / "data/processed/validated/supply-chain-dataset1-validated-v1"
+    )
     assert Path(result["directory"]) == directory
     provenance = json.loads((directory / "provenance.json").read_text())
     assert provenance["data_version"] == "supply-chain-dataset1-validated-v1"
     assert provenance["source"] == supplied
     assert provenance["scope"] == {
-        "start_date": "2024-01-01", "end_date": "2024-12-30", "columns": cleaning.COLUMNS,
-        "validation_mode": "shared-source-quality", "purpose": "shared validated source preparation",
-        "authorization_reference": "https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/102"}
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-30",
+        "columns": cleaning.COLUMNS,
+        "validation_mode": "shared-source-quality",
+        "purpose": "shared validated source preparation",
+        "authorization_reference": "https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/102",
+    }
     assert provenance["human_review"]["status"] == "pending_human_review"
-    assert len(handoff.read_validated_handoff(repository, handoff.PROJECT_DATA_VERSION,
-        expected_provenance_sha256=result["provenance_sha256"])) == 8
+    assert (
+        len(
+            handoff.read_validated_handoff(
+                repository,
+                handoff.PROJECT_DATA_VERSION,
+                expected_provenance_sha256=result["provenance_sha256"],
+            )
+        )
+        == 8
+    )
     assert list((repository / "data/processed/interim").iterdir()) == []
-    repeated = subprocess.run([sys.executable, "-m", "src.data.validated_handoff"],
-        cwd=repository, text=True, capture_output=True, check=False, timeout=20)
+    repeated = subprocess.run(
+        [sys.executable, "-m", "src.data.validated_handoff"],
+        cwd=repository,
+        text=True,
+        capture_output=True,
+        check=False,
+        timeout=20,
+    )
     assert repeated.returncode == 2 and "no overwrite" in repeated.stderr
 
 
-def test_relative_cli_overrides_resolve_against_repository(source, tmp_path, capsys, monkeypatch):
+def test_relative_cli_overrides_resolve_against_repository(
+    source, tmp_path, capsys, monkeypatch
+):
     repository = source.parents[2]
     (repository / "receipt.json").write_text(json.dumps(receipt(source)))
     monkeypatch.chdir(tmp_path.parent)
-    handoff.main(["--repository", str(repository), "--input", "data/raw/source.csv",
-        "--source-receipt", "receipt.json", "--data-version", "override",
-        "--start", "2024-01-01", "--end", "2024-01-04", "--purpose", "synthetic override",
-        "--authorization-reference", "synthetic authorization"])
+    handoff.main(
+        [
+            "--repository",
+            str(repository),
+            "--input",
+            "data/raw/source.csv",
+            "--source-receipt",
+            "receipt.json",
+            "--data-version",
+            "override",
+            "--start",
+            "2024-01-01",
+            "--end",
+            "2024-01-04",
+            "--purpose",
+            "synthetic override",
+            "--authorization-reference",
+            "synthetic authorization",
+        ]
+    )
     result = json.loads(capsys.readouterr().out)
     assert Path(result["directory"]).name == "override"
     provenance = json.loads((Path(result["directory"]) / "provenance.json").read_text())

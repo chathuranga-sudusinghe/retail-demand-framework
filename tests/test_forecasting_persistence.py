@@ -1,4 +1,5 @@
 """Persistence coordination checks using temporary synthetic authorization records."""
+
 from dataclasses import asdict, replace
 from hashlib import sha256
 import json
@@ -21,7 +22,14 @@ def snapshot_context(tmp_path):
     # Noncanonical formatting proves the reviewed bytes survive without reserialization.
     payload = (json.dumps(asdict(approved), separators=(",", ":")) + "\n\n").encode()
     path.write_bytes(payload)
-    context = ExecutionContext(approved, path, sha256(payload).hexdigest(), json.loads(payload), layout.dataset, layout)
+    context = ExecutionContext(
+        approved,
+        path,
+        sha256(payload).hexdigest(),
+        json.loads(payload),
+        layout.dataset,
+        layout,
+    )
     return approved, context, payload
 
 
@@ -30,7 +38,9 @@ def test_reviewed_authorization_snapshot_preserves_exact_bytes_and_source(tmp_pa
     writer = ArtifactWriter(context.layout, approved.run_id)
     digest = persistence.persist_authorization(writer, approved, context)
     destination = writer.directory / "authorization.json"
-    assert destination.read_bytes() == context.authorization_path.read_bytes() == payload
+    assert (
+        destination.read_bytes() == context.authorization_path.read_bytes() == payload
+    )
     assert digest == context.authorization_digest == file_hash(destination)
     assert not (writer.directory / "authorization.json.tmp").exists()
 
@@ -51,7 +61,9 @@ def test_mismatched_context_blocks_before_reading_or_persisting(tmp_path, monkey
     reader = Mock(side_effect=AssertionError("Cannot read a mismatched record"))
     monkeypatch.setattr(type(context.authorization_path), "read_bytes", reader)
     with pytest.raises(ExecutionBlocked, match="differs from authorization"):
-        persistence.persist_authorization(writer, replace(approved, run_id="different"), context)
+        persistence.persist_authorization(
+            writer, replace(approved, run_id="different"), context
+        )
     reader.assert_not_called()
     assert not list(writer.directory.iterdir())
 
@@ -67,7 +79,9 @@ def test_supplied_authorization_is_retained_without_creating_a_local_approval(tm
     assert not layout.execution_record.exists()
 
 
-def test_failed_model_serialization_does_not_index_an_unpersisted_descriptor(tmp_path, monkeypatch):
+def test_failed_model_serialization_does_not_index_an_unpersisted_descriptor(
+    tmp_path, monkeypatch
+):
     writer = ArtifactWriter(tmp_path, "synthetic-persistence")
     original = OSError("controlled serialization failure")
     serializer = Mock(side_effect=original)

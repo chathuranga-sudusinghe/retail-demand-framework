@@ -1,16 +1,23 @@
 """Historical candidate-grain summaries; no forecasting methodology changes."""
+
 import numpy as np
 import pandas as pd
 
 from src.analysis.forecasting_grain_analysis import (
-    check_source_constraints, profile_candidate_units, promotion_consistency_check,
+    check_source_constraints,
+    profile_candidate_units,
+    promotion_consistency_check,
 )
 
 
 def test_candidate_grains_preserve_totals_and_week_alignment(panel):
     original = panel.copy(deep=True)
     summary, views = profile_candidate_units(panel)
-    assert summary.analytical_unit.tolist() == ["sku_day", "sku_warehouse_day", "sku_week"]
+    assert summary.analytical_unit.tolist() == [
+        "sku_day",
+        "sku_warehouse_day",
+        "sku_week",
+    ]
     assert summary.n_series.tolist() == [2, 4, 2]
     assert summary.n_rows.tolist() == [120, 240, 18]
     assert summary.median_temporal_completeness.eq(1).all()

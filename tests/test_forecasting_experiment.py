@@ -1,9 +1,16 @@
 """Thin CLI wiring and direct compatibility aliases; no experiment execution."""
+
 from unittest.mock import Mock
 
 import pytest
 
-from src.forecasting import authorization as authorization_module, execution, experiment, metadata, orchestration
+from src.forecasting import (
+    authorization as authorization_module,
+    execution,
+    experiment,
+    metadata,
+    orchestration,
+)
 from src.forecasting.authorization import ExecutionBlocked, ExecutionContext
 from test_forecasting_orchestration import authorization
 
@@ -19,7 +26,9 @@ def test_argument_free_entrypoint_wires_resolved_context(monkeypatch):
     monkeypatch.setattr(experiment, "run_validation", runner)
     experiment.main([])
     resolver.assert_called_once_with(experiment.DEFAULT_LAYOUT)
-    runner.assert_called_once_with(frame, run_id=approved.run_id, authorization=approved, execution_context=context)
+    runner.assert_called_once_with(
+        frame, run_id=approved.run_id, authorization=approved, execution_context=context
+    )
     loader.assert_called_once_with(context.dataset_path)
 
 
@@ -48,9 +57,20 @@ def test_cli_cannot_load_or_run_without_authorization(monkeypatch):
 
 
 def test_legacy_public_imports_are_direct_authoritative_aliases():
-    for name in ("ExecutionBlocked", "ExecutionContext", "RunScope", "ValidationAuthorization", "resolve_execution"):
+    for name in (
+        "ExecutionBlocked",
+        "ExecutionContext",
+        "RunScope",
+        "ValidationAuthorization",
+        "resolve_execution",
+    ):
         assert getattr(execution, name) is getattr(authorization_module, name)
     for name in ("ExecutionBlocked", "RunScope", "ValidationAuthorization"):
         assert getattr(metadata, name) is getattr(authorization_module, name)
-    for name in ("Candidate", "planned_candidates", "run_validation", "run_final_evaluation"):
+    for name in (
+        "Candidate",
+        "planned_candidates",
+        "run_validation",
+        "run_final_evaluation",
+    ):
         assert getattr(experiment, name) is getattr(orchestration, name)

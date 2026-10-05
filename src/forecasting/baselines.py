@@ -1,4 +1,5 @@
 """Untuned origin-available formulas from protocol Section 10."""
+
 from __future__ import annotations
 
 from datetime import date
@@ -16,7 +17,9 @@ BASELINE_FORMULAS = {
 }
 
 
-def baseline_history(data: pd.DataFrame, *, origin: str | date | pd.Timestamp) -> pd.DataFrame:
+def baseline_history(
+    data: pd.DataFrame, *, origin: str | date | pd.Timestamp
+) -> pd.DataFrame:
     """Latest complete week per historical pair; future demand is never inspected."""
     cutoff = calendar_date(origin)
     # The utility masks quantities before validating them. Remove future keys as well.
@@ -26,15 +29,23 @@ def baseline_history(data: pd.DataFrame, *, origin: str | date | pd.Timestamp) -
     rows = []
     for pair in roster.itertuples(index=False, name=None):
         values = history.loc[
-            history.SKU_ID.eq(pair[0]) & history.Warehouse_ID.eq(pair[1])
+            history.SKU_ID.eq(pair[0])
+            & history.Warehouse_ID.eq(pair[1])
             & history.Date.between(cutoff - pd.Timedelta(days=6), cutoff)
         ].sort_values("Date")
         if len(values) != 7 or values.Units_Sold.isna().any():
-            raise ValueError(f"Incomplete baseline history for pair {pair} at {cutoff.date()}.")
-        rows.append({"SKU_ID": pair[0], "Warehouse_ID": pair[1],
-                     "latest": float(values.Units_Sold.iloc[-1]),
-                     "previous_week": float(values.Units_Sold.iloc[0]),
-                     "week_sum": float(values.Units_Sold.sum())})
+            raise ValueError(
+                f"Incomplete baseline history for pair {pair} at {cutoff.date()}."
+            )
+        rows.append(
+            {
+                "SKU_ID": pair[0],
+                "Warehouse_ID": pair[1],
+                "latest": float(values.Units_Sold.iloc[-1]),
+                "previous_week": float(values.Units_Sold.iloc[0]),
+                "week_sum": float(values.Units_Sold.sum()),
+            }
+        )
     if not rows:
         raise ValueError("No baseline origin population.")
     return pd.DataFrame(rows)

@@ -1,4 +1,5 @@
 """Controlled synthetic diagnostics only; no project data or research experiment."""
+
 from dataclasses import replace
 from math import sqrt
 from unittest.mock import Mock
@@ -9,16 +10,25 @@ import pytest
 
 from src.forecasting.artifacts import json_text
 from src.forecasting.baselines import baseline_history, baseline_predictions
-from src.forecasting.configuration import PRIMARY_GRID, primary_model_parameters, supportive_model_parameters
+from src.forecasting.configuration import (
+    PRIMARY_GRID,
+    primary_model_parameters,
+    supportive_model_parameters,
+)
 from src.forecasting.metrics import forecasting_metrics, four_fold_means
 from src.forecasting.models import (
-    construct_estimator, effective_iterations, estimator_parameters, fit_estimator,
+    construct_estimator,
+    effective_iterations,
+    estimator_parameters,
+    fit_estimator,
 )
 
 
 @pytest.mark.parametrize("model", ["xgboost", "lightgbm", "catboost"])
 @pytest.mark.parametrize("configuration", PRIMARY_GRID)
-def test_estimator_construction_keeps_all_24_mappings_and_exact_requested_iterations(model, configuration):
+def test_estimator_construction_keeps_all_24_mappings_and_exact_requested_iterations(
+    model, configuration
+):
     estimator = construct_estimator(model, configuration)
     declared = primary_model_parameters(model, configuration)
     requested = estimator.get_params()
@@ -27,7 +37,16 @@ def test_estimator_construction_keeps_all_24_mappings_and_exact_requested_iterat
     assert requested[key] == configuration.boosting_iterations
     assert requested["thread_count" if model == "catboost" else "n_jobs"] == 1
     assert requested["random_seed" if model == "catboost" else "random_state"] == 42
-    assert requested["task_type" if model == "catboost" else "device_type" if model == "lightgbm" else "device"].lower() == "cpu"
+    assert (
+        requested[
+            "task_type"
+            if model == "catboost"
+            else "device_type"
+            if model == "lightgbm"
+            else "device"
+        ].lower()
+        == "cpu"
+    )
     assert requested.get("early_stopping_rounds") is None
     assert requested.get("callbacks") is None
     if model == "catboost":
@@ -46,18 +65,31 @@ def test_supportive_construction_reuses_only_fixed_configuration(model):
         assert params["solver"] == "auto"
 
 
-@pytest.mark.parametrize("model,configuration", [
-    ("xgboost", None), ("ridge", PRIMARY_GRID[0]), ("random_forest", PRIMARY_GRID[0]),
-    ("unknown", None), ("naive", None), ("catboost", replace(PRIMARY_GRID[0], boosting_iterations=5)),
-])
-def test_construction_rejects_unknown_models_or_unapproved_recipes(model, configuration):
+@pytest.mark.parametrize(
+    "model,configuration",
+    [
+        ("xgboost", None),
+        ("ridge", PRIMARY_GRID[0]),
+        ("random_forest", PRIMARY_GRID[0]),
+        ("unknown", None),
+        ("naive", None),
+        ("catboost", replace(PRIMARY_GRID[0], boosting_iterations=5)),
+    ],
+)
+def test_construction_rejects_unknown_models_or_unapproved_recipes(
+    model, configuration
+):
     with pytest.raises(ValueError):
         construct_estimator(model, configuration)
 
 
-@pytest.mark.parametrize("model", ["xgboost", "lightgbm", "catboost", "ridge", "random_forest"])
+@pytest.mark.parametrize(
+    "model", ["xgboost", "lightgbm", "catboost", "ridge", "random_forest"]
+)
 def test_fit_rejects_tampered_runtime_before_fit(model):
-    configuration = PRIMARY_GRID[0] if model in ("xgboost", "lightgbm", "catboost") else None
+    configuration = (
+        PRIMARY_GRID[0] if model in ("xgboost", "lightgbm", "catboost") else None
+    )
     estimator = Mock()
     params = estimator_parameters(model, configuration)
     params[next(iter(params))] = "tampered"
@@ -86,12 +118,22 @@ def test_early_stopping_cannot_be_added_and_fit_has_no_eval_kwargs(model):
     assert effective_iterations(estimator, model) == 99
 
 
-@pytest.mark.parametrize("model,configuration", [
-    ("xgboost", PRIMARY_GRID[0]), ("lightgbm", PRIMARY_GRID[0]), ("catboost", PRIMARY_GRID[0]),
-    ("ridge", None), ("random_forest", None),
-    ("xgboost", PRIMARY_GRID[4]), ("lightgbm", PRIMARY_GRID[4]), ("catboost", PRIMARY_GRID[4]),
-])
-def test_small_controlled_library_fits_verify_effective_iterations_and_defaults(model, configuration, tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "model,configuration",
+    [
+        ("xgboost", PRIMARY_GRID[0]),
+        ("lightgbm", PRIMARY_GRID[0]),
+        ("catboost", PRIMARY_GRID[0]),
+        ("ridge", None),
+        ("random_forest", None),
+        ("xgboost", PRIMARY_GRID[4]),
+        ("lightgbm", PRIMARY_GRID[4]),
+        ("catboost", PRIMARY_GRID[4]),
+    ],
+)
+def test_small_controlled_library_fits_verify_effective_iterations_and_defaults(
+    model, configuration, tmp_path, monkeypatch
+):
     # Independent random arrays (not project demand or fold scores), enough varied
     # targets for LightGBM to retain its budget under the frozen default leaf size.
     monkeypatch.chdir(tmp_path)
@@ -100,10 +142,17 @@ def test_small_controlled_library_fits_verify_effective_iterations_and_defaults(
     labels = matrix[:, 0] * 20 + matrix[:, 1] ** 2 + rng.normal(size=200)
     estimator = construct_estimator(model, configuration)
     record = fit_estimator(estimator, model, configuration, matrix, labels)
-    assert record["effective_iterations"] == (configuration.boosting_iterations if configuration else
-                                              300 if model == "random_forest" else None)
+    assert record["effective_iterations"] == (
+        configuration.boosting_iterations
+        if configuration
+        else 300
+        if model == "random_forest"
+        else None
+    )
     assert np.isfinite(estimator.predict(matrix[:2])).all()
-    assert record["requested_api_parameters"] == estimator_parameters(model, configuration)
+    assert record["requested_api_parameters"] == estimator_parameters(
+        model, configuration
+    )
     assert record["effective_api_parameters"]
     json_text(record)  # No NaN/Infinity in inherited-default metadata.
     if model == "lightgbm":
@@ -117,16 +166,25 @@ def test_small_controlled_library_fits_verify_effective_iterations_and_defaults(
 def test_real_lightgbm_shortened_budget_is_a_failure_even_without_early_stopping():
     estimator = construct_estimator("lightgbm", PRIMARY_GRID[0])
     with pytest.raises(ValueError, match="Iteration mismatch: requested 100"):
-        fit_estimator(estimator, "lightgbm", PRIMARY_GRID[0], np.ones((32, 4)), np.ones(32))
+        fit_estimator(
+            estimator, "lightgbm", PRIMARY_GRID[0], np.ones((32, 4)), np.ones(32)
+        )
     assert effective_iterations(estimator, "lightgbm") < 100
     assert estimator.get_params().get("early_stopping_rounds") is None
 
 
 def test_metrics_exact_formulas_bias_sign_and_no_prediction_clipping():
     record = forecasting_metrics([2, 4, 6], [1, 7, 4])
-    assert record == {"n_predictions": 3, "wape": 0.5, "mae": 2.0,
-                      "rmse": sqrt(14 / 3), "bias": 0.0, "wape_denominator": 12.0,
-                      "metric_status": "valid", "failure_reason": None}
+    assert record == {
+        "n_predictions": 3,
+        "wape": 0.5,
+        "mae": 2.0,
+        "rmse": sqrt(14 / 3),
+        "bias": 0.0,
+        "wape_denominator": 12.0,
+        "metric_status": "valid",
+        "failure_reason": None,
+    }
     assert forecasting_metrics([2, 4], [3, 5])["bias"] == 1
     assert forecasting_metrics([2, 4], [1, 3])["bias"] == -1
     assert forecasting_metrics([0, 2], [-2, -1])["bias"] == -2.5
@@ -144,10 +202,15 @@ def test_zero_wape_denominator_keeps_supporting_metrics_and_json_null():
         json_text({"score": np.inf})
 
 
-@pytest.mark.parametrize("actual,prediction,reason", [
-    ([], [], "empty_population"), ([1], [np.nan], "nonfinite_prediction"),
-    ([np.inf], [1], "nonfinite_actual"), ([1e308], [-1e308], "numeric_overflow"),
-])
+@pytest.mark.parametrize(
+    "actual,prediction,reason",
+    [
+        ([], [], "empty_population"),
+        ([1], [np.nan], "nonfinite_prediction"),
+        ([np.inf], [1], "nonfinite_actual"),
+        ([1e308], [-1e308], "numeric_overflow"),
+    ],
+)
 def test_failed_metric_populations_are_not_scores(actual, prediction, reason):
     record = forecasting_metrics(actual, prediction)
     assert record["metric_status"] == "failed"
@@ -164,9 +227,17 @@ def test_metrics_require_aligned_vector_shapes():
 
 
 def test_four_fold_means_are_arithmetic_unweighted_and_require_every_metric():
-    records = [{"fold_id": i, **forecasting_metrics([1] * i, [i + 1] * i)} for i in range(1, 5)]
+    records = [
+        {"fold_id": i, **forecasting_metrics([1] * i, [i + 1] * i)} for i in range(1, 5)
+    ]
     summary = four_fold_means(records[::-1])
-    assert summary["mean_wape"] == summary["mean_mae"] == summary["mean_rmse"] == summary["mean_bias"] == 2.5
+    assert (
+        summary["mean_wape"]
+        == summary["mean_mae"]
+        == summary["mean_rmse"]
+        == summary["mean_bias"]
+        == 2.5
+    )
     assert summary["n_predictions"] == 10
     assert four_fold_means(records[:-1])["mean_wape"] is None
     records[-1]["wape"] = None
@@ -179,28 +250,57 @@ def test_four_fold_means_are_arithmetic_unweighted_and_require_every_metric():
 
 
 def week_panel():
-    return pd.DataFrame([{"SKU_ID": sku, "Warehouse_ID": warehouse, "Date": day,
-                          "Units_Sold": offset + base}
-                         for sku, warehouse, base in (("A", "W1", 1), ("A", "W2", 10), ("B", "W1", 100))
-                         for offset, day in enumerate(pd.date_range("2024-03-25", periods=10))])
+    return pd.DataFrame(
+        [
+            {
+                "SKU_ID": sku,
+                "Warehouse_ID": warehouse,
+                "Date": day,
+                "Units_Sold": offset + base,
+            }
+            for sku, warehouse, base in (
+                ("A", "W1", 1),
+                ("A", "W2", 10),
+                ("B", "W1", 100),
+            )
+            for offset, day in enumerate(pd.date_range("2024-03-25", periods=10))
+        ]
+    )
 
 
 @pytest.mark.parametrize("horizon", [1, 7, 14, 28])
 def test_baseline_exact_formulas_latest_complete_week_and_series_boundaries(horizon):
     panel = week_panel()
-    history = baseline_history(panel.sample(frac=1, random_state=2), origin="2024-03-31")
-    np.testing.assert_array_equal(baseline_predictions(history, "naive", horizon), np.array([7, 16, 106]) * horizon)
-    expected = np.array([1, 10, 100]) if horizon == 1 else np.array([28, 91, 721]) * (horizon // 7)
-    np.testing.assert_array_equal(baseline_predictions(history, "seasonal_naive", horizon), expected)
+    history = baseline_history(
+        panel.sample(frac=1, random_state=2), origin="2024-03-31"
+    )
+    np.testing.assert_array_equal(
+        baseline_predictions(history, "naive", horizon),
+        np.array([7, 16, 106]) * horizon,
+    )
+    expected = (
+        np.array([1, 10, 100])
+        if horizon == 1
+        else np.array([28, 91, 721]) * (horizon // 7)
+    )
+    np.testing.assert_array_equal(
+        baseline_predictions(history, "seasonal_naive", horizon), expected
+    )
     panel["Units_Sold"] = panel.Units_Sold.astype(object)
-    panel.loc[panel.Date.gt(pd.Timestamp("2024-03-31")), "Units_Sold"] = "unknown future"
+    panel.loc[panel.Date.gt(pd.Timestamp("2024-03-31")), "Units_Sold"] = (
+        "unknown future"
+    )
     pd.testing.assert_frame_equal(history, baseline_history(panel, origin="2024-03-31"))
 
 
 @pytest.mark.parametrize("missing", ["date", "value"])
 def test_baselines_fail_missing_observation_in_latest_week(missing):
     panel = week_panel()
-    mask = panel.SKU_ID.eq("A") & panel.Warehouse_ID.eq("W1") & panel.Date.eq(pd.Timestamp("2024-03-27"))
+    mask = (
+        panel.SKU_ID.eq("A")
+        & panel.Warehouse_ID.eq("W1")
+        & panel.Date.eq(pd.Timestamp("2024-03-27"))
+    )
     if missing == "date":
         panel = panel.loc[~mask]
     else:
@@ -209,7 +309,9 @@ def test_baselines_fail_missing_observation_in_latest_week(missing):
         baseline_history(panel, origin="2024-03-31")
 
 
-@pytest.mark.parametrize("model,horizon", [("other", 1), ("naive", 2), ("naive", True), ("naive", 7.0)])
+@pytest.mark.parametrize(
+    "model,horizon", [("other", 1), ("naive", 2), ("naive", True), ("naive", 7.0)]
+)
 def test_baselines_reject_unapproved_models_horizons(model, horizon):
     history = baseline_history(week_panel(), origin="2024-03-31")
     with pytest.raises(ValueError):

@@ -6,6 +6,7 @@ not every effective pinned-library default. A later authorised runner must recor
 those defaults, fix thread counts and reject early-stopping callbacks. This module
 neither chooses thread counts nor grants experiment-execution approval.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -48,13 +49,16 @@ class CanonicalConfiguration:
 PRIMARY_GRID = tuple(
     CanonicalConfiguration(f"GBM{index:03d}", rate, iterations, depth, subsample)
     for index, (rate, iterations, depth, subsample) in enumerate(
-        product((0.03, 0.05, 0.10), (100, 300), (4, 8), (0.8, 1.0)), start=1,
+        product((0.03, 0.05, 0.10), (100, 300), (4, 8), (0.8, 1.0)),
+        start=1,
     )
 )
 
 
 def primary_configuration_grid(
-    model: PrimaryModel, *, horizon: int,
+    model: PrimaryModel,
+    *,
+    horizon: int,
 ) -> tuple[CanonicalConfiguration, ...]:
     """Return the same ordered 24 declarations, without evaluating candidates."""
     if model not in PRIMARY_MODELS:
@@ -65,7 +69,8 @@ def primary_configuration_grid(
 
 
 def primary_model_parameters(
-    model: PrimaryModel, configuration: CanonicalConfiguration,
+    model: PrimaryModel,
+    configuration: CanonicalConfiguration,
 ) -> ModelParameters:
     """Map an approved canonical identity to fresh CPU estimator parameters.
 
@@ -77,7 +82,9 @@ def primary_model_parameters(
     if model not in PRIMARY_MODELS:
         raise ValueError("Primary model must be xgboost, lightgbm or catboost.")
     if configuration not in PRIMARY_GRID:
-        raise ValueError("Configuration must match an approved canonical grid identity.")
+        raise ValueError(
+            "Configuration must match an approved canonical grid identity."
+        )
     common: ModelParameters = {
         "learning_rate": configuration.learning_rate,
         "subsample": configuration.subsample,

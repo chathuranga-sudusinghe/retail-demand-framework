@@ -11,6 +11,7 @@ The DR-012 exposure method is retained as *proposed for group approval*. Source
 ``Demand_Forecast`` is preserved if present but is never used as the project
 forecast. Values are not clipped, rounded, imputed, or silently dropped.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -169,18 +170,37 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("Inventory-risk input panel is empty.")
 
     frame = records.copy(deep=True).reset_index(drop=True)
-    for column in ("SKU_ID", "Warehouse_ID", "run_id", "evaluation_stage", "evidence_role", "model", "configuration_id"):
+    for column in (
+        "SKU_ID",
+        "Warehouse_ID",
+        "run_id",
+        "evaluation_stage",
+        "evidence_role",
+        "model",
+        "configuration_id",
+    ):
         if not frame[column].map(_nonblank).all():
-            raise ValueError(f"{column} must contain nonblank, unpadded text identifiers.")
+            raise ValueError(
+                f"{column} must contain nonblank, unpadded text identifiers."
+            )
 
     duplicate_key = [
-        "run_id", "evaluation_stage", "evidence_role", "model", "configuration_id",
-        "SKU_ID", "Warehouse_ID", "forecast_origin", "horizon",
+        "run_id",
+        "evaluation_stage",
+        "evidence_role",
+        "model",
+        "configuration_id",
+        "SKU_ID",
+        "Warehouse_ID",
+        "forecast_origin",
+        "horizon",
     ]
     if "fold_id" in frame.columns:
         duplicate_key.append("fold_id")
     if frame.duplicated(duplicate_key, keep=False).any():
-        raise ValueError("Duplicate forecast records at run/model/configuration/SKU/warehouse/origin/horizon grain.")
+        raise ValueError(
+            "Duplicate forecast records at run/model/configuration/SKU/warehouse/origin/horizon grain."
+        )
 
     frame["_forecast_origin_date"] = frame["forecast_origin"].map(_calendar_date)
     frame["_inventory_record_date"] = frame["Date"].map(_calendar_date)
@@ -218,14 +238,23 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
 
     for index, row in frame.iterrows():
         reasons = _reason_list(row.get("unavailable_information_reasons"))
-        origin, record_date = row["_forecast_origin_date"], row["_inventory_record_date"]
+        origin, record_date = (
+            row["_forecast_origin_date"],
+            row["_inventory_record_date"],
+        )
 
         marker = row["origin_snapshot_available"]
         if isinstance(marker, (bool, np.bool_)) and bool(marker):
             if pd.isna(origin) or pd.isna(record_date):
-                snapshot_status, snapshot_reason = "unavailable", "invalid_origin_or_inventory_record_date"
+                snapshot_status, snapshot_reason = (
+                    "unavailable",
+                    "invalid_origin_or_inventory_record_date",
+                )
             elif record_date != origin:
-                snapshot_status, snapshot_reason = "unavailable", "inventory_record_date_does_not_match_forecast_origin"
+                snapshot_status, snapshot_reason = (
+                    "unavailable",
+                    "inventory_record_date_does_not_match_forecast_origin",
+                )
             else:
                 snapshot_status, snapshot_reason = "available", ""
         elif isinstance(marker, (bool, np.bool_)):
@@ -275,7 +304,9 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
             row["_target_start_date"] != origin + pd.Timedelta(days=1)
             or row["_target_end_date"] != origin + pd.Timedelta(days=horizon)
         ):
-            interval_reasons.append("forecast_target_interval_does_not_match_origin_and_horizon")
+            interval_reasons.append(
+                "forecast_target_interval_does_not_match_origin_and_horizon"
+            )
 
         forecast_reasons = interval_reasons.copy()
         if pd.isna(row["_forecast_demand_value"]):
@@ -284,11 +315,17 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
             forecast_reasons.append("negative_forecast_handling_not_approved")
         if "prediction_status" not in frame.columns:
             forecast_reasons.append("forecast_prediction_status_not_provided")
-        elif _missing_scalar(row["prediction_status"]) or row["prediction_status"] != "available":
+        elif (
+            _missing_scalar(row["prediction_status"])
+            or row["prediction_status"] != "available"
+        ):
             forecast_reasons.append("forecast_prediction_status_not_available")
         if "eligibility_status" not in frame.columns:
             forecast_reasons.append("forecast_eligibility_status_not_provided")
-        elif _missing_scalar(row["eligibility_status"]) or row["eligibility_status"] != "eligible":
+        elif (
+            _missing_scalar(row["eligibility_status"])
+            or row["eligibility_status"] != "eligible"
+        ):
             forecast_reasons.append("forecast_eligibility_status_not_eligible")
         if any(not _nonblank(row[column]) for column in REQUIRED_PROVENANCE_COLUMNS):
             forecast_reasons.append("forecast_provenance_incomplete")
@@ -304,21 +341,35 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
             retrospective_reasons.append("realised_horizon_demand_invalid")
         if "target_status" not in frame.columns:
             retrospective_reasons.append("retrospective_target_status_not_provided")
-        elif _missing_scalar(row["target_status"]) or row["target_status"] != "complete":
+        elif (
+            _missing_scalar(row["target_status"]) or row["target_status"] != "complete"
+        ):
             retrospective_reasons.append("retrospective_target_status_not_complete")
-        retrospective_status = "available" if not retrospective_reasons else "unavailable"
+        retrospective_status = (
+            "available" if not retrospective_reasons else "unavailable"
+        )
         frame.at[index, "retrospective_input_status"] = retrospective_status
         frame.at[index, "retrospective_input_reason"] = ";".join(retrospective_reasons)
         reasons.extend(retrospective_reasons)
 
         for value_name, availability_column, output_name in (
-            ("Supplier_Lead_Time_Days", "supplier_lead_time_available_at_origin", "lead_time_context_status"),
-            ("Order_Quantity", "order_quantity_available_at_origin", "order_quantity_context_status"),
+            (
+                "Supplier_Lead_Time_Days",
+                "supplier_lead_time_available_at_origin",
+                "lead_time_context_status",
+            ),
+            (
+                "Order_Quantity",
+                "order_quantity_available_at_origin",
+                "order_quantity_context_status",
+            ),
         ):
             if value_name not in frame.columns:
                 frame.at[index, output_name] = "unavailable"
                 reasons.append(f"{value_name}_not_provided")
-            elif availability_column not in frame.columns or _missing_scalar(row.get(availability_column)):
+            elif availability_column not in frame.columns or _missing_scalar(
+                row.get(availability_column)
+            ):
                 frame.at[index, output_name] = "unknown"
                 reasons.append(f"{value_name}_availability_at_origin_not_established")
             elif not isinstance(row[availability_column], (bool, np.bool_)):
@@ -336,7 +387,10 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
             else:
                 frame.at[index, output_name] = "available_as_context_only"
 
-        if frame.at[index, "lead_time_context_status"] == "available_as_context_only" and horizon is not None:
+        if (
+            frame.at[index, "lead_time_context_status"] == "available_as_context_only"
+            and horizon is not None
+        ):
             lead_time = _valid_count(row["Supplier_Lead_Time_Days"])
             if lead_time is not None:
                 relation = (
@@ -348,6 +402,8 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
                 )
                 frame.at[index, "lead_time_horizon_relation"] = relation
 
-        frame.at[index, "preparation_unavailable_reasons"] = list(dict.fromkeys(reasons))
+        frame.at[index, "preparation_unavailable_reasons"] = list(
+            dict.fromkeys(reasons)
+        )
 
     return frame
