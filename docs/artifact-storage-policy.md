@@ -25,6 +25,8 @@ Datasets, generated data tables, binaries, machine evidence and temporary report
 
 The Issue #132 derivative location was approved by Chathuranga on 2026-10-05. Its [forecast API contract](forecast-api-contract.md) owns the prospective field allowlist, frozen producers, exact source anchors and deterministic export rules. The export stays outside retained final-run evidence and MUST NOT overwrite it or contain retrospective outcomes/errors. Record the accepted derivative SHA-256 in that contract and pin it in the API configuration; do not commit generated output. Storage approval does not authorize generating the real export, training, prediction replay or metric recalculation.
 
+The Issue #132 writer may create ignored `.forecast-export-*` staging files beside the approved export while publishing it. These are incomplete temporary material and MUST NOT be consumed as forecasts or accepted evidence. Normal completion or handled errors remove them; a process crash can leave them behind. This allowance does not authorize automatic cleanup or overwriting an existing accepted export.
+
 ## Evidence and model retention
 
 Retain all evaluated configurations' canonical/requested/effective settings, fold/horizon/role/status, metrics, complete keyed predictions, selection/tie evidence, eligibility reasons and population fingerprints. Preserve exact source/view identity, environment, code/contract versions, model-to-preprocessor-to-origin links and authorization references. Actuals/errors are retrospective evaluation evidence and cannot enter a prospective handoff.
