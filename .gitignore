@@ -53,11 +53,7 @@ data/processed/*
 artifacts/
 outputs/
 models/
-<<<<<<< HEAD
 reports/forecasting/drafts/
-=======
-/reports/forecasting/drafts/
->>>>>>> origin/main
 
 # Local university and research reference materials
 research-materials/
