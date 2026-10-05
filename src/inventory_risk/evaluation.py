@@ -9,6 +9,8 @@ across origins or horizons.
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 import pandas as pd
 
 from src.inventory_risk.input_preparation import (
@@ -47,13 +49,15 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
     cases["evaluation_unavailable_reasons"] = [[] for _ in range(len(cases))]
     cases["methodology_status"] = METHOD_STATUS
 
+    # Object cells support lists; pandas-stubs restrict the scalar setter's types.
+    reason_cells = cast(Any, cases.at)
     for index, row in cases.iterrows():
         reasons: list[str] = []
         if not bool(row["inventory_state_available"]):
             reasons.extend(row["preparation_unavailable_reasons"])
             reasons.append(str(row["origin_snapshot_reason"]))
             cases.at[index, "comparison_case"] = "unavailable"
-            cases.at[index, "evaluation_unavailable_reasons"] = list(
+            reason_cells[index, "evaluation_unavailable_reasons"] = list(
                 dict.fromkeys(reason for reason in reasons if reason.strip())
             )
             continue
@@ -70,7 +74,7 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
                 "not_in_primary_comparison"
             )
             cases.at[index, "comparison_case"] = "origin_known_at_or_below_threshold"
-            cases.at[index, "evaluation_unavailable_reasons"] = []
+            reason_cells[index, "evaluation_unavailable_reasons"] = []
             continue
 
         cases.at[index, "origin_exposure_state"] = "initially_above_threshold"
@@ -134,7 +138,7 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
             cases.at[index, "comparison_case"] = "evaluable_paired_case"
         else:
             cases.at[index, "comparison_case"] = "unavailable"
-        cases.at[index, "evaluation_unavailable_reasons"] = list(
+        reason_cells[index, "evaluation_unavailable_reasons"] = list(
             dict.fromkeys(reason for reason in reasons if reason.strip())
         )
 
