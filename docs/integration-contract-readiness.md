@@ -4,8 +4,8 @@
 **Prepares:** Issue #86 (later integration implementation; remains open)
 **Owner:** Tinosh Gamage — System Integration and Prototype Engineering
 **Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
-**Updated:** 2026-10-05 for the owner-approved Issue #132 forecasting contract and derivative storage location.
-**Status:** Forecasting research completed and integrity verified as confirmed by the owner; the Issue #132 forecasting contract is owner-approved, while exporter implementation, validation, real export generation and consumer acceptance remain pending. Other downstream/API contracts retain their existing review requirements. This map creates no schema or analytical approval.
+**Updated:** 2026-10-05 for the owner-requested saved-model inference API and presentation inputs.
+**Status:** The retained exporter is implemented and a local derivative exists. Chathuranga has requested a saved-model request-time API in place of stored-forecast serving; its implementation and four synthetic input examples are prepared on the feature branch for review. Manual demonstration and Tinosh's consumer acceptance remain pending (B2). Other component decisions and review requirements are unchanged.
 
 ---
 
@@ -51,7 +51,8 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 | [src/forecasting/targets.py](../src/forecasting/targets.py) | Exact meaning of horizon targets and their row alignment |
 | [src/forecasting/experiment.py](../src/forecasting/experiment.py) | How origin and target dates are written for validation records |
 | [docs/forecasting-runner.md](forecasting-runner.md) | Run lifecycle, completion manifest, Issue #89 status |
-| [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Owner-approved Issue #132 prospective contract and local/ignored derivative location; implementation and accepted export remain pending |
+| [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Retained export contract and local/ignored derivative location; exporter exists, acceptance remains pending |
+| [Request-time forecast API](forecast-inference-api.md), [inference source](../src/forecasting/inference.py), [API source](../src/api/main.py) | Owner-requested active serving behavior; supplied-history request contract, four presentation examples and implementation pending review |
 | [docs/workflows/shared-data-foundation.md](workflows/shared-data-foundation.md) | Forecast-to-inventory timing contract and open contract decisions |
 | [docs/workflows/system-integration-and-prototype.md](workflows/system-integration-and-prototype.md) | Integration rules and adapter boundaries |
 | [docs/team/tinosh/group-project-overview.md](team/tinosh/group-project-overview.md) | Tinosh's expected inputs and boundaries |
@@ -161,7 +162,7 @@ Rules recorded in sources:
 - The retrospective margin is evaluation evidence and must not become a prospective review input (DR-012 §7).
 - The API must not use future outcome information in prospective views ([system integration workflow](workflows/system-integration-and-prototype.md)).
 
-**Current state:** completed validation and separate final-evaluation artifacts remain retrospective research evidence. The [Issue #132 forecast API contract](forecast-api-contract.md) is owner-approved, including D1–D5 and the storage-policy allowance for the ignored derivative export. The prospective handoff is not yet available: exporter implementation/tests, owner-authorized generation, the reviewed export SHA-256 and Tinosh's consumer acceptance remain pending (B2). Completed final evidence alone does not supply that handoff.
+**Current state:** the [retained-export contract](forecast-api-contract.md) remains applicable to its fixed-origin artifact; exporter code and a local derivative exist. The active [forecast inference API](forecast-inference-api.md) builds fresh request features and invokes the frozen saved producer. Its code and four synthetic JSON inputs are prepared for review; manual demonstration and Tinosh's acceptance remain pending (B2). No retrospective outcome is used by this runtime.
 
 ---
 
@@ -240,7 +241,7 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 | Handoff | Available / frozen | Remaining acceptance or decision |
 |---|---|---|
 | Retrospective forecasting research | Completed validation/final evidence; approved configurations, fresh-refit policy and producer mapping | Preserve the reviewed final interpretation and retained evidence |
-| Prospective forecasting input/API | Owner-approved [Issue #132 contract](forecast-api-contract.md), DR-014 producers and derivative storage location | Exporter implementation/tests, owner-authorized real export, accepted export hash and Tinosh's consumer acceptance |
+| Prospective forecasting input/API | Retained exporter exists; owner-requested [inference API](forecast-inference-api.md), frozen DR-014 saved models and four synthetic request examples are prepared for review | Human code/schema review, manual four-horizon demonstration and Tinosh's consumer acceptance; retained-export hash acceptance is separate |
 | Forecasting → inventory-risk | Grain/target meaning and documented dataset limits | Proposed DR-012 approval; origin snapshot semantics, problematic forecasts, schema, 28-day use and Order_Quantity availability |
 | Inventory-risk → responsible decision support | Advisory-only boundary and DR-011 structure-only field groups | Final schema, unavailable-state encoding, replenishment quantity, uncertainty and review rules |
 | Components → prototype/API | Ownership split and presentation-oriented boundary | Approved interchange/response schemas, adapters, tests and technical visual requirements |
@@ -253,7 +254,7 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 
 | ID | Blocker | Component owner | Related Issue | Required decision or deliverable |
 |---|---|---|---|---|
-| B2 | The forecasting contract is owner-approved; the prospective export and consumer handoff remain pending. | Chathuranga, with Tinosh for delivery | #132; #86 | Implement and test the [contract](forecast-api-contract.md); generate the real export with owner authorization, record its reviewed SHA-256 and obtain Tinosh's consumer acceptance |
+| B2 | The active request-time forecasting API is prepared for review; consumer handoff remains pending. | Chathuranga, with Tinosh for delivery | #132; #86 | Review the [inference API](forecast-inference-api.md), run the four manual input examples against saved models, and obtain Tinosh's consumer acceptance. Accept the separate retained-export hash only if that artifact is consumed. |
 | B3 | Origin inventory snapshot availability and within-day (before/after sales) semantics are undocumented. | Didilani | #51 (DR-012); #70 / #85 | Documented snapshot semantics and handling of unavailable origin snapshots |
 | B4 | DR-012 is still Proposed. | Didilani (group decision) | #51; #70 / #85 | Group approval or revision of DR-012 |
 | B5 | Handling of negative / problematic forecasts at the inventory input is open; no clipping is approved. | Didilani, with Chathuranga for forecast meaning | #70 / #85 | Explicit input-contract decision |
@@ -283,7 +284,7 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 |---|---|
 | Forecast → inventory-risk adapter | B2, B3, B4, B5, B6 |
 | Inventory-risk → decision-support adapter | B4, B7, B9, B12 |
-| Prospective forecast API endpoints | B2 |
+| Accept or extend prospective forecast API endpoints | B2 (initial inference implementation is prepared for review) |
 | Any 28-day downstream view or review trigger | B8 |
 | Human-review flags or reasons in the prototype | B10 |
 | Uncertainty display | B11 |

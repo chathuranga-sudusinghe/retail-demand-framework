@@ -1,16 +1,16 @@
-# Forecast API Contract — Prospective Forecasting Handoff
+# Retained Forecast Export Contract — Fixed-Origin Handoff
 
 **Issue:** #132 — Phase 3: Define forecast API contract and hand off forecasting outputs to Tinosh
 **Owner:** Chathuranga Sudusinghe — forecasting-facing contract and output meaning
 **Implementer after handoff:** Tinosh Gamage — FastAPI endpoints, schemas, adapters and API tests
 **Date:** 2026-10-05 (Asia/Colombo)
-**Status:** Owner-approved contract — Chathuranga approved the recommended D1–D5 choices and storage-policy alignment on 2026-10-05 (Section 12). Exporter implementation, tests, real export generation and consumer acceptance remain pending. The stored-forecast design directions in Section 3 were agreed by the owner in discussion on 2026-10-05. This document authorizes no experiment, refit, model reselection or runtime API implementation.
+**Status:** Retained-export contract; exporter and synthetic checks are implemented, and a local export exists. Acceptance of its exact hash and Tinosh's consumer acceptance remain pending. The earlier stored-forecast runtime design is superseded by Chathuranga's explicit request for request-time saved-model inference on 2026-10-05. The active API contract is [Request-time forecast API](forecast-inference-api.md); the fixed-origin export remains a separate artifact.
 
 ---
 
 ## 1. Purpose and boundaries
 
-This document defines what the forecasting component hands to the API and what each forecast record means. It turns the completed, verified final evidence into one reviewable prospective forecast contract so that Tinosh can implement the API without redefining forecasting semantics.
+This document defines the retained fixed-origin forecasting export and its record meaning. Its export-specific source checks, schema and storage rules remain applicable to that artifact. Sections 8–9 describe the earlier lookup proposal and do not govern the active [request-time API](forecast-inference-api.md).
 
 It covers:
 
@@ -60,16 +60,16 @@ Rules:
 
 ## 3. Agreed design directions (owner discussion, 2026-10-05)
 
-### 3.1 The API serves the stored producer forecasts (option A)
+### 3.1 Active inference API; retained export remains separate
 
-The API returns the forecasts that the four DR-014 producer models already made in the verified final run. It does not run models on request.
+The owner explicitly requested that each presentation request supply new daily history and invoke a saved designated model. The active request, response and endpoint definitions are in [Request-time forecast API](forecast-inference-api.md). This supersedes the previous option A serving proposal, without changing the retained export or frozen producer mapping.
 
-| Option | Meaning | Decision |
-|---|---|---|
-| **A. Serve stored producer forecasts** | Read-only projection of the sealed predictions. Values are identical to what the saved models produce from the retained origin inputs; the completed run's replay check confirmed this. | **Agreed** — fits Issue #132 (no rerun, refit or reselection) |
-| B. Run models on request from a new origin | Needs predictor vectors built after 2024-12-02, which is a new forecasting run. | **Out of scope for #132.** Would need its own Issue, decision record and explicit run authorization. |
+| Behavior | Current purpose |
+|---|---|
+| Serve stored fixed-origin producer records | Retained export only; not the presentation API |
+| Invoke saved producers on supplied request history | Active presentation API, requested by Chathuranga on 2026-10-05; implementation subject to human review |
 
-**Meaning of "prospective" here.** The selected dataset covers 2024-01-01 to 2024-12-30 ([dataset](dataset.md)). Later demand for the target interval therefore exists in the dataset, but these records are forecasts *as issued at origin 2024-12-02*. Each one uses only information available on or before that date. The API presents that decision point. It MUST NOT add, compare or reveal the later outcomes. The data are simulated, so the forecasts are not forecasts of real future demand.
+The retained export still represents forecasts issued at origin 2024-12-02. The active API uses the supplied request origin and history; it does not read the export as its output source.
 
 ### 3.2 Forecast producer resolved by horizon
 
@@ -153,7 +153,7 @@ The export is one JSON object with a top-level `forecasts` array containing the 
 | `series_count`, `record_count` | 250 and 1,000 for the current source |
 | `forecasts[]` | Section 6 prospective records, sorted by `horizon`, then `SKU_ID`, then `Warehouse_ID`; exactly `record_count` entries |
 
-Model references let a reviewer trace each value back to the exact fitted model and preprocessing, in line with W3C PROV (entity → activity → agent), the FAIR principles and model-card practice (Section 13). The API exposes these references read-only. It MUST NOT load or execute the models in response to a request.
+Model references let a reviewer trace each value back to the exact fitted model and preprocessing, in line with W3C PROV (entity → activity → agent), the FAIR principles and model-card practice (Section 13). The retained export exposes these references read-only and does not execute models. The active inference API loads the bound saved models at startup and invokes them on supplied request history, as specified in its separate contract.
 
 ### 6.2 Fields excluded from prospective views
 
@@ -191,7 +191,7 @@ Values below are illustrative placeholders, not numbers taken from the run.
 
 A request for all horizons of one series returns four such records, ordered by horizon 1, 7, 14, 28. Each has its own `model`, `configuration_id`, `target_end_date` and `forecast_type`.
 
-## 8. Logical API operations
+## 8. Earlier retained-export lookup operations (superseded for runtime)
 
 These describe behaviour, not final URLs. Tinosh chooses route names, response models and framework details, and the forecasting owner reviews them for meaning.
 
@@ -207,7 +207,7 @@ Optional `model` and `configuration_id` are exact source identifiers used solely
 
 These logical operations are read-only. HTTP methods, routes, status codes, error-body formats and framework response models are deferred to Tinosh's later implementation and shared architecture review. They are not selected by Issue #132.
 
-## 9. Unavailable and error behaviour
+## 9. Retained-export unavailable and lookup behaviour
 
 The API MUST NOT substitute another value, model, horizon, run or series when a forecast is unavailable. Missing values MUST NOT be shown as zero or `false` (DR-011).
 
@@ -240,11 +240,11 @@ Valid comparator rows in the full 28-candidate source are excluded during produc
 
 These codes cover forecasting availability only. Mapping them to the DR-011 unavailable-state vocabulary ("no agreed method", "not applicable", "waiting on another component") is Dewmi's decision under blocker B9.
 
-## 10. API constraints
+## 10. Shared forecasting API boundaries
 
 From Issue #132 and the [system integration workflow](workflows/system-integration-and-prototype.md):
 
-1. The API MUST NOT train, refit, tune or select models, or run model inference on request.
+1. The API MUST NOT train, refit, tune or select models. The active [inference API](forecast-inference-api.md) invokes only the four bound saved producers on supplied request history. The retained exporter remains a read-only projection and MUST NOT execute model inference.
 2. The API MUST NOT compute research metrics or expose retrospective outcomes or errors in prospective views.
 3. The API MUST NOT reinterpret cumulative forecasts as daily forecasts.
 4. The API MUST NOT change the producer mapping or serve non-producer candidates as forecasts.
@@ -264,7 +264,7 @@ The export is a deterministic projection of the recorded verified bundle:
 6. Serialize with fixed key ordering/formatting and no NaN/infinity or changing export-time timestamps. Copy stored quantities and the recorded integrity result unchanged.
 7. Write outside retained evidence, without overwriting, and record the derivative export's SHA-256 separately.
 
-The derivative export's SHA-256 is recorded in this contract as an accepted-export entry (path, `export_schema`, source run and hash) after owner-authorized generation, and is included in the Issue #132 handoff. The API configuration pins that reviewed value. Before serving, the API MUST compare the exact export bytes with the pinned hash; a missing export, missing pin or mismatch returns `source_unverified`. The expected hash MUST NOT be read from the export itself or from a file stored beside it, and MUST NOT be silently refreshed.
+The derivative export's SHA-256 is recorded in this contract as an accepted-export entry (path, `export_schema`, source run and hash) after owner-authorized generation, and is included in the Issue #132 handoff. Any consumer of this retained export must pin that reviewed value. Before serving retained records, that consumer MUST compare the exact export bytes with the pinned hash; a missing export, missing pin or mismatch returns `source_unverified`. The active inference API does not consume the export; it pins the saved-model source manifest and receipt instead. The expected hash MUST NOT be read from the export itself or from a file stored beside it, and MUST NOT be silently refreshed.
 
 The same verified source always gives byte-identical output. The export stays local and ignored by Git (`.gitignore` already covers `data/processed/` and `artifacts/`). Do not commit generated output. Ignore coverage alone does not establish storage approval. The D2 location is now covered by the reviewed [storage-policy row](artifact-storage-policy.md#storage-responsibilities); generating a real export still requires the authorization below.
 
@@ -282,7 +282,7 @@ Owner approval: Chathuranga, 2026-10-05, by explicit instruction in the working 
 | D4 | Contract identifier | `issue-132-forecast-export-v1`. |
 | D5 | Decision record | Record these choices here and reference this contract in [integration readiness](integration-contract-readiness.md). No new Decision Record. |
 
-The logical request behaviour and reason-code precedence in Sections 8–9 are part of this approved contract. Chathuranga retains forecasting ownership; Tinosh reviews and implements the consumer. Exporter validation, an owner-authorized real export, its accepted-export hash entry and consumer acceptance are still required before the handoff is available. No generated export hash is recorded until the exact bytes exist and are reviewed.
+The logical request behaviour and reason-code precedence in Sections 8–9 are part of this approved contract. Chathuranga retains forecasting ownership; Tinosh reviews and implements the consumer. Exporter implementation and synthetic checks are complete, and the owner generated a local derivative export. Its accepted-export hash entry and consumer acceptance remain pending; existence alone does not establish acceptance. The active inference handoff has separate review and manual demonstration steps in [its contract](forecast-inference-api.md).
 
 Posting a decision comment on Issue #132 requires the owner's instruction; this documentation approval does not authorize posting one.
 
@@ -301,9 +301,9 @@ Standards and conventions this contract follows. Bibliographic details should be
 
 Project sources: [AGENTS.md](../AGENTS.md), [DR-002](decisions/DR-002-forecasting-analytical-unit.md), [DR-004](decisions/DR-004-forecast-horizons.md), [DR-008](decisions/DR-008-multi-step-forecasting-strategy.md), [DR-011](decisions/DR-011-decision-support-output-structure.md), [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md), [protocol](protocol.md), [final evaluation](forecasting-final-evaluation.md), [storage policy](artifact-storage-policy.md), [runner operations](forecasting-runner.md), [integration readiness](integration-contract-readiness.md), [system integration workflow](workflows/system-integration-and-prototype.md).
 
-## 14. Handoff to Tinosh
+## 14. Retained-export handoff to Tinosh
 
-After owner approval of this contract:
+For retained-export consumption only; active API responsibilities and acceptance steps are recorded in [the inference handoff](forecast-inference-api.md#7-engineering-handoff):
 
 | Party | Responsibility |
 |---|---|
@@ -331,7 +331,7 @@ Tests SHOULD use synthetic fixtures. Any use of real run outputs follows the ver
 ## 15. Limitations
 
 - The dataset is simulated. Forecasts do not describe a real retailer ([dataset](dataset.md)).
-- The source is one fixed origin (2024-12-02). The API serves that decision point, not a rolling forecast.
+- The retained export has one fixed origin (2024-12-02). This limitation belongs to that artifact; the active inference API computes from a supplied origin and daily history.
 - The final interval was not fully unseen: December 3–16 had earlier validation exposure, and full-year exploratory analysis inspected the interval ([final evaluation](forecasting-final-evaluation.md)).
 - No forecast uncertainty is available (B11).
 - `Stockout_Flag` is zero-variance and plays no part in this contract.
