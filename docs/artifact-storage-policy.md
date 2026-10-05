@@ -10,7 +10,8 @@ This document owns storage, immutability and retention. [Shared data foundation]
 | data/processed/validated/<data_version>/ | Typed, ordered native records, audit/schema and provenance; validated shared handoff |
 | data/processed/interim/<preparation_id>/ | Isolated preparation staging/scratch; no sole authoritative evidence |
 | data/processed/model-ready/<representation_id>/ | Separate feature/target tables and explicitly identified fold/horizon fitted matrices/states |
-| data/processed/forecasting/ | Reviewed validation_authorization.json and final_authorization.json control records |
+| data/processed/forecasting/ | Reviewed validation_authorization.json and final_authorization.json control records; the approved Issue #132 handoff export is listed separately below |
+| data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json | Local, ignored prospective derivative export for Issue #132; Chathuranga owns forecasting meaning and export, Tinosh consumes the reviewed handoff |
 | artifacts/forecasting/<run_id>/ | Machine evidence, retained authorization, metadata, logs, diagnostics, sole run_manifest.json completion authority |
 | models/forecasting/<run_id>/ | Native models, descriptors, fitted preprocessing and small origin replay inputs |
 | reports/forecasting/<run_id>/comparison.md | Canonical trackable generated comparison for a verified completed run |
@@ -21,6 +22,8 @@ This document owns storage, immutability and retention. [Shared data foundation]
 Descriptive tables under data/processed/demand_eda/ and temporal_profile/ remain descriptive evidence, not training datasets. No automatic latest-version discovery or silent replacement is allowed. Reuse requires matching exact parents, scope, code, contract and fitted state.
 
 Datasets, generated data tables, binaries, machine evidence and temporary reports stay local/ignored. Preserve .gitignore protections and do not embed bulk data in reports/notebooks to bypass them. Only lightweight comparison Markdown, reviewed reports/figures, documentation, code and approved small fixtures belong in Git.
+
+The Issue #132 derivative location was approved by Chathuranga on 2026-10-05. Its [forecast API contract](forecast-api-contract.md) owns the prospective field allowlist, frozen producers, exact source anchors and deterministic export rules. The export stays outside retained final-run evidence and MUST NOT overwrite it or contain retrospective outcomes/errors. Record the accepted derivative SHA-256 in that contract and pin it in the API configuration; do not commit generated output. Storage approval does not authorize generating the real export, training, prediction replay or metric recalculation.
 
 ## Evidence and model retention
 
@@ -54,7 +57,7 @@ Validation manifest and model descriptor contracts are version 2. Final manifest
 
 The sole completion authority is **artifacts/forecasting/<run_id>/run_manifest.json**, published last after scientific reconciliation, all-model replay, log closure and final metadata. It inventories exact repository-relative artifact/model/report paths, owners and SHA-256 hashes; it does not hash itself. Metadata receipts and comparison text alone do not establish completion or human review.
 
-Consumers verify from the exact artifact anchor using the stage-specific verifier described in [runner operations](forecasting-runner.md#persistence-and-completion-verification). Missing, extra, redirected, corrupted, cross-run or incomplete evidence blocks consumption. Final verification reads its retained freeze.md/policy.md snapshots; current documentation consolidation must not rewrite those snapshots or historical scientific/evidence hashes.
+Consumers verify from the exact artifact anchor using the stage-specific verifier described in [runner operations](forecasting-runner.md#persistence-and-completion-verification). For the Issue #132 prospective derivative of the already verified `final-20261003-02` run, use the read-only pinned-hash, binding and schema checks in [forecast API contract Section 2](forecast-api-contract.md#2-source-evidence); do not repeat scientific verification, model replay or metric reconciliation. Missing, extra, redirected, corrupted, cross-run or incomplete evidence blocks consumption. Final verification reads its retained freeze.md/policy.md snapshots; current documentation consolidation must not rewrite those snapshots or historical scientific/evidence hashes.
 
 Historical completed bundles retain their original draft report and exact receipt path. A tracked canonical comparison copy does not replace that original or refresh its manifest. Do not relabel removed/unavailable earlier evidence as retained or recreate it under an original ID.
 
