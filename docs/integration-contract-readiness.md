@@ -4,8 +4,8 @@
 **Prepares:** Issue #86 (later integration implementation; remains open)
 **Owner:** Tinosh Gamage — System Integration and Prototype Engineering
 **Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
-**Updated:** 2026-10-04 for completed forecasting evidence and current run storage.
-**Status:** Forecasting research completed and integrity verified as confirmed by the owner; prospective handoff and downstream/API contracts remain subject to their existing reviews. This map creates no schema or analytical approval.
+**Updated:** 2026-10-05 for the owner-approved Issue #132 forecasting contract and derivative storage location.
+**Status:** Forecasting research completed and integrity verified as confirmed by the owner; the Issue #132 forecasting contract is owner-approved, while exporter implementation, validation, real export generation and consumer acceptance remain pending. Other downstream/API contracts retain their existing review requirements. This map creates no schema or analytical approval.
 
 ---
 
@@ -51,6 +51,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 | [src/forecasting/targets.py](../src/forecasting/targets.py) | Exact meaning of horizon targets and their row alignment |
 | [src/forecasting/experiment.py](../src/forecasting/experiment.py) | How origin and target dates are written for validation records |
 | [docs/forecasting-runner.md](forecasting-runner.md) | Run lifecycle, completion manifest, Issue #89 status |
+| [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Owner-approved Issue #132 prospective contract and local/ignored derivative location; implementation and accepted export remain pending |
 | [docs/workflows/shared-data-foundation.md](workflows/shared-data-foundation.md) | Forecast-to-inventory timing contract and open contract decisions |
 | [docs/workflows/system-integration-and-prototype.md](workflows/system-integration-and-prototype.md) | Integration rules and adapter boundaries |
 | [docs/team/tinosh/group-project-overview.md](team/tinosh/group-project-overview.md) | Tinosh's expected inputs and boundaries |
@@ -160,7 +161,7 @@ Rules recorded in sources:
 - The retrospective margin is evaluation evidence and must not become a prospective review input (DR-012 §7).
 - The API must not use future outcome information in prospective views ([system integration workflow](workflows/system-integration-and-prototype.md)).
 
-**Current state:** completed validation and separate final-evaluation artifacts are retrospective research evidence. A reviewed prospective forecast-input export/API contract remains undefined (B2); completed final evidence alone does not supply that contract.
+**Current state:** completed validation and separate final-evaluation artifacts remain retrospective research evidence. The [Issue #132 forecast API contract](forecast-api-contract.md) is owner-approved, including D1–D5 and the storage-policy allowance for the ignored derivative export. The prospective handoff is not yet available: exporter implementation/tests, owner-authorized generation, the reviewed export SHA-256 and Tinosh's consumer acceptance remain pending (B2). Completed final evidence alone does not supply that handoff.
 
 ---
 
@@ -239,7 +240,7 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 | Handoff | Available / frozen | Remaining acceptance or decision |
 |---|---|---|
 | Retrospective forecasting research | Completed validation/final evidence; approved configurations, fresh-refit policy and producer mapping | Preserve the reviewed final interpretation and retained evidence |
-| Prospective forecasting input/API | Meaning of keys, origin, horizons and raw forecast; DR-014 producers | Issue #132: prospective export definition, exact schemas/model-state handoff and component-owner acceptance |
+| Prospective forecasting input/API | Owner-approved [Issue #132 contract](forecast-api-contract.md), DR-014 producers and derivative storage location | Exporter implementation/tests, owner-authorized real export, accepted export hash and Tinosh's consumer acceptance |
 | Forecasting → inventory-risk | Grain/target meaning and documented dataset limits | Proposed DR-012 approval; origin snapshot semantics, problematic forecasts, schema, 28-day use and Order_Quantity availability |
 | Inventory-risk → responsible decision support | Advisory-only boundary and DR-011 structure-only field groups | Final schema, unavailable-state encoding, replenishment quantity, uncertainty and review rules |
 | Components → prototype/API | Ownership split and presentation-oriented boundary | Approved interchange/response schemas, adapters, tests and technical visual requirements |
@@ -252,7 +253,7 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 
 | ID | Blocker | Component owner | Related Issue | Required decision or deliverable |
 |---|---|---|---|---|
-| B2 | A completed final bundle and producer mapping exist, but a reviewed prospective forecast-input export/API contract is still undefined. | Chathuranga, with Tinosh for delivery | #132; #86 | Exact prospective record, model/preprocessor/provenance links and owner acceptance |
+| B2 | The forecasting contract is owner-approved; the prospective export and consumer handoff remain pending. | Chathuranga, with Tinosh for delivery | #132; #86 | Implement and test the [contract](forecast-api-contract.md); generate the real export with owner authorization, record its reviewed SHA-256 and obtain Tinosh's consumer acceptance |
 | B3 | Origin inventory snapshot availability and within-day (before/after sales) semantics are undocumented. | Didilani | #51 (DR-012); #70 / #85 | Documented snapshot semantics and handling of unavailable origin snapshots |
 | B4 | DR-012 is still Proposed. | Didilani (group decision) | #51; #70 / #85 | Group approval or revision of DR-012 |
 | B5 | Handling of negative / problematic forecasts at the inventory input is open; no clipping is approved. | Didilani, with Chathuranga for forecast meaning | #70 / #85 | Explicit input-contract decision |
