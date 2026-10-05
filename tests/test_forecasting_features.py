@@ -25,7 +25,7 @@ from src.forecasting.validation import FINAL_HOLDOUT, VALIDATION_FOLDS, split_fo
 
 def make_panel(periods: int = 40) -> pd.DataFrame:
     """Return two deliberately different complete daily demand series."""
-    rows = []
+    rows: list[dict[str, str | int]] = []
     for offset, current_date in enumerate(pd.date_range("2024-01-01", periods=periods)):
         rows.extend(
             (

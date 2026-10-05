@@ -15,9 +15,11 @@ forecast. Values are not clipped, rounded, imputed, or silently dropped.
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
+from pandas.api.typing import NaTType
 
 METHOD_STATUS = "proposed_for_group_approval"
 SUPPORTED_HORIZONS = (1, 7, 14, 28)
@@ -67,7 +69,9 @@ METHOD_LIMITATIONS = (
 )
 
 
-def _calendar_date(value: object) -> pd.Timestamp | pd.NaT:
+# Raw pandas cells may hold heterogeneous values, including nullable scalars.
+# Runtime checks below continue to determine their validity.
+def _calendar_date(value: Any) -> pd.Timestamp | NaTType:
     """Parse one calendar date without accepting numeric timestamps or tz values."""
     if pd.isna(value) or isinstance(value, (int, float, np.number)):
         return pd.NaT
@@ -80,7 +84,7 @@ def _calendar_date(value: object) -> pd.Timestamp | pd.NaT:
     return parsed
 
 
-def _missing_scalar(value: object) -> bool:
+def _missing_scalar(value: Any) -> bool:
     if value is None or value is pd.NA:
         return True
     try:
@@ -90,7 +94,7 @@ def _missing_scalar(value: object) -> bool:
         return False
 
 
-def _finite_number(value: object, *, nonnegative: bool = False) -> float | None:
+def _finite_number(value: Any, *, nonnegative: bool = False) -> float | None:
     """Return a finite parsed number, retaining invalid source cells untouched."""
     if pd.isna(value) or isinstance(value, (bool, np.bool_)):
         return None
@@ -114,7 +118,7 @@ def _nonblank(value: object) -> bool:
     return isinstance(value, str) and bool(value.strip()) and value == value.strip()
 
 
-def _reason_list(value: object) -> list[str]:
+def _reason_list(value: Any) -> list[str]:
     if value is None:
         return []
     if isinstance(value, str):
@@ -129,7 +133,7 @@ def _reason_list(value: object) -> list[str]:
     return [str(value)]
 
 
-def _horizon(value: object) -> int | None:
+def _horizon(value: Any) -> int | None:
     if isinstance(value, (bool, np.bool_)) or pd.isna(value):
         return None
     try:
@@ -236,6 +240,8 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
     frame["method_assumptions"] = [METHOD_ASSUMPTIONS for _ in range(len(frame))]
     frame["method_limitations"] = [METHOD_LIMITATIONS for _ in range(len(frame))]
 
+    # Object cells support lists; pandas-stubs restrict the scalar setter's types.
+    reason_cells = cast(Any, frame.at)
     for index, row in frame.iterrows():
         reasons = _reason_list(row.get("unavailable_information_reasons"))
         origin, record_date = (
@@ -243,6 +249,7 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
             row["_inventory_record_date"],
         )
 
+        snapshot_reason: object
         marker = row["origin_snapshot_available"]
         if isinstance(marker, (bool, np.bool_)) and bool(marker):
             if pd.isna(origin) or pd.isna(record_date):
@@ -402,7 +409,7 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
                 )
                 frame.at[index, "lead_time_horizon_relation"] = relation
 
-        frame.at[index, "preparation_unavailable_reasons"] = list(
+        reason_cells[index, "preparation_unavailable_reasons"] = list(
             dict.fromkeys(reasons)
         )
 

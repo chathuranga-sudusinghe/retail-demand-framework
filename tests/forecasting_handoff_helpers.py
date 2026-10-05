@@ -28,7 +28,7 @@ def panel():
 
 def publish_forecasting_handoff(repository: Path, demand: pd.DataFrame):
     source = demand.copy()
-    defaults = {
+    defaults: dict[str, str | int | float] = {
         **dict.fromkeys(cleaning.COLUMNS, 0),
         "Supplier_ID": "synthetic",
         "Region": "synthetic",
