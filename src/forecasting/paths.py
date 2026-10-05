@@ -48,6 +48,10 @@ class RepositoryLayout:
         return self.root / "models" / "forecasting"
 
     @property
+    def report_root(self) -> Path:
+        return self.root / "reports" / "forecasting"
+
+    @property
     def draft_report_root(self) -> Path:
         return self.root / "reports" / "forecasting" / "drafts"
 
@@ -88,6 +92,23 @@ class RepositoryLayout:
 
     def model_run_directory(self, run_id: str) -> Path:
         return self._run_directory(self.model_root, run_id)
+
+    def report_directory(self, run_id: str) -> Path:
+        """Canonical comparison evidence; temporary drafts have a separate root."""
+        if run_id == "drafts":
+            raise ValueError("run_id must not use the reserved drafts directory.")
+        return self._run_directory(self.report_root, run_id)
+
+    def comparison_path(self, run_id: str, *, retained_reference: str | None = None) -> Path:
+        """Use canonical storage, or an exact legacy path declared by retained evidence."""
+        canonical = self.report_directory(run_id) / "comparison.md"
+        if retained_reference is None:
+            return self._owned_path(canonical)
+        legacy = self.draft_report_directory(run_id) / "comparison.md"
+        for path in (canonical, legacy):
+            if retained_reference == path.relative_to(self.root).as_posix():
+                return self._owned_path(path)
+        raise ValueError("Comparison reference must identify this run's canonical or legacy report.")
 
     def draft_report_directory(self, run_id: str) -> Path:
         return self._run_directory(self.draft_report_root, run_id)

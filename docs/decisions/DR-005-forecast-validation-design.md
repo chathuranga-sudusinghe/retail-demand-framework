@@ -1,6 +1,6 @@
 # DR-005 — Forecast Validation Design
 
-> **Current status cross-reference — Issue #94:** [The frozen protocol](../protocol.md) resolves prior pending supportive settings, baseline and runtime decisions. Issue #89 was merged through PR #90. [Runner operations](../forecasting-runner.md) distinguish approved storage policy from unchanged runtime behavior. Original decision/development wording below remains historical provenance; this status note changes no decision or authorizes any run.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
@@ -20,7 +20,7 @@ source spans 365 complete daily dates from 2024-01-01 to 2024-12-30 for 250 seri
 The earlier 14-day fold design cannot accommodate a complete 28-day outcome.
 Previous scores were not used to choose this amendment. Historical evidence is
 [demand EDA](../../reports/demand-eda.md), its saved notebook and the temporal profile.
-[Revision and provenance](../forecasting-methodology-revision.md) records the
+[final results and limitations](../forecasting-final-evaluation.md#9-limitations) records the
 current human-approved forecasting scope, frozen feature contract and separate remaining approval boundaries.
 
 ## Current human-approved forecasting design

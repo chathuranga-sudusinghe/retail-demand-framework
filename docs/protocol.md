@@ -1,133 +1,22 @@
-# Revised forecasting experiment protocol — Issue #65
-
-**Status:** SCIENTIFIC PROTOCOL HUMAN-APPROVED / FROZEN — NO NEW EXECUTION AUTHORIZATION
-
-**Operational alignment:** Issues #92/#93 supply the architecture authorities. Issue #111 implements Phase 5 split storage; Issue #116 documents manifest and model descriptor contract version 2. No new execution authorization is granted. The dated approval-control labels and earlier amendments remain historical records; current storage operations use human review, implementation acceptance, explicit run authorization and reserved final evaluation blocked.
-
-**Prepared:** 2026-09-29
-
-**Owner:** Chathuranga
-
-**Protocol version:** `issue-65-matched-frozen-1`
-
-**Human decisions recorded:** 2026-09-29, on the project owner's explicit Issue #65
-instruction: exact-tie handling, single-thread runtime, 28-day simple baselines
-and deferral of final refit/preprocessing to Gate 6. These decisions remain
-unchanged.
-
-**Gate 1 approval/freeze:** 2026-09-29, explicitly approved by the project owner
-after reviewing the complete protocol. Approval reference: the project owner's
-Issue #65 instruction, "I have reviewed and approved `docs/protocol.md` for
-Issue #65. Record Gate 1 as human-approved/frozen." This approves the validation
-protocol only; experiment execution remains **NOT AUTHORISED**.
-
-**Issue:** [#65 — Research: define and freeze revised forecasting experiment protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65)
+# Forecasting Experimental Protocol
 
 ## 1. Authority, scope and current implementation
 
-`docs/protocol.md` is the consolidated, human-approved and frozen forecasting
-validation experiment protocol. Human review and protocol freeze are complete on
-the explicit project-owner approval recorded above. Accepted runner implementation and specific run
-authorisation remain required; protocol approval does not grant execution approval.
+This is the final human-approved experimental methodology (scientific schema `issue-65-v2`, protocol version `issue-65-matched-frozen-1`). Validation-protocol freeze was approved by the owner on 2026-09-29. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) governs the matched primary comparison; [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the subsequent approved configuration/producer freeze and final-refit policy.
 
-The current research authority is
-[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md): XGBoost,
-LightGBM and CatBoost are the primary controlled RQ2 comparison; Ridge and
-Random Forest are fixed supportive benchmarks only. DR-013 supersedes the
-learned-model roles in DR-007, the single-boosting choice in DR-009 and the
-primary grids/representation/fit counts in DR-010. Their historical bodies do
-not supply current execution instructions. DR-007's retained 1/7/14-day
-simple-baseline formulas remain unchanged. The project owner's decisions recorded
-in this protocol resolve the previously pending 28-day formulas and numeric
-thread policy; no other decision record or source file is changed here.
+Preparation, development, validation and final evaluation are complete as confirmed by the owner. The [final report](forecasting-final-evaluation.md) owns current interpretation and scientific exposure disclosures. [Feature engineering](forecasting-feature-engineering.md) owns exact predictor/preprocessing definitions. [Runner operations](forecasting-runner.md) and [storage policy](artifact-storage-policy.md) own commands, persistence and integrity mechanics. No further experiment is authorized by this document.
 
-[DR-004](decisions/DR-004-forecast-horizons.md),
-[DR-005](decisions/DR-005-forecast-validation-design.md),
-[DR-006](decisions/DR-006-forecasting-metrics-and-model-selection.md),
-[DR-008](decisions/DR-008-multi-step-forecasting-strategy.md) and the
-[frozen feature contract](forecasting-feature-engineering.md) continue to govern
-horizons, dates, metrics, direct targets and predictor formulas. The only new
-resolutions are the explicit human decisions recorded above and in Section 18.
-The older Issue #65 body and companion-document implementation notes describe
-the pre-#66/pre-#68 state;
-current DR-013 decisions and the merged interfaces below take precedence.
-
-Issue #68 implementation alignment is complete and merged into the inspected
-main-aligned checkout through PR #69. The existing reusable interfaces are:
-
-| Existing interface | Protocol use |
-|---|---|
-| [features.py](../src/forecasting/features.py): `build_features`, `feature_eligibility` | Historical predictors and complete-vector eligibility |
-| [features.py](../src/forecasting/features.py): `build_origin_features` | One fixed-origin evidence row per historical pair |
-| [preprocessing.py](../src/forecasting/preprocessing.py): `fit_primary_preprocessors` | Fit one eligible-training vocabulary and share immutable unscaled primary representations |
-| [preprocessing.py](../src/forecasting/preprocessing.py): `fit_preprocessor`, `ForecastPreprocessor.transform` | Training-only supportive scaling/encoding and prediction transformation without refitting |
-| [configuration.py](../src/forecasting/configuration.py): `PRIMARY_GRID`, `primary_configuration_grid`, `primary_model_parameters` | Canonical `GBM001`–`GBM024` grid and primary API mappings/fixed controls |
-| [configuration.py](../src/forecasting/configuration.py): `supportive_model_parameters` | One predeclared configuration per supportive model; no search |
-| [targets.py](../src/forecasting/targets.py): `build_horizon_targets` | Complete observed cumulative labels, separate from predictors |
-| [validation.py](../src/forecasting/validation.py): `split_fold`, `VALIDATION_FOLDS`, `FINAL_HOLDOUT` | Exact fold slicing and final interval boundaries |
-
-`FINAL_HOLDOUT` remains a legacy identifier for the revised final evaluation
-interval, not a claim that it is historically unseen. The current
-[feature tests](../tests/test_forecasting_features.py),
-[preprocessing tests](../tests/test_forecasting_preprocessing.py) and
-[configuration tests](../tests/test_forecasting_configuration.py) cover the
-frozen calculations, targets/boundaries, identical primary matrices, training-only
-vocabularies, supportive scaling, grid identities and parameter declarations.
-They are inspected as implementation evidence; this documentation task does not
-execute them or infer scientific performance from them.
-
-The configuration layer declares parameters without constructing estimators.
-Estimator orchestration, metrics, baselines and the runner are now implemented;
-Issue #89 was merged through PR #90. The owner confirms validation has occurred;
-[methodology provenance](forecasting-methodology-revision.md) records the evidence
-availability boundary. Phase 5 now implements the approved split storage layout;
-its operational contract is recorded below. No new command is authorized by this
-documentation. The deferred final refit/preprocessing policy in Section 18 and
-[AGENTS.md](../AGENTS.md), Sections 17–19, remain binding.
+Horizon/date/metric/direct-target decisions remain in DR-004/005/006/008. DR-003/009/010 are historical or superseded; DR-007 retains contextual baseline provisions. Scientific definitions below and immutable retained evidence are not changed by documentation consolidation.
 
 ## 2. Frozen target, predictor information and ordering
 
-The dataset is simulated. The target is `Units_Sold` at
-`SKU_ID + Warehouse_ID + Date`; [dataset.md](dataset.md) records its limitations.
-For origin o and horizon h in `1, 7, 14, 28`, the direct observed target is:
+Use Units_Sold at SKU_ID + Warehouse_ID + Date in the simulated dataset. For origin o and h in {1,7,14,28}:
 
 $$
 Y_{o,h}=\sum_{j=1}^{h}y_{o+j}.
 $$
 
-For h=1 this is next-day demand; h=7/14/28 are cumulative totals. No daily path,
-recursive prediction or within-window updating is implied. All learned models
-receive the same ordered fourteen conceptual predictors:
-
-```text
-SKU_ID
-Warehouse_ID
-dow_sin
-dow_cos
-lag_1
-lag_7
-lag_14
-rolling_mean_7
-rolling_std_7
-rolling_mean_14
-rolling_std_14
-rolling_mean_28
-rolling_std_28
-rolling_slope_14
-```
-
-The last twelve are the numerical feature order. Calendar phase refers to the
-first target day t=o+1, Monday=0 through Sunday=6. Lags are y_o, y_(o-6) and
-y_(o-13). Rolling mean/sample std (`ddof=1`) and oldest-to-newest fourteen-day
-slope end at o, exactly as defined in the feature contract.
-
-`Date` is alignment/calendar construction only; raw `Units_Sold` supplies history
-and separate labels. The eleven other raw fields remain excluded forecasting
-predictors: `Supplier_ID`, `Region`, `Inventory_Level`, `Supplier_Lead_Time_Days`,
-`Reorder_Point`, `Order_Quantity`, `Unit_Cost`, `Unit_Price`, `Promotion_Flag`,
-`Stockout_Flag`, `Demand_Forecast`. No raw weekday, month/quarter, lag_28, median,
-interaction or other additional predictor is permitted. No source forecast,
-future operational value, label or retrospective error enters a predictor matrix.
+For h=1 this is next-day demand; h=7/14/28 are cumulative totals, not a daily path or recursive forecast. The fourteen conceptual predictors, exact order, formulas and physical representations are defined once in the [feature contract](forecasting-feature-engineering.md#3-final-ordered-feature-contract). All models/horizons receive that information. Calendar phase refers to the first target day o+1 and all demand history ends at o. No source forecast, future operational value, target or retrospective error enters a predictor matrix.
 
 ## 3. Temporal boundaries
 
@@ -332,7 +221,7 @@ best-model truncation is permitted. Requested and effective iteration/tree count
 must match the canonical 100 or 300 value. Record both counts and report/fail an
 unexpected mismatch instead of silently shortening the budget or fabricating
 extra trees. The parameter layer alone is not a fit-time stopping guard; the
-future runner must enforce these restrictions.
+runner enforces these restrictions.
 
 Training uses library-specific squared-error regression formulations. These are
 not identical internal implementations, and their losses do not replace WAPE
@@ -370,8 +259,8 @@ horizon/fold remain part of every composite key, so shared IDs do not collide.
 DR-013 records Python **3.12.3** and the pinned, import/dependency-verified
 versions `xgboost==3.4.1`, `lightgbm==4.7.0`, `catboost==1.2.10` and
 `scikit-learn==1.9.1`. scikit-learn supplies supportive Ridge/Random Forest and
-preprocessing utilities. Verify and record the actual versions/builds for a
-later authorised run; a mismatch requires review, not silent pin changes.
+preprocessing utilities. Verify and record the actual versions/builds for any
+separately authorised run; a mismatch requires review, not silent pin changes.
 Import success and `pip check` are not training, experimental validation,
 scientific evidence or execution approval.
 
@@ -387,21 +276,12 @@ preserved. The project owner has approved the following fixed execution controls
 | Experiment orchestration | `worker_count=1`; execute fits sequentially |
 
 These are runtime controls, not tuning dimensions. No new Ridge hyperparameter
-or solver choice is introduced. The current parameter declarations omit these
-thread settings; the later accepted runner must add the exact controls above,
-preserve the existing settings and verify effective single-thread execution.
-This document records the policy without modifying source code or claiming that
-thread enforcement is already implemented. Do not rely on automatic library
-thread counts or infer execution authority from this approval.
+or solver choice is introduced. The implemented parameter declarations and runtime enforce these controls; they are not search dimensions or execution permission.
 
 Before an authorised run, record the frozen thread mappings/counts, worker count,
 seed mappings and shared execution environment/hardware. Verify the complete
 effective recipe against the pinned libraries, then capture requested/effective
-parameters, defaults, devices and determinism controls in run metadata. DR-013
-specifically requires rechecking the earlier LightGBM API evidence (4.6.0) against
-the pinned 4.7.0 version before execution. Capturing defaults and verifying runtime
-behaviour remain preflight requirements; they do not reopen the approved numeric
-thread policy. Fixed seeds do not guarantee cross-library bitwise equality.
+parameters, defaults, devices and determinism controls in run metadata. Requested/effective controls and inherited defaults are retained in metadata. Fixed seeds do not guarantee cross-library bitwise equality.
 
 ## 8. Metric formulas and aggregation
 
@@ -466,8 +346,7 @@ silently use MAE, complexity or runtime to break an exact WAPE tie.
 
 Ridge and Random Forest have one fixed configuration, so there is no supportive
 configuration search/selection. Their evidence is contextual and cannot determine
-RQ2. Simple baselines also remain untuned. A downstream deployment-selection
-policy is not approved by the primary comparison.
+RQ2. Simple baselines also remain untuned. The separate DR-014 producer decision is frozen before final evaluation; it does not change the primary comparison.
 
 The RQ2 and subordinate hypotheses remain exactly those in DR-013. For each
 horizon independently, compare the three primary implementations descriptively
@@ -518,10 +397,8 @@ all four folds and the same metrics; they have no learned preprocessing, tuning
 or configuration-selection search.
 
 Both baselines are approved for all horizons 1/7/14/28 and remain contextual
-only: they do not enter the matched primary grid or determine RQ2. Their previous
-28-day approval-pending/excluded status is resolved by the project owner's
-explicit decision recorded here. Formula approval does not authorise execution;
-Gate 4 still requires a specific run and scope manifest, and no baseline may be
+only: they do not enter the matched primary grid or determine RQ2.  Formula approval does not authorise execution;
+Validation execution still requires specific run authorization and a scope manifest, and no baseline may be
 silently omitted or executed outside that scope. Improvement over a baseline
 may be claimed only using actually executed, authorised comparable evidence.
 
@@ -559,50 +436,15 @@ demand-regime or downstream inventory method is introduced here.
 
 ## 12. Final-evaluation protection and refit policy
 
-Validation-stage input is restricted to 2024-01-01 through 2024-12-02 before
-feature construction, demand validation, eligibility analysis or input-view
-fingerprinting. Fold operations additionally restrict to their own intervals.
-Final-period demand must not enter validation fitting, preprocessing, debugging
-based on forecast performance, feature/model/configuration selection, search-space
-changes or protocol revision in response to scores. Do not profile or
-fingerprint final outcomes as part of validation metadata. Reading dates to isolate
-permitted rows is not authorisation to evaluate outcomes outside that scope.
+Validation input is restricted to 2024-01-01 through 2024-12-02 before feature construction, demand validation, eligibility analysis or input-view fingerprinting, with further fold-specific restrictions. Reserved outcomes cannot inform features, fitting, vocabulary/scaling, debugging based on performance, selection, grid changes or revised scientific decisions.
 
-Before final evaluation, freeze human-reviewed validation configurations and
-model choices by horizon, any approved baseline policy, this protocol and the
-accepted implementation. Gate 6 requires a separately authorised final run
-manifest naming the models/horizons, selected configurations and approved
-fitting policy. Synthetic/static implementation diagnostics may precede that
-gate; actual final-window performance cannot be used to debug or redesign it.
+The previously deferred final-refit policy was resolved by explicit owner approval in [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md#final-refit-and-preprocessing-policy). Fit new estimators and preprocessing for all twenty learned candidates on the unchanged horizon-specific eligible population using history January 1 through December 2. Every label must end by December 2. Do not reuse or continue a Fold 4 estimator or preprocessing state.
 
-**Final estimator refit and preprocessing policy are explicitly deferred to
-Gate 6. This does not block validation-protocol approval/freeze at Gate 1 or
-separately authorised validation.** The
-current decisions define folds, complete-label eligibility and the December 2
-final origin, but do not approve a final fitting population or reuse/refit rule.
-The merged configuration/preprocessing modules and their tests do not supply
-that approval. No historical Issue #52 policy, fold-4 fitted estimator or implicit
-all-history refit may be assumed authoritative.
+The final scope contains twelve frozen primary candidates, eight fixed supportive candidates and eight baseline evaluations. The common December 2-origin vector predicts targets ending December 3/9/16/30. Persist and verify all 28 candidates' predictions before revealing any reserved outcome; preserve them unchanged for scoring. Runtime ordering and failure behavior are in [runner operations](forecasting-runner.md#separate-final-runtime-and-predict-before-reveal).
 
-Before Gate 6, human approval must explicitly specify the final training dates
-and eligible labelled population separately by horizon; whether the frozen
-configuration is newly fitted or an identified accepted estimator is reused;
-and whether category vocabularies/Ridge scaling state are newly fitted or which
-identified fitted states are reused. The chosen policy must comply with Section 4,
-use no outcome after December 2, and preserve common primary representation,
-unknown-ID rejection and exact requested iterations without a new search.
-Do not choose a final refit/preprocessing policy without separate Gate 6 approval.
+The completed final evaluation does not reopen selection. No final-result-driven reselection, tuning, substituted candidate or performance retry is permitted. Any verified implementation-defect correction requires separate explicit human authorization with unchanged frozen scientific scope and preserved failed evidence.
 
-Only after that decision and separate final-run authorisation may the runner
-construct the common December 2-origin vector (first target day December 3),
-apply the approved fitted preprocessing and predict the authorised frozen
-candidates. Direct targets end December 3/9/16/30 for horizons 1/7/14/28.
-Final estimator and preprocessing fitting remain blocked until this policy is
-approved, even if validation has already completed.
-
-All final reporting must repeat the earlier Dec 3–16 validation exposure and
-full-year EDA exposure. Reserved from subsequent selection is not historically
-fully unseen. Final evidence must not feed back into accepted decisions.
+December 3–16 had earlier validation exposure and full-year EDA inspected the interval. The first final execution also accessed outcomes before failing integrity completion. The corrected final run kept the frozen scope. [Final limitations](forecasting-final-evaluation.md#9-limitations) disclose these boundaries; reserved from subsequent selection does not mean historically fully unseen.
 
 ## 13. Machine-readable reproducibility metadata
 
@@ -610,7 +452,7 @@ fully unseen. Final evidence must not feed back into accepted decisions.
 Persist preflight metadata before computation and record completion/failure
 without overwriting another run. Its `artifact_manifest` contains receipts;
 the artifact-side `run_manifest.json` is the sole completion authority and is
-written last, as specified in [the Phase 5 contract](#phase-5-storage-contract). The following keys/groups are required:
+written last, as specified in [the storage policy](artifact-storage-policy.md#version-completion-and-archival-discipline). The following keys/groups are required:
 
 | Group | Required machine-readable keys |
 |---|---|
@@ -682,18 +524,17 @@ no full source row or future operational predictor is included.
 
 ## 15. Stable output artifacts
 
-Phase 5 uses `artifacts/forecasting/<run_id>/` for machine-readable evidence and
+Run storage uses `artifacts/forecasting/<run_id>/` for machine-readable evidence and
 the sole completion authority, `run_manifest.json`, written last.
 Every successful learned model, descriptor, fitted preprocessing state and replay
 input belongs in `models/forecasting/<run_id>/`. The generated comparison belongs
-in `reports/forecasting/drafts/<run_id>/comparison.md` and remains pending human
-review. Later reviewed findings use `reports/forecasting/<run_id>.md` under the
-[reporting contract](../reports/README.md). Completed evidence across these owners
+in `reports/forecasting/<run_id>/comparison.md` and remains pending human
+review. Current reviewed findings are consolidated in [final evaluation](forecasting-final-evaluation.md); optional supplementary reports follow the [reporting contract](../reports/README.md). Completed evidence across these owners
 is immutable; never overwrite another run or relabel historical evidence.
 
-The implemented [Phase 5 contract](#phase-5-storage-contract) uses manifest contract
+The implemented [storage policy](artifact-storage-policy.md) uses manifest contract
 version 2 and model descriptor contract version 2. All-model persistence/replay
-continues; selective retention/pruning is deferred to Phase 6. Scientific table
+continues; selective retention/pruning is subject to a separately approved retention policy. Scientific table
 schemas below remain unchanged. No full raw/processed dataset or training matrix
 is copied into run storage. `data/processed/...` ownership, approved Phase 4
 handoffs and `data/processed/forecasting/validation_authorization.json` remain
@@ -707,7 +548,7 @@ unchanged. This documentation authorizes no new exports or protected outcome acc
 | `selected_configurations.json` | Primary selections/ties and human freeze references, fixed supportive declarations, and explicit baseline policies/exclusions |
 | `predictions.csv` | Section 14 keyed pair-level audit records |
 | `eligibility_counts.csv` | Per-pair history/label/intersection and exclusion diagnostics |
-| `comparison.md` | Generated evidence summary at `reports/forecasting/drafts/<run_id>/comparison.md`: separate horizon/role tables, magnitude/direction/fold-consistency discussion, approval gaps and final-exposure disclosure; pending human review |
+| `comparison.md` | Generated evidence summary at `reports/forecasting/<run_id>/comparison.md`: separate horizon/role tables, magnitude/direction/fold-consistency discussion, approval gaps and final-exposure disclosure; pending human review |
 
 `fold_metrics.csv` required column order:
 
@@ -777,251 +618,37 @@ decisions remain explicit. Generated comparison text alone does not meet human
 review requirements or authorize publication. Record the reviewed handoff in the
 [progress log](research-progress.md), linking actual review evidence.
 
-## 16. Experiment-stage gates
+## 16. Human approval boundaries
 
-Historical approval-control labels from the frozen protocol are retained below.
-The human controls remain required. Current Phase 5 operations use human review,
-implementation acceptance, explicit run authorization, selection freeze and
-reserved final evaluation blocked; these terms do not grant or remove approval.
-See [the current storage contract](#phase-5-storage-contract).
+These remain distinct human controls; completed approval for one run does not authorize another:
 
-| Gate | Required explicit human control | Authority granted |
+| Step | Human control | Recorded current state |
 |---|---|---|
-| 1 | **Complete:** project owner reviewed and explicitly approved/froze the full validation protocol on 2026-09-29; approval reference is recorded above | Validation-protocol freeze only; experiment execution NOT AUTHORISED; final refit deferred to Gate 6 |
-| 2 | Separately authorize applicable estimator/metrics/baseline/runner implementation or architecture revision against this protocol | Implementation work; no fitting/tuning/scoring |
-| 3 | Review relevant test evidence and accept the complete runner/pipeline | Full implementation acceptance; no experiment execution |
-| 4 | Specifically authorise the validation run and primary/supportive/baseline scope manifest; verify the frozen single-thread policy and complete runtime recipe | Only that validation run; no final evaluation |
-| 5 | Review validation evidence and freeze primary configurations/model choices by horizon and baseline policy | Selection freeze; no final evaluation |
-| 6 | Approve final estimator/preprocessing refit policy and specifically authorise final evaluation | Only the named final run/frozen scope |
+| 1 | Review/freeze the full validation protocol and exact feature contract | Owner-approved/frozen |
+| 2 | Authorize implementation against those contracts | Implemented |
+| 3 | Review tests and accept the runtime | Accepted by the owner |
+| 4 | Specifically authorize the exact validation run/scope | Retained validation-20261002-01 completed |
+| 5 | Review validation and freeze configurations/producer decisions | DR-014 approved before final evaluation |
+| 6 | Approve final refit policy and the exact final run | DR-014 policy approved; final-20261003-02 completed and integrity verified, as confirmed by the owner |
 
-Issue #68 alignment and the subsequent runner are implemented; PR #90 merged
-Issue #89 orchestration. The owner confirms a validation run occurred. Its retained
-authorization record and unavailable machine bundle are distinguished in the
-[methodology revision](forecasting-methodology-revision.md). No Gate 5 selection
-freeze or Gate 6 approval is inferred from execution, generated selections or merge.
+Generated scores do not themselves establish acceptance or authorize fitting. No pending scientific final-refit decision remains for the completed forecasting study. Downstream inventory-risk, replenishment, uncertainty, human-review and integration approvals remain separate. See [AGENTS.md](../AGENTS.md) Sections 17–19 and [runner operations](forecasting-runner.md) for execution controls.
 
-The gates above remain controls for each applicable revision/run. The completed
-Gate 1 freeze does not authorize future execution. Storage/retention migration
-requires implementation acceptance and a new source/protocol-bound specific
-record; past authorization does not transfer. Final refit/preprocessing remains
-deferred to Gate 6 under the historical labels above. See runner operations for
-the implemented Phase 5 storage contract.
+## 17. Historical provenance and exposure
 
-## 17. Issue #52 relationship and historical provenance
+The earlier study used 1/7/14-day horizons, 14-day validation windows and a different predictor set. Those results are historical and must not be relabelled as the baseline or evidence for the revised study. Its December 3–16 validation exposure and full-year EDA exposure remain scientifically material and are disclosed in [final limitations](forecasting-final-evaluation.md#9-limitations).
 
-[The original Issue #52 protocol](issue-52-forecasting-protocol.md), its outputs
-and earlier runtime/tie rules remain unchanged historical provenance only. Its
-thirteen numerical columns, 1/7/14-day scope, fourteen-day windows, old dates,
-approval and results do not control or constitute evidence for the future matched
-experiment. Neither archived first-grid tie handling nor single-thread/SVD Ridge
-choices transfer into this protocol. Current supportive Ridge uses the approved
-`solver="auto"` configuration in DR-013.
-
-Future experiment work is controlled by this human-approved/frozen protocol,
-DR-013, the explicit human decisions recorded here and separate implementation/run
-gates, regardless of which GitHub issue
-tracks that work. The historical reproduction command references absent source;
-compiled caches are not a runnable source archive. Do not recreate its results
-or relabel them as the revised study.
-
-The [methodology revision record](forecasting-methodology-revision.md) preserves
-that history and prior final-period exposure. Historical output references remain
-provenance; local availability must be verified rather than inferred. No old score selects the current features, grid or protocol.
-Issue #94 reconciles active documentation, not GitHub issue text or original
-historical records, and authorizes no experiment.
+Selected validation predictions are out of sample for fitting but participated in selection. Overlapping historical labels and shared expanding histories make the evidence dependent. No formal significance procedure is part of this experiment.
 
 ## 18. Human decision record and validation-protocol finalisation
 
-The project owner explicitly approved the following decisions on 2026-09-29 in
-the earlier Issue #65 decision instruction. This record resolves the corresponding
-pending items in the reviewed repository; older pending wording in DR-007/DR-013 does not
-override these newer explicit human decisions. Those files remain unchanged.
+The owner's 2026-09-29 protocol decisions resolved these policies; later final-refit approval is recorded in DR-014:
 
-| Decision | Approved policy | Protocol section / status |
+| Decision | Approved policy | Authority |
 |---|---|---|
-| Exact configuration ties within a primary model/horizon | Preserve all tied canonical IDs; use the lowest GBM ID solely as the deterministic administrative representative. Canonical order implies no scientific superiority. | Section 9; resolved |
-| Exact ties between primary model leaders | Report all tied models as ties by horizon; no forced single overall winner. | Sections 9, 11 and 15; resolved |
-| Single-thread execution | XGBoost `n_jobs=1`; LightGBM `n_jobs=1`; CatBoost `thread_count=1`; Random Forest `n_jobs=1`; experiment `worker_count=1`. Preserve CPU, seeds and all existing runtime controls. | Section 7; resolved |
-| 28-day simple baselines | Naive = `28 * y_o`; Seasonal Naive = `4 * S_o`, using the latest complete seven-day sum. Untuned and contextual only. | Section 10; resolved |
-| Final estimator refit/preprocessing timing | Explicitly defer the final fitting population and estimator/category/scaler reuse-versus-refit decision to Gate 6. It does not block validation-protocol freeze. | Section 12; deferral approved, final policy undecided |
+| Exact within-model/horizon configuration ties | Preserve every tied ID; lowest GBM ID is an administrative representative only | Section 9 |
+| Exact primary-model ties | Report all tied models by horizon; force no overall winner | Sections 9, 11 and 15 |
+| Single-thread execution | XGBoost/LightGBM/Random Forest n_jobs=1; CatBoost thread_count=1; orchestration worker_count=1 | Section 7 |
+| 28-day baselines | Naive=28*y_o; Seasonal Naive=4*S_o | Section 10 |
+| Final estimator/preprocessing refit | Fresh fits on eligible history through December 2, without reserved outcomes | DR-014 and Section 12 |
 
-**Gate 1 validation-protocol review, approval and freeze are complete.** The
-project owner's explicit full-protocol approval is recorded at the start of this
-document. The sole deferred policy is final estimator refit/preprocessing:
-human approval must specify final training dates/eligible populations by horizon
-and estimator/category/scaler reuse versus refit, using no outcome after
-December 2. This blocks only Gate 6 final fitting/evaluation.
-
-The approved primary/supportive roles, canonical grid, 1,152 planned primary
-fits, common primary representation, versions, existing model controls and new
-single-thread settings remain fixed. Capturing inherited defaults, enforcing the
-thread controls in each accepted runner revision and verifying the complete pinned-version
-recipe are implementation/preflight requirements, not unresolved Gate 1 research
-choices or permission to execute experiments.
-
-The substantive Issue #65 protocol requirements are now documented: exact
-training-row eligibility, fixed origins, current preprocessing, matched search,
-metric formulas/aggregation, horizon-specific selection and approved exact-tie
-handling, all baseline formulas, reproducibility and artifact schemas, final
-protection, execution gates and historical provenance. **The validation protocol
-is human-approved/frozen at Gate 1.** The project owner's explicit review and
-approval satisfy Issue #65's human-reviewed/frozen protocol acceptance criterion.
-Recording this approval changes no substantive research decision and does not
-approve downstream implementation, model selection or experiment execution.
-
-Final refit/preprocessing remains explicitly deferred to Gate 6 and does not
-affect the completed Gate 1 freeze. Experiment execution remains
-**NOT AUTHORISED** despite protocol approval; validation and final evaluation
-retain their separate specific-run gates.
-
-The runner implementation was merged through PR #90; future architecture changes
-still require test acceptance and new specific-run authorization. Selection freeze
-and final-run authorization remain separate gates. Downstream inventory-risk, replenishment, uncertainty and human-
-review methodology stay outside this forecasting-protocol task. No tests, model
-fits, scores or experiments are executed by this document update.
-
-## Issue #89 operational/artifact amendment — historical accepted runtime contract
-
-Historical operational snapshot: the original amendment below is preserved as provenance. Current Phase 5 paths and contract versions are documented in [the Phase 5 storage contract](#phase-5-storage-contract); all-model persistence/replay remains operative.
-
-This amendment records the all-fit/single-bundle contract implemented in PR #90.
-Its original operational requirements below are preserved as provenance and
-unchanged runtime behavior. Issue #94 supersedes its storage direction for future
-implementation; it does not authorize pruning historical bundles or executing the
-legacy layout.
-
-This amendment implements the project owner's Issue #89 operational instructions. It changes no grain, features, labels, horizons, folds, grid, model settings, baseline/metric formulas, tie semantics or final-stage research policy. Scientific schema remains issue-65-v2 and protocol version remains issue-65-matched-frozen-1; the full protocol byte hash binds this amendment.
-
-Normal execution is `python -m src.forecasting.experiment` from the repository root. Fixed pathlib locations resolve dataset and reviewed execution record; the exact approved run ID is resolved, not generated. No approvals or hashes are manufactured/refreshed. Existing directories are consumed and cannot be overwritten/resumed. See [runner operations](forecasting-runner.md).
-
-Completion requires readback schema/count/key/provenance checks, reconciliation using existing scientific functions, hashes and saved-model replay. All successful learned validation fits are retained in native XGBoost/LightGBM/CatBoost formats or trusted version-bound joblib, with fitted preprocessing and derived origin predictors. They are validation candidates, not final/deployment models. Baselines retain formula provenance. No raw/full dataset or training matrix is copied. This explicitly extends the earlier seven-artifact/no-model-binary operational policy; scientific columns and selection meaning remain unchanged. Storage capacity must be reviewed before execution.
-
-Authorization/model/state files and finalized logs are hashed by run_manifest.json (version 1). Lifecycle is preflight, running, finalizing, verified_completed; failures are failed/interrupted. The manifest is published LAST after verification, log closure and final metadata. Metadata alone is not completion evidence. Failed, partial, missing or corrupt bundles are rejected by completed-evidence consumers. Recovery preserves the original exception.
-
-Source/tests, direct joblib/threadpoolctl pins and this amendment change approval-bound hashes. Earlier authorization cannot authorize changed code without renewed human review and a matching reviewed record. Writing this amendment neither executes nor approves an experiment. Gate 6 remains blocked.
-
-## Issue #94 operational alignment — implementation boundary
-
-Historical implementation boundary: the text below records the Issue #94 state before Phase 5 migration. [The Phase 5 storage contract](#phase-5-storage-contract) supersedes its migration-pending statements; selective retention/pruning remains deferred to Phase 6.
-
-This operational amendment connects merged Issues #92/#93 without changing
-Sections 2–12 scientific definitions, horizons, folds, metrics, model roles,
-selection/tie rules or final-evaluation protection. The scientific protocol version
-remains `issue-65-matched-frozen-1`; that identifier alone is insufficient to
-identify this operational revision. Record Issue #94 review/acceptance, the full
-protocol byte hash and applicable storage/retention/schema versions. No approval
-reference or new operational schema number is invented here. Existing authorization
-hashes are historical and must not be refreshed automatically.
-
-- **Lifecycle/storage:** Follow [shared data foundation](workflows/shared-data-foundation.md)
-  for chronological scope before fold/origin-specific features, separate targets,
-  training-only preprocessing and model-ready matrices. Section 15 and the
-  [storage policy](artifact-storage-policy.md) own distinct evidence/model/report
-  locations. No random split, global preprocessing fit or silent repair is permitted.
-- **Candidate retention:** Retain complete configuration, metric, prediction,
-  eligibility, provenance and selection/tie evidence for every evaluated candidate.
-  Reusable selected bundles include the exact fitted preprocessing and replay inputs;
-  retained validation fits are not final/deployment models. Unselected binaries may
-  be temporary only after an exact human-approved retention set identifies selected
-  fold models, ties, supportive models and audit exceptions. The set and version
-  are still unresolved: all-fit persistence/replay remains the compatibility
-  requirement until that approval and accepted implementation. No current binary
-  pruning is authorized. Historical completed bundles remain immutable.
-- **Metadata/integrity:** Extend Section 13 operational records, through a reviewed
-  schema amendment, with candidate retention status/reason, policy version,
-  selection basis and model/state paths/hashes. A cross-location completion manifest
-  must cover all retained evidence and model/preprocessor dependencies with confined,
-  unambiguous references. Distinguish fit/evaluation counts from retained-model and
-  replay counts. Verify all candidate tables/metrics/configurations/predictions;
-  replay every retained model with exact saved state and origin inputs without
-  refitting. Missing retained dependencies or discarded scientific evidence fail
-  completion. Explicitly record not-retained candidates; absence must not masquerade
-  as failed fitting. Until accepted migration, verification still expects every
-  successful learned fit as in the legacy implementation.
-- **Completion/failure:** Retain authorization, finalized logs and manifest-last
-  verification. Temporary candidates must be accounted for before final completion
-  under the approved retention set. Never rewrite a completed manifest to conceal
-  pruning; archival derivatives identify parent evidence and omissions. Failed or
-  interrupted evidence is diagnostic only, never a valid selection/comparison.
-- **Reporting/review:** A generated comparison is machine evidence. Human-readable
-  findings follow [reports/README.md](../reports/README.md), linking exact completed
-  evidence, dataset/view/code/protocol/environment identities, fold/aggregate
-  comparisons, selection status, limitations and prior-exposure disclosure. Human
-  review, configuration freeze and final authorization remain separate. Record
-  material milestones in [research-progress.md](research-progress.md) without
-  duplicating meeting minutes or Decision Records.
-
-The runner still writes the removed legacy location and retains/replays all fits.
-Do not execute it to recreate that architecture. A separate implementation task
-must update paths, metadata/model persistence, cross-location integrity and tests,
-resolve the exact retention set/schema and persisted-handoff permissions, obtain
-human acceptance and issue new matching specific authorization. Documentation
-acceptance alone does not complete that work, approve experiments or unblock Gate 6.
-
-## Phase 5 storage contract
-
-Issues #111/#116 document the implemented storage migration only. The scientific
-schema remains `issue-65-v2` and the protocol version remains
-`issue-65-matched-frozen-1`; targets, features, folds, model parameters,
-metrics, selection and preprocessing behavior are unchanged.
-
-```text
-artifacts/forecasting/<run_id>/
-  machine-readable evidence, authorization snapshot, logs and diagnostics
-  run_manifest.json
-
-models/forecasting/<run_id>/
-  persisted models and descriptors
-  fitted preprocessing state and origin replay inputs
-
-reports/forecasting/drafts/<run_id>/
-  comparison.md
-```
-
-`ArtifactWriter.directory` remains the artifact-run anchor. `RepositoryLayout`
-resolves model and draft locations from that anchor with the same exact run ID.
-Source and approved processed/model-ready handoffs keep their
-`data/processed/...` ownership, including the Phase 4 lifecycle. The reviewed
-authorization-record location remains
-`data/processed/forecasting/validation_authorization.json`.
-
-Manifest contract version 2 (`manifest_version: 2`) records repository-relative
-`path`, explicit `owner` (`artifacts`, `models`, `reports`) and `sha256` for
-each finalized run-owned file. The sole completion authority is
-`artifacts/forecasting/<run_id>/run_manifest.json`, written last after scientific
-reconciliation, all-model replay, log closure and final metadata. It covers all
-machine-readable evidence, model/descriptor/preprocessing/replay dependencies
-and the generated comparison; it does not hash itself. Metadata receipts,
-model-side files and draft reports do not establish completion.
-
-Model descriptor contract version 2 (`descriptor_version: 2`) binds
-repository-relative model, preprocessing and origin-input references under the
-same `models/forecasting/<run_id>/`. Descriptors link source provenance back to
-artifact-side metadata. Exact candidate/family/horizon/configuration/fold ownership,
-hashes, saved preprocessing and every persisted model's prediction replay are
-verified without refitting. Native serialization formats and fitted-state format
-remain unchanged. Historical version-1 compatibility/migration is not implemented.
-
-Phase 5 retains and replays every successful learned validation fit, including
-unselected and tied configurations; baseline formula provenance remains unchanged.
-All candidate configuration, metric, prediction, eligibility and selection
-evidence remains retained. Selective model retention/pruning is deferred to
-Phase 6 and requires separate human approval and implementation.
-
-Completed consumers use `verify_completed` with the canonical artifact-run anchor.
-Missing, extra, corrupted, redirected, cross-run or unfinished run-owned evidence
-blocks completed consumption. Failed/interrupted runs publish no completion
-manifest. Partial evidence remains in its owning directories; there is no
-automatic cleanup, retry, resume or reuse of a consumed run ID.
-
-The generated `comparison.md` is ignored draft evidence, pending human review.
-Its evidence links resolve from the draft directory to the artifact-run anchor.
-Later reviewed research reporting and figures follow
-[reports/README.md](../reports/README.md) in separate locations. Completion does
-not establish human review, configuration freeze, publication or final-run
-authorization. Reserved final evaluation remains blocked.
-
-This documentation changes approval-bound protocol bytes. A future run requires
-human implementation acceptance and a matching specific run authorization; no
-approval record or hash is generated/refreshed here. The earlier operational
-amendments remain historical provenance and authorize no experiment or cleanup.
+These recorded approvals do not grant standing execution authority. The matched grid, deterministic ordering, targets, features, metrics and evidence roles remain frozen. Final outcomes do not amend them. Scientific configuration/producer decisions remain exactly those in DR-014.

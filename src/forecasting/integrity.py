@@ -36,21 +36,33 @@ class IntegrityError(ValueError):
     """Evidence must not be consumed as completed research output."""
 
 
-def _owner_directories(directory: Path) -> dict[str, Path]:
+def _owner_directories(directory: Path, metadata: dict[str, Any] | None = None) -> dict[str, Path]:
     layout = RepositoryLayout.from_artifact_directory(directory)
+    if metadata is None:
+        metadata_path = layout._owned_path(directory / "run_metadata.json")
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8")) if metadata_path.exists() else {}
+    reports = [r["artifact_path"] for r in metadata.get("artifact_manifest", [])
+               if r["artifact_path"].endswith("/comparison.md")]
+    if len(reports) > 1:
+        raise IntegrityError("Multiple comparison receipts are not allowed.")
+    try:
+        report = layout.comparison_path(directory.name, retained_reference=reports[0] if reports else None)
+    except ValueError as exc:
+        raise IntegrityError("Artifact receipts differ from run-owned evidence.") from exc
     return {"artifacts": layout.run_directory(directory.name),
             "models": layout.model_run_directory(directory.name),
-            "reports": layout.draft_report_directory(directory.name)}
+            "reports": report.parent}
 
 
-def _evidence_path(directory: Path, owner: str, relative: str) -> Path:
+def _evidence_path(directory: Path, owner: str, relative: str, *, report_directory: Path | None = None) -> Path:
     """Resolve only normalized repository references within the declared run owner."""
     layout = RepositoryLayout.from_artifact_directory(directory)
     reference = Path(relative)
     if (reference.is_absolute() or ".." in reference.parts or "\\" in relative
             or reference.as_posix() != relative):
         raise IntegrityError("Evidence reference escapes its declared run owner.")
-    roots = _owner_directories(directory)
+    roots = {"artifacts": directory, "models": layout.model_run_directory(directory.name),
+             "reports": report_directory} if report_directory is not None else _owner_directories(directory)
     if owner not in roots:
         raise IntegrityError("Unknown evidence owner.")
     path = layout._owned_path(layout.repository_path(relative))
@@ -61,7 +73,7 @@ def _evidence_path(directory: Path, owner: str, relative: str) -> Path:
             "authorization.json", "run.log", "diagnostics.json")):
         raise IntegrityError("Reference is not a declared machine-readable artifact.")
     if owner == "reports" and path != roots[owner] / "comparison.md":
-        raise IntegrityError("Reference is not the run's draft comparison.")
+        raise IntegrityError("Reference is not the run's comparison.")
     return path
 
 
@@ -87,7 +99,7 @@ def _run_files(directory: Path, metadata: dict[str, Any], *, include_report: boo
     layout = RepositoryLayout.from_artifact_directory(directory)
     if metadata["run_id"] != directory.name:
         raise IntegrityError("Run identity differs from the artifact anchor.")
-    roots = _owner_directories(directory)
+    roots = _owner_directories(directory, metadata)
     expected = {directory / name: "artifacts" for name in ARTIFACT_NAMES if name != "comparison.md"}
     expected.update({directory / "authorization.json": "artifacts", directory / "run.log": "artifacts"})
     diagnostics = layout._owned_path(directory / "diagnostics.json")
@@ -130,7 +142,7 @@ def _run_files(directory: Path, metadata: dict[str, Any], *, include_report: boo
 
 def _verify_artifact_receipts(directory: Path, metadata: dict[str, Any]) -> None:
     layout = RepositoryLayout.from_artifact_directory(directory)
-    roots = _owner_directories(directory)
+    roots = _owner_directories(directory, metadata)
     diagnostics = directory / "diagnostics.json"
     expected = {}
     for name in ARTIFACT_NAMES:
@@ -242,7 +254,7 @@ def verify_scientific(directory: Path, *, include_report: bool = True) -> dict[s
             raise IntegrityError("Expected/completed counts differ from the approved plan.")
         for name in ARTIFACT_NAMES:
             if name != "comparison.md" or include_report:
-                path = (layout.draft_report_directory(directory.name) if name == "comparison.md" else directory) / name
+                path = (_owner_directories(directory, metadata)["reports"] if name == "comparison.md" else directory) / name
                 if not path.is_file():
                     raise IntegrityError(f"Required artifact missing: {name}.")
         tables = {name: read_csv(directory, name) for name in CSV_SCHEMAS}
@@ -405,7 +417,9 @@ def verify_completed(directory: Path) -> dict[str, Any]:
                 or manifest["completed_at_utc"] != metadata["completed_at_utc"]):
             raise IntegrityError("Completion manifest/metadata differs.")
         index = _index(manifest["artifacts"], ("path",))
-        references = {_evidence_path(directory, record["owner"], record["path"]): record for record in index.values()}
+        roots = _owner_directories(directory, metadata)
+        references = {_evidence_path(directory, record["owner"], record["path"],
+                                     report_directory=roots["reports"]): record for record in index.values()}
         files = _run_files(directory, metadata)
         if files != {path: record["owner"] for path, record in references.items()}:
             raise IntegrityError("Completion manifest file set differs.")

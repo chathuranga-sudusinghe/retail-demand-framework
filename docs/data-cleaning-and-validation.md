@@ -1,9 +1,7 @@
 # Data Cleaning and Validation Contract
 
-**Status:** Issue #99 shared cleaning implementation is merged. The Issue #102 Parquet handoff design is human-approved; its implementation remains under human review. No repair, dataset processing or experiment is authorized by creating this document.
+**Status:** Shared cleaning and the validated Parquet handoff are implemented and used by the completed forecasting preparation. This maintenance pass processes no source data.
 **Scope:** Raw source -> cleaned / validated representation.
-**Related implementation:** [Issue #99](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/99) (shared cleaning) and [Issue #102](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/102) (persisted validated handoff).
-**Parent architecture refactor:** [Issue #98](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/98).
 
 ## 1. Purpose and authority boundaries
 
@@ -16,11 +14,11 @@ This contract defines how source observations become a typed, keyed, ordered and
 | [Shared data foundation](workflows/shared-data-foundation.md) | Repository-wide representation lifecycle and chronological preparation order |
 | [Storage policy](artifact-storage-policy.md) | Locations, retention, immutability and archival boundaries |
 | [Feature contract](forecasting-feature-engineering.md) | Predictor definitions, temporal availability, completeness and preprocessing semantics |
-| [Protocol](protocol.md) | Authorized chronological windows, eligibility, evaluation/selection and experiment gates |
+| [Protocol](protocol.md) | Authorized chronological windows, eligibility, evaluation/selection and specific run authorization |
 | [Applied MLOps](workflows/applied-mlops.md) | Reproducibility, provenance, integrity and human-review workflow |
 | [Research design](research-design.md) and [Decision Records](decisions/README.md) | Research rationale and approved decisions |
 
-This document owns validation/parsing/sorting behavior and the validated-handoff evidence contract. [src/data/data_cleaning.py](../src/data/data_cleaning.py) is the authoritative reusable cleaning/validation implementation owner. [src/data/validated_handoff.py](../src/data/validated_handoff.py) delegates to it and owns persistence/orchestration only. `src/analysis/` owns descriptive research analysis only. Its modules consume a typed, validated shared DataFrame; retained command-line entry points delegate loading and validation to data_cleaning.py. No competing shared-source loader or validation implementation remains in those analysis modules. This does not replace dataset.md's quality requirements or change the frozen forecasting contract. Implementation acceptance and specific dataset preparation remain separate human-review gates.
+This document owns validation/parsing/sorting behavior and the validated-handoff evidence contract. [src/data/data_cleaning.py](../src/data/data_cleaning.py) is the authoritative reusable cleaning/validation implementation owner. [src/data/validated_handoff.py](../src/data/validated_handoff.py) delegates to it and owns persistence/orchestration only. `src/analysis/` owns descriptive research analysis only. Its modules consume a typed, validated shared DataFrame; retained command-line entry points delegate loading and validation to data_cleaning.py. No competing shared-source loader or validation implementation remains in those analysis modules. This does not replace dataset.md's quality requirements or change the frozen forecasting contract. Implementation acceptance and authorization for specific dataset preparation remain separate human approval boundaries.
 
 ## 2. Input contract
 
@@ -135,15 +133,15 @@ Fingerprints require a declared canonical ordering/schema. Serialization readbac
 
 ## 7. Chronological safety and model-ready boundaries
 
-The lifecycle arrow “raw -> validated” does not authorize inspecting all outcomes first. As in the [shared lifecycle](workflows/shared-data-foundation.md#leakage-safe-order), parse the date information needed to isolate permitted records before validating quantities/identities or collecting outcome-derived audits/fingerprints. The current forecasting implementation follows that scope-first rule. A persisted validated snapshot is purpose/scope-specific, not standing permission to consume every row.
+The lifecycle arrow “raw -> validated” does not authorize inspecting all outcomes first. As in the [shared lifecycle](workflows/shared-data-foundation.md#data-lifecycle-and-representation-contracts), parse the date information needed to isolate permitted records before validating quantities/identities or collecting outcome-derived audits/fingerprints. The current forecasting implementation follows that scope-first rule. A persisted validated snapshot is purpose/scope-specific, not standing permission to consume every row.
 
-A validated dataset does not authorize full-year feature engineering followed by splitting, access to reserved final outcomes, random train/test splitting or globally fitted preprocessing. Chronological windows, eligibility and final-evaluation protection remain in the protocol. Historical full-year EDA is a separately disclosed activity; this contract does not rerun it or erase prior exposure recorded in the [methodology revision](forecasting-methodology-revision.md).
+A validated dataset does not authorize full-year feature engineering followed by splitting, access to reserved final outcomes, random train/test splitting or globally fitted preprocessing. Chronological windows, eligibility and final-evaluation protection remain in the protocol. Historical full-year EDA is a separately disclosed activity; this contract does not rerun it or erase prior exposure recorded in the [final results and limitations](forecasting-final-evaluation.md#9-limitations).
 
 **Cleaned/validated dataset != feature-engineered dataset != model-ready matrix.**
 
 Validated data retain source observations. Engineered data contain origin-available conceptual predictors and separately identified targets. Model-ready matrices apply the correct training-fitted representation. Their formulas, eligibility and preprocessing are owned by the feature contract/protocol; their storage is owned by the storage policy. Passing source validation neither constructs targets nor certifies a model-ready population or authorizes fitting.
 
-## 8. Current implementation and Issue #102 handoff
+## 8. Current implementation and validated handoff
 
 | Existing implementation | Current behavior / boundary |
 |---|---|
@@ -155,19 +153,17 @@ Validated data retain source observations. Engineered data contain origin-availa
 | [features.py](../src/forecasting/features.py): prepare_demand | Validates keys/dates/observed demand, rejects duplicates/invalid quantities and sorts in memory. Missing demand is retained; daily-gap enforcement depends on the existing caller option |
 | [evaluation.py](../src/forecasting/evaluation.py): validation_view / prepare_fold | Isolates authorized records before demand checks/fingerprinting; applies fold coverage and separate feature/target eligibility. It does not persist a validated dataset |
 
-Existing runtime validation is implemented but primarily in memory. EDA/profile outputs are quality/descriptive evidence, not a persisted cleaned training dataset. Issue #102 adds the validated-handoff stage, tested with synthetic data only. It is not wired into the forecasting runner and has not processed the project dataset.
-
-Issue #99 shared cleaning and analysis separation are merged; Issue #102 persisted handoff implementation awaits human review. Forecasting orchestration and cross-location integrity integration remain later Issue #98 work. Reuse existing rules without broadening access or changing scientific eligibility. In particular, shared source auditing is stricter/wider than the forecasting demand projection; do not silently replace one with the other. Storage migration and selective model retention remain governed by their separate decisions.
+The validated handoff is implemented and the forecasting runtime consumes its named Parquet representation via authorized four-column projection and date filtering. EDA/profile outputs remain descriptive evidence, not training inputs. [Runner operations](forecasting-runner.md) owns commands; [storage policy](artifact-storage-policy.md) owns run persistence. Shared auditing preserves all fifteen fields and remains distinct from forecasting projection/eligibility.
 
 ## 9. Human review and remaining decisions
 
-Human review must accept this contract before treating it as the new authoritative validation baseline. Any future repair or observation-changing rule requires separate explicit approval; no repair rule is assumed missing and automatically filled in by implementation.
+Human review remains required for material amendments to this validated preparation contract. Any future repair or observation-changing rule requires separate explicit approval; no repair rule is assumed missing and automatically filled in by implementation.
 
 Before accepting or publishing a persisted project handoff, confirm authorized preparation scope, serialized schema/format/version and source lineage availability. The shared handoff preserves all fifteen fields; the four-column demand view is downstream. A forecasting-only validated view must be labelled accordingly; it must not be presented as a complete shared dataset. Additional anomaly thresholds, identifier mappings or missing-period handling require decisions only if proposed, not speculative defaults.
 
 Relevant component owners retain their existing analytical responsibilities. Contract acceptance, source-quality acceptance, source-code acceptance and specific experiment authorization are separate controls. Creating or reviewing this document does not authorize dataset processing, model training, final evaluation, cleanup or Git operations.
 
-## 10. Executable validated handoff — Issue #102
+## 10. Executable validated handoff
 
 One owner-triggered command performs loading, authorized date isolation, shared validation, accepted dataframe construction, audit generation, Parquet/JSON serialization, strict readback, hash verification and publication. This example is a command shape, not permission to process the project source:
 
@@ -191,4 +187,4 @@ Readback verifies declared physical/logical types, exact columns/order/index, da
 
 Staging is data/processed/interim/<preparation_id>/validated-handoff/. All stage files are verified before portable exclusive final-directory creation and exclusive file copying. Provenance is copied last as the completion record; completed publication is checked again. This is not an atomic directory rename or a power-loss durability guarantee. An interrupted final copy remains incomplete, fails readback and blocks reuse of that version pending human investigation. Cleanup removes only this attempt’s unpublished staging, never another attempt or a final version. Paths reject traversal and symlink redirection; the local filesystem is assumed trusted during execution, not adversarially mutated concurrently.
 
-No real source was prepared by this implementation. Legacy ignored EDA/profile outputs are untouched and are not inputs to this stage. Feature/target/model-ready/view persistence, forecasting integration, model retention and reports remain outside Issue #102.
+The completed project preparation does not authorize another source-processing operation. Descriptive outputs are not inputs to this stage. Feature/target/model-ready preparation and experiment evidence have their separate contracts in [features](forecasting-feature-engineering.md), [protocol](protocol.md) and [runner operations](forecasting-runner.md).

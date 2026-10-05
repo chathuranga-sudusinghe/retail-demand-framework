@@ -1,5 +1,7 @@
 # DR-009 — Gradient-Boosting Model Choice
 
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+
 **Status:** SUPERSEDED BY DR-013
 
 ## Current status and effect
@@ -20,8 +22,6 @@ DR-009 no longer selects the current boosting implementation. Its earlier select
 <summary>Show superseded historical DR-009 body</summary>
 
 # DR-009 — Gradient-Boosting Model Choice
-
-> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted
