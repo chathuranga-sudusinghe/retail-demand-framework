@@ -1,0 +1,38 @@
+name: CI Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    # Keep PR checks unconditional; skip only presentation docs on main pushes.
+    paths-ignore:
+      - README.md
+      - CONTRIBUTING.md
+      - "docs/literature/**/*.md"
+      - "docs/meetings/**/*.md"
+      - "docs/team/**/*.md"
+
+jobs:
+  tests:
+    name: Full test suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12.3"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: python -m pytest -q

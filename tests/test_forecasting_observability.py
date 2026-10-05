@@ -1,5 +1,6 @@
 """Deterministic operational/reporting checks with synthetic saved evidence only."""
-import importlib
+import subprocess
+import sys
 import json
 import logging
 from unittest.mock import Mock
@@ -98,19 +99,28 @@ def test_known_failure_reason_is_logged_explicitly_without_model_payload(tmp_pat
     assert "completed_fits=0/1" in text
 
 
-def test_module_imports_do_not_setup_logging_or_execute(monkeypatch, tmp_path):
-    from src.forecasting import experiment
-    constructor = Mock(side_effect=AssertionError("Import must not construct estimators"))
-    file_handler = Mock(side_effect=AssertionError("Import must not open logs"))
-    with monkeypatch.context() as patch:
-        patch.setattr("src.forecasting.models.construct_estimator", constructor)
-        patch.setattr(logging, "FileHandler", file_handler)
-        patch.chdir(tmp_path)
-        for module in (progress, reporting, experiment):
-            importlib.reload(module)
-    importlib.reload(experiment)  # Restore imported function bindings after the mock.
-    constructor.assert_not_called()
-    file_handler.assert_not_called()
+def test_module_imports_do_not_setup_logging_or_execute(tmp_path):
+    from src.forecasting.paths import REPOSITORY
+    # A fresh interpreter also checks first imports without rebinding shared classes.
+    code = f"""
+import sys
+sys.path.insert(0, {str(REPOSITORY)!r})
+import importlib
+import logging
+from pathlib import Path
+from unittest.mock import Mock, patch
+
+forbidden = Mock(side_effect=AssertionError("Import must not execute or write"))
+with patch("src.forecasting.models.construct_estimator", forbidden), \
+     patch.object(logging, "FileHandler", forbidden), \
+     patch.object(Path, "mkdir", forbidden), \
+     patch.object(Path, "write_text", forbidden), \
+     patch.object(Path, "write_bytes", forbidden):
+    for name in ("progress", "reporting", "authorization", "execution", "model_ready", "persistence", "orchestration", "experiment"):
+        importlib.import_module("src.forecasting." + name)
+forbidden.assert_not_called()
+"""
+    subprocess.run([sys.executable, "-c", code], cwd=tmp_path, check=True)
     assert list(tmp_path.iterdir()) == []
 
 
@@ -193,6 +203,12 @@ def test_report_required_summary_matrices_and_horizon_evidence(saved_evidence):
     assert "| xgboost | primary | GBM002 |" in text
     assert "| xgboost | GBM002 | 4 | 0.0123456789012345" in text
     assert "LightGBM configuration ties: none recorded." in text
+    saved_evidence.write_comparison(text)
+    draft = saved_evidence.layout.report_directory(saved_evidence.directory.name) / "comparison.md"
+    assert draft.read_text() == text
+    assert "pending human review" in text and "pending_human_review" in text
+    assert not (saved_evidence.directory / "comparison.md").exists()
+    assert not (saved_evidence.directory / "run_manifest.json").exists()
 
 
 def test_report_reads_artifacts_without_recalculation_or_changes(saved_evidence, monkeypatch):
@@ -203,9 +219,9 @@ def test_report_reads_artifacts_without_recalculation_or_changes(saved_evidence,
     monkeypatch.setattr(selection, "summarize_configurations", forbidden)
     monkeypatch.setattr(selection, "select_primary", forbidden)
     directory = saved_evidence.directory
-    before = {path.name: path.read_bytes() for path in directory.iterdir()}
+    before = {path: path.read_bytes() for path in saved_evidence.repository.rglob("*") if path.is_file()}
     text = reporting.comparison_text(directory, require_verified=False)
-    assert {path.name: path.read_bytes() for path in directory.iterdir()} == before
+    assert {path: path.read_bytes() for path in saved_evidence.repository.rglob("*") if path.is_file()} == before
     assert reporting.comparison_text(directory, require_verified=False) == text
     forbidden.assert_not_called()
     # Change a recorded display value, not a computed value: the report must follow the CSV.

@@ -1,6 +1,6 @@
 # DR-012 — Inventory-Risk and Replenishment Methodology
 
-> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
+> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
 **Date:** 2026-09-28
 **Status:** Proposed for group approval; implementation and the open decisions below remain pending.

@@ -1,303 +1,90 @@
 # Contributing Guide
 
-> **Current contribution guidance:** Four-member responsibilities are defined in the member overviews: Chathuranga (Research Team Lead & Forecasting), Didilani (Inventory Risk & Replenishment Analysis), Dewmi (Responsible Decision Support) and Tinosh (System Integration and Prototype Engineering). Git-changing commands below are examples for explicitly approved human workflow, not standing AI authorization. Preserve unrelated modifications; stage only reviewed files. Forecasting experiments require exactly Python 3.12.3 and a matching specific authorization.
+Work from an assigned Issue on a dedicated task branch in the existing repository. Keep the change reviewable, preserve unrelated work and obtain human review before acceptance. All Git-changing examples below require explicit human authorization when performed by an AI agent.
 
-## 1. Purpose
+## 1. One-time setup
 
-This guide explains how group members should contribute to the `retail-demand-framework` repository.
+You need repository access, Git, Python **3.12.3**, and the existing local repository. In WSL, keep the repository and its virtual environment on the Linux filesystem. Do not create a sibling copy or another worktree.
 
-The repository is shared by:
+From the repository root, after approval to prepare your environment:
 
-- Chathuranga Indrajith Sudusinghe
-- Didilani Prasadika Weerawickrama Pathinayaka
-- Haputhanthrige Dewmi Pramodya
-- Tinosh — System Integration and Prototype Engineering
+~~~bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+python -m pip check
+~~~
 
-All members have write access, but normal work must still follow the branch and Pull Request workflow.
+Confirm the exact Python patch version; a 3.12 interpreter is not automatically 3.12.3. Dependencies are pinned. Obtain the [dataset](docs/dataset.md) locally under data/raw/ only when your task requires it. The repository does not distribute it. Environment setup and data possession do not authorize preparation or experiments.
 
----
+## 2. Reading order and responsibility
 
-## 2. Golden rule
+Read [README](README.md), [AGENTS](AGENTS.md), [overview](docs/project-overview.md), [boundaries](docs/project-boundaries.md), [research design](docs/research-design.md), [dataset](docs/dataset.md), [references](docs/references.md), relevant [decisions](docs/decisions/README.md), your member overview/workflow, and the assigned Issue before implementation.
 
-**Do not work directly on `main`.**
+| Member | Overview | Workflow / review responsibility |
+|---|---|---|
+| Chathuranga | [Research Team Lead & Forecasting](docs/team/chathuranga/group-project-overview.md) | [Forecasting](docs/workflows/demand-forecasting.md); forecasting meaning and shared API architecture/integration review |
+| Didilani | [Inventory Risk & Replenishment](docs/team/didilani/group-project-overview.md) | [Inventory risk](docs/workflows/inventory-risk-analysis.md); rules, analytical meaning and business interpretation |
+| Dewmi | [Responsible Decision Support](docs/team/dewmi/group-project-overview.md) | [Responsible support](docs/workflows/responsible-decision-support.md); semantics, governance and human oversight |
+| Tinosh | [System Integration & Prototype](docs/team/tinosh/group-project-overview.md) | [Integration](docs/workflows/system-integration-and-prototype.md); adapters, delivery schemas, technical visuals and integration tests |
 
-Every task should follow:
+Cross-review is encouraged. Technical implementation does not transfer analytical ownership. Missing/conflicting research decisions must be referred to their human owner, not resolved silently by AI.
 
-```text
-Issue
--> branch
--> work
--> commit
--> push
--> Pull Request with "Closes #<issue-number>"
--> review
--> merge
--> Issue auto-closes
-```
+## 3. Issue and branch workflow
 
----
+An Issue should name the problem, owner, expected component/files, acceptance criteria, dependencies, approved research decisions and definition of done. Implement that scope.
 
-## 3. Before starting work
+Begin with read-only inspection:
 
-Inspect `git status --short --branch` first. Reuse the matching task branch. Synchronize only when needed and explicitly approved; for an approved synchronization:
+~~~bash
+git status --short --branch
+git branch --show-current
+~~~
 
-```bash
-git checkout main
-git pull origin main
-```
+Reuse an existing matching task branch. Never implement on main or reuse one branch for unrelated Issues. Determine whether synchronization is needed before proposing it; do not blindly pull or switch with unrelated modifications. After explicit approval, a new task branch may use feature/, research/, fix/, docs/, test/ or refactor/ naming, for example:
 
-Then read the GitHub Issue assigned to you.
-
-Also read:
-
-```text
-README.md
-AGENTS.md
-docs/project-boundaries.md
-your group-project-overview.md
-the relevant workflow document
-```
-
----
-
-## 4. Create a feature branch
-
-Create the branch from the updated `main`.
-
-Example:
-
-```bash
+~~~bash
 git checkout -b feature/inventory-risk-baseline
-```
+~~~
 
-Recommended branch prefixes:
+The normal sequence is Issue -> branch -> scoped work -> checks -> human review -> commit/push -> Pull Request -> required review/approval -> merge to main. No step grants standing authorization for later Git actions. Do not reset, stash, discard, force-push or resolve conflicts by overwriting another contributor's work.
 
-```text
-feature/
-research/
-fix/
-docs/
-test/
-refactor/
-```
+## 4. Implementation, tests and AI assistance
 
-Examples:
+Ask Codex to explain the Issue, relevant files, existing branch, expected outputs, prohibited changes and safe checks before unfamiliar work. Understand and review its output; AI-generated text/code is not automatically accepted evidence or a research decision.
 
-```text
-feature/data-cleaning-baseline
-feature/time-series-features
-feature/inventory-risk-baseline
-research/temporal-demand-profile
-docs/update-research-design
-fix/cancellation-filter
-```
+Use reusable src/ modules and repository tools. Run targeted checks first. MyPy configuration is in [mypy.ini](mypy.ini); Ruff and pytest commands follow the [quality](.github/workflows/ci-quality.yml) and [test](.github/workflows/ci-tests.yml) definitions. Some model tests include small native fits, so inspect test scope when fitting is prohibited. Never hide failures or alter tests merely to make wrong behavior pass.
 
----
+Actual training, tuning, validation, final evaluation, large analysis and real data preparation require explicit owner authorization for the particular operation. A passing synthetic test, documentation merge or protocol approval does not authorize it. Preserve chronological order, fixed features, exact scope and reserved-outcome safeguards.
 
-## 5. Work only on your task
+## 5. Evidence and progress handoff
 
-Do not make unrelated changes in the same branch.
+Use [applied MLOps](docs/workflows/applied-mlops.md) for reproducibility/review controls, [storage policy](docs/artifact-storage-policy.md) for retention and [report index](reports/README.md) for findings. Link exact run IDs, stage, evidence, completion/review status, limitations and the actual approving references. Generated metrics and logs are not human approval.
 
-If you notice another problem:
+Update [research progress](docs/research-progress.md) after material milestones, discussions, blockers or decisions; the contributor closest to the work drafts the entry and the component owner checks claims. Detailed decisions belong in Decision Records and meetings in their own records. Retain failed/incomplete evidence and never regenerate unavailable history as if it were original evidence.
 
-1. finish the current task;
-2. create a separate GitHub Issue;
-3. create a separate branch for that work.
+## 6. Commit, push and Pull Request
 
-This keeps Pull Requests easy to review.
+First review status/diff and ensure only intended files changed, data/secrets are untracked and checks pass. Stage explicit reviewed files. These are examples for a human-approved next step:
 
----
-
-## 6. Dataset handling
-
-The source dataset remains local.
-
-Place it under:
-
-```text
-data/raw/
-```
-
-Do not commit the dataset.
-
-Before pushing, check:
-
-```bash
-git status
-```
-
-The raw dataset should not appear as a tracked file.
-
----
-
-## 7. Commit your work
-
-Check changes:
-
-```bash
-git status
-```
-
-Stage selected changes:
-
-```bash
+~~~bash
 git add <reviewed-file-paths>
-```
+git commit -m "<type>: <short summary>"
+git push -u origin <task-branch>
+~~~
 
-Commit:
+Open a Pull Request with base main and the task branch as head. Complete the [template](.github/PULL_REQUEST_TEMPLATE.md), including summary, files, tests/results, evidence where relevant, limitations, unresolved decisions and **Closes #<issue-number>**. Request the relevant owner/reviewer. Do not merge before required review/approval is complete or merge failing work for convenience. Authorship alone does not prohibit a contributor from merging after all required review conditions are satisfied. AI agents remain subject to the separate merge restrictions in [AGENTS](AGENTS.md).
 
-```bash
-git commit -m "feat: add inventory risk baseline"
-```
+## 7. Review feedback and conflicts
 
-Use a short and clear message.
+Address review feedback on the **same task branch**; a new branch is not needed. Explain changes, rerun relevant checks and commit/push only after authorization. The existing Pull Request updates automatically.
 
----
+If behind main, inspect the divergence before choosing synchronization. Ask for help with unfamiliar conflicts. Preserve both contributors' intended behavior and resolve against the approved contracts, not whichever side is quickest. Do not use blind reset/checkout conflict choices or unapproved merge/rebase.
 
-## 8. Push your branch
+After an approved merge, verify that GitHub closed the linked Issue; if not, a human-authorized follow-up should close it as completed. Synchronize local main only when needed and approved. Branch deletion also requires authorization. Start the next unrelated Issue on its own branch.
 
-First push:
+## 8. Beginner mistakes and when to ask for help
 
-```bash
-git push -u origin feature/inventory-risk-baseline
-```
+Avoid typing a GitHub URL alone as a shell command, developing on main, committing dataset files or secrets, copying code you cannot explain, mixing unrelated work, ignoring failing tests, and treating source Demand_Forecast as the project's forecast. Preserve .gitignore protections for raw/processed data, artifacts and models.
 
-Later pushes on the same branch:
-
-```bash
-git push
-```
-
----
-
-## 9. Open a Pull Request
-
-> **Every Pull Request that completes a GitHub Issue must include `Closes #<issue-number>` in the PR description.**
-
-This is the repository's standard issue-completion rule. When that Pull Request is merged to `main`, GitHub should automatically close the linked Issue.
-
-On GitHub:
-
-1. open the repository;
-2. click **Pull requests**;
-3. click **New pull request**;
-4. set base branch to `main`;
-5. select your feature branch as the compare branch;
-6. complete the Pull Request template;
-7. link and auto-close the relevant Issue by adding `Closes #<issue-number>` to the PR description;
-8. request review;
-9. do not merge until review requirements are satisfied.
-
----
-
-## 10. Review process
-
-The normal review process is:
-
-```text
-Contributor opens PR
-        |
-        v
-Reviewer checks code / docs / tests
-        |
-        +--> changes requested -> contributor updates branch
-        |
-        v
-Approval
-        |
-        v
-Merge to main
-```
-
-Do not bypass review for convenience.
-
----
-
-## 11. After a Pull Request is merged
-
-Update your local `main`:
-
-```bash
-git checkout main
-git pull origin main
-```
-
-Delete the old local branch when it is no longer needed:
-
-```bash
-git branch -d feature/inventory-risk-baseline
-```
-
-Verify that the PR's linked Issue was automatically closed. If it was not, close it manually as completed.
-
-Then start the next Issue from the updated `main`.
-
----
-
-## 12. Working with Codex / ChatGPT
-
-You may use ChatGPT and Codex to help with this project.
-
-Before asking Codex to implement anything, ask it to read:
-
-```text
-AGENTS.md
-README.md
-docs/project-boundaries.md
-your group-project-overview.md
-the relevant workflow file
-the assigned GitHub Issue
-```
-
-A good first prompt is:
-
-```text
-Read AGENTS.md and the project documentation relevant to my assigned task.
-
-I am working on GitHub Issue #<number>.
-
-First explain:
-1. what this task requires,
-2. which files are relevant,
-3. which feature branch I should create,
-4. what I must not change.
-
-Do not modify files yet.
-```
-
-Only after you understand the plan should you ask the agent to implement.
-
----
-
-## 13. Research decisions
-
-Do not let an AI tool silently decide important research methodology.
-
-Examples requiring explicit discussion:
-
-- changes to the approved target definition;
-- changes to the approved analytical unit / aggregation frequency;
-- return/cancellation treatment;
-- demand-regime definition;
-- risk-proxy definition;
-- hypothesis changes;
-- evaluation metrics;
-- model comparison rules.
-
-Record important decisions in:
-
-```text
-docs/decisions/
-```
-
----
-
-## 14. Need help?
-
-If you are unsure what to do:
-
-1. do not push random changes;
-2. do not edit `main`;
-3. ask in the group;
-4. ask ChatGPT/Codex to explain the task using the repository documentation;
-5. open or update a GitHub Issue when necessary.
+Ask for help when repository access fails, the current branch is unclear, a merge conflict appears, dataset files appear in status, an Issue's output is unclear, or a proposed change affects research methodology. Human review is the final control point; unresolved rules are not permission to invent a default.

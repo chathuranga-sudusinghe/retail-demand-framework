@@ -1,8 +1,6 @@
 # DR-008 — Multi-Step Forecasting Strategy
 
-> **Current status cross-reference — Issue #94:** [The frozen protocol](../protocol.md) resolves prior pending supportive settings, baseline and runtime decisions. Issue #89 was merged through PR #90. [Runner operations](../forecasting-runner.md) distinguish approved storage policy from unchanged runtime behavior. Original decision/development wording below remains historical provenance; this status note changes no decision or authorizes any run.
-
-> **Documentation alignment — 2026-09-29:** The project owner has approved the current 1/7/14/28-day forecasting design and [frozen feature contract](../forecasting-feature-engineering.md). This record's original date and decision history remain intact. Proposed 28-day baseline formulas, the executable protocol and downstream methods retain separate approval boundaries; experiment execution is NOT authorised. See [current approval and provenance](../forecasting-methodology-revision.md).
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
@@ -88,8 +86,8 @@ Not included in the current approved scope because it would add another methodol
 - Direct forecasting requires horizon-specific targets and model outputs.
 - A cumulative 7-day, 14-day or 28-day prediction does not by itself provide the daily path within that horizon.
 - Separate horizon models or outputs can differ in their selected candidate or error behaviour.
-- The strategy itself did not resolve those independent choices. DR-009/010 historically settled a single LightGBM candidate and unequal grids; [DR-013](DR-013-matched-gradient-boosting-comparison.md) now defines the primary matched boosting comparison. The frozen feature contract retains predictor membership; runtime and supportive configuration decisions remain pending. Uncertainty and formal demand-condition definitions remain open.
-- The decision is specific to this project's horizons and downstream planning quantities; downstream 28-day use remains separately gated.
+- The strategy itself did not resolve those independent choices. DR-009/010 historically settled a single LightGBM candidate and unequal grids; [DR-013](DR-013-matched-gradient-boosting-comparison.md) now defines the primary matched boosting comparison. The frozen feature contract retains predictor membership; the runtime is implemented, supportive configuration policy is resolved in the frozen [protocol](../protocol.md), and validation/final evaluation are complete. Uncertainty and formal demand-condition definitions remain open.
+- The decision is specific to this project's horizons and downstream planning quantities; downstream 28-day use still requires separate component-owner/human approval.
 
 ## Impact
 

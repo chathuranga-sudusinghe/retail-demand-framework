@@ -1,120 +1,55 @@
-# Forecasting runner — Issue #89 orchestration
+# Forecasting Runner Operations
 
-The frozen scientific contract remains in [protocol.md](protocol.md). Issue #89 orchestration was merged through PR #90. Merged Issues #92/#93 own [lifecycle](workflows/shared-data-foundation.md), [storage/retention](artifact-storage-policy.md), [applied MLOps](workflows/applied-mlops.md), [reporting](../reports/README.md) and [progress](research-progress.md). Issue #94 aligns operational documentation; source behavior remains unchanged. No new experiment is authorized and Gate 6 remains blocked.
+This reference describes the implemented preparation, validation and separate final runtime. Scientific methods belong in the [protocol](protocol.md), [features](forecasting-feature-engineering.md) and [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md); results belong in [final evaluation](forecasting-final-evaluation.md). Retained validation and final evaluation are complete as confirmed by the owner. Commands below are reference shapes, not permission to execute another run.
 
-## Existing entrypoint — blocked pending architecture migration
+## Supported entrypoints
 
-The accepted legacy entrypoint is shown for implementation identification only.
-Do not execute it with unchanged code: it would recreate the removed storage
-architecture. Future execution requires reviewed migration, the approved Python
-3.12.3 environment and a new matching specific authorization.
+Run from the repository root using the reviewed Python 3.12.3 environment:
 
-```bash
-python -m src.forecasting.experiment
-```
+~~~bash
+.venv/bin/python -m src.data.validated_handoff
+.venv/bin/python -m src.forecasting.model_ready --representation-id <reviewed-id> --fold <1-4>
+.venv/bin/python -m src.forecasting.experiment
+.venv/bin/python -m src.forecasting.final_evaluation
+~~~
 
-Current code locations — legacy runtime description, not active execution guidance:
+The first two prepare reviewed data representations; they are not experiment commands. Real preparation requires owner authorization. Model-ready preparation supports one validation fold only and rejects final/refit stages before input access. Validation and final experiment entrypoints require their own matching specific-run authorization. Do not rerun completed evidence as a check.
 
-- Dataset: `data/raw/supply_chain_dataset1.csv`.
-- Reviewed local record: `data/processed/forecasting/validation_authorization.json`.
-- Legacy output: `outputs/revised-forecasting/<exact-approved-run-id>/` (removed; migration required).
+## Fixed inputs and authorization
 
-The existing ValidationAuthorization fields now live in execution.py, with compatibility exports from metadata.py. The reviewed record supplies the exact ID, ordered scope and human references. No approval is generated, no hashes are refreshed, and no latest-file discovery occurs. Missing/malformed/stale records, missing datasets, duplicate required CSV headers and consumed run directories fail before estimator construction. A failed directory cannot be resumed/reused; another run requires separate review. Approval references are a local workflow guard, not cryptographic identity.
-
-## Responsibilities
-
-| Module | Responsibility |
+| Runtime | Fixed input / record |
 |---|---|
-| paths.py | Fixed repository-relative locations; no import-time writes. |
-| execution.py | Strict record/scope loading, approval checks and four-column CSV loading. |
-| experiment.py | Sole entrypoint, sequential scientific orchestration, lifecycle and independent recovery. |
-| features/targets/validation/configuration/models/baselines/metrics | Unchanged scientific definitions and runtime controls. |
-| preprocessing.py | Unchanged transformations plus versioned fitted-state reconstruction. |
-| evaluation/selection | Existing populations, alignment and selection semantics. |
-| model_artifacts.py | Native candidate persistence, provenance descriptors and replay. |
-| artifacts.py | Existing schemas, exclusive directories, atomic writes and streaming hashes. |
-| metadata.py | Git/source/protocol/input/feature/runtime/build/environment provenance. |
-| reporting/progress | Read-only reporting, verified completed consumption, UTC phase events. |
-| integrity.py | Readback schemas/counts/keys/metrics/selection/model links, hashes and completion verification. |
+| Forecasting dataset | data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet |
+| Validation record | data/processed/forecasting/validation_authorization.json |
+| Final record | data/processed/forecasting/final_authorization.json |
+| Optional model-ready export | data/processed/model-ready/<representation_id>/ |
 
-## Lifecycle
+[paths.py](../src/forecasting/paths.py) resolves repository locations; [authorization.py](../src/forecasting/authorization.py) and [final_authorization.py](../src/forecasting/final_authorization.py) own the strict record contracts. Exact run ID, ordered scope, human approval references, scientific-document bindings, retained evidence, historical input identity and pinned environment must match. Missing, malformed or stale records and consumed storage fail closed. Never refresh authorization hashes, discover a latest file or infer approval from a document. Source/Git identities are provenance; they do not authorize the final runtime.
 
-`preflight -> running -> finalizing -> verified_completed`; failures are `failed` or `interrupted`. Metadata alone never establishes completion. Persisted scientific evidence is verified; source/protocol/input and execution record are checked again; finalization logging closes; final metadata is written; `run_manifest.json` is atomically published LAST. Consumers must use `verify_completed`. Missing, partial, inconsistent or corrupt bundles are rejected. The comparison records finalizing status at rendering time; the manifest is the completion authority. Undefined WAPE remains explicit and unselectable. Selection/freeze still requires human review.
+## Validation runtime
 
-## Legacy runtime persistence — implementation evidence
+[experiment.py](../src/forecasting/experiment.py) delegates to [orchestration.py](../src/forecasting/orchestration.py). Input projection selects only native keys and Units_Sold with authorized date filters before demand decoding. Fold preparation fits features/targets/preprocessing within frozen chronological boundaries. Validation persists every successful candidate, metrics, predictions, selection records and eligibility evidence. Its entrypoint rejects final-evaluation execution, including --stage final_evaluation; final evaluation uses the separate entrypoint below.
 
-Existing scientific names and CSV columns remain unchanged:
+## Separate final runtime and predict-before-reveal
 
-```text
-run_metadata.json
-fold_metrics.csv
-configuration_summary.csv
-selected_configurations.json
-predictions.csv
-eligibility_counts.csv
-comparison.md
-```
+[final_evaluation.py](../src/forecasting/final_evaluation.py) consumes the separate final record and frozen DR-014 scope. It verifies retained validation and historical readiness, refits the twenty learned candidates and preprocessing from eligible history, and constructs all 28 candidate predictions. **All predictions are saved, hashed and verified before any reserved outcome is revealed.** Scoring uses those immutable predictions; final results cannot trigger search, retuning, reselection, replacement or a changed producer mapping.
 
-Additions: exact retained `authorization.json`, `run.log`, `run_manifest.json`, failure `diagnostics.json` where writable, and validation models/state. The scientific schema remains `issue-65-v2`; manifest/model/preprocessing descriptors have version 1. The final manifest hashes all finalized files, including metadata/log/model/state/authorization. It does not claim to hash itself. Full source/environment provenance remains in metadata rather than duplicated in every descriptor.
+[final_artifacts.py](../src/forecasting/final_artifacts.py) provides separate final persistence and integrity verification. Final fold IDs are null and final rows never enter validation four-fold summaries.
 
-```text
-models/validation/<family>/h<horizon>/<configuration>/fold-<n>/
-  model.ubj | model.txt | model.cbm | model.joblib
-  descriptor.json
-models/preprocessing/<family>/h<horizon>/fold-<n>/
-  state.json
-  origin_features.json
-```
+## Persistence and completion verification
 
-Under the accepted legacy runtime contract, every successful learned validation fit is saved. Full-plan counts are 1,152 primary fits, 32 supportive fits, 32 baseline evaluations, 1,216 evaluations and 304 summaries: planned counts, not results. Native coverage yields 304,000 prediction records. Baselines have formula provenance, not binaries. Retaining 1,184 learned artifacts increases storage requirements, particularly 300-tree Random Forest models; review capacity against the approved retention plan before any future authorized run. No raw/full dataset or training matrix is copied.
+The [storage policy](artifact-storage-policy.md#storage-responsibilities) owns artifact/model/report locations and retention requirements, including temporary reports and historical receipt paths.
 
-Descriptors link exact run/family/horizon/configuration/fold, training/validation intervals, Git/source/protocol/feature/input provenance, requested/effective parameters, versions and hashes. Versioned state restores the original one-hot order and Ridge scaling. Reloaded models replay persisted predictions exactly using the same matrix layout and CPU/thread controls. No refitting occurs. Only trusted locally generated joblib files with verified provenance/hashes are loaded. Hashes detect alterations, not malicious replacement of an entire bundle.
+Successful lifecycle: preflight -> running -> finalizing -> verified_completed. Metadata alone never establishes completion. The sole completion authority, artifacts/forecasting/<run_id>/run_manifest.json, is published **last**, after reconciliation, model replay, closed logging and final metadata. Never overwrite a completed bundle or its report.
 
-## Approved architecture handoff — not yet implemented
+Validation consumers use `src.forecasting.integrity.verify_completed`; final consumers use `src.forecasting.final_artifacts.verify_final_completed`, each at the exact artifact-run anchor. They verify schemas, keys, counts, hashes, model/preprocessor/input links and saved-prediction replay without refitting. Missing, extra, redirected, cross-run, corrupted or incomplete evidence is rejected. Load only trusted locally generated native/joblib artifacts with verified provenance. Verification is an explicit operation, not something documentation edits perform automatically.
 
-Machine-readable evidence belongs in `artifacts/forecasting/<run_id>/`, selected
-reusable model/state bundles in `models/forecasting/<run_id>/`, reviewed findings
-in `reports/forecasting/<run_id>.md`, and temporary candidates in the storage
-policy's run-scoped temporary location. Data handoffs retain the lifecycle's
-scope/view/feature/preprocessing order; no full training matrix export is approved
-by this reconciliation. Existing module responsibilities above describe current
-code; they must be updated after accepted migration rather than inventing new APIs.
+## Failure handling
 
-The [Issue #94 protocol amendment](protocol.md#issue-94-operational-alignment--implementation-boundary)
-defines the required cross-location manifests, metadata and retained-model replay.
-Complete configuration/metric/prediction evidence must survive for all evaluated
-candidates. The exact selected-fold/tie/supportive/audit retention set and schema
-version still require human approval; until accepted implementation, all-fit
-persistence and replay remain the compatibility requirement. No pruning of current
-or historical bundles is authorized. Retained models must keep exact fitted
-preprocessing/order/scaling and origin replay inputs; reload never refits.
+Failed/interrupted runs publish no completion manifest or accepted selection. Recovery independently attempts metadata, diagnostics and partial evidence, preserving the original exception when secondary writes fail. A killed process may leave no diagnostics; absent completion still blocks consumption. Retain partial artifact/model/report directories and the failed status. There is no automatic retry, resume or cleanup.
 
-Completion must reconcile all scientific evidence, hashes and retained dependencies,
-then publish the final manifest last. Retained-model/replay counts must be distinct
-from evaluation counts. Completed bundles remain immutable; any approved archive
-derivative must identify its parent and omissions. Missing retained dependencies,
-failed/partial evidence or inconsistent candidate records block completed consumption.
-Existing verification is single-bundle/all-fit and cannot verify the new layout yet.
+A verified implementation defect may support only a separately approved corrected run with a new unused ID and unchanged frozen scientific scope. Preserve and disclose prior outcome access. Performance-driven retries and candidate substitution are prohibited. The earlier final execution's scientific exposure is documented in [limitations](forecasting-final-evaluation.md#9-limitations), without using its scores to change methodology.
 
-The completed-run handoff includes a report following the reporting authority;
-generated `comparison.md` remains a draft evidence summary. Human interpretation,
-selection freeze and final authorization are separate. Link reviewed milestones in
-the progress log; do not invent approvals or results from the existence of a report.
+## Lightweight implementation checks
 
-## Failure and interruption
-
-Recovery independently attempts metadata, diagnostics and partial evidence; secondary failures attach notes without replacing the original exception. Failed/interrupted runs publish no completion manifest or valid selection. Filesystem failure may prevent diagnostics, but absent completion still blocks promotion. SIGKILL/power loss cannot invoke recovery: the run remains incomplete. There is no automatic retry/resume. Partial files are diagnostic only.
-
-## Checks
-
-```bash
-python -m pytest -q
-ruff check src/forecasting tests/test_forecasting_*.py
-python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
-python -m pip check
-git diff --check
-```
-
-Tests use synthetic panels/mock fits and small controlled native smoke tests. They never read the project dataset and are not research comparison evidence. The complete candidate plan uses mocks, never the real 1,152-fit workload.
-
-The final entry, including `--stage final_evaluation`, stays blocked. Final estimator/preprocessor policy and execution need separate approval; no fold-4 reuse, all-history refit, deployment promotion or downstream rule is assumed. Disclose earlier December 3–16 validation and full-year EDA exposure.
+Use targeted synthetic parser/path/authorization tests for documentation compatibility. Some broader forecasting tests include small native model fits; inspect the selected tests before running. Tests are implementation evidence, not research results. No real preparation, experiment or reserved-outcome read is part of a documentation check. CI definitions are [quality](../.github/workflows/ci-quality.yml) and [tests](../.github/workflows/ci-tests.yml).

@@ -4,7 +4,7 @@
 **Module:** COMP1884 Group Project, MSc Data Science, University of Greenwich  
 **Status:** Working literature-review baseline for group review  
 **Original literature baseline:** 2026-09-22
-**Current methodology alignment:** 2026-09-29; literature background and original study findings are preserved.
+**Current documentation alignment:** 2026-10-04; literature background and original study findings are preserved. Forecasting results belong in the final report; this narrative review does not establish experiment outcomes.
 
 ## 1. Purpose and scope
 
@@ -17,7 +17,7 @@ historical demand
     -> responsible management-facing decision support
 ```
 
-The review is not intended to justify a pre-selected model. Instead, it identifies evidence that can guide methodological decisions. Since this baseline review was created, dataset profiling and DR-002 have fixed the primary analytical unit as SKU-warehouse-day. The learned models, feature contract, horizons, chronological folds and metric policy are now settled. Inventory-risk approval, replenishment logic, uncertainty treatment and human-review rules retain separate decision boundaries; see [current methodology and provenance](../forecasting-methodology-revision.md).
+The review is not intended to justify a pre-selected model. Instead, it identifies evidence that can guide methodological decisions. Since this baseline review was created, dataset profiling and DR-002 have fixed the primary analytical unit as SKU-warehouse-day. The learned models, feature contract, horizons, chronological folds and metric policy are now settled. Inventory-risk approval, replenishment logic, uncertainty treatment and human-review rules retain separate decision boundaries; see [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
 The review concentrates on five connected areas:
 
@@ -189,33 +189,11 @@ Supported by XAI and human-centred decision-support literature. The project shou
 
 ## 10. Methodological decisions: resolved and still open
 
-### Current resolved forecasting decisions
+The accepted forecasting feature/preprocessing contract, direct targets, horizons, chronological validation, matched boosting comparison, fixed supportive models, baseline formulas, metrics/aggregation/ties and final-refit decision are now resolved and implemented. Use [features](../forecasting-feature-engineering.md), [protocol](../protocol.md) and [DR-014](../decisions/DR-014-forecasting-selection-and-final-refit.md) for their exact definitions, without duplicating settings here.
 
-- **Primary analytical unit:** SKU-warehouse-day, recorded in DR-002.
-- **Primary forecasting target:** `Units_Sold` at `SKU_ID + Warehouse_ID + Date` grain.
-- **Stockout label limitation:** `Stockout_Flag` is zero-variance and cannot support supervised stockout classification or validation.
-- **Primary RQ2 models:** XGBoost, LightGBM and CatBoost; Ridge/Random Forest are supportive benchmarks only (DR-013). DR-007/009 learned-role decisions remain provenance; baseline provisions are retained.
-- **Features:** the [frozen fourteen-predictor contract](../forecasting-feature-engineering.md), including two categorical identities, twelve numerical features and 28-day minimum history; promotion and additional predictors are excluded.
-- **Targets and evaluation:** direct 1/7/14/28-day targets, four fixed-origin 28-day validation windows and December 3–30 final evaluation at origin December 2 (DR-004/005/008). Prior December 3–16 validation and full-year EDA exposure must be disclosed; the final interval is reserved from subsequent selection/fitting, not fully unseen historically.
-- **Metrics:** WAPE primary; MAE/RMSE/Bias supporting, Bias = forecast − actual; four-fold arithmetic means separately by horizon, without a cross-horizon composite (DR-006).
-- **Primary search:** DR-013 matched four-dimensional grid, 24 configurations per model × horizon, seed 42 and 1,152 planned primary fits; DR-010 unequal grids remain provenance. Neither this review nor the feature freeze authorises execution.
+Forecasting validation and final evaluation are complete as confirmed by the owner. [Final results](../forecasting-final-evaluation.md) owns interpretation, unchanged producer mapping and prior-exposure/simulation limitations. Literature motivation is distinct from evidence that a method worked on this dataset; simpler supportive/baseline performance remains visible.
 
-- **RQ2 hypotheses and interpretation:** comparative research hypotheses with descriptive, horizon-specific interpretation of magnitude, direction, fold consistency and supporting metrics; no significance procedure or universal numerical decision threshold (DR-013).
-
-### Still open
-
-- revised primary representation/model implementation alignment after accepted Issue #62, complete fixed runtime/version recipe, supportive configuration policy and Issue #65 protocol freeze;
-- explicit approval of proposed 28-day baseline formulas;
-- DR-012 group approval and separate 28-day downstream use;
-- demand-regime definitions and statistical tests;
-- uncertainty representation;
-- inventory-risk / shortage-pressure / overstock formulas and thresholds;
-- use of sparse `Order_Quantity` in validation or rule construction;
-- replenishment-quantity formula;
-- human-review rules and evaluation criteria;
-- whether the source `Demand_Forecast` is used later as a separately documented benchmark.
-
-These remaining items should be converted into explicit decision records only after literature evidence and reproducible dataset evidence are considered together.
+Still open: inventory-risk/replenishment approvals and origin semantics, uncertainty, human-review logic, 28-day downstream use and final prospective/interchange/API contracts. [Integration readiness](../integration-contract-readiness.md) records their existing owners and boundaries. This literature alignment settles none of those methods.
 
 ## 11. References
 

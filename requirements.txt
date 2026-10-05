@@ -11,3 +11,6 @@ matplotlib==3.11.2
 # Direct operational dependencies: thread controls and trusted local model persistence.
 threadpoolctl==3.7.0
 joblib==1.6.0
+
+# Validated shared-data Parquet serialization.
+pyarrow==21.0.0
