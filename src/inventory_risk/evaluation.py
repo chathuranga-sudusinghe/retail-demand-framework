@@ -49,9 +49,12 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
     for index, row in cases.iterrows():
         reasons: list[str] = []
         if not bool(row["inventory_state_available"]):
+            reasons.extend(row["preparation_unavailable_reasons"])
             reasons.append(str(row["origin_snapshot_reason"]))
             cases.at[index, "comparison_case"] = "unavailable"
-            cases.at[index, "evaluation_unavailable_reasons"] = list(dict.fromkeys(reasons))
+            cases.at[index, "evaluation_unavailable_reasons"] = list(
+                dict.fromkeys(reason for reason in reasons if reason.strip())
+            )
             continue
 
         inventory = float(row["_inventory_level_value"])
@@ -72,12 +75,12 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
         forecast_ready = (
             horizon in EVALUABLE_HORIZONS
             and row["forecast_input_status"] == "available"
-            and row["_forecast_demand_value"] is not None
+            and pd.notna(row["_forecast_demand_value"])
         )
         actual_ready = (
             horizon in EVALUABLE_HORIZONS
             and row["retrospective_input_status"] == "available"
-            and row["_observed_demand_value"] is not None
+            and pd.notna(row["_observed_demand_value"])
         )
 
         forecast_crossing: bool | None = None
@@ -123,7 +126,9 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
             cases.at[index, "comparison_case"] = "evaluable_paired_case"
         else:
             cases.at[index, "comparison_case"] = "unavailable"
-        cases.at[index, "evaluation_unavailable_reasons"] = list(dict.fromkeys(reasons))
+        cases.at[index, "evaluation_unavailable_reasons"] = list(
+            dict.fromkeys(reason for reason in reasons if reason.strip())
+        )
 
     return cases
 

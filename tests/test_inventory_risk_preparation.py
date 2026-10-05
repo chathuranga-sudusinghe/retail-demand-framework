@@ -184,3 +184,115 @@ def test_order_quantity_is_context_only_when_origin_availability_is_explicit():
 
     assert result.loc[0, "order_quantity_context_status"] == "available_as_context_only"
     assert result.loc[0, "Order_Quantity"] == 0
+
+
+@pytest.mark.parametrize(
+    ("column", "status_column", "reason"),
+    [
+        ("prediction", "forecast_input_status", "forecast_missing_or_nonfinite"),
+        ("observed_target", "retrospective_input_status", "realised_horizon_demand_unavailable"),
+        ("Inventory_Level", "inventory_state_available", "inventory_level_missing_or_invalid"),
+        ("Reorder_Point", "inventory_state_available", "reorder_point_missing_or_invalid"),
+    ],
+)
+@pytest.mark.parametrize("value", [None, float("nan"), pd.NA, float("inf"), float("-inf"), "invalid"])
+def test_mixed_invalid_numeric_values_remain_unavailable(column, status_column, reason, value):
+    records = pd.DataFrame([
+        forecast_inventory_row(SKU_ID="VALID"),
+        forecast_inventory_row(SKU_ID="INVALID", **{column: value}),
+    ])
+    result = prepare_inventory_risk_inputs(records).set_index("SKU_ID")
+
+    assert len(result) == 2
+    assert result.loc["VALID", "forecast_input_status"] == "available"
+    assert result.loc["VALID", "retrospective_input_status"] == "available"
+    invalid = result.loc["INVALID"]
+    if status_column == "inventory_state_available":
+        assert not invalid[status_column]
+    else:
+        assert invalid[status_column] == "unavailable"
+    assert reason in invalid["preparation_unavailable_reasons"]
+
+
+@pytest.mark.parametrize("column", ["Inventory_Level", "Reorder_Point"])
+@pytest.mark.parametrize("value", [-1, 1.5])
+def test_negative_or_fractional_inventory_counts_remain_unavailable(column, value):
+    result = prepare_inventory_risk_inputs(pd.DataFrame([
+        forecast_inventory_row(SKU_ID="VALID"),
+        forecast_inventory_row(SKU_ID="INVALID", **{column: value}),
+    ])).set_index("SKU_ID")
+
+    assert not result.loc["INVALID", "inventory_state_available"]
+    reason = "inventory_level_missing_or_invalid" if column == "Inventory_Level" else "reorder_point_missing_or_invalid"
+    assert reason in result.loc["INVALID", "preparation_unavailable_reasons"]
+
+
+@pytest.mark.parametrize("horizon", [None, float("nan"), pd.NA, float("inf"), float("-inf"), "invalid", 0, 2, 1.5])
+def test_mixed_invalid_horizons_are_retained_without_date_arithmetic_errors(horizon):
+    result = prepare_inventory_risk_inputs(pd.DataFrame([
+        forecast_inventory_row(SKU_ID="VALID"),
+        forecast_inventory_row(SKU_ID="INVALID", horizon=horizon),
+    ])).set_index("SKU_ID")
+
+    assert len(result) == 2
+    assert result.loc["VALID", "forecast_input_status"] == "available"
+    invalid = result.loc["INVALID"]
+    assert invalid["forecast_input_status"] == "unavailable"
+    assert invalid["retrospective_input_status"] == "unavailable"
+    assert invalid["downstream_use_status"] == "unavailable"
+    assert "unsupported_or_invalid_forecast_horizon" in invalid["forecast_input_reason"]
+    assert "unsupported_or_invalid_forecast_horizon" in invalid["retrospective_input_reason"]
+
+
+@pytest.mark.parametrize(
+    ("column", "value", "status_column", "reason"),
+    [
+        ("prediction_status", pd.NA, "forecast_input_status", "forecast_prediction_status_not_available"),
+        ("eligibility_status", pd.NA, "forecast_input_status", "forecast_eligibility_status_not_eligible"),
+        ("target_status", pd.NA, "retrospective_input_status", "retrospective_target_status_not_complete"),
+        ("target_status", "incomplete", "retrospective_input_status", "retrospective_target_status_not_complete"),
+    ],
+)
+def test_missing_or_incomplete_status_is_unavailable_with_valid_numeric_inputs(column, value, status_column, reason):
+    records = pd.DataFrame([
+        forecast_inventory_row(SKU_ID="VALID"),
+        forecast_inventory_row(SKU_ID="INVALID", **{column: value}),
+    ])
+    # Keep actual pd.NA cells instead of letting pandas infer NaN object cells.
+    records[column] = records[column].astype("string")
+    if value is pd.NA:
+        assert records.loc[1, column] is pd.NA
+    result = prepare_inventory_risk_inputs(records).set_index("SKU_ID")
+
+    assert result.loc["VALID", status_column] == "available"
+    invalid = result.loc["INVALID"]
+    assert invalid["prediction"] == 8.5
+    assert invalid["observed_target"] == 9
+    assert invalid[status_column] == "unavailable"
+    assert reason in invalid["preparation_unavailable_reasons"]
+    assert "realised_horizon_demand_unavailable" not in invalid["preparation_unavailable_reasons"]
+
+
+@pytest.mark.parametrize(
+    "updates",
+    [
+        {"target_start_date": "2024-01-01"},
+        {"target_start_date": "2024-01-03"},
+        {"target_end_date": "2024-01-09"},
+        {"target_start_date": None},
+        {"target_end_date": pd.NA},
+    ],
+)
+def test_retrospective_input_requires_exact_origin_horizon_interval(updates):
+    result = prepare_inventory_risk_inputs(pd.DataFrame([
+        forecast_inventory_row(SKU_ID="VALID"),
+        forecast_inventory_row(SKU_ID="INVALID", **updates),
+    ])).set_index("SKU_ID")
+
+    assert result.loc["VALID", "retrospective_input_status"] == "available"
+    invalid = result.loc["INVALID"]
+    assert invalid["observed_target"] == 9
+    assert invalid["target_status"] == "complete"
+    assert invalid["forecast_input_status"] == "unavailable"
+    assert invalid["retrospective_input_status"] == "unavailable"
+    assert "forecast_target_interval_does_not_match_origin_and_horizon" in invalid["retrospective_input_reason"]

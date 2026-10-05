@@ -241,18 +241,18 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
 
         inventory_valid = (
             snapshot_status == "available"
-            and row["_inventory_level_value"] is not None
-            and row["_reorder_point_value"] is not None
+            and pd.notna(row["_inventory_level_value"])
+            and pd.notna(row["_reorder_point_value"])
         )
         frame.at[index, "inventory_state_available"] = bool(inventory_valid)
         if snapshot_status != "available":
             reasons.append(str(snapshot_reason))
-        if row["_inventory_level_value"] is None:
+        if pd.isna(row["_inventory_level_value"]):
             reasons.append("inventory_level_missing_or_invalid")
-        if row["_reorder_point_value"] is None:
+        if pd.isna(row["_reorder_point_value"]):
             reasons.append("reorder_point_missing_or_invalid")
 
-        horizon = row["_horizon_days"]
+        horizon = None if pd.isna(row["_horizon_days"]) else int(row["_horizon_days"])
         if horizon == 28:
             downstream_status = "not_approved_for_downstream_use"
             downstream_reason = "28_day_downstream_use_requires_separate_approval"
@@ -265,27 +265,30 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
         frame.at[index, "downstream_use_status"] = downstream_status
         frame.at[index, "downstream_use_reason"] = downstream_reason
 
-        forecast_reasons: list[str] = []
+        # Forecast and retrospective evidence must describe the same exact window.
+        interval_reasons: list[str] = []
         if horizon is None:
-            forecast_reasons.append("unsupported_or_invalid_forecast_horizon")
-        if pd.isna(row["_forecast_origin_date"]):
-            forecast_reasons.append("forecast_origin_missing_or_invalid")
-        if horizon is not None and (
-            row["_target_start_date"] != row["_forecast_origin_date"] + pd.Timedelta(days=1)
-            or row["_target_end_date"] != row["_forecast_origin_date"] + pd.Timedelta(days=horizon)
+            interval_reasons.append("unsupported_or_invalid_forecast_horizon")
+        if pd.isna(origin):
+            interval_reasons.append("forecast_origin_missing_or_invalid")
+        elif horizon is not None and (
+            row["_target_start_date"] != origin + pd.Timedelta(days=1)
+            or row["_target_end_date"] != origin + pd.Timedelta(days=horizon)
         ):
-            forecast_reasons.append("forecast_target_interval_does_not_match_origin_and_horizon")
-        if row["_forecast_demand_value"] is None:
+            interval_reasons.append("forecast_target_interval_does_not_match_origin_and_horizon")
+
+        forecast_reasons = interval_reasons.copy()
+        if pd.isna(row["_forecast_demand_value"]):
             forecast_reasons.append("forecast_missing_or_nonfinite")
         elif row["_forecast_demand_value"] < 0:
             forecast_reasons.append("negative_forecast_handling_not_approved")
         if "prediction_status" not in frame.columns:
             forecast_reasons.append("forecast_prediction_status_not_provided")
-        elif row["prediction_status"] != "available":
+        elif _missing_scalar(row["prediction_status"]) or row["prediction_status"] != "available":
             forecast_reasons.append("forecast_prediction_status_not_available")
         if "eligibility_status" not in frame.columns:
             forecast_reasons.append("forecast_eligibility_status_not_provided")
-        elif row["eligibility_status"] != "eligible":
+        elif _missing_scalar(row["eligibility_status"]) or row["eligibility_status"] != "eligible":
             forecast_reasons.append("forecast_eligibility_status_not_eligible")
         if any(not _nonblank(row[column]) for column in REQUIRED_PROVENANCE_COLUMNS):
             forecast_reasons.append("forecast_provenance_incomplete")
@@ -294,16 +297,14 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
         frame.at[index, "forecast_input_reason"] = ";".join(forecast_reasons)
         reasons.extend(forecast_reasons)
 
-        retrospective_reasons: list[str] = []
-        if horizon is None:
-            retrospective_reasons.append("unsupported_or_invalid_forecast_horizon")
-        if row["_observed_demand_value"] is None:
+        retrospective_reasons = interval_reasons.copy()
+        if pd.isna(row["_observed_demand_value"]):
             retrospective_reasons.append("realised_horizon_demand_unavailable")
         elif row["_observed_demand_value"] < 0:
             retrospective_reasons.append("realised_horizon_demand_invalid")
         if "target_status" not in frame.columns:
             retrospective_reasons.append("retrospective_target_status_not_provided")
-        elif row["target_status"] != "complete":
+        elif _missing_scalar(row["target_status"]) or row["target_status"] != "complete":
             retrospective_reasons.append("retrospective_target_status_not_complete")
         retrospective_status = "available" if not retrospective_reasons else "unavailable"
         frame.at[index, "retrospective_input_status"] = retrospective_status
