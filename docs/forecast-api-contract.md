@@ -139,7 +139,7 @@ Dates are timezone-naive calendar dates in ISO 8601 / RFC 3339 `full-date` form.
 
 ### 6.1 Export-level provenance
 
-The export document carries one provenance block. Records do not repeat it.
+The export is one JSON object with a top-level `forecasts` array containing the Section 6 records. The export-level fields below are siblings of `forecasts`; `source` is a nested object and `producers` is an array. Shared provenance appears once and is not repeated in each forecast record.
 
 | Field | Meaning |
 |---|---|
@@ -151,6 +151,7 @@ The export document carries one provenance block. Records do not repeat it.
 | `forecast_origin`, `training_start`, `training_end` | Temporal policy of the source run |
 | `producers[]` | For each horizon: `model`, `configuration_id`, `forecast_type` and a `model_reference` with repository-relative paths and SHA-256 hashes of the model, descriptor, fitted preprocessing and origin features, as recorded in `candidates.json` |
 | `series_count`, `record_count` | 250 and 1,000 for the current source |
+| `forecasts[]` | Section 6 prospective records, sorted by `horizon`, then `SKU_ID`, then `Warehouse_ID`; exactly `record_count` entries |
 
 Model references let a reviewer trace each value back to the exact fitted model and preprocessing, in line with W3C PROV (entity → activity → agent), the FAIR principles and model-card practice (Section 13). The API exposes these references read-only. It MUST NOT load or execute the models in response to a request.
 
