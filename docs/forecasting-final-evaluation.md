@@ -4,7 +4,7 @@ This report consolidates the completed forecasting study under Issue #131. Compl
 
 ## 1. Final evaluation scope
 
-The study predicts future `Units_Sold` at `SKU_ID + Warehouse_ID + Date` in the simulated High-Dimensional Supply Chain Inventory Dataset. Forecasts represent next-day demand or cumulative demand over 7, 14 or 28 days. The 28-day target is four weeks, not a calendar month or supplier-specific lead time.
+The study predicts future `Units_Sold` at `SKU_ID + Warehouse_ID + Date` in the High-Dimensional Supply Chain Inventory Dataset downloaded from Kaggle, whose source records are simulated by its publisher. Forecasts represent next-day demand or cumulative demand over 7, 14 or 28 days. The 28-day target is four weeks, not a calendar month or supplier-specific lead time.
 
 The final origin is **2024-12-02**. The reserved evaluation interval is **2024-12-03 through 2024-12-30**; target ends are December 3, 9, 16 and 30 respectively. One prediction per SKU–warehouse pair and horizon is issued from that origin, without updating inside the interval.
 
@@ -160,7 +160,7 @@ The completed forecasting component supplies reproducible predictions, provenanc
 
 ## 9. Limitations
 
-- The dataset is simulated and covers approximately one year; these results cannot establish effectiveness in a real retailer or robust long-cycle seasonality.
+- The dataset downloaded from Kaggle is simulated by its publisher and covers approximately one year; these results cannot establish effectiveness in a real retailer or robust long-cycle seasonality.
 - **December 3–16 had prior validation exposure** under the earlier 1/7/14-day methodology. Full-year exploratory data analysis (EDA) also inspected the final interval. The revised December 3–30 interval is reserved from subsequent selection and fitting, but is not historically fully unseen.
 - Validation folds share expanding training histories; historical horizon labels overlap. Pair-level observations and folds are not independent experimental replications. Selected-configuration validation predictions are out of sample for fitting but also participated in configuration selection.
 - No formal significance test, near-tie threshold or universal fold-stability threshold was performed/defined. Small aggregate differences must not be presented as significant superiority.

@@ -123,4 +123,4 @@ Those remain separate research decisions.
 
 ## Limitations
 
-The decision is specific to the current simulated dataset and integrated COMP1884 architecture. It does not establish that SKU-warehouse-day is universally preferable for retail forecasting.
+The decision is specific to the current Kaggle dataset with publisher-simulated records and integrated COMP1884 architecture. It does not establish that SKU-warehouse-day is universally preferable for retail forecasting.

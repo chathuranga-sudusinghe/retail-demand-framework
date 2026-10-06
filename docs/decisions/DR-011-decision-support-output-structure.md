@@ -130,7 +130,7 @@ The output must not be treated as an automatic instruction, an automatically app
 
 There are some important limitations that should remain visible in the decision-support output.
 
-The dataset used in this project is simulated, so the framework should not be presented as if it has already been tested as an operating policy in a real retail business.
+The dataset used in this project was downloaded from Kaggle and is simulated by its publisher, so the framework should not be presented as if it has already been tested as an operating policy in a real retail business.
 
 The verified dataset also shows no variation in `Stockout_Flag`. For this reason, this field cannot be treated as observed evidence of actual stockout events or used to validate stockout predictions.
 

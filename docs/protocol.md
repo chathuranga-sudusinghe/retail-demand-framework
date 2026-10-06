@@ -10,7 +10,7 @@ Horizon/date/metric/direct-target decisions remain in DR-004/005/006/008. DR-003
 
 ## 2. Frozen target, predictor information and ordering
 
-Use Units_Sold at SKU_ID + Warehouse_ID + Date in the simulated dataset. For origin o and h in {1,7,14,28}:
+Use Units_Sold at SKU_ID + Warehouse_ID + Date in the published dataset downloaded from Kaggle, whose source records are simulated by the publisher. For origin o and h in {1,7,14,28}:
 
 $$
 Y_{o,h}=\sum_{j=1}^{h}y_{o+j}.

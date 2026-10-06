@@ -48,7 +48,7 @@ forecast origin 2024-12-02. No December 31 observation is invented.
 Historical EDA reports March/April means of 29.8834/29.8391, July 17.4084,
 September/October 10.1739/10.2708 and November 13.0807 units per native observation.
 The saved notebook's monthly/quarterly tables and retrospective daily chart
-support high levels, decline, low demand and recovery within this simulated year;
+support high levels, decline, low demand and recovery within the publisher's simulated year in the downloaded Kaggle dataset;
 they do not establish recurring annual seasonality or formal demand regimes.
 
 Three folds were considered and remain methodologically feasible: April high
@@ -98,7 +98,7 @@ back into selection, and this prior exposure must be disclosed in reporting.
 
 ## Limitations and open decisions
 
-The dataset is simulated and contains one year. Four origins and one final interval
+The dataset downloaded from Kaggle is simulated by its publisher and contains one year. Four origins and one final interval
 cannot establish annual generalisation, recurring seasonal regimes or real-retailer
 effectiveness. Prior validation exposure limits the independence of the revised
 final evaluation. Overlapping cumulative training labels also create dependence.

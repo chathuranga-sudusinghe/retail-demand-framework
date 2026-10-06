@@ -47,7 +47,7 @@ Research hypotheses, rationale and inference boundaries are defined in [research
 ## 8. Integrated system architecture
 
 ~~~text
-Local source -> shared validation/preparation
+Downloaded Kaggle source -> shared validation/preparation
   -> demand forecasting at SKU–warehouse–day grain
   -> origin-aligned inventory-risk/replenishment analysis
   -> responsible decision-support record
@@ -118,7 +118,7 @@ Integration may use each reviewed output as it becomes available; the implementa
 
 ## 12. Dataset
 
-The simulated High-Dimensional Supply Chain Inventory Dataset supplies historical sales and inventory context. [Dataset identity/schema/limitations](dataset.md) owns its field meanings and quality profile. Forecasting uses historical Units_Sold; Stockout_Flag is zero-variance and cannot validate stockout predictions. Source Demand_Forecast is excluded from normal forecasting features/targets.
+Ziya's published High-Dimensional Supply Chain Inventory Dataset, downloaded from Kaggle, supplies historical sales and inventory context. The publisher describes its source records as simulated. [Dataset identity/schema/limitations](dataset.md) owns its field meanings and quality profile. Forecasting uses historical Units_Sold; Stockout_Flag is zero-variance and cannot validate stockout predictions. Source Demand_Forecast is excluded from normal forecasting features/targets.
 
 ## 13. Scope
 
@@ -143,7 +143,7 @@ Out of scope unless later justified:
 
 ## 14. Critical dataset limitation
 
-The selected dataset is **simulated rather than observed data from a real company**. This improves coverage of the variables required by the framework, but limits claims about direct real-world operational effectiveness.
+The selected dataset is **downloaded from Kaggle**, with source records **simulated by the publisher rather than observed from a real company**. This improves coverage of the variables required by the framework, but limits claims about direct real-world operational effectiveness.
 
 All final conclusions must distinguish:
 

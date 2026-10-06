@@ -46,7 +46,7 @@ Do not average or rank performance across horizons into a single composite. Mode
 
 ## 3. Source and analytical unit
 
-The selected source is the **High-Dimensional Supply Chain Inventory Dataset**, a simulated daily SKU-level supply-chain dataset.
+The selected source is the **High-Dimensional Supply Chain Inventory Dataset**, published by Ziya and downloaded from Kaggle. Its daily SKU-level supply-chain records are simulated by the publisher; the project team did not generate a replacement research dataset.
 
 The primary forecasting unit is a regular **SKU-warehouse-day** demand time series derived from `Units_Sold`.
 
@@ -206,7 +206,7 @@ Tinosh's fourth-member contribution is technical integration and prototype engin
 
 Important threats include:
 
-- the dataset is simulated, not observed from a real operating retailer;
+- the dataset downloaded from Kaggle is simulated by its publisher, not observed from a real operating retailer;
 - approximately one year of data limits long-cycle seasonal inference;
 - source-generated variables may embed assumptions from the simulation;
 - `Demand_Forecast` may create leakage if incorrectly used;

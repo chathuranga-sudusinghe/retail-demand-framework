@@ -6,7 +6,7 @@
 
 ## Decision
 
-Use the **High-Dimensional Supply Chain Inventory Dataset** as the primary COMP1884 implementation dataset instead of the UCI Online Retail dataset.
+Use the **High-Dimensional Supply Chain Inventory Dataset**, published by Ziya on Kaggle, as the primary COMP1884 implementation dataset instead of the UCI Online Retail dataset.
 
 Selected source:
 
@@ -48,7 +48,7 @@ It provides connected sales and inventory variables in one source, allowing:
 
 ## Key trade-off
 
-The new dataset is **simulated**.
+The new dataset is **downloaded from Kaggle** and contains **publisher-simulated source records**. The project team did not generate or simulate a replacement research dataset.
 
 Therefore:
 
@@ -77,7 +77,7 @@ Disadvantages:
 - no replenishment quantity;
 - inventory-risk/replenishment logic would depend heavily on hypothetical assumptions.
 
-### 2. Use a richer simulated supply-chain dataset
+### 2. Use the richer published supply-chain dataset from Kaggle
 
 Advantages:
 
@@ -87,7 +87,7 @@ Advantages:
 
 Disadvantages:
 
-- simulated rather than observed company data.
+- publisher-simulated rather than observed company data.
 
 ## Verified downloaded-dataset findings
 

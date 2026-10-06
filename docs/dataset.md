@@ -5,10 +5,12 @@
 **Dataset:** High-Dimensional Supply Chain Inventory Dataset  
 **Publisher:** Ziya on Kaggle  
 **Source:** https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset  
-**Type:** Simulated daily SKU-level supply-chain and inventory data  
+**Type:** Published Kaggle dataset containing publisher-simulated daily SKU-level supply-chain and inventory data\
 **Dataset size:** 91,250 records and 15 source columns (verified from the downloaded CSV)  
 **Time coverage:** 2024-01-01 to 2024-12-30 (365 dates)  
 **Repository rule:** The dataset file itself is not committed to GitHub.
+
+The research uses the published dataset downloaded from Ziya on Kaggle. The project team did not generate or simulate a replacement research dataset. The publisher describes the source as simulating real-world operations, including simulated sales and replenishments. Local storage refers to where the downloaded file is kept.
 
 Local raw data should be placed under:
 
@@ -260,6 +262,6 @@ Only documentation, code, schemas, tests, and small non-sensitive fixtures shoul
 
 ## 11. Dataset limitation
 
-The selected dataset is **simulated**. It is useful because it provides the connected sales and inventory variables required by the framework, but it is not direct evidence from a real operating company.
+The selected dataset was **downloaded from Kaggle**; its records are **simulated by the publisher**. It is useful because it provides the connected sales and inventory variables required by the framework, but it is not direct evidence from a real operating company.
 
 Results must therefore be described as evaluation within the simulated supply-chain environment, not proof of real-company operational performance.

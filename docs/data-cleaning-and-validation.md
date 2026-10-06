@@ -24,7 +24,7 @@ This document owns validation/parsing/sorting behavior and the validated-handoff
 
 ### Source and observation identity
 
-Use the **High-Dimensional Supply Chain Inventory Dataset**, the simulated source selected in [dataset.md](dataset.md#1-selected-source-dataset) and [DR-001](decisions/DR-001-dataset-selection.md). A file name alone is not a source version: bind preparation to the exact local source snapshot and its provenance. Raw source bytes remain unchanged under data/raw/.
+Use the **High-Dimensional Supply Chain Inventory Dataset**, the published source downloaded from Kaggle with publisher-simulated records, selected in [dataset.md](dataset.md#1-selected-source-dataset) and [DR-001](decisions/DR-001-dataset-selection.md). A file name alone is not a source version: bind preparation to the exact local source snapshot and its provenance. Raw source bytes remain unchanged under data/raw/.
 
 The native observation key is Date + SKU_ID + Warehouse_ID under [DR-002](decisions/DR-002-forecasting-analytical-unit.md). A validated representation preserves one observation per native key; it does not aggregate warehouses, products or dates. Row positions and a regenerated DataFrame index are not observation identities.
 

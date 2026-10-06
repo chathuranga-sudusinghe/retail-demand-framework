@@ -65,7 +65,7 @@ The framework should not hide forecast uncertainty or present a point forecast, 
 
 Known dataset, model, and decision-rule limitations should be visible and documented.
 
-The source dataset is simulated, so the final interface must not imply that the recommendation has already been validated in a real operating retailer.
+The source dataset downloaded from Kaggle is simulated by its publisher, so the final interface must not imply that the recommendation has already been validated in a real operating retailer.
 
 ### Human oversight
 

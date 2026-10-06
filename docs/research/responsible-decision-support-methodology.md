@@ -10,7 +10,7 @@ This project combines demand forecasting with inventory-risk and replenishment a
 
 The purpose of this component is therefore to define how these analytical outputs can be communicated to managers in a transparent and responsible way. The decision-support layer should show the forecast, inventory-risk information, replenishment recommendation where available, supporting evidence, uncertainty, assumptions, and important limitations. It should also identify situations where human review may be appropriate.
 
-The framework is intended to support managerial judgement rather than replace it. It will not automatically approve or execute replenishment orders. This is particularly important because the project uses a simulated dataset and cannot demonstrate how the framework would perform in a real retail organisation without further validation.
+The framework is intended to support managerial judgement rather than replace it. It will not automatically approve or execute replenishment orders. This is particularly important because the project uses a published Kaggle dataset with source records simulated by its publisher and cannot demonstrate how the framework would perform in a real retail organisation without further validation.
 
 ### Component Research Question
 
@@ -99,7 +99,7 @@ The framework also assumes that the information presented to a manager can be tr
 
 Another assumption is that the system is intended to support rather than replace managerial judgement. The proposed human-review conditions are therefore treated as safeguards for cases where uncertainty, limited evidence, or potentially important consequences make automatic interpretation inappropriate.
 
-Finally, the project uses simulated supply-chain data rather than observed data from a real retail organisation. The methodology can demonstrate how responsible decision support could be structured, but its effectiveness in a real operational setting would require further evaluation with appropriate users and real-world evidence.
+Finally, the project uses the published supply-chain dataset downloaded from Kaggle, whose records are simulated by the publisher rather than observed from a real retail organisation. The methodology can demonstrate how responsible decision support could be structured, but its effectiveness in a real operational setting would require further evaluation with appropriate users and real-world evidence.
 
 ## 7. Ethical, Legal, and Governance Considerations
 
@@ -113,7 +113,7 @@ The use of project data and analytical outputs should also follow clear governan
 
 ## 8. Limitations
 
-This methodology has several limitations that should be considered when interpreting the decision-support outputs. The project is based on simulated supply-chain data rather than data collected from a real retail organisation. As a result, the framework can be used to demonstrate how forecasting and inventory-risk information could support decisions, but it cannot show how well the approach would perform under real operational conditions.
+This methodology has several limitations that should be considered when interpreting the decision-support outputs. The project is based on the published supply-chain dataset downloaded from Kaggle, whose records are simulated by the publisher rather than collected from a real retail organisation. As a result, the framework can be used to demonstrate how forecasting and inventory-risk information could support decisions, but it cannot show how well the approach would perform under real operational conditions.
 
 Another limitation is that the quality of the decision-support output depends on the quality of the forecasting and inventory information provided by the earlier analytical stages. If these inputs are incomplete or inaccurate, the resulting risk information and replenishment recommendation may also be affected. For this reason, the framework should present these outputs as decision-support evidence rather than as guaranteed outcomes.
 

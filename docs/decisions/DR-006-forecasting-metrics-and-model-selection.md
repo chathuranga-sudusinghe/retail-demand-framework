@@ -125,7 +125,7 @@ Results from the revised final evaluation interval must not be used for model fi
 - WAPE aggregates absolute errors and does not show error direction; Bias is therefore required as a supporting metric.
 - Mean values can hide fold-to-fold variation, so individual fold results must also be reviewed.
 - The policy does not define a universal WAPE quality band or guarantee performance in a real retailer.
-- The dataset is simulated and covers one observed year; the four folds cannot represent every future demand condition.
+- The dataset downloaded from Kaggle is simulated by its publisher and covers one observed year; the four folds cannot represent every future demand condition.
 - The original metric decision did not resolve models, features, strategy or search. DR-008, [DR-013](DR-013-matched-gradient-boosting-comparison.md) and the frozen feature contract define the direct strategy, revised primary models/grid and predictor membership, including promotion exclusion; runtime controls and supportive configuration policy are resolved in the frozen [protocol](../protocol.md), and validation/final evaluation are complete. Uncertainty and formal demand-regime definitions remain separate.
 
 ## Impact

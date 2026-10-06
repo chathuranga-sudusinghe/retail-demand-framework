@@ -70,7 +70,7 @@ Origin reorder-threshold exposure supplies replenishment-related evidence. Final
 
 ## Critical limitation
 
-The dataset is simulated. Its inventory fields provide a useful controlled environment for testing the framework, but the resulting rules/recommendations are not automatically validated for a real company.
+The dataset downloaded from Kaggle is simulated by its publisher. Its inventory fields provide a useful controlled environment for testing the framework, but the resulting rules/recommendations are not automatically validated for a real company.
 
 ## Evaluation
 

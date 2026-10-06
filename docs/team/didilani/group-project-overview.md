@@ -87,7 +87,7 @@ Missing/invalid required evidence must not become a negative result. Not reachin
 
 ## Important boundary
 
-The source dataset is simulated. The no-receipt scenario assumes no transfers, returns, losses or other adjustments and does not reconstruct actual inventory evolution. Negative projected balances are arithmetic scenario values, not verified physical negative inventory. Conclusions must not be presented as actual stockout prediction, actual shortage ground truth or validated operating rules for a real retailer.
+The source dataset downloaded from Kaggle is simulated by its publisher. The no-receipt scenario assumes no transfers, returns, losses or other adjustments and does not reconstruct actual inventory evolution. Negative projected balances are arithmetic scenario values, not verified physical negative inventory. Conclusions must not be presented as actual stockout prediction, actual shortage ground truth or validated operating rules for a real retailer.
 
 If a numerical replenishment method is later justified and approved, any quantity it recommends would be a **decision-support recommendation**, not an automatically executable purchase order.
 

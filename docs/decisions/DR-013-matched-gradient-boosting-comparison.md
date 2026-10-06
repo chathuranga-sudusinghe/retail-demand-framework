@@ -156,7 +156,7 @@ The accepted Issue #62 feature/preprocessing implementation reflects the earlier
 
 ## Limitations and references
 
-Matched external values do not equalise internal tree-growing algorithms, capacity, parameter effects or random sampling. Equal maximum depth does not remove LightGBM leaf-count controls or CatBoost symmetric-tree differences. Four dependent folds do not justify an invented significance test. The study uses one simulated year; results cannot establish real-retailer effectiveness or universal model superiority. Fixed seed 42 does not measure variability over seeds or promise bit-for-bit cross-library equality.
+Matched external values do not equalise internal tree-growing algorithms, capacity, parameter effects or random sampling. Equal maximum depth does not remove LightGBM leaf-count controls or CatBoost symmetric-tree differences. Four dependent folds do not justify an invented significance test. The study uses one publisher-simulated year from the downloaded Kaggle dataset; results cannot establish real-retailer effectiveness or universal model superiority. Fixed seed 42 does not measure variability over seeds or promise bit-for-bit cross-library equality.
 
 API evidence checked on 2026-09-29 (version-free documentation must be rechecked against selected pins):
 

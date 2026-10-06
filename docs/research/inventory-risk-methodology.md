@@ -35,7 +35,7 @@ The first two sources are already cited in [DR-004](../decisions/DR-004-forecast
 
 ## 3. Dataset-variable mapping
 
-The selected source is simulated daily supply-chain data. The verified profile is 91,250 rows, 15 columns, 50 SKUs, five warehouses, and dates from 2024-01-01 through 2024-12-30. Its native record key is `Date + SKU_ID + Warehouse_ID` ([dataset contract](../dataset.md); [DR-002](../decisions/DR-002-forecasting-analytical-unit.md)).
+The selected source is the published High-Dimensional Supply Chain Inventory Dataset downloaded from Kaggle, with daily supply-chain records simulated by its publisher. The verified profile is 91,250 rows, 15 columns, 50 SKUs, five warehouses, and dates from 2024-01-01 through 2024-12-30. Its native record key is `Date + SKU_ID + Warehouse_ID` ([dataset contract](../dataset.md); [DR-002](../decisions/DR-002-forecasting-analytical-unit.md)).
 
 | Variable | Documented meaning / potential role | Status or caution |
 |---|---|---|
@@ -92,7 +92,7 @@ No new operational assumptions are adopted by this brief.
 
 ## 7. Limitations
 
-- The dataset is simulated, and results cannot establish real-retailer effectiveness.
+- The dataset downloaded from Kaggle is simulated by its publisher, and results cannot establish real-retailer effectiveness.
 - The source has only about one year of daily coverage, limiting evidence about longer seasonal or replenishment cycles.
 - `Stockout_Flag` has no variation and cannot validate stockout predictions.
 - Non-zero `Order_Quantity` is sparse, and order timing/state semantics need clarification.

@@ -231,7 +231,7 @@ Rejected. Model selection must follow DR-006 evidence, not an assumption that mo
 - Current `requirements.txt` contains `lightgbm==4.6.0` as a pre-existing local change; this documentation alignment does not accept/install dependencies or implement a model.
 - DR-010 settles the bounded model grids/search policy; the revised executable protocol and implementation remain separately reviewed.
 - The frozen feature contract settles lags, rolling windows, categorical identities and promotion exclusion for all learned models/horizons.
-- The dataset contains one simulated year, which limits the evidence available to every candidate.
+- The dataset downloaded from Kaggle contains one publisher-simulated year, which limits the evidence available to every candidate.
 - The candidate set does not guarantee that any machine-learning model will outperform the baselines.
 - This decision defines model roles, not training code or model results.
 

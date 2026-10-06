@@ -225,7 +225,7 @@ identity / time; forecast; forecast-error / uncertainty context; inventory risk;
 | Missing values never shown as zero; reason distinguishes: no agreed method / not applicable / waiting on another component | Structure-only agreement; concrete encoding **unresolved** | DR-011 |
 | Human-review status with reason(s); unassessed cases shown as `not assessed`, never `false` | Structure-only agreement | DR-011 |
 | Advisory-only presentation; never an executable purchase order | Implemented / frozen rule | DR-011; AGENTS.md §8 |
-| Standing limitations: simulated dataset; zero-variance `Stockout_Flag` | Implemented / frozen rule | DR-011 |
+| Standing limitations: publisher-simulated Kaggle dataset; zero-variance `Stockout_Flag` | Implemented / frozen rule | DR-011 |
 | Eight transparency criteria for evaluation | Structure-only agreement | DR-011 |
 | Uncertainty method | **Unresolved** | DR-011 dependency table |
 | Human-review rules and numerical thresholds | **Unresolved** | DR-011; responsible DS workflow |
@@ -309,7 +309,7 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 
 ## 11. Standing limitations
 
-- The dataset is simulated; outputs are not validated for a real retailer ([dataset.md](dataset.md); DR-011).
+- The dataset downloaded from Kaggle is simulated by its publisher; outputs are not validated for a real retailer ([dataset.md](dataset.md); DR-011).
 - `Stockout_Flag` is zero-variance and cannot be stockout ground truth.
 - The final evaluation interval (2024-12-03 to 2024-12-30) is reserved but not historically fully unseen; December 3–16 had earlier validation exposure and full-year EDA inspected it ([protocol.md §3, §12](protocol.md)).
 - All framework outputs are advisory decision support, not executable purchase orders.

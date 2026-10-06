@@ -166,7 +166,7 @@ The reserved interval is **2024-12-03 through 2024-12-30**, with horizon target
 ends December 3, 9, 16 and 30. It is reserved from subsequent selection, but
 not historically fully unseen: December 3–16 had earlier validation exposure,
 and full-year exploratory data analysis inspected the interval. Reports must
-repeat both disclosures. The dataset is simulated; results do not establish
+repeat both disclosures. The dataset downloaded from Kaggle is simulated by its publisher; results do not establish
 effectiveness in a real retailer.
 
 ## Impact and remaining human controls

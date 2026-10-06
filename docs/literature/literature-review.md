@@ -31,7 +31,7 @@ This is a **structured narrative review**, not a claimed systematic literature r
 
 ## 2. Dataset-informed boundary of the review
 
-The selected High-Dimensional Supply Chain Inventory Dataset contains daily simulated supply-chain records for 2024, including `Units_Sold`, `Inventory_Level`, `Supplier_Lead_Time_Days`, `Reorder_Point`, `Order_Quantity`, `Promotion_Flag`, identifiers for SKU/warehouse/supplier/region, cost and price variables, and a source-generated `Demand_Forecast`.
+The selected High-Dimensional Supply Chain Inventory Dataset, published by Ziya and downloaded from Kaggle, contains daily supply-chain records simulated by the publisher for 2024, including `Units_Sold`, `Inventory_Level`, `Supplier_Lead_Time_Days`, `Reorder_Point`, `Order_Quantity`, `Promotion_Flag`, identifiers for SKU/warehouse/supplier/region, cost and price variables, and a source-generated `Demand_Forecast`.
 
 These characteristics constrain what the literature can legitimately support in this project.
 
@@ -42,7 +42,7 @@ These characteristics constrain what the literature can legitimately support in 
 - `Order_Quantity` is sparse, with relatively few non-zero order events, which limits direct modelling of replenishment quantities as an ordinary target.
 - the source `Demand_Forecast` must not be used in a way that leaks future or target information into the project's own forecasting models.
 - only approximately one year of observations is available, so strong claims about long-cycle or multi-year seasonality would not be defensible.
-- because the dataset is simulated, conclusions must describe performance within the simulated environment rather than claim proven effectiveness in a real retailer.
+- because the dataset downloaded from Kaggle is simulated by its publisher, conclusions must describe performance within the simulated environment rather than claim proven effectiveness in a real retailer.
 
 These constraints mean that literature on stockout classification, rich customer-level demand, weather-driven retail demand, or multi-year seasonal modelling may provide background context but cannot automatically define the project's main method.
 

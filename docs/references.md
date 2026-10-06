@@ -32,7 +32,7 @@ Why it is relevant:
 
 Important limitation:
 
-- the dataset is simulated, not observed from a real operating retailer.
+- the dataset downloaded from Kaggle is simulated by its publisher, not observed from a real operating retailer.
 
 ### Original dataset from the COMP1889 proposal
 
