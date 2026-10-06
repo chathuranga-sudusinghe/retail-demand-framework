@@ -43,7 +43,7 @@ The full project is guided by the primary group-level hypothesis, while this com
 
 1. Define how the system communicates forecast and inventory-risk uncertainty.
 2. Present replenishment recommendations with their evidence, assumptions, and limitations.
-3. Document data and model limitations, including the simulated nature of the source dataset.
+3. Document data and model limitations, including the publisher-simulated nature of the source dataset downloaded from Kaggle.
 4. Analyse transparency and explainability requirements.
 5. Examine potential bias or uneven behaviour across relevant segments where methodologically justified.
 6. Define appropriate human-in-the-loop decision points.

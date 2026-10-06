@@ -13,7 +13,7 @@
 
 The [inventory methodology research brief](../research/inventory-risk-methodology.md) identified candidate methods and unresolved timing and evaluation questions. This record proposes the initial method for group approval: **origin reorder-threshold exposure**. It supplies a common downstream interpretation of Chathuranga's forecasts while preserving Didilani's inventory-analysis ownership and Dewmi's responsible decision-support ownership.
 
-The [dataset contract](../dataset.md) documents simulated SKU-warehouse observations, one observed year, a zero-variance `Stockout_Flag`, and sparse `Order_Quantity`. These data cannot validate actual stockout prediction or establish an optimal ordering policy. The method below produces constructed scenario evidence, not actual shortage ground truth or a reconstruction of realised inventory evolution.
+The [dataset contract](../dataset.md) documents publisher-simulated SKU-warehouse records downloaded from Kaggle, one observed year, a zero-variance `Stockout_Flag`, and sparse `Order_Quantity`. These data cannot validate actual stockout prediction or establish an optimal ordering policy. The method below produces constructed scenario evidence, not actual shortage ground truth or a reconstruction of realised inventory evolution.
 
 ## Reason / rationale
 

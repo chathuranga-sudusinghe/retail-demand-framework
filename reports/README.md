@@ -2,6 +2,10 @@
 
 This directory holds lightweight inspectable numerical snapshots, descriptive reports and approved figures. [Final evaluation](../docs/forecasting-final-evaluation.md) is the canonical current forecasting interpretation and conclusion; generated reports retain the wording/status captured when they were rendered.
 
+## Dataset provenance
+
+The research uses Ziya's published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset), downloaded from Kaggle. The source records were simulated by the publisher; the project team did not generate a replacement research dataset. References to simulated data in retained reports describe the published source's provenance. Synthetic test fixtures and API demonstration inputs are separately labelled examples.
+
 ## Forecasting evidence
 
 | Role | Exact retained run | Tracked numerical source |

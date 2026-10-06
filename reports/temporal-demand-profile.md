@@ -20,7 +20,7 @@ Candidate units:
 
 ## 2. Verified source constraints
 
-The local dataset contains:
+The published dataset downloaded from Kaggle and stored locally contains:
 
 - 91,250 rows;
 - 365 observed dates from 2024-01-01 to 2024-12-30;
@@ -134,7 +134,7 @@ These remain separate evidence-based decisions.
 
 ## 9. Limitations
 
-- the dataset is simulated;
+- the dataset downloaded from Kaggle is simulated by its publisher;
 - only approximately one year of data is available;
 - strong long-cycle seasonal claims are not supported;
 - lag-1 autocorrelation is descriptive and does not establish model suitability;

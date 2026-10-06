@@ -121,7 +121,7 @@ At a validation/final origin, build one row per expected pair and reuse that vec
 
 Identity indicators provide pooled series context. Short lags represent recent level and weekday-aligned history; 7/14/28-day mean/std windows represent local level and dispersion at planning scales; the slope represents local direction. Their inclusion is an approved transparent design, not a claim that ablation proved every feature useful.
 
-The historical EDA shows level autocorrelation but does not prove independent weekly seasonality: the differenced lag-7 median was approximately 0.003. Cyclic weekday representation is retained without claiming predictive superiority. One simulated annual trajectory does not justify month/quarter/year-position features as recurring seasonality.
+The historical EDA shows level autocorrelation but does not prove independent weekly seasonality: the differenced lag-7 median was approximately 0.003. Cyclic weekday representation is retained without claiming predictive superiority. One annual trajectory from the publisher-simulated Kaggle dataset does not justify month/quarter/year-position features as recurring seasonality.
 
 Excluded alternatives include ordinal day_of_week, month/quarter/year calendars, lag_28, rolling medians, growth ratios/change features, interactions, cumulative/calendar-end encodings and future promotion scenarios. The 28-day mean/std already retain the long local window; extra correlated summaries and denominator-sensitive ratios are outside the accepted feature set. Excluded definitions are not an alternative executable contract.
 

@@ -330,7 +330,7 @@ Tests SHOULD use synthetic fixtures. Any use of real run outputs follows the ver
 
 ## 15. Limitations
 
-- The dataset is simulated. Forecasts do not describe a real retailer ([dataset](dataset.md)).
+- The dataset downloaded from Kaggle is simulated by its publisher. Forecasts do not describe a real retailer ([dataset](dataset.md)).
 - The retained export has one fixed origin (2024-12-02). This limitation belongs to that artifact; the active inference API computes from a supplied origin and daily history.
 - The final interval was not fully unseen: December 3–16 had earlier validation exposure, and full-year exploratory analysis inspected the interval ([final evaluation](forecasting-final-evaluation.md)).
 - No forecast uncertainty is available (B11).

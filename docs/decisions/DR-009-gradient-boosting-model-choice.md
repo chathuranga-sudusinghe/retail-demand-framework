@@ -94,7 +94,7 @@ It is not selected because including both LightGBM and XGBoost would add overlap
 - LightGBM is a third-party dependency already listed locally; this record supplies no installation/runtime evidence.
 - Boosted-tree performance and runtime depend on the final features, hyperparameters, horizon, and execution environment.
 - Feature importance can be unstable or misleading when predictors are correlated and must be interpreted cautiously.
-- The dataset is simulated and covers one observed year; selecting a suitable implementation does not establish real-retailer effectiveness.
+- The dataset downloaded from Kaggle is simulated by its publisher and covers one observed year; selecting a suitable implementation does not establish real-retailer effectiveness.
 
 ## Impact
 

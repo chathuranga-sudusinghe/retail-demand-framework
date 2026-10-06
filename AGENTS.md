@@ -138,7 +138,7 @@ except approved small test fixtures.
 
 Do not remove the dataset-protection rules from `.gitignore`.
 
-The dataset is simulated. Do not describe it as observed data from a real operating company.
+The project uses Ziya's published High-Dimensional Supply Chain Inventory Dataset, downloaded from Kaggle. Its source records are simulated by the publisher; the project team did not generate a replacement research dataset. Do not describe it as observed data from a real operating company.
 
 The project must build its own demand-forecasting models from historical `Units_Sold`.
 
