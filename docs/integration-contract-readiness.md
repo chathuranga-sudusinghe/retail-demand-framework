@@ -313,3 +313,313 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 - `Stockout_Flag` is zero-variance and cannot be stockout ground truth.
 - The final evaluation interval (2024-12-03 to 2024-12-30) is reserved but not historically fully unseen; December 3–16 had earlier validation exposure and full-year EDA inspected it ([protocol.md §3, §12](protocol.md)).
 - All framework outputs are advisory decision support, not executable purchase orders.
+
+12. Integration acceptance scenarios (Issue #101)
+Issue: #101 — Docs: specify integration acceptance scenarios from frozen handoff requirements Builds on: Issue #87 (Sections 1–11 of this document). Issue #101 lists #98, #70 and #73 as completed inputs. This section uses their requirements only as already reflected in Sections 3–9. Owners should add any further requirement from those Issues during review. Status: Documentation only. These scenarios describe what a later implementation must show. They are not tests, adapters, API code, charts or final schemas.
+12.1 Rules for this section
+Synthetic data only. Every value below is invented for illustration (SKU_SYN_A, WH_SYN_1, syn-run-01, small demand numbers). None comes from the project dataset or a real run.
+Real names only where they already exist. Back-ticked forecasting names (SKU_ID, forecast_origin, horizon, target_start_date, target_end_date, prediction, observed_target, run_id, evaluation_stage, evidence_role, model, configuration_id, canonical_config_id) are the implemented predictions.csv columns in artifacts.py. Everything downstream is described in plain words, because final downstream names, types and encodings are not agreed (B6, B7, B9).
+No new defaults. Where a value is missing or unapproved, the scenario only requires that this is visible with a reason. It does not choose a fallback, clipping rule, uncertainty method or review threshold.
+Positive examples show acceptable behaviour. Negative examples show behaviour a later implementation must reject or never produce.
+12.2 Acceptance matrix
+ID
+Requirement
+Authoritative reference
+Synthetic scenario
+Expected invariant / observable behaviour
+Existing test coverage (forecasting side)
+Remaining dependency
+Responsible reviewer
+AS-01
+Identity preservation
+AGENTS.md §5 (DR-002 grain); protocol.md §6, §14; §3.2 above
+One forecast for SKU_SYN_A / WH_SYN_1 passes through a handoff
+Same SKU_ID + Warehouse_ID pair arrives unchanged; no merging, swapping or new identity; an unknown identity fails explicitly
+test_forecasting_features.py (invalid/duplicate keys rejected); test_forecasting_evaluation.py (row index is not an identity key)
+#85 (inventory handoff); #132 (API presentation)
+Chathuranga; Didilani for inventory side
+AS-02
+Forecast origin ≠ target start
+protocol.md §2, §5; §4 above; shared-data foundation
+Origin 2024-03-31, h = 28
+Origin shown as 2024-03-31; target start shown as 2024-04-01; the two are never equal or swapped
+test_forecasting_features.py (origin features use the first target day, not the origin)
+#132 for prospective display
+Chathuranga
+AS-03
+Inclusive target window
+protocol.md §2, §3; §4 above
+Origin 2024-11-04, h = 7
+Window is 2024-11-05 to 2024-11-11, both days included, exactly 7 days
+test_forecasting_features.py (inclusive fold boundaries; targets fit inside windows)
+None for forecasting meaning; #132 for display
+Chathuranga
+AS-04
+Horizon preservation
+DR-004; DR-008; protocol.md §2; §4 above
+Same pair and origin with h = 1, 7, 14, 28
+Four separate records, each keeps its own horizon; 7/14/28 stay cumulative totals; no daily path or cross-horizon total
+test_forecasting_evaluation.py (direct cumulative, not recursive); test_forecasting_configuration.py (unapproved horizons rejected)
+#132 for display; B8 for any 28-day downstream use
+Chathuranga; Didilani / Dewmi for 28-day downstream
+AS-05
+Provenance preservation
+protocol.md §7.3, §11, §14; DR-011 source distinction; §3.4 above
+A primary and a supportive record from syn-run-01
+Each record keeps run_id, evaluation_stage, evidence_role, model, configuration_id; supportive canonical_config_id stays empty; producing component stays identifiable
+test_forecasting_experiment.py (exact artifacts and metadata; schema drift rejected)
+#132 for API provenance; #85 for inventory carry-through
+Chathuranga; Dewmi for source distinction in presentation
+AS-06
+Retrospective outcomes kept out of prospective presentation
+protocol.md §14; DR-012 §7; §5 above; system integration workflow
+One record with prediction 14.0 and observed_target 15
+Retrospective view may show both, clearly labelled; prospective view shows no observed_target, error or metric
+test_forecasting_features.py (post-origin actuals masked); test_forecasting_evaluation.py (outcomes change only targets)
+#132 (prospective API)
+Chathuranga
+AS-07
+Unavailable information is visible with a reason (conceptual)
+DR-011 missing-value semantics; DR-012 §2; §7.2 above
+Uncertainty requested where no method exists
+Shown as unavailable with a reason; never zero, never silently hidden
+Forecasting side only: test_forecasting_observability.py (unavailable status kept in reports)
+Concrete encoding: B9; see 12.5
+Dewmi; each producing owner
+AS-08
+Advisory-only presentation (conceptual)
+DR-011; AGENTS.md §8; system integration workflow
+Exposure evidence shown to a manager
+Presented as guidance for human consideration; no automatic or executable order
+None (no presentation code in scope)
+B7, B10; see 12.5
+Dewmi; Didilani for inventory wording
+AS-09
+"Not assessed" with reason, never false (conceptual)
+DR-011 human review; DR-012 §8; §7.2 above
+Record before any review method is approved
+Review state reads as not assessed, with a reason; never false, "no", or blank
+None
+B9, B10; see 12.5
+Dewmi
+AS-10
+Undefined metric stays unavailable
+protocol.md §8
+Retrospective group whose actual total is 0
+WAPE marked unavailable (undefined_zero_actual_total), not 0 or infinity
+test_forecasting_observability.py (unavailable status)
+None (retrospective only)
+Chathuranga
+
+
+Note on test coverage: test files are named from the repository's tests/ folder. They cover the forecasting side only. No integration, adapter or API acceptance test is claimed. Reviewers should confirm the named tests still exist on current main.
+12.3 Positive and negative examples
+A. Identity preservation (AS-01)
+Positive — the pair arrives unchanged:
+
+forecasting record:      SKU_ID=SKU_SYN_A  Warehouse_ID=WH_SYN_1  horizon=7  prediction=14.0
+
+after handoff (concept): same SKU_SYN_A / WH_SYN_1, same horizon, same forecast value
+
+Negative — must be rejected:
+
+Case
+Why it fails
+Output shows WH_SYN_2 for a WH_SYN_1 input
+Warehouse swapped
+SKU_SYN_A at WH_SYN_1 and WH_SYN_2 added into one SKU total
+Breaks the SKU-warehouse grain
+SKU_SYN_Z (never seen in training) gets an all-zero or default forecast
+Unknown identities must fail explicitly (protocol.md §6)
+
+B. Forecast origin versus target start (AS-02)
+Positive:
+
+forecast_origin=2024-03-31   target_start_date=2024-04-01   horizon=28   target_end_date=2024-04-28
+
+Negative:
+
+Case
+Why it fails
+Display says "forecast made on 2024-04-01"
+Target start shown as origin
+forecast_origin = target_start_date = 2024-04-01
+Origin must be the day before target start
+A target_7_day label joined to the row dated 2024-03-31
+Labels sit on the row dated origin + 1, not the origin (§4)
+
+C. Inclusive target window (AS-03)
+Positive — origin 2024-11-04, h = 7, synthetic daily demand:
+
+Date
+11-05
+11-06
+11-07
+11-08
+11-09
+11-10
+11-11
+Units
+3
+0
+2
+5
+1
+4
+0
+
+
+Window = 2024-11-05 to 2024-11-11 (7 days, both ends included). Retrospective cumulative total = 15. For h = 1, start and end are the same day (2024-11-05).
+
+Negative:
+
+Case
+Why it fails
+Window ends 2024-11-12 (8 days)
+One day too many
+Window starts 2024-11-04
+Includes the origin day
+Window treated as 2024-11-05 to 2024-11-10 (6 days)
+The end day must be included
+
+D. Horizon preservation (AS-04)
+Positive — one pair, one origin, four separate records:
+
+horizon=1   prediction=2.0    (next day)
+
+horizon=7   prediction=14.0   (7-day cumulative total)
+
+horizon=14  prediction=27.5   (14-day cumulative total)
+
+horizon=28  prediction=55.0   (28-day cumulative total; four weeks, not a calendar month)
+
+Negative:
+
+Case
+Why it fails
+28-day value divided by 28 and drawn as a daily line
+No daily path is implied (DR-008)
+The four values summed or averaged into one score
+Horizons must not be combined
+h = 28 labelled "next month" or "lead time"
+28 days is four weeks, not a calendar month or lead-time estimate (DR-004)
+A 28-day inventory exposure state shown as approved
+28-day downstream use is not approved (B8)
+
+E. Provenance preservation (AS-05)
+Positive:
+
+run_id=syn-run-01  evaluation_stage=final_evaluation  evidence_role=primary     model=lightgbm  configuration_id=GBM015  canonical_config_id=GBM015
+
+run_id=syn-run-01  evaluation_stage=final_evaluation  evidence_role=supportive  model=ridge     configuration_id=fixed   canonical_config_id=(empty)
+
+Negative:
+
+Case
+Why it fails
+model or run_id dropped before display
+Source can no longer be traced
+Ridge record shown with canonical_config_id=GBM001
+Supportive records have no canonical ID (protocol.md §7.3)
+A validation record presented as final performance
+Stages must stay separate (protocol.md §11)
+Inventory or review content shown without saying which component produced it
+DR-011 source distinction
+
+F. Retrospective outcomes versus prospective presentation (AS-06)
+Positive — retrospective (evaluation) view, clearly labelled as looking back:
+
+evaluation_stage=final_evaluation  horizon=7  prediction=14.0  observed_target=15
+
+Positive — prospective view (concept): shows identity, origin, horizon, target window, forecast value and provenance. It shows no observed demand, error or metric.
+
+Negative:
+
+Case
+Why it fails
+Prospective view shows observed_target = 15 next to the forecast
+Future outcome shown as if known at the origin
+Prospective view shows WAPE or error beside a live forecast as if it applied to that forecast
+Errors are retrospective only
+Retrospective margin (B_t - Y_t,h) used to trigger review
+Must not become a prospective review input (DR-012 §7)
+
+12.4 Conceptual scenarios — unavailable information, advisory-only, not assessed
+These describe behaviour only. They do not set field names, codes, values or encodings (B9 remains open). DR-011 writes the review state as "not assessed"; Issue #101 writes it not_assessed. Final spelling and encoding are not decided here.
+Unavailable information (AS-07)
+DR-011 separates three reasons: no agreed method, does not apply, and waiting for another component's decision or output.
+
+Synthetic situation
+Acceptable behaviour
+Must never happen
+Uncertainty for any forecast (no method, B11)
+Shown as unavailable, reason: no agreed method
+Shown as 0, ±0, or a made-up range
+28-day inventory exposure (not approved, B8)
+Shown as unavailable, reason: waiting for decision
+Calculated by extending DR-012 on its own
+Replenishment quantity (provisional, B12)
+Shown as unavailable, reason: no agreed method
+Shown as 0 units or as a suggested order
+Origin inventory snapshot missing for SKU_SYN_A / WH_SYN_1
+Exposure unavailable with reason; the forecast itself can still be shown (availability is per output, DR-012 §2)
+Whole record silently dropped, or a later snapshot used instead
+Observed demand of 0 on a real day
+Shown as 0 — a real zero
+Treated as unavailable
+
+Advisory-only presentation (AS-08)
+Acceptable
+Must never happen
+"Forecast threshold crossing within 7 days — for manager review"
+"Order 120 units now"
+Evidence, assumptions and limitations shown next to the result
+A button or action that creates a purchase order
+The final decision is clearly left with a responsible person
+Wording that implies the system approved the action
+
+"Not assessed" with a reason (AS-09)
+Acceptable
+Must never happen
+Review state: not assessed — reason: no approved review method yet
+Review state shown as false
+Exposure assessed but review still not assessed (they are independent, DR-012 §8)
+"No review needed" when no rule exists
+More than one reason kept, if more than one applies
+Blank review state with no reason
+
+12.5 Ready to specify now versus waiting on #85, #132 or #145
+Ready to specify now (frozen sources exist; no pending decision is needed to write the expected behaviour):
+
+AS-01 to AS-06 on the forecasting side, using the implemented predictions.csv fields and synthetic records;
+AS-10 (undefined metric stays unavailable);
+the behaviour in AS-07, AS-08 and AS-09 as described in 12.4 — but not their concrete fields or encodings.
+
+Waiting on a dependency (the scenario can be written as behaviour, but it cannot be turned into a concrete test yet):
+
+Depends on
+Scenarios affected
+What must exist first
+Related blockers
+#132
+AS-01 to AS-06 as shown by the request-time forecast API
+Reviewed API, four-horizon demonstration and Tinosh's consumer acceptance
+B2
+#85
+AS-01, AS-02, AS-04, AS-05 carried into the inventory-risk handoff; unavailable-snapshot case in AS-07
+Agreed forecasting → inventory-risk contract; origin snapshot meaning; problematic-forecast handling
+B3, B4, B5, B6, B13
+#145
+Concrete unavailable-state and review-status representation in the decision-support handoff (AS-07, AS-08, AS-09)
+Listed as a dependency in Issue #101; its owner should confirm this scope during review
+B7, B9, B10
+No Issue yet / separate approval
+Uncertainty display; any 28-day downstream content
+Uncertainty decision (B11); 28-day downstream approval (B8)
+B8, B11
+
+12.6 What this section does not do
+It does not add runtime code, adapters, FastAPI endpoints, charts or automated tests.
+It does not define final shared or interchange schemas, field names, encodings or defaults.
+It does not choose an uncertainty method, review threshold, clipping rule or replenishment quantity.
+It does not change any research methodology or authorise any experiment.
