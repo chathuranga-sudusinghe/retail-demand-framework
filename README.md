@@ -129,6 +129,7 @@ flowchart TB
 - Forecasting contracts: [validated preparation](docs/data-cleaning-and-validation.md), [exact features/preprocessing](docs/forecasting-feature-engineering.md), [experimental protocol](docs/protocol.md), [DR-014 freeze/refit](docs/decisions/DR-014-forecasting-selection-and-final-refit.md).
 - Operations/evidence: [runner](docs/forecasting-runner.md), [storage/retention](docs/artifact-storage-policy.md), [report index](reports/README.md), [historical progress](docs/research-progress.md).
 - Contribution: [CONTRIBUTING](CONTRIBUTING.md), [AGENTS](AGENTS.md), [decision records](docs/decisions/README.md), [member/workflow boundaries](docs/project-boundaries.md).
+- Academic AI assistance: [university guidance and source evidence](docs/university-ai-guidance.md), including dated references and assessment permissions still requiring confirmation.
 
 ## Repository layout
 
