@@ -93,3 +93,10 @@ The following is a template, not an event:
 - Outcome: canonical methods/features/operations/results/storage and contribution ownership consolidated; redundant temporary guides retired after preserving material caveats and contributor guidance.
 - Evidence: [final report](forecasting-final-evaluation.md), [protocol](protocol.md), [feature contract](forecasting-feature-engineering.md), [runner](forecasting-runner.md), [CONTRIBUTING](../CONTRIBUTING.md).
 - Review/next action: owner review of the documentation and compatibility-check handoff before any commit/push. No scientific decision, execution or Git finalization is authorized by this entry.
+
+### 2026-10-08 — University AI-use guidance documented for review
+
+- Type/status: documentation under [Issue #155](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/155); uncommitted human-review draft coordinated by Chathuranga.
+- Evidence: [university AI-use note](university-ai-guidance.md) records the first-semester declaration, 2025/26 handbook, inspected 9 September 2026 website update, access date, file identities and verification limits. Original documents remain local/ignored; the supplied declaration was copied without changing its bytes, and the existing handbook copy matches the supplied file.
+- Boundaries: COMP1884 tier, permitted activities and applicable acknowledgement format remain unconfirmed; no research methodology, component ownership, experiment permission or Git finalisation is approved by this note.
+- Next action: human review of the source summary and references, followed by assessment/cohort-specific confirmation of applicable AI guidance. No commit, push or Pull Request has been performed.

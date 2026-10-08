@@ -49,6 +49,14 @@ Status in COMP1884:
 
 University of Greenwich COMP1884 group-project guidance and relevant project materials should be cited or referenced in the final report only where academically appropriate.
 
+The [university AI-use evidence note](university-ai-guidance.md) records source provenance, local file identities, verification limits and unresolved applicability to the COMP1884 submissions. These entries document guidance, not approval of Tier 2 or blanket permission for AI-generated work.
+
+- University of Greenwich (2026) '[New AI guidance to support learning and assessments in 2026/27](https://www.gre.ac.uk/articles/public-relations/new-ai-guidance-to-support-learning-and-assessments-in-202627)', 9 September (Accessed: 8 October 2026). Public article inspected; detailed linked guidance was not accessible during the review.
+- University of Greenwich (2025/26) *UoG Student Handbook*. Academic-year edition supplied to the project owner; local original: `research-materials/university/student-handbook-2025-26.docx`. Relevant academic-integrity text inspected on 8 October 2026; academic year is an edition label, not a verified publication date.
+- *Declaration of AI Use* (n.d.). University-supplied form according to the project owner; author/date/version not stated in the inspected text. Local original: `research-materials/university/declaration-of-ai-use.docx`. Inspected on 8 October 2026; first-semester receipt does not establish second-semester assessment permission.
+
+Use the assessment's required reference style in submitted work. Retain the local originals outside Git and confirm the applicable cohort/assessment instructions before choosing a declaration or AI Reflection format.
+
 ## Literature references
 
 The literature-review baseline is maintained in:
