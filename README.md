@@ -2,7 +2,7 @@
 
 **COMP1884 · MSc Data Science · University of Greenwich**
 
-This group project builds a data-driven decision-support framework connecting demand forecasts, inventory-risk/replenishment analysis and responsible management-facing outputs. It uses Ziya's published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset), downloaded from Kaggle. The publisher describes the source records as simulated; results do not establish effectiveness in a real retailer.
+This group project builds a data-driven decision-support framework connecting demand forecasts, inventory-risk/replenishment analysis and responsible management-facing outputs. It uses the published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset) from Kaggle, selected for its linked daily sales and inventory variables supporting analysis at SKU-warehouse level. The publisher-simulated records support evaluation within this dataset; results do not establish effectiveness in a real retailer.
 
 ## Dataset source
 
@@ -10,7 +10,7 @@ This group project builds a data-driven decision-support framework connecting de
 
 **Publisher:** Ziya on Kaggle.
 
-The research uses the dataset downloaded from this published source. The project team did not generate a replacement research dataset. Dataset identity, schema, provenance and limitations are documented in the [dataset contract](docs/dataset.md).
+The research uses the dataset downloaded from this published source. The project team did not generate a replacement research dataset. The [dataset contract](docs/dataset.md#11-suitability-for-the-project-research-purpose) documents the selection rationale, verified profiling evidence, source context and limitations.
 
 ## Current project state
 

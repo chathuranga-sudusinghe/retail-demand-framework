@@ -24,6 +24,24 @@ The dataset change from UCI Online Retail is recorded in:
 docs/decisions/DR-001-dataset-selection.md
 ```
 
+### 1.1 Suitability for the project research purpose
+
+The dataset was selected for the integrated COMP1884 research because it connects historical sales with warehouse-specific inventory variables in one published source. [DR-001](decisions/DR-001-dataset-selection.md) records the selection rationale; [DR-002](decisions/DR-002-forecasting-analytical-unit.md) records the approved SKU-warehouse-day analytical unit.
+
+- **Demand forecasting:** Historical `Units_Sold` supports chronological model development and evaluation. The project builds its own forecasts rather than adopting the source `Demand_Forecast`.
+- **Inventory alignment:** `SKU_ID`, `Warehouse_ID` and `Date` connect sales with inventory levels, reorder points, supplier lead times and order activity. Preserving the warehouse dimension retains operational context; prediction-time availability and downstream interpretation remain governed by their reviewed contracts.
+- **Verified temporal coverage:** The [retained temporal and inventory-alignment profile](../reports/temporal-demand-profile.md) records 250 SKU-warehouse series, each with 365 observations, and unique native observation keys. Section 2 gives the wider source profile; the [preparation contract](data-cleaning-and-validation.md) defines reproducible quality checks.
+
+These properties provide a structured basis for forecasting evaluation and development of the integrated decision-support framework within the publisher-simulated environment. Field-specific limitations and inference boundaries are documented in Sections 2 and 11 and the [research-design threats to validity](research-design.md#15-threats-to-validity).
+
+### 1.2 Supplementary source context
+
+The [Kaggle dataset page](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset) reports a **Usability score of 8.82/10** (accessed 8 October 2026) and describes the dataset as designed for supply-chain inventory research, including demand forecasting and inventory analysis.
+
+Usability reflects documentation, related public content, file types and metadata coverage, as described by Pancini et al. (2025), [Section 4.3](https://doi.org/10.1002/smr.70044). It provides supplementary context for ease of use and reuse; the project's research suitability is supported by the verified profiling and selection rationale in Section 1.1.
+
+The publisher, [Ziya (ziya07)](https://www.kaggle.com/ziya07), is listed as a **Datasets Expert** in [Kaggle's dataset rankings](https://www.kaggle.com/rankings/datasets) (accessed 8 October 2026). [References](references.md#dataset-source-context) records these sources.
+
 ## 2. Verified dataset profile
 
 The downloaded CSV was profiled before implementation. Verified characteristics:

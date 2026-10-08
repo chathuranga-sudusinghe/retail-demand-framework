@@ -34,6 +34,14 @@ Important limitation:
 
 - the dataset downloaded from Kaggle is simulated by its publisher, not observed from a real operating retailer.
 
+### Dataset source context
+
+- Ziya (n.d.) *High-Dimensional Supply Chain Inventory Dataset*. Kaggle. [Dataset page](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset) (Accessed: 8 October 2026). The page reports Usability **8.82/10** and describes its intended applications in demand forecasting and inventory research.
+- Ziya (n.d.) *Ziya (ziya07) profile*. Kaggle. [Profile](https://www.kaggle.com/ziya07) and [dataset rankings](https://www.kaggle.com/rankings/datasets) (Accessed: 8 October 2026). Lists the publisher as a Datasets Expert.
+- Pancini, M., Camilli, M., Quattrocchi, G. and Tamburri, D.A. (2025) 'Engineering MLOps Pipelines With Data Quality: A Case Study on Tabular Datasets in Kaggle', *Journal of Software: Evolution and Process*, 37(9), e70044. [https://doi.org/10.1002/smr.70044](https://doi.org/10.1002/smr.70044) (Accessed: 8 October 2026). Section 4.3 explains the documentation, public-content, file-type and metadata basis of Kaggle Usability.
+
+The [dataset suitability note](dataset.md#11-suitability-for-the-project-research-purpose) connects this source context with the project's verified profiling evidence and documented research scope.
+
 ### Original dataset from the COMP1889 proposal
 
 **Online Retail**  
