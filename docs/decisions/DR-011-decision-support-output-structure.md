@@ -4,10 +4,10 @@
 
 **Date:** 2026-09-27
 **Status:** Accepted for structure only; upstream-dependent field contents remain provisional.
-**Owner:** Dewmi Pramodya
+**Responsible member:** Dewmi Pramodya
 **Decision owners:** COMP1884 group
 **Related issue:** #48 – Decision: define responsible decision-support output structure (DR-011)
-**Supervisor confirmation:** Not required to record the current group methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
+**University requirements:** This record asserts no separate lecturer approval. Any confirmation required by the applicable COMP1884 instructions remains subject to the team's review process; teaching guidance does not establish approval of this methodology.
 
 
 ## Context
@@ -201,7 +201,7 @@ This decision gives the group a common structure that can later be used when the
 It also keeps the output transparent by showing where information comes from, what is still uncertain, and when human judgement is required. At the same time, some parts of the output cannot be finalised yet because they depend on decisions and results from other parts of the project.
 
 Future implementation should follow this structure, but the provisional areas identified in this Decision Record may be updated when the relevant upstream decisions are approved.
-## Revised forecasting interface and owner review
+## Revised forecasting interface and component review
 
 The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative quantities do not imply a daily forecast path. Preserve origin and

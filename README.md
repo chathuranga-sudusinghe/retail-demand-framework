@@ -14,7 +14,7 @@ The research uses the dataset downloaded from this published source. The project
 
 ## Current project state
 
-Chathuranga's forecasting research is complete: preparation, development, validation, configuration/model freeze, final holdout evaluation and integrity verification, as confirmed by the project owner. [Final results and limitations](docs/forecasting-final-evaluation.md) consolidate the evidence and interpretation for human review.
+Chathuranga's forecasting research is complete: preparation, development, validation, configuration/model freeze, final holdout evaluation and integrity verification, as confirmed by Chathuranga. [Final results and limitations](docs/forecasting-final-evaluation.md) consolidate the evidence and interpretation for human review.
 
 | Horizon | Frozen producer | Configuration |
 |---|---|---|
@@ -129,6 +129,7 @@ flowchart TB
 - Forecasting contracts: [validated preparation](docs/data-cleaning-and-validation.md), [exact features/preprocessing](docs/forecasting-feature-engineering.md), [experimental protocol](docs/protocol.md), [DR-014 freeze/refit](docs/decisions/DR-014-forecasting-selection-and-final-refit.md).
 - Operations/evidence: [runner](docs/forecasting-runner.md), [storage/retention](docs/artifact-storage-policy.md), [report index](reports/README.md), [historical progress](docs/research-progress.md).
 - Contribution: [CONTRIBUTING](CONTRIBUTING.md), [AGENTS](AGENTS.md), [decision records](docs/decisions/README.md), [member/workflow boundaries](docs/project-boundaries.md).
+- Assessment requirements: [COMP1884 criteria checklist](docs/greenwich-criteria-checklist.md), including programme evidence, submission requirements, team/lecturer roles and remaining verification gaps.
 - Academic AI assistance: [university guidance and source evidence](docs/university-ai-guidance.md), including dated references and assessment permissions still requiring confirmation.
 
 ## Repository layout

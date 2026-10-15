@@ -1,12 +1,12 @@
 # Demand Forecasting Workflow
 
-## Owner
+## Responsible member
 
 Chathuranga — Research Team Lead & Forecasting. Owns methodology, model comparison, forecast/output meaning and evaluation; shares API architecture/integration review with Tinosh.
 
 ## Goal and current state
 
-Produce reproducible next-day and cumulative planning-horizon forecasts from historical Units_Sold at SKU_ID + Warehouse_ID + Date. Preparation, development, validation, freeze, final evaluation and integrity verification are complete as confirmed by the owner. [Final evaluation](../forecasting-final-evaluation.md) owns the full results, decision and scientific limitations; downstream work remains separate.
+Produce reproducible next-day and cumulative planning-horizon forecasts from historical Units_Sold at SKU_ID + Warehouse_ID + Date. Preparation, development, validation, freeze, final evaluation and integrity verification are complete as confirmed by Chathuranga. [Final evaluation](../forecasting-final-evaluation.md) owns the full results, decision and scientific limitations; downstream work remains separate.
 
 ## Canonical working sequence
 
@@ -47,4 +47,4 @@ Use the unchanged DR-014 producer mapping. Forecast origin, target start/end, ho
 
 ## Execution and review boundary
 
-The completed study does not authorize another run. The owner manually runs any specifically approved preparation/experiment. Synthetic checks support implementation review but are not research evidence. Follow [CONTRIBUTING](../../CONTRIBUTING.md), [applied MLOps](applied-mlops.md) and [AGENTS](../../AGENTS.md). The earlier experiment's different design remains historical, not the revised study's official baseline.
+The completed study does not authorize another run. For forecasting, Chathuranga manually runs any specifically approved preparation/experiment. Synthetic checks support implementation review but are not research evidence. Follow [CONTRIBUTING](../../CONTRIBUTING.md), [applied MLOps](applied-mlops.md) and [AGENTS](../../AGENTS.md). The earlier experiment's different design remains historical, not the revised study's official baseline.

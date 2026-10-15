@@ -1,6 +1,6 @@
 # Forecasting Final Evaluation
 
-This report consolidates the completed forecasting study under Issue #131. Completion and integrity verification of the retained runs are confirmed by the project owner; this documentation pass performs no new experiment or bundle verification. The frozen research decisions remain those in [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md). The final forecasting interpretation has been human-reviewed; this documentation pass creates no new approval.
+This report consolidates the completed forecasting study under Issue #131. Completion and integrity verification of the retained runs are confirmed by Chathuranga; this documentation pass performs no new experiment or bundle verification. The frozen research decisions remain those in [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md). The final forecasting interpretation has been human-reviewed; this documentation pass creates no new approval.
 
 ## 1. Final evaluation scope
 
@@ -170,7 +170,7 @@ The completed forecasting component supplies reproducible predictions, provenanc
 
 ## 10. Final conclusion
 
-Forecasting preparation, development, validation, configuration/model freeze, final holdout evaluation and final integrity verification are complete, as confirmed by the project owner. The accepted producer mapping remains LightGBM GBM018 for 1 day, LightGBM GBM011 for 7 days, XGBoost GBM022 for 14 days and XGBoost GBM003 for 28 days.
+Forecasting preparation, development, validation, configuration/model freeze, final holdout evaluation and final integrity verification are complete, as confirmed by Chathuranga. The accepted producer mapping remains LightGBM GBM018 for 1 day, LightGBM GBM011 for 7 days, XGBoost GBM022 for 14 days and XGBoost GBM003 for 28 days.
 
 The evidence supports a reproducible, horizon-specific forecasting comparison. It also shows that simpler supportive/baseline methods can outperform the frozen producers in the final period. The study establishes neither universal model superiority nor statistical significance nor inventory/replenishment effectiveness. Subsequent work is the reviewed prospective handoff and the separately owned downstream components, with the exposure and simulation limitations carried forward.
 

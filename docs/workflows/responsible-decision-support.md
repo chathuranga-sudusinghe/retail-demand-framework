@@ -2,11 +2,11 @@
 
 Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
-## Owner
+## Responsible member
 
-Primary COMP1884 owner: **Dewmi**
+Responsible COMP1884 member: **Dewmi**
 
 ## Goal
 
@@ -127,7 +127,7 @@ The 7-day, 14-day and 28-day values represent cumulative demand across their res
 
 The overall output structure follows DR-011, while fields that depend on inventory-risk, replenishment, uncertainty, or human-review rules remain provisional until the related project decisions are approved.
 
-## Revised forecasting interface and owner review
+## Revised forecasting interface and component review
 
 The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is

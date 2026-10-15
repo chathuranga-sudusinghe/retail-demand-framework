@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Work from an assigned Issue on a dedicated task branch in the existing repository. Keep the change reviewable, preserve unrelated work and obtain human review before acceptance. All Git-changing examples below require explicit human authorization when performed by an AI agent.
+Work from an assigned Issue on a dedicated task branch in the existing repository. Keep the change reviewable, preserve unrelated work and obtain human review before acceptance. Branch commands and PR-opening/merging instructions below are for humans to perform; AI assistants must not perform those actions. Other permitted Git operations still require explicit user authorization before an AI agent performs them.
 
 ## 1. One-time setup
 
@@ -28,11 +28,11 @@ Read [README](README.md), [AGENTS](AGENTS.md), [overview](docs/project-overview.
 | Dewmi | [Responsible Decision Support](docs/team/dewmi/group-project-overview.md) | [Responsible support](docs/workflows/responsible-decision-support.md); semantics, governance and human oversight |
 | Tinosh | [System Integration & Prototype](docs/team/tinosh/group-project-overview.md) | [Integration](docs/workflows/system-integration-and-prototype.md); adapters, delivery schemas, technical visuals and integration tests |
 
-Cross-review is encouraged. Technical implementation does not transfer analytical ownership. Missing/conflicting research decisions must be referred to their human owner, not resolved silently by AI.
+Code changes require review and approval by at least one other human team member before merging into main; human reviewers may use AI assistance, but must inspect the changes and make their own approval decision. Self-review or AI review alone does not satisfy this requirement. Cross-component review is encouraged where relevant. Technical implementation does not transfer analytical ownership. Missing/conflicting research decisions must be referred to their human owner, not resolved silently by AI.
 
 ## 3. Issue and branch workflow
 
-An Issue should name the problem, owner, expected component/files, acceptance criteria, dependencies, approved research decisions and definition of done. Implement that scope.
+An Issue should name the problem, owner, expected component/files, acceptance criteria, dependencies, approved research decisions and definition of done. Implement that scope. An AI assistant may draft or suggest an Issue, but must explain the proposal and obtain explicit user permission for that specific Issue before creating it on GitHub. A perceived need for an Issue or approval for a different Issue is not permission to create one.
 
 Begin with read-only inspection:
 
@@ -41,7 +41,7 @@ git status --short --branch
 git branch --show-current
 ~~~
 
-Reuse an existing matching task branch. Never implement on main or reuse one branch for unrelated Issues. Determine whether synchronization is needed before proposing it; do not blindly pull or switch with unrelated modifications. After explicit approval, a new task branch may use feature/, research/, fix/, docs/, test/ or refactor/ naming, for example:
+Reuse an existing matching task branch. Never implement on main or reuse one branch for unrelated Issues. Determine whether synchronization is needed before proposing it; do not blindly pull or switch with unrelated modifications. A human creates any new task branch; AI assistants provide the exact command and wait for the branch to exist rather than creating it themselves. Branch names may use feature/, research/, fix/, docs/, test/ or refactor/ naming. For example, the human runs:
 
 ~~~bash
 git checkout -b feature/inventory-risk-baseline
@@ -55,7 +55,7 @@ Ask Codex to explain the Issue, relevant files, existing branch, expected output
 
 Use reusable src/ modules and repository tools. Run targeted checks first. MyPy configuration is in [mypy.ini](mypy.ini); Ruff and pytest commands follow the [quality](.github/workflows/ci-quality.yml) and [test](.github/workflows/ci-tests.yml) definitions. Some model tests include small native fits, so inspect test scope when fitting is prohibited. Never hide failures or alter tests merely to make wrong behavior pass.
 
-Actual training, tuning, validation, final evaluation, large analysis and real data preparation require explicit owner authorization for the particular operation. A passing synthetic test, documentation merge or protocol approval does not authorize it. Preserve chronological order, fixed features, exact scope and reserved-outcome safeguards.
+Actual training, tuning, validation, final evaluation, large analysis and real data preparation require explicit human authorization for the particular operation. The responsible component member reviews the run within the approved scope and manually starts it in their own terminal. Chathuranga handles forecasting; Didilani may run her approved inventory-risk work. Shared preparation and cross-component work require review by the relevant members and a named human executor; decisions requiring group agreement, including DR-012 approval, remain team decisions. AI assistants prepare code, explain commands and hand them to the member; research execution remains human under [AGENTS §17](AGENTS.md#17-experiment-execution-responsibility). A passing synthetic test, documentation merge or protocol approval does not authorize a research run. Preserve chronological order, fixed features, exact scope and reserved-outcome safeguards.
 
 ## 5. Evidence and progress handoff
 
@@ -73,7 +73,7 @@ git commit -m "<type>: <short summary>"
 git push -u origin <task-branch>
 ~~~
 
-Open a Pull Request with base main and the task branch as head. Complete the [template](.github/PULL_REQUEST_TEMPLATE.md), including summary, files, tests/results, evidence where relevant, limitations, unresolved decisions and **Closes #<issue-number>**. Request the relevant owner/reviewer. Do not merge before required review/approval is complete or merge failing work for convenience. Authorship alone does not prohibit a contributor from merging after all required review conditions are satisfied. AI agents remain subject to the separate merge restrictions in [AGENTS](AGENTS.md).
+The human contributor opens a Pull Request with base main and the task branch as head; AI assistants may prepare its title, description and instructions but must not open or merge it. Complete the [template](.github/PULL_REQUEST_TEMPLATE.md), including summary, files, tests/results, evidence where relevant, limitations, unresolved decisions and **Closes #<issue-number>**. For code changes, request review from at least one human team member other than the author of the changes and record their review and approval on the PR. AI tools may assist the human reviewer with inspection and findings, but the reviewer must assess the changes and decide whether to approve. Self-review, AI review alone and passing checks do not replace human peer review. Substantive code changes after approval require renewed review and approval of those changes. Once that review is complete, review blockers are resolved and required checks pass, either the human task/PR author or the human reviewer may merge, subject to repository permissions and protections. Do not merge unreviewed or failing work for convenience. Branch creation and PR opening/merging remain human-only under [AGENTS](AGENTS.md).
 
 ## 7. Review feedback and conflicts
 

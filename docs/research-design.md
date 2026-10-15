@@ -1,6 +1,6 @@
 # Research Design
 
-This document owns the research questions, hypotheses, rationale and inference boundaries. Exact forecasting methods belong in the [protocol](protocol.md); completed numerical interpretation belongs in [final evaluation](forecasting-final-evaluation.md). The forecasting study is complete as confirmed by the owner; the integrated group hypothesis and downstream components are not declared complete.
+This document owns the research questions, hypotheses, rationale and inference boundaries. Exact forecasting methods belong in the [protocol](protocol.md); completed numerical interpretation belongs in [final evaluation](forecasting-final-evaluation.md). The forecasting study is complete as confirmed by Chathuranga; the integrated group hypothesis and downstream components are not declared complete.
 
 ## 1. Purpose
 
@@ -42,7 +42,7 @@ No statistical-significance procedure is approved for RQ2. The four temporal fol
 
 Do not average or rank performance across horizons into a single composite. Model ordering may differ by horizon; report those differences rather than collapsing them into an overall winner.
 
-[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records the owner's approved revised direction. The protocol and DR-014 selection/refit decision are frozen; further implementation or experiment execution requires separate human approval.
+[DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) records Chathuranga's approved revised direction. The protocol and DR-014 selection/refit decision are frozen; further implementation or experiment execution requires separate human approval.
 
 ## 3. Source and analytical unit
 

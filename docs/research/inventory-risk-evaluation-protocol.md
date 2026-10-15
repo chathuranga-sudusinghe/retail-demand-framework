@@ -14,7 +14,7 @@ This is a protocol proposal only. No inventory-risk evaluation, result table, me
 
 | Evidence | Current record | Status and interpretation |
 |---|---|---|
-| Retained forecast export | `data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json`; export schema `issue-132-forecast-export-v1`; SHA-256 `c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863` | The local file hash matches the hash in the received handoff manifest. The owner-reviewed hash entry and consumer acceptance remain pending in the forecast contract. This is prospective forecast evidence, not an inventory-risk result. |
+| Retained forecast export | `data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json`; export schema `issue-132-forecast-export-v1`; SHA-256 `c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863` | The local file hash matches the hash in the received handoff manifest. The hash entry reviewed by Chathuranga and consumer acceptance remain pending in the forecast contract. This is prospective forecast evidence, not an inventory-risk result. |
 | Forecast source | `source.run_id=final-20261003-02`; `source.evaluation_stage=final_evaluation`; `source.source_schema=issue-130-final-v1`; manifest SHA-256 `adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43`; prediction-receipt SHA-256 `853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692` | These are source-level provenance references. The derivative handoff does not include the full parent run archive, so package checksum verification must not be represented as an independent re-verification of the parent run. |
 | Received handoff package | `research-materials/received/final-20261003-02/`; manifest records source repository commit `d9714bbffa3d52730991336b49e07b527e396cc7`, source run `final-20261003-02`, and package role “member-specific derivative subset” | The package says it is prepared for recipient review, not consumer acceptance. Its repository commit is the package/source context, not the current repository baseline. |
 | Current reviewed repository baseline | `origin/main` at `12e30fc65fde367b320ea4f4b474a976ca09a3e8` when this proposal was prepared | Keep this separate from the package source commit above. The checked-in protocol and relevant documentation should be reviewed against the current main baseline. |
@@ -53,7 +53,7 @@ The Issue #70 input format is an internal preparation format, not a final shared
 | `horizon` | Row-level integer 1, 7, 14, or 28. | Available upstream. Keep each horizon distinct; downstream h=28 is approval-gated. | Chathuranga for semantics; Didilani and human approval for downstream use. |
 | `target_start_date` | Present per row; contract defines origin + 1. | Available; preserve and validate against the origin/horizon contract. | Chathuranga. |
 | `target_end_date` | Present per row; contract defines origin + horizon. | Available; preserve and validate the inclusive window. | Chathuranga. |
-| `prediction` | Project-generated `Units_Sold` forecast; row includes unit and `forecast_status`. | Available in the retained export, but exact-hash owner/consumer acceptance is pending. Preserve raw values and provenance. | Chathuranga; Tinosh for technical consumption. |
+| `prediction` | Project-generated `Units_Sold` forecast; row includes unit and `forecast_status`. | Available in the retained export, but exact-hash Chathuranga/consumer acceptance is pending. Preserve raw values and provenance. | Chathuranga; Tinosh for technical consumption. |
 | `model` | Present per row. | Available; preserve the designated producer rather than changing selection. | Chathuranga. |
 | `configuration_id` | Present per row. | Available; preserve the designated configuration. | Chathuranga. |
 | `producer_status` | Present per row as `designated_producer`. | Available as producer status; it is not an `evidence_role` or eligibility mapping. | Chathuranga. |
@@ -75,7 +75,7 @@ The Issue #70 input format is an internal preparation format, not a final shared
 | Source `Demand_Forecast` | Dataset reference field; not the export's project `prediction`. | Do not map as a project forecast or substitute for missing project predictions. | All owners preserve this distinction. |
 | `Stockout_Flag` | Dataset limitation; documented zero-variance. | Do not map as a target, label, or validation outcome. | All owners preserve this boundary. |
 
-Any final field names, types, nesting, row-level provenance propagation, or status translation require owner review. This table is a proposal, not the final forecast-to-inventory schema.
+Any final field names, types, nesting, row-level provenance propagation, or status translation require review by the relevant producing and consuming component members. This table is a proposal, not the final forecast-to-inventory schema.
 
 ## 5. Origin inventory snapshot gate
 
@@ -95,7 +95,7 @@ The forecast contract preserves raw predictions without rounding, clipping, or f
 
 | Input condition | Proposed record treatment for review |
 |---|---|
-| Negative finite prediction | Preserve the original prediction and provenance; do not reinterpret it as zero demand or silently repair it. Keep forecast-dependent inventory output unavailable with an explicit reason unless and until an owner-approved handling rule says otherwise. The current Issue #70 code uses `negative_forecast_handling_not_approved`; this is existing provisional behavior, not approval. |
+| Negative finite prediction | Preserve the original prediction and provenance; do not reinterpret it as zero demand or silently repair it. Keep forecast-dependent inventory output unavailable with an explicit reason unless and until a handling rule approved by Didilani, after Chathuranga's review of forecast meaning, says otherwise. The current Issue #70 code uses `negative_forecast_handling_not_approved`; this is existing provisional behavior, not approval. |
 | Missing prediction | Retain the forecast record identity and source context; mark the forecast-dependent output unavailable with a reason. Do not substitute source `Demand_Forecast`. |
 | Malformed prediction | Do not coerce or rewrite the source value to make it usable. Record the validation failure and reason; do not silently delete the affected record. |
 | Non-finite prediction | Treat the source quantity as unusable under the forecast contract; preserve provenance and the failure reason. Do not replace it with a finite value. |
@@ -107,7 +107,7 @@ Chathuranga must review forecast meaning and source validity; Didilani must revi
 
 The following sequence is proposed for a later, separately authorized execution only:
 
-1. **Freeze and cite inputs.** Identify the exact retained export and hash, dataset version and provenance, source run/stage, producer/configuration, code and protocol versions, and fixed forecast origin. Confirm owner/consumer acceptance before treating the export as an accepted handoff.
+1. **Freeze and cite inputs.** Identify the exact retained export and hash, dataset version and provenance, source run/stage, producer/configuration, code and protocol versions, and fixed forecast origin. Confirm Chathuranga/consumer acceptance before treating the export as an accepted handoff.
 2. **Preserve case identity.** Keep `SKU_ID`, `Warehouse_ID`, `forecast_origin`, `horizon`, inclusive target dates, producer/configuration, and source provenance. Do not join on date alone or collapse horizons.
 3. **Establish origin evidence.** Require reviewed evidence that the same SKU-warehouse `Inventory_Level` and `Reorder_Point` were available at forecast issuance. If availability or same-day semantics remain unknown, retain the case and reason as unknown/not assessed; do not score it as a crossing or no crossing.
 4. **Separate origin-known states.** Under the proposed DR-012 method, report cases already at/below the origin reorder point separately from cases initially above it. The former are not evidence of forecast skill.
@@ -165,7 +165,7 @@ DR-011 identifies the reason concepts “no agreed method,” “not applicable,
 
 ### Chathuranga — forecasting meaning and inputs
 
-Review the exact export and source references; forecast origin, horizon and inclusive target dates; producer/model/configuration fields; source-level `run_id` and `evaluation_stage` propagation; the missing `evidence_role` definition; meanings of `forecast_status`, `prediction_status`, and `eligibility_status`; problematic forecast handling; and the owner/consumer acceptance status. No model selection or forecast recomputation is in scope.
+Review the exact export and source references; forecast origin, horizon and inclusive target dates; producer/model/configuration fields; source-level `run_id` and `evaluation_stage` propagation; the missing `evidence_role` definition; meanings of `forecast_status`, `prediction_status`, and `eligibility_status`; problematic forecast handling; and Chathuranga's and the consumer's acceptance status. No model selection or forecast recomputation is in scope.
 
 ### Dewmi — downstream meaning and unavailable information
 
@@ -177,7 +177,7 @@ Review whether the proposed identities, source scopes, horizon distinctions, sta
 
 ## 12. Decision and dependency register
 
-The statuses below describe the current documented evidence and proposed owner actions. A document merge alone does not resolve a blocker.
+The statuses below describe the current documented evidence and proposed actions by the responsible members. A document merge alone does not resolve a blocker.
 
 | Blocker | Proposal/status | Evidence | Required reviewer/owner | Remaining action |
 |---|---|---|---|---|
@@ -193,7 +193,7 @@ The statuses below describe the current documented evidence and proposed owner a
 | B10 — human-review rules | Unresolved and owned by responsible decision support. | DR-011 approves structure only; no triggers or thresholds. | Dewmi. | Keep `not_assessed` where unassessed; do not add rules here. |
 | B11 — uncertainty method | Unresolved; current export states unavailable with `no_agreed_method`. | Forecast contract and readiness map do not approve an uncertainty estimate. | Chathuranga; Dewmi reviews downstream presentation. | Preserve unavailable status/reason unless a separate method is approved. |
 
-When reviews occur, update the relevant readiness entries with the proposal, evidence, reviewer, actual review status, and remaining owner action. Do not mark a blocker resolved merely because this protocol or another document is merged. Any change to DR-012 must reflect actual human-reviewed decisions only.
+When reviews occur, update the relevant readiness entries with the proposal, evidence, reviewer, actual review status, and remaining action by the responsible member. Do not mark a blocker resolved merely because this protocol or another document is merged. Any change to DR-012 must reflect actual human-reviewed decisions only.
 
 **Referenced-issue status-text discrepancy:** Issue #101's background describes #85 and #145 as active. The current issue records show #85 closed through PR #160 and #145 closed; Issue #153 says #145 is closed and tracks the remaining decision-support assessment. Issue #101 itself remains open for its acceptance-scenario scope. This protocol uses those current statuses for dependency context and does not alter or reinterpret Issue #101's acceptance requirements.
 
@@ -210,7 +210,7 @@ This protocol does **not** authorize:
 - an uncertainty method or human-review trigger;
 - 28-day downstream inventory use.
 
-The project owner runs approved research commands manually under AGENTS.md. Any later execution needs specific authorization after the methodology, field mapping, protocol, and execution-critical approvals are reviewed. Forecasts in the retained export must not be retrained, re-inferred, or recomputed for this work.
+Didilani retains responsibility for inventory-risk methodology and evaluation and may manually execute her specifically authorised component research commands in her own terminal under [AGENTS §17](../../AGENTS.md#17-experiment-execution-responsibility). She reviews and explicitly authorises the particular run within the approved component scope; required group approval of DR-012 and review by the relevant members of cross-component decisions remain separate prerequisites. Any later execution requires the methodology, field mapping, protocol and execution-critical approvals to be reviewed first. AI assistants may prepare code and explain the exact command, then hand it to the human member; they do not execute the research run. Forecasts in the retained export must not be retrained, re-inferred, or recomputed for this work.
 
 ## 14. Review checklist
 

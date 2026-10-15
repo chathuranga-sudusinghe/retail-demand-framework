@@ -1,5 +1,7 @@
 # Project Commencement Meeting
 
+> **Clarification — 14 October 2026, Issue #165:** The earlier supervisor/project-initiation approval wording remains pending participant confirmation. Chathuranga has clarified the teaching role as the COMP1884 lecturer; this does not verify a specific approval. The group decisions and actions below remain the recorded group history.
+
 **Date:** 20 September 2026  
 **Time:** 8:30 PM – 9:30 PM  
 **Meeting Type:** Group Meeting  
@@ -72,11 +74,21 @@ Initial setup focused on establishing the repository structure and documentation
 
 No major blockers were recorded at this commencement meeting.
 
-## Supervisor / Module-Leader Confirmation
+## Lecturer guidance and confirmation status
 
-The COMP1884 project had already been discussed with and approved to proceed by the supervisor during the supervisor meeting held earlier the same day, from 1:00 PM to 3:00 PM.
+**Historical wording quoted for traceability — 15 October 2026, Issue #165:** The original confirmation, workflow and outcome sentences were:
 
-This 8:30 PM group meeting was therefore used to organise the approved project into a practical team workflow, including member responsibility areas, GitHub collaboration, and initial repository setup.
+> The COMP1884 project had already been discussed with and approved to proceed by the supervisor during the supervisor meeting held earlier the same day, from 1:00 PM to 3:00 PM.
+
+> This 8:30 PM group meeting was therefore used to organise the approved project into a practical team workflow, including member responsibility areas, GitHub collaboration, and initial repository setup.
+
+> Following the supervisor's approval to proceed earlier that day, the group translated the approved project into an initial working plan, agreed to use a shared GitHub repository, identified the first responsibility areas for the three active members, and completed the initial repository setup required to begin the COMP1884 project.
+
+These quotations preserve the earlier claims; they do not verify them. The clarification below and the revised Outcome retain the planning record without asserting the unconfirmed lecturer permission.
+
+The original record attributed permission to proceed to a supervisor session earlier that day, from 1:00 PM to 3:00 PM. The teaching role is now clarified as the COMP1884 lecturer. The exact earlier session and any project-initiation permission remain pending participant confirmation in the [lecturer-guidance record](2026-09-20-supervisor-meeting.md#confirmation-status). This group note does not establish lecturer approval of the research methodology.
+
+The 8:30 PM group meeting organised the project into a practical team workflow, including member responsibility areas, GitHub collaboration and initial repository setup.
 
 ## Related Project Evidence
 
@@ -85,4 +97,4 @@ This 8:30 PM group meeting was therefore used to organise the approved project i
 
 ## Outcome
 
-Following the supervisor's approval to proceed earlier that day, the group translated the approved project into an initial working plan, agreed to use a shared GitHub repository, identified the first responsibility areas for the three active members, and completed the initial repository setup required to begin the COMP1884 project.
+The group translated its project planning into an initial working plan, agreed to use a shared GitHub repository, identified the first responsibility areas for the three active members, and completed the initial repository setup required to begin the COMP1884 project.

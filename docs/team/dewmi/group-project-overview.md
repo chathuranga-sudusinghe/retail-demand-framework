@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../../workflows/shared-data-foundation.md), [storage and retention](../../artifact-storage-policy.md), [applied MLOps](../../workflows/applied-mlops.md), [research reporting](../../../reports/README.md), and [continuous progress log](../../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [final results and limitations](../../forecasting-final-evaluation.md#9-limitations).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../../forecasting-final-evaluation.md#9-limitations).
 
 ## Member details
 
@@ -106,7 +106,7 @@ The 7-day, 14-day and 28-day forecasts represent cumulative demand over those pe
 
 DR-011 defines the overall structure for this management-facing output. Details that depend on forecasting uncertainty, inventory-risk methods, replenishment rules, or human-review thresholds will remain provisional until the relevant group decisions are approved.
 
-## Revised forecasting interface and owner review
+## Revised forecasting interface and component review
 
 The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative 7/14/28-day quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is

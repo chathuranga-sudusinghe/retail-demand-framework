@@ -39,7 +39,7 @@ Every implementation task must be completed on a feature branch.
 
 ### Permanent local workspace rule
 
-All work must happen inside the existing `retail-demand-framework` repository root. Do not create another Git worktree or a sibling copy/folder for the same repository. Never make changes directly on `main`; for each task, create or switch to a dedicated branch inside the same repository.
+All work must happen inside the existing `retail-demand-framework` repository root. Do not create another Git worktree or a sibling copy/folder for the same repository. Never make changes directly on `main`; use a dedicated task branch inside the same repository. Branch creation is human-only: AI assistants must provide the proposed branch command for the user to run, rather than executing branch creation themselves. If no suitable task branch exists, hand off the command and wait for the human-created branch before implementation.
 
 Preserve unrelated local modifications. Do not reset, stash, overwrite or discard unrelated local changes without explicit user permission.
 
@@ -67,14 +67,25 @@ test/<short-test-name>
 
 Changes must reach `main` through a Pull Request.
 
+Before code changes are merged into `main`, **at least one other human team member, besides the author of those changes, must review and approve them**. Record the peer review and approval on the Pull Request. Human reviewers may use AI tools to assist with inspection and findings, but must assess the changes and make the approval decision themselves. Self-review, AI review alone and passing automated checks do not replace this human peer review. If substantive code changes are made after review, obtain review and approval of those changes before merging.
+
+After the required human review/approval is recorded, review blockers are resolved and required checks pass, either the human task/PR author or the human reviewer may merge, subject to repository permissions and protections. Opening and merging Pull Requests are human-only actions. AI assistants must not open or merge any Pull Request; they may prepare the title, description, review findings and instructions for a human to use. General Git approval does not override these human-only actions.
+
+**Clarified by Chathuranga — 15 October 2026, Issue #165:** Another team member must review code before it reaches `main`; the author or reviewer may perform the merge once that review requirement is satisfied.
+
 The agent must not:
 
 - push implementation directly to `main`;
-- merge its own Pull Request;
+- open any Pull Request;
+- merge any Pull Request;
 - bypass required review;
 - force-push to `main`;
 - delete protected branches;
 - disable repository rules.
+
+**Issue creation permission:** An AI assistant may create a GitHub Issue only after the user explicitly authorises creation of that specific Issue. If the assistant identifies a possible need, it must explain the proposed Issue to the user and request permission before publishing it. Drafting an Issue is permitted; identifying work, following this workflow or receiving approval for a different Issue does not authorise creation.
+
+**Clarified by Chathuranga — 15 October 2026, Issue #165:** AI tools may assist human review and create a specifically authorised Issue, but users create branches and humans open/merge PRs.
 
 The normal flow is:
 
@@ -100,7 +111,7 @@ If GitHub does not auto-close the linked Issue after merge, verify the Issue sta
 
 The AI agent may implement approved research decisions, but it must not silently create new research decisions.
 
-Examples of decisions that require explicit team or supervisor approval where appropriate:
+Examples of decisions that require explicit approval from the relevant human team members (and any confirmation required by the applicable COMP1884 instructions):
 
 - changes to the approved analytical unit or aggregation frequency;
 - changes to the approved forecasting target definition;
@@ -222,6 +233,8 @@ A recommendation is decision support, not an automatically executable purchase o
 ---
 
 ## 9. Member boundaries
+
+This is a team project, with no defined project-wide owner role. Use the named member or relevant component responsibility for review and execution; do not turn individual approvals into team approvals. Lecturer guidance and applicable university requirements are distinct from project research approval; see [the COMP1884 criteria checklist](docs/greenwich-criteria-checklist.md). Existing human review, specific-run authorisation and Git approval controls remain in force.
 
 ### Chathuranga
 
@@ -350,7 +363,7 @@ Keep commits focused on one logical change where practical.
 
 ## 13. Pull Request preparation
 
-Before opening a Pull Request, the agent should provide:
+Before a human opens a Pull Request, the agent may prepare the following handoff; it must not open the Pull Request itself:
 
 - summary of changes;
 - files changed;
@@ -358,7 +371,8 @@ Before opening a Pull Request, the agent should provide:
 - known limitations;
 - related GitHub Issue;
 - `Closes #<issue-number>` in the PR body;
-- any research decision that still needs approval.
+- any research decision that still needs approval;
+- a request for review by at least one other human team member for code changes, with approval recorded before merge.
 
 The agent must not claim work is complete when required validation has not been run.
 
@@ -372,11 +386,11 @@ When asked for help, explain:
 
 1. what task is being worked on;
 2. what file(s) are relevant;
-3. what branch should be created;
+3. what branch the human should create and the exact command to run;
 4. what command should be run next;
 5. what should not be changed;
 6. how to commit and push;
-7. how to open a Pull Request.
+7. how the human opens a Pull Request using the prepared title and description.
 
 Use simple, step-by-step instructions.
 
@@ -425,7 +439,7 @@ Codex is used for:
 - static validation and lightweight test execution;
 - reviewing code and repository consistency.
 
-Codex must **not independently execute or authorise**:
+Research execution is a human responsibility. AI assistants, including Codex, Claude and ChatGPT, may help prepare and review work but must **not execute or authorise**:
 
 - model training runs;
 - hyperparameter-search experiments;
@@ -434,9 +448,11 @@ Codex must **not independently execute or authorise**:
 - long-running data-analysis jobs;
 - computationally expensive research experiments.
 
-Those experiment commands must be run manually by the project owner from the terminal after the methodology, features, experiment protocol and code have been reviewed and approved.
+The relevant human member reviews and explicitly authorises each specific research run within the approved component scope, then manually starts the reviewed command in their own terminal. Chathuranga remains responsible for forecasting; Didilani remains responsible for inventory-risk methodology and evaluation and may run her approved component work. Shared-data preparation and runs affecting multiple components require review by the relevant members and a named human executor for the particular run. Decisions requiring group agreement, including DR-012 approval and cross-component methodological changes, must be discussed and approved by the team before execution. No member is made the sole authoriser or executor of every component, and no standing run permission is granted.
 
-Codex may prepare the exact terminal command and explain what it will run, but must stop before executing it unless the user explicitly authorises that specific run. Approval to implement code or review methodology does not authorise experiment execution.
+**Clarification — 15 October 2026, Issue #165:** Chathuranga clarified that research is performed and decisions are made by the human members/team, with AI used as an assistant. This clarification does not change historical approval attribution or component responsibilities. See the [recorded scope clarification](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/165#issuecomment-6189673295) for the human instructions and pending review.
+
+AI assistants may prepare the code and exact terminal command, explain inputs, outputs and impact, and hand them to the responsible human member for review and execution. They must stop before executing the research command. Approval to implement code or review methodology does not authorise experiment execution. Read-only repository inspection, static validation and lightweight synthetic implementation tests remain permitted within the task scope; they are not research runs or research evidence.
 
 These execution rules do not replace the research decision rule in Section 4: research decisions must not be invented, and missing decisions still require explicit approval.
 
@@ -455,7 +471,7 @@ Required order:
 5. Document/freeze the experiment protocol.
 6. Implement and test the feature pipeline.
 7. Obtain explicit approval.
-8. The project owner manually runs model training/tuning/validation, subject to the specific-run authorisation exception in Section 17.
+8. Chathuranga, responsible for forecasting, manually runs specifically authorised model training/tuning/validation under Section 17; AI assistants prepare the reviewed command and hand it to him.
 9. Review results.
 10. Only later perform final-holdout evaluation after model-selection decisions are frozen, following Section 17's execution rule.
 
@@ -500,8 +516,10 @@ AI assistants must not:
 - create new research decisions without approval;
 - reinterpret an unresolved decision as settled;
 - silently expand project scope;
-- execute consequential experiments without explicit authorisation;
-- commit, push, merge, or otherwise finalise repository changes without explicit authorisation;
+- execute research runs reserved for human members under Section 17;
+- create Git branches or open/merge Pull Requests; these actions are reserved for humans under Sections 2–3;
+- create a GitHub Issue without explicit user permission for that specific Issue;
+- commit, push or perform other permitted Git operations without explicit authorisation;
 - treat AI-generated results or text as authoritative project evidence without human review.
 
 When approval is unclear, stop and ask the user rather than continuing based on assumption.

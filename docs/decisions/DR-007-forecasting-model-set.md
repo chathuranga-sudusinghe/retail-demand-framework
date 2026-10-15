@@ -1,6 +1,6 @@
 # DR-007 — Forecasting Model Set
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Status:** PARTIALLY SUPERSEDED BY DR-013
 
@@ -52,7 +52,7 @@ These definitions keep the two baselines distinct: Naive extends the latest obse
 ### Approved 28-day baseline formulas
 
 The frozen [protocol](../protocol.md#10-approved-contextual-simple-baselines)
-records the owner’s approval of both 28-day baseline extensions. The formulas
+records Chathuranga’s approval of both 28-day baseline extensions. The formulas
 below are resolved and remain unchanged:
 
 **Approved Naive 28-day:**
@@ -93,6 +93,8 @@ This record authorises no experiment execution. Protocol approval, implementatio
 ## Historical original decision body
 
 > The content below is retained verbatim as historical provenance and is non-operative where superseded by DR-013.
+
+> **Historical wording clarification — 15 October 2026, Issue #165:** The original block is preserved exactly as recorded, including its earlier “owner” and “Supervisor confirmation” labels. Those labels do not establish a current project-wide owner or verified lecturer approval. Chathuranga is the named forecasting member; any university confirmation required by the applicable COMP1884 instructions remains subject to verification. This note does not create or broaden historical approval.
 
 <details>
 <summary>Show superseded historical DR-007 body</summary>
