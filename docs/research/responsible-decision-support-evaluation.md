@@ -29,6 +29,29 @@ The check names below match [methodology §12.2](responsible-decision-support-me
 
 For each applicable check, the assessment outcome is recorded as `met`, `not met`, or `not assessable`. Where a check is `not met` or `not assessable`, a short reason is retained so that the evidence and limitation remain traceable.
 
+### Proposed 20-Row Forecast Evidence Selection (Pending Scope Approval)
+
+This is a purposive, case-based selection of 20 forecasting rows from the retained Issue #132 fixed-origin export. These rows are not yet verified as completed `DecisionSupportRecord` instances, and the selection does not claim population-wide representativeness.
+
+| Assessment IDs | SKU_ID | Warehouse_ID | Forecast origin | Horizons (days) | Rows |
+|---|---|---|---|---|---|
+| F01–F04 | SKU_1 | WH_1 | 2024-12-02 | 1, 7, 14, 28 | 4 |
+| F05–F08 | SKU_5 | WH_2 | 2024-12-02 | 1, 7, 14, 28 | 4 |
+| F09–F12 | SKU_10 | WH_3 | 2024-12-02 | 1, 7, 14, 28 | 4 |
+| F13–F16 | SKU_15 | WH_4 | 2024-12-02 | 1, 7, 14, 28 | 4 |
+| F17–F20 | SKU_20 | WH_5 | 2024-12-02 | 1, 7, 14, 28 | 4 |
+
+**Selection rule:** The five SKU–warehouse combinations were chosen using SKU numbers 1, 5, 10, 15 and 20, paired with warehouses 1–5 respectively. All four horizons are retained for each pair. The rule supports comparison across horizons and selected SKU–warehouse combinations but is not a representative sample.
+
+**Source and version:** `issue-132-forecast-export-v1.json`; export schema `issue-132-forecast-export-v1`; handoff `final-20261003-02`; forecast origin `2024-12-02`. The retained export contract is documented in `docs/forecast-api-contract.md`. One-day predictions represent next-day demand; 7-, 14- and 28-day predictions represent cumulative-window demand. Forecast uncertainty is reported unavailable (`no_agreed_method`).
+
+**Proposed record linkage:** Each selected forecast row will be traced by SKU_ID, Warehouse_ID, forecast origin and horizon against `src/decision_support/records.py`. Forecast predictions and provenance can inform the corresponding record fields, but no automatic record-generation or completed-record match has yet been established. The mapping between numeric export horizons and the string-valued `forecast_horizon` field requires confirmation. Test fixtures must not be treated as evaluated project records.
+
+**Downstream evidence boundary:** Reviewed inventory-risk and replenishment outputs will be linked only where an actual matching source exists. Missing evidence will be recorded explicitly with record-specific reasons rather than replaced with assumptions or used to silently exclude reviewable cases. Pending inventory-risk decisions under Issue #164 remain dependencies. The 28-day horizon is retained for forecast-transparency assessment only; downstream inventory and replenishment interpretation remains deferred.
+
+**Assessment status:** Selection proposed for Chathuranga's scope review. The eight transparency checks have not yet been applied to these rows. The readiness register below remains distinct from a completed record-level assessment matrix.
+
+
 ## 3. Evaluation Readiness and Pending Evidence
 
 No identified decision-support record has been evaluated in this document. The table below is a readiness register, not a completed assessment matrix. Its `not assessable` entries describe evidence gaps; they must not be counted as observed record-level outcomes. Missing or unapproved upstream information is not replaced with assumed values.
