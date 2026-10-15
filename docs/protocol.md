@@ -2,9 +2,9 @@
 
 ## 1. Authority, scope and current implementation
 
-This is the final human-approved experimental methodology (scientific schema `issue-65-v2`, protocol version `issue-65-matched-frozen-1`). Validation-protocol freeze was approved by the owner on 2026-09-29. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) governs the matched primary comparison; [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the subsequent approved configuration/producer freeze and final-refit policy.
+This is the final human-approved experimental methodology (scientific schema `issue-65-v2`, protocol version `issue-65-matched-frozen-1`). Validation-protocol freeze was approved by Chathuranga on 2026-09-29. [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md) governs the matched primary comparison; [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) records the subsequent approved configuration/producer freeze and final-refit policy.
 
-Preparation, development, validation and final evaluation are complete as confirmed by the owner. The [final report](forecasting-final-evaluation.md) owns current interpretation and scientific exposure disclosures. [Feature engineering](forecasting-feature-engineering.md) owns exact predictor/preprocessing definitions. [Runner operations](forecasting-runner.md) and [storage policy](artifact-storage-policy.md) own commands, persistence and integrity mechanics. No further experiment is authorized by this document.
+Preparation, development, validation and final evaluation are complete as confirmed by Chathuranga. The [final report](forecasting-final-evaluation.md) owns current interpretation and scientific exposure disclosures. [Feature engineering](forecasting-feature-engineering.md) owns exact predictor/preprocessing definitions. [Runner operations](forecasting-runner.md) and [storage policy](artifact-storage-policy.md) own commands, persistence and integrity mechanics. No further experiment is authorized by this document.
 
 Horizon/date/metric/direct-target decisions remain in DR-004/005/006/008. DR-003/009/010 are historical or superseded; DR-007 retains contextual baseline provisions. Scientific definitions below and immutable retained evidence are not changed by documentation consolidation.
 
@@ -265,7 +265,7 @@ Import success and `pip check` are not training, experimental validation,
 scientific evidence or execution approval.
 
 CPU execution, seed 42 and all existing primary/supportive model controls are
-preserved. The project owner has approved the following fixed execution controls:
+preserved. Chathuranga has approved the following fixed execution controls:
 
 | Component | Fixed runtime control |
 |---|---|
@@ -373,7 +373,7 @@ silently authorises a new setting, metric, threshold or experiment.
 ## 10. Approved contextual simple baselines
 
 Naive and weekly Seasonal Naive are fixed, untuned, contextual baselines.
-DR-007's 1/7/14-day formulas remain unchanged. The project owner explicitly
+DR-007's 1/7/14-day formulas remain unchanged. Chathuranga explicitly
 approves both 28-day extensions in this protocol. For origin o, y_o is the latest
 observed daily demand, and S_o is the latest complete seven-day sum within the
 same SKU–warehouse pair, ending at o:
@@ -438,7 +438,7 @@ demand-regime or downstream inventory method is introduced here.
 
 Validation input is restricted to 2024-01-01 through 2024-12-02 before feature construction, demand validation, eligibility analysis or input-view fingerprinting, with further fold-specific restrictions. Reserved outcomes cannot inform features, fitting, vocabulary/scaling, debugging based on performance, selection, grid changes or revised scientific decisions.
 
-The previously deferred final-refit policy was resolved by explicit owner approval in [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md#final-refit-and-preprocessing-policy). Fit new estimators and preprocessing for all twenty learned candidates on the unchanged horizon-specific eligible population using history January 1 through December 2. Every label must end by December 2. Do not reuse or continue a Fold 4 estimator or preprocessing state.
+The previously deferred final-refit policy was resolved by explicit approval by Chathuranga in [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md#final-refit-and-preprocessing-policy). Fit new estimators and preprocessing for all twenty learned candidates on the unchanged horizon-specific eligible population using history January 1 through December 2. Every label must end by December 2. Do not reuse or continue a Fold 4 estimator or preprocessing state.
 
 The final scope contains twelve frozen primary candidates, eight fixed supportive candidates and eight baseline evaluations. The common December 2-origin vector predicts targets ending December 3/9/16/30. Persist and verify all 28 candidates' predictions before revealing any reserved outcome; preserve them unchanged for scoring. Runtime ordering and failure behavior are in [runner operations](forecasting-runner.md#separate-final-runtime-and-predict-before-reveal).
 
@@ -624,12 +624,12 @@ These remain distinct human controls; completed approval for one run does not au
 
 | Step | Human control | Recorded current state |
 |---|---|---|
-| 1 | Review/freeze the full validation protocol and exact feature contract | Owner-approved/frozen |
+| 1 | Review/freeze the full validation protocol and exact feature contract | Approved by Chathuranga/frozen |
 | 2 | Authorize implementation against those contracts | Implemented |
-| 3 | Review tests and accept the runtime | Accepted by the owner |
+| 3 | Review tests and accept the runtime | Accepted by Chathuranga |
 | 4 | Specifically authorize the exact validation run/scope | Retained validation-20261002-01 completed |
 | 5 | Review validation and freeze configurations/producer decisions | DR-014 approved before final evaluation |
-| 6 | Approve final refit policy and the exact final run | DR-014 policy approved; final-20261003-02 completed and integrity verified, as confirmed by the owner |
+| 6 | Approve final refit policy and the exact final run | DR-014 policy approved; final-20261003-02 completed and integrity verified, as confirmed by Chathuranga |
 
 Generated scores do not themselves establish acceptance or authorize fitting. No pending scientific final-refit decision remains for the completed forecasting study. Downstream inventory-risk, replenishment, uncertainty, human-review and integration approvals remain separate. See [AGENTS.md](../AGENTS.md) Sections 17–19 and [runner operations](forecasting-runner.md) for execution controls.
 
@@ -641,7 +641,7 @@ Selected validation predictions are out of sample for fitting but participated i
 
 ## 18. Human decision record and validation-protocol finalisation
 
-The owner's 2026-09-29 protocol decisions resolved these policies; later final-refit approval is recorded in DR-014:
+Chathuranga's 2026-09-29 protocol decisions resolved these policies; later final-refit approval is recorded in DR-014:
 
 | Decision | Approved policy | Authority |
 |---|---|---|

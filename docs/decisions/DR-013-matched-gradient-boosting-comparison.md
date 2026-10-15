@@ -1,20 +1,20 @@
 # DR-013 — Matched Gradient-Boosting RQ2 Comparison
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Date:** 2026-09-29
 
-**Status:** Owner-approved research direction; protocol/runtime details resolved in the frozen protocol. Changed implementation and each experiment require separate human approval.
+**Status:** Research direction approved by Chathuranga; protocol/runtime details resolved in the frozen protocol. Changed implementation and each experiment require separate human approval.
 
-**Owner:** Chathuranga
+**Responsible member:** Chathuranga
 
 **Related issue:** [#66 — Research: revise RQ2 with a matched gradient-boosting model comparison](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/66)
 
-**Approval provenance:** The project owner's attached Issue #66 task brief explicitly supplies the human-approved revised direction. This record documents that instruction; it does not create AI approval of implementation, runtime proposals or hypothesis operationalisation. No separate supervisor/group approval is asserted; any required review remains with the team.
+**Approval provenance:** Chathuranga's attached Issue #66 task brief explicitly supplies the human-approved revised direction. This record documents that instruction; it does not create AI approval of implementation, runtime proposals or hypothesis operationalisation. No separate lecturer/group approval is asserted; any required review remains with the team.
 
 ## Context and reason
 
-The earlier comparison combined Ridge, Random Forest and LightGBM with different representations and unequal search spaces. The owner requests a controlled RQ2 experiment. The principal experimental variable is the gradient-boosting implementation. XGBoost Regressor, LightGBM Regressor and CatBoost Regressor are the three implementations in the primary matched gradient-boosting comparison. The revision precedes training, tuning or scoring for this revised design; historical Issue #52 evidence remains separate provenance and supplies no justification for a preferred primary model.
+The earlier comparison combined Ridge, Random Forest and LightGBM with different representations and unequal search spaces. Chathuranga requests a controlled RQ2 experiment. The principal experimental variable is the gradient-boosting implementation. XGBoost Regressor, LightGBM Regressor and CatBoost Regressor are the three implementations in the primary matched gradient-boosting comparison. The revision precedes training, tuning or scoring for this revised design; historical Issue #52 evidence remains separate provenance and supplies no justification for a preferred primary model.
 
 ## Decision
 
@@ -24,7 +24,7 @@ The earlier comparison combined Ridge, Random Forest and LightGBM with different
 
 **H1_RQ2:** Under the matched experimental conditions, demand-forecasting performance differs among XGBoost, LightGBM, and CatBoost across the evaluated horizons.
 
-The main research question, RQ1 and existing group-level H0/H1 remain unchanged. The project owner approves these subordinate RQ2 hypotheses as comparative research hypotheses, not statistical-significance hypotheses.
+The main research question, RQ1 and existing group-level H0/H1 remain unchanged. Chathuranga approves these subordinate RQ2 hypotheses as comparative research hypotheses, not statistical-significance hypotheses.
 
 | Role | Models | Evidence boundary |
 |---|---|---|
@@ -70,7 +70,7 @@ Issue #65 must revise artifact schemas to carry `evidence_role` (primary/support
 
 The checked official APIs support the matched dimensions; no documented incompatibility with full numeric one-hot inputs or the specified subsample/depth values was identified. This is API-documentation evidence, not installed-runtime testing.
 
-The project owner explicitly approves the following fixed runtime/model and subsampling controls for the primary matched XGBoost / LightGBM / CatBoost comparison. This approval records these controls only; it does not authorise implementation acceptance or experiment execution.
+Chathuranga explicitly approves the following fixed runtime/model and subsampling controls for the primary matched XGBoost / LightGBM / CatBoost comparison. This approval records these controls only; it does not authorise implementation acceptance or experiment execution.
 
 | Primary model | Human-approved fixed controls | Fixed execution / seed |
 |---|---|---|
@@ -92,7 +92,7 @@ These controls are fixed runtime settings, not tuning dimensions. **`subsample` 
 
 **Threading and reproducibility:** All primary models run on CPU with seed 42 and should use the same execution environment for the controlled comparison. LightGBM `deterministic=True` and `force_col_wise=True` are fixed. Thread counts must be explicitly fixed before experiment execution; no numeric thread count is approved in this record. Thread-count choice remains a final human implementation/protocol decision. Capture exact effective runtime parameters, inherited defaults from the pinned versions, thread counts and seed mappings in run metadata. These controls do not guarantee bit-for-bit equality across libraries.
 
-The project owner reports the following pinned and verified library versions for the planned Issue #66 implementation. The local Python version is **3.12.3**; the four library versions match the exact pins in `requirements.txt`.
+Chathuranga reports the following pinned and verified library versions for the planned Issue #66 implementation. The local Python version is **3.12.3**; the four library versions match the exact pins in `requirements.txt`.
 
 | Runtime / library | Verified version / exact pin | Scope |
 |---|---|---|
@@ -102,13 +102,13 @@ The project owner reports the following pinned and verified library versions for
 | CatBoost | `catboost==1.2.10` | Primary RQ2 comparison |
 | scikit-learn | `scikit-learn==1.9.1` | Supportive Ridge Regression / Random Forest environment and preprocessing utilities |
 
-The owner confirms that all four libraries imported successfully, reported versions matched the requirements pins, and `pip check` reported: "No broken requirements found." Successful import and pip dependency verification do **not** constitute model training, experimental validation, scientific evidence or execution approval.
+Chathuranga confirms that all four libraries imported successfully, reported versions matched the requirements pins, and `pip check` reported: "No broken requirements found." Successful import and pip dependency verification do **not** constitute model training, experimental validation, scientific evidence or execution approval.
 
 The matched canonical grid remains unchanged. The fixed controls, objectives/losses, pinned-library default policy, CPU execution, seed mappings and iteration-retention rules above are human-approved. Numeric thread counts and remaining execution/protocol details still require human review; inherited defaults must be explicitly captured rather than silently inferred. The complete mapped recipe still requires version-specific verification before execution. The earlier LightGBM API evidence was checked against 4.6.0 and must be rechecked against the pinned 4.7.0 version.
 
 ## Supportive benchmark configuration policy
 
-The project owner approves **one fixed, predeclared configuration for each supportive model**, with no Ridge Regression or Random Forest hyperparameter search. Historical Ridge / Random Forest 5/12 configuration grids remain superseded and are not reused. Ridge is a regularised linear benchmark; Random Forest is a non-linear bagged-tree benchmark. These configurations provide contextual comparison and are not presented as optimal.
+Chathuranga approves **one fixed, predeclared configuration for each supportive model**, with no Ridge Regression or Random Forest hyperparameter search. Historical Ridge / Random Forest 5/12 configuration grids remain superseded and are not reused. Ridge is a regularised linear benchmark; Random Forest is a non-linear bagged-tree benchmark. These configurations provide contextual comparison and are not presented as optimal.
 
 | Supportive model | Human-approved fixed configuration |
 |---|---|
@@ -143,7 +143,7 @@ Earlier DR bodies are retained verbatim beneath explicit notices. Historical Iss
 
 ## Alternatives considered
 
-- Retain the heterogeneous Ridge/Random Forest/LightGBM primary comparison: rejected by the owner's revised direction because representation/search scope would also differ.
+- Retain the heterogeneous Ridge/Random Forest/LightGBM primary comparison: rejected by Chathuranga's revised direction because representation/search scope would also differ.
 - Use native categorical support for LightGBM/CatBoost: excluded from the primary comparison to control representation.
 - Tune model-specific additional dimensions: excluded; only the four matched dimensions are searched.
 - Remove simple/supportive benchmarks: rejected; contextual and baseline evidence remain useful under separate roles.
@@ -152,7 +152,7 @@ Earlier DR bodies are retained verbatim beneath explicit notices. Historical Iss
 
 The accepted Issue #62 feature/preprocessing implementation reflects the earlier contract. Features/targets/fold utilities exist, but preprocessing supports only ridge/random_forest/lightgbm and returns native categorical LightGBM inputs. After design approval, a separate alignment task must add the common primary encoding and XGBoost/CatBoost representation interfaces/tests. Model classes, metric code and a runner are not implemented here. No source/tests/dependencies change in Issue #66.
 
-[Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) must align, review and freeze its preserved `docs/protocol.md` after this revision. Gate 1 remains incomplete; subsequent implementation acceptance, validation-run authorisation, selection freeze and final-evaluation authorisation are separate human gates. The owner confirms that `docs/protocol.md` and the earlier review work are preserved in the Git stash named `issue-65 protocol draft before rq2 redesign`. Issue #66 does not inspect, restore, modify or drop that stash or reconstruct the protocol. Issue #65 remains blocked on human approval of this revision; its later continuation must align the preserved draft and reassess its previous four unresolved items. Those items cannot be declared resolved or copied speculatively in this task.
+[Issue #65](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/65) must align, review and freeze its preserved `docs/protocol.md` after this revision. Gate 1 remains incomplete; subsequent implementation acceptance, validation-run authorisation, selection freeze and final-evaluation authorisation are separate human gates. Chathuranga confirms that `docs/protocol.md` and the earlier review work are preserved in the Git stash named `issue-65 protocol draft before rq2 redesign`. Issue #66 does not inspect, restore, modify or drop that stash or reconstruct the protocol. Issue #65 remains blocked on human approval of this revision; its later continuation must align the preserved draft and reassess its previous four unresolved items. Those items cannot be declared resolved or copied speculatively in this task.
 
 ## Limitations and references
 

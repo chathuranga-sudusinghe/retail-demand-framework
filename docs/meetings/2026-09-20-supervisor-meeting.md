@@ -1,13 +1,15 @@
-# Supervisor Meeting
+# COMP1884 Lecturer Guidance Record
+
+> **Clarification — 14 October 2026, Issue #165:** Chathuranga identifies the teaching role as the COMP1884 lecturer. The original note called this a supervisor meeting and asserted project-initiation approval. The exact session format, permission and scope remain pending confirmation by the recorded participants. This record does not establish a supervisor appointment or methodological approval. The legacy filename is retained for traceability.
 
 **Date:** 20 September 2026  
 **Time:** 1:00 PM – 3:00 PM  
-**Meeting Type:** Supervisor Meeting  
+**Meeting Type:** Lecturer guidance; exact session format pending participant confirmation\
 **Purpose:** Initial COMP1884 project initiation discussion
 
 ## Attendees
 
-- COMP1884 project supervisor
+- COMP1884 lecturer (role clarified by Chathuranga; attendance and session details pending participant confirmation)
 - Chathuranga Indrajith Sudusinghe
 - Didilani Prasadika Weerawickrama Pathinayaka
 - Haputhanthrige Dewmi Pramodya
@@ -21,7 +23,7 @@
 
 ## Decisions / Guidance
 
-- The supervisor approved the group to proceed with initiating the COMP1884 project.
+- The original note recorded permission to initiate the project; the exact permission and scope remain pending participant confirmation.
 - The project should be organised and developed as a coordinated group effort.
 - Further project details, member responsibilities, methodology, and implementation decisions would be refined as the work progressed.
 
@@ -37,9 +39,11 @@
 
 No specific blocker was recorded from this meeting.
 
-## Supervisor / Module-Leader Confirmation
+## Confirmation status
 
-The supervisor confirmed approval for the group to proceed with the COMP1884 project initiation.
+The original wording was: “The supervisor approved the group to proceed with initiating the COMP1884 project.” That role and approval claim must not be relied on as verified evidence. Participants need to confirm what was actually said, whether it was general teaching guidance or specific project-initiation permission, and its scope. No lecturer review of the research methodology is established by this record.
+
+See the [COMP1884 criteria checklist](../greenwich-criteria-checklist.md#team-and-teaching-roles) for the distinction between lecturer guidance, team review and institutional requirements.
 
 ## Related Project Evidence
 
@@ -48,4 +52,4 @@ The supervisor confirmed approval for the group to proceed with the COMP1884 pro
 
 ## Outcome
 
-The supervisor meeting approved the project to proceed and established the starting point for the COMP1884 work. The group then held a separate project commencement meeting later the same day, from 8:30 PM to 9:30 PM, to organise responsibilities, collaboration, and repository setup.
+This historical note describes initial COMP1884 guidance; its approval claim remains unverified. The group then held a separate project commencement meeting later the same day, from 8:30 PM to 9:30 PM, to organise responsibilities, collaboration, and repository setup.

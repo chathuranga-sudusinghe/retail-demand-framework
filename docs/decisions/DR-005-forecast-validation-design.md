@@ -1,16 +1,16 @@
 # DR-005 — Forecast Validation Design
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
 **Revision status:** Current forecasting design human-approved; experiment execution NOT authorised
-**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
+**Documentation alignment:** 2026-09-29, on Chathuranga's explicit instruction
 **Revision owner:** Chathuranga
-**Group-level acceptance:** Pending; separate from the project owner's current forecasting approval
+**Group-level acceptance:** Pending; separate from Chathuranga's current forecasting approval
 **Related issue:** [#31 — Define expanding-window forecast validation design](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31)
-**Approval provenance:** The original design was approved through Issue #31. The project owner supplied the horizon/fold amendment on 2026-09-28 and explicitly confirmed the current forecasting position for this September 29 alignment. Implementation/protocol acceptance and separate group-level matters remain gated. Separate supervisor approval is not asserted.
+**Approval provenance:** The original design was approved through Issue #31. Chathuranga supplied the horizon/fold amendment on 2026-09-28 and explicitly confirmed the current forecasting position for this September 29 alignment. Implementation/protocol acceptance and separate group-level matters remain gated. Separate lecturer approval is not asserted.
 
 ## Context and revision
 

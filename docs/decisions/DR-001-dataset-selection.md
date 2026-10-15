@@ -1,7 +1,7 @@
 # DR-001 — Dataset Selection
 
 **Date:** 2026-09-21  
-**Status:** Accepted for project planning; supervisor awareness/confirmation recommended because the source dataset differs from the COMP1889 proposal.  
+**Status:** Accepted for project planning; lecturer/module-leader awareness or confirmation recommended where required by module guidance because the source dataset differs from the COMP1889 proposal.\
 **Owners:** COMP1884 group
 
 ## Decision
@@ -130,6 +130,6 @@ The following remain:
 - the three-member integrated framework;
 - the overarching COMP1884 research question.
 
-## Supervisor note
+## University guidance note
 
-Because the primary dataset differs from the earlier COMP1889 proposal, the group should keep this record and raise the change with the supervisor/module leader where required by module guidance.
+Because the primary dataset differs from the earlier COMP1889 proposal, the group should keep this record and raise the change with the lecturer or module leader where required by module guidance.

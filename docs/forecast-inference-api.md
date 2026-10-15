@@ -1,9 +1,9 @@
 # Request-time forecast API and presentation inputs
 
-**Owner:** Chathuranga — forecasting meaning and shared API architecture.
+**Responsible member:** Chathuranga — forecasting meaning and shared API architecture.
 **Integration reviewer:** Tinosh — endpoint, schema and adapter acceptance.
 **Date:** 2026-10-05 (Asia/Colombo).
-**Status:** Implementation prepared for human review. Chathuranga explicitly requested request-time predictions from supplied JSON histories in the working session. The owner reported that the initial manual API demonstration worked. The revised synthetic examples require a fresh manual presentation check; later PR review and consumer acceptance remain pending. This does not close Issue #132.
+**Status:** Implementation prepared for human review. Chathuranga explicitly requested request-time predictions from supplied JSON histories in the working session. Chathuranga reported that the initial manual API demonstration worked. The revised synthetic examples require a fresh manual presentation check; later PR review and consumer acceptance remain pending. This does not close Issue #132.
 
 ## 1. Active serving behavior
 
@@ -13,7 +13,7 @@ The presentation flow is:
 
 Models and their saved preprocessing are loaded once at application startup. Every accepted request builds its own feature vector and invokes the designated model. Responses are not cached. The existing [retained forecast export](forecast-api-contract.md) is a separate fixed-origin artifact: the runtime neither opens it nor reads stored predictions, observations or metric files.
 
-This owner-directed behavior supersedes the earlier stored-forecast serving proposal. It preserves the existing feature definitions, saved preprocessing, model files and producer mapping. Chathuranga and Tinosh retain their documented ownership; this initial implementation is subject to their review.
+This behavior requested by Chathuranga supersedes the earlier stored-forecast serving proposal. It preserves the existing feature definitions, saved preprocessing, model files and producer mapping. Chathuranga and Tinosh retain their documented ownership; this initial implementation is subject to their review.
 
 ### 1.1 Research and demonstration scope
 
@@ -23,7 +23,7 @@ The FastAPI service demonstrates request-time inference using the saved forecast
 
 The demonstration preserves the research questions, hypotheses, targets, feature definitions, producer mapping, saved models and retained numerical evidence. Synthetic requests and their responses are illustrative presentation material and must be labelled accordingly in slides and recordings. Changing an example input does not create an additional research result. The API neither establishes replenishment quantities nor approves downstream 28-day use.
 
-The owner authorises preparing this demo on the existing feature branch. Tinosh may review the code later through the normal PR process; his prior review is not a prerequisite for preparing or pushing the demo branch. This collaboration does not transfer the team's documented component ownership or claim integration acceptance.
+Chathuranga authorises preparing this demo on the existing feature branch. Tinosh may review the code later through the normal PR process; his prior review is not a prerequisite for preparing or pushing the demo branch. This collaboration does not transfer the team's documented component ownership or claim integration acceptance.
 
 ## 2. Models and source bindings
 

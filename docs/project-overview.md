@@ -82,7 +82,7 @@ A recommended replenishment quantity may be produced where the final method can 
 
 ### Chathuranga
 
-As Research Team Lead & Forecasting owner, coordinates group research and owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and SKU-warehouse-day forecast outputs. Shares API architecture and integration review with Tinosh, including forecasting-facing contracts and provenance.
+As Research Team Lead & Forecasting contributor, coordinates group research and owns model training, model comparison/selection, demand forecasting, forecasting evaluation, and SKU-warehouse-day forecast outputs. Shares API architecture and integration review with Tinosh, including forecasting-facing contracts and provenance.
 
 ### Didilani
 
@@ -155,6 +155,6 @@ proven performance in a real retailer
 
 ## 15. Current delivery state
 
-Forecasting preparation, training/development, validation, freeze, final evaluation and integrity verification are complete as confirmed by the owner. The [final report](forecasting-final-evaluation.md) links unchanged numerical evidence and the [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) producer mapping. Final ordering does not change that mapping.
+Forecasting preparation, training/development, validation, freeze, final evaluation and integrity verification are complete as confirmed by Chathuranga. The [final report](forecasting-final-evaluation.md) links unchanged numerical evidence and the [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) producer mapping. Final ordering does not change that mapping.
 
 The integrated group product remains in progress. Inventory-risk/replenishment, responsible decision-support semantics, approved uncertainty/human-review logic and prospective API/export acceptance require their component owners' work and review. This overview does not approve unresolved DR-012 or 28-day downstream use.

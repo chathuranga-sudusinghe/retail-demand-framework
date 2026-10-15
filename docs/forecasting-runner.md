@@ -1,6 +1,6 @@
 # Forecasting Runner Operations
 
-This reference describes the implemented preparation, validation and separate final runtime. Scientific methods belong in the [protocol](protocol.md), [features](forecasting-feature-engineering.md) and [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md); results belong in [final evaluation](forecasting-final-evaluation.md). Retained validation and final evaluation are complete as confirmed by the owner. Commands below are reference shapes, not permission to execute another run.
+This reference describes the implemented preparation, validation and separate final runtime. Scientific methods belong in the [protocol](protocol.md), [features](forecasting-feature-engineering.md) and [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md); results belong in [final evaluation](forecasting-final-evaluation.md). Retained validation and final evaluation are complete as confirmed by Chathuranga. Commands below are reference shapes, not permission to execute another run.
 
 ## Supported entrypoints
 
@@ -13,7 +13,7 @@ Run from the repository root using the reviewed Python 3.12.3 environment:
 .venv/bin/python -m src.forecasting.final_evaluation
 ~~~
 
-The first two prepare reviewed data representations; they are not experiment commands. Real preparation requires owner authorization. Model-ready preparation supports one validation fold only and rejects final/refit stages before input access. Validation and final experiment entrypoints require their own matching specific-run authorization. Do not rerun completed evidence as a check.
+The first two prepare reviewed data representations; they are not experiment commands. Real preparation requires explicit human authorization for the particular operation and manual execution by the responsible human member under [AGENTS §17](../AGENTS.md#17-experiment-execution-responsibility). For forecasting preparation this is Chathuranga; shared validated-handoff preparation requires relevant-member review and a named human executor. AI assistants prepare and explain the command for that member to run. Model-ready preparation supports one validation fold only and rejects final/refit stages before input access. Validation and final experiment entrypoints require their own matching specific-run authorization. Do not rerun completed evidence as a check.
 
 ## Fixed inputs and authorization
 

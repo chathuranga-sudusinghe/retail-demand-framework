@@ -2,13 +2,13 @@
 
 **Date:** 2026-10-03 (Asia/Colombo)
 
-**Status:** Owner-approved scientific freeze and final-refit policy; retained validation and corrected final evaluation completed and integrity verified, as confirmed by the owner under Issue #131. This documentation cleanup changes no decision content.
+**Status:** Scientific freeze and final-refit policy approved by Chathuranga; retained validation and corrected final evaluation completed and integrity verified, as confirmed by Chathuranga under Issue #131. This documentation cleanup changes no decision content.
 
-**Owner:** Chathuranga — forecasting methodology and output meaning.
+**Responsible member:** Chathuranga — forecasting methodology and output meaning.
 
 **Related issues:** [#130](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/130) (freeze/refit approval) and [#131](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/131) (final evaluation and repository refinement).
 
-**Approval provenance:** The owner's explicit 2026-10-03 Issue #130 instruction approved the scientific scope, configurations, producer mapping and fresh-refit policy below. Documentation Step 1 and the separate runtime were subsequently accepted by the owner under Issue #131. The owner separately authorized corrected final run final-20261003-02 after a verified implementation defect in final-20261003-01. These approvals were supplied in the owner-agent conversation; no additional GitHub comment, supervisor or group approval is asserted.
+**Approval provenance:** Chathuranga's explicit 2026-10-03 Issue #130 instruction approved the scientific scope, configurations, producer mapping and fresh-refit policy below. Documentation Step 1 and the separate runtime were subsequently accepted by Chathuranga under Issue #131. Chathuranga separately authorized corrected final run final-20261003-02 after a verified implementation defect in final-20261003-01. These approvals were supplied in the conversation between Chathuranga and the AI assistant; no additional GitHub comment, lecturer confirmation or group approval is asserted.
 
 ## Context and evidence binding
 
@@ -60,7 +60,7 @@ their exact existing definitions in
 | 14 days | GBM022 | GBM014 | GBM021 |
 | 28 days | GBM003 | GBM022 | GBM015 |
 
-The owner-supplied validation interpretation is that XGBoost, LightGBM and
+The validation interpretation supplied by Chathuranga is that XGBoost, LightGBM and
 CatBoost showed broadly comparable performance, with no universal primary-model
 winner. RQ2 remains descriptive and horizon-specific under DR-013. Ridge and
 Random Forest remain supportive; Naive and Seasonal Naive remain contextual
@@ -156,7 +156,7 @@ eligibility still requires complete labels and predictor history.
 
 Fresh estimator and preprocessing fits use all eligible history available at
 the approved origin while preserving the frozen recipe. Fold 4 estimator/state
-reuse was rejected by the owner's explicit policy. Selecting only the four
+reuse was rejected by Chathuranga's explicit policy. Selecting only the four
 producer candidates would omit the approved research comparison. Outcome-driven
 search and performance-driven retries would compromise the protected final
 evaluation. A separately approved implementation-defect rerun must preserve and

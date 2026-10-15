@@ -6,13 +6,13 @@
 
 ## 1. Purpose and boundary
 
-Record the MSc guidance supplied to the project owner alongside Greenwich's dated website update. These sources support transparent acknowledgement of AI assistance; they do not establish permission for every activity or approve this project's assessment tier.
+Record the MSc guidance supplied to Chathuranga alongside Greenwich's dated website update. These sources support transparent acknowledgement of AI assistance; they do not establish permission for every activity or approve this project's assessment tier.
 
-This note concerns AI assistance used to produce assessed work. The forecasting models studied by the project and Dewmi's management-facing decision-support assessment are separate matters. No research method, component ownership or experiment permission is changed here.
+This note concerns AI assistance used to produce assessed work. The forecasting models studied by the project and Dewmi's management-facing decision-support assessment are separate matters. No research method, component ownership or experiment permission is changed here. The [COMP1884 criteria checklist](greenwich-criteria-checklist.md) maps broader assessment requirements and explains the team/lecturer roles; this note retains the detailed AI-use evidence.
 
 ## 2. University-supplied local evidence
 
-The project owner reports receiving the following documents during the first MSc semester. Original files remain in the ignored `research-materials/university/` directory; they are not distributed with this repository.
+Chathuranga reports receiving the following documents during the first MSc semester. Original files remain in the ignored `research-materials/university/` directory; they are not distributed with this repository.
 
 | Source | Document date / version | Local evidence | What was verified |
 |---|---|---|---|
@@ -62,7 +62,7 @@ Keep the 2025/26 documents as evidence of guidance supplied to the cohort. Retai
 | Individual reflective essay | Not confirmed from the inspected sources | Its own instructions, including whether and how AIR should be included. |
 | Group presentation / individual questions | Not confirmed from the inspected sources | Presentation-specific permitted uses and acknowledgement requirements. |
 
-The owner considers Tier 2 a possible fit, not an approved classification. Record the relevant brief or written module-leader confirmation, its date and which submissions/activities it covers when available. Do not infer blanket permission for generating code, tests or report text from the declaration form or tier name. Using AI-generated code does not itself reclassify an assessment as Tier 3.
+Chathuranga considers Tier 2 a possible fit, not an approved classification. Record the relevant brief or written module-leader confirmation, its date and which submissions/activities it covers when available. Do not infer blanket permission for generating code, tests or report text from the declaration form or tier name. Using AI-generated code does not itself reclassify an assessment as Tier 3.
 
 [AGENTS.md](../AGENTS.md) and [CONTRIBUTING.md](../CONTRIBUTING.md) require human review of material work and separate authorisation for consequential experiments and Git operations. Those repository controls remain in force; they do not replace university permission.
 
@@ -70,7 +70,7 @@ The owner considers Tier 2 a possible fit, not an approved classification. Recor
 
 For each member's relevant use, retain a concise factual account of the tool, task, affected work, output accepted or rejected, verification/revisions, and the member's own contribution. Link existing Issues, reviewed diffs, source checks and experiment records where useful. Record only use and review that actually happened; do not invent retrospective logs or claim generated text/code was entirely written by the student.
 
-Use that account to prepare the acknowledgement required by the applicable assessment instructions. This note is not a completed declaration or AIR. The final reflective account and assessment permissions require human review; no lecturer or supervisor confirmation is asserted here.
+Use that account to prepare the acknowledgement required by the applicable assessment instructions. This note is not a completed declaration or AIR. The final reflective account and assessment permissions require human review; no lecturer or module-leader confirmation is asserted here.
 
 ## 6. References and maintenance
 

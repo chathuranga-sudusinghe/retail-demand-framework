@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate owner/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
+> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
 ## 1. Problem Definition
 
@@ -139,7 +139,7 @@ Some parts of the decision-support methodology still require agreement from the 
 
 [DR-011](../decisions/DR-011-decision-support-output-structure.md) defines the management-facing output structure and is accepted for structure only. Fields depending on inventory-risk, replenishment, forecasting uncertainty, recommendation rules or human-review thresholds remain provisional until their related methodology decisions are approved. This structural acceptance does not approve substantive downstream logic. No thresholds should be invented; unresolved thresholds remain open.
 
-## Revised forecasting interface and owner review
+## Revised forecasting interface and component review
 
 The human-approved upstream forecast interface supports 1-day next-day and cumulative 7/14/28-day demand from one fixed origin.
 Cumulative quantities do not imply a daily forecast path. Preserve origin and horizon in explanations; 28 days is

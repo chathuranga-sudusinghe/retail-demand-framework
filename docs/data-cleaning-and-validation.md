@@ -165,13 +165,13 @@ Relevant component owners retain their existing analytical responsibilities. Con
 
 ## 10. Executable validated handoff
 
-One owner-triggered command performs loading, authorized date isolation, shared validation, accepted dataframe construction, audit generation, Parquet/JSON serialization, strict readback, hash verification and publication. This example is a command shape, not permission to process the project source:
+One command, specifically authorized after review by the relevant human members and manually run by the named human executor under [AGENTS §17](../AGENTS.md#17-experiment-execution-responsibility), performs loading, authorized date isolation, shared validation, accepted dataframe construction, audit generation, Parquet/JSON serialization, strict readback, hash verification and publication. This example is a command shape, not permission to process the project source:
 
 ~~~bash
 python -m src.data.validated_handoff
 ~~~
 
-Project defaults live in src/data/validated_handoff.py: the module-derived repository root, data/raw/supply_chain_dataset1.csv, data/raw/source-receipt.json, 2024-01-01 through 2024-12-30, purpose shared validated source preparation, data_version supply-chain-dataset1-validated-v1 and the Issue #102 URL as the preparation reference. This is full-source shared validation only; it does not authorize feature construction or final evaluation. The owner must review and authorize the actual run separately. Missing/invalid receipt evidence fails closed; no receipt is fabricated.
+Project defaults live in src/data/validated_handoff.py: the module-derived repository root, data/raw/supply_chain_dataset1.csv, data/raw/source-receipt.json, 2024-01-01 through 2024-12-30, purpose shared validated source preparation, data_version supply-chain-dataset1-validated-v1 and the Issue #102 URL as the preparation reference. This is full-source shared validation only; it does not authorize feature construction or final evaluation. Before a shared-preparation run, the relevant human members must review and explicitly authorize its actual scope and identify the human member who will execute it manually. AI assistants may prepare and explain the command, then hand it to that member; they do not execute the research preparation. Shared preparation-contract acceptance remains separate. Missing/invalid receipt evidence fails closed; no receipt is fabricated.
 
 All CLI options remain optional overrides for development or separately reviewed preparation, including --repository, --input, --source-receipt, --data-version, --start, --end, --purpose and --authorization-reference. Relative input/receipt paths resolve against the chosen repository, not the current working directory. Existing data_version publication is refused even for the default command. The programmatic prepare_validated_handoff interface remains explicit and unchanged, returning HandoffResult with directory and provenance_sha256; read_validated_handoff verifies a named version, optionally against that externally retained hash.
 

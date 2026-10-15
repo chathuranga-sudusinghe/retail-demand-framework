@@ -1,13 +1,13 @@
 # DR-004 — Forecast Horizons for Decision Support
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the 1/7/14-day forecasting-methodology baseline
 **Revision date:** 2026-09-28
 **Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
-**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
-**Owner:** Chathuranga  
+**Documentation alignment:** 2026-09-29, on Chathuranga's explicit instruction
+**Responsible member:** Chathuranga\
 **Related issue:** #28
 
 ## Context
@@ -28,7 +28,7 @@ The verified project dataset contains `Supplier_Lead_Time_Days` values from 2 to
 
 ## Decision
 
-The original September 22 decision covered 1/7/14 days. The current owner-approved design adds 28 days:
+The original September 22 decision covered 1/7/14 days. The current design approved by Chathuranga adds 28 days:
 
 - **1 day** — immediate next-day SKU-warehouse demand;
 - **7 days** — cumulative demand over the next 7 days;

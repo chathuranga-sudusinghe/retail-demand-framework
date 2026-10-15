@@ -1,10 +1,10 @@
 # DR-003 — Initial Forecasting Feature-Engineering Baseline
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Date:** 2026-09-22  
 **Original decision status:** Accepted for the forecasting-methodology baseline at the September 22 decision
-**Owner:** Chathuranga  
+**Responsible member:** Chathuranga\
 **Related issue:** #26
 
 > **Supersession notice — 2026-09-29:** The original decision body below is historical provenance. Its calendar/lag/median candidates and then-open choices are superseded by the human-approved [fourteen-predictor contract](../forecasting-feature-engineering.md): two categorical identities plus twelve numerical features, complete 7/14/28-day summaries and 28-day minimum history. Original dates, definitions and rationale are preserved; these are not current predictor alternatives or execution authority. Models, targets, folds, metrics and grids are settled in subsequent records; uncertainty and downstream decisions remain separate.

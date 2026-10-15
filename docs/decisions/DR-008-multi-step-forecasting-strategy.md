@@ -1,15 +1,15 @@
 # DR-008 — Multi-Step Forecasting Strategy
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
 **Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
-**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
-**Owner:** Chathuranga
+**Documentation alignment:** 2026-09-29, on Chathuranga's explicit instruction
+**Responsible member:** Chathuranga
 **Related issue:** [#40 — Formalise forecasting model set and multi-step strategy](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/40)
-**Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
+**University requirements:** This record asserts no separate lecturer approval. Any confirmation required by the applicable COMP1884 instructions remains subject to the team's review process; teaching guidance does not establish approval of this methodology.
 
 ## Context
 
@@ -94,5 +94,5 @@ Not included in the current approved scope because it would add another methodol
 - `docs/research-design.md` and `docs/workflows/demand-forecasting.md` now identify direct horizon-specific forecasting as primary.
 - Future training code must construct separate 1-day, 7-day cumulative, 14-day cumulative, and 28-day cumulative targets without future-data leakage.
 - Recursive use of earlier predictions is not part of the primary modelling workflow.
-- The original September 22 strategy decision did not change DR-004/005/006. The September 28 horizon revision, now explicitly approved by the project owner, extends the direct strategy to the 28-day cumulative target, while revised DR-005 separately defines the updated validation and final-evaluation boundaries; direct prediction and metric policy remain.
+- The original September 22 strategy decision did not change DR-004/005/006. The September 28 horizon revision, now explicitly approved by Chathuranga, extends the direct strategy to the 28-day cumulative target, while revised DR-005 separately defines the updated validation and final-evaluation boundaries; direct prediction and metric policy remain.
 - No model training or modelling result is introduced by this decision.

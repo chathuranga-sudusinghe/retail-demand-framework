@@ -137,3 +137,19 @@ Each member owns a distinct COMP1884 component
 +
 all components must integrate into one shared group product.
 ```
+
+## 8. Team, teaching and approval terminology
+
+This is a collaborative group project; “project owner” is not a defined team role. Chathuranga coordinates research as Research Team Lead & Forecasting, while all members retain their documented component responsibilities. “Component owner” describes responsibility for a component only.
+
+Name the person who gave an instruction, reviewed work or authorised execution, and preserve the date, source and exact scope. An individual approval must not be described as group approval. Team decisions and component review remain subject to the existing human review controls.
+
+**Human research workflow — clarified by Chathuranga on 15 October 2026, Issue #165:** The relevant human member reviews and authorises the particular run within the approved component scope and manually executes the reviewed command in their own terminal. Shared-data or cross-component work requires review by the relevant members and a named human executor; decisions requiring group agreement must be discussed and approved by the team. AI assistants may prepare code and explain the exact command, but research execution remains with the human members under [AGENTS §17](../AGENTS.md#17-experiment-execution-responsibility). Read-only inspection and lightweight synthetic implementation checks remain supporting activities, not research decisions or results.
+
+**Human peer review before merge — clarified by Chathuranga on 15 October 2026, Issue #165:** Before code reaches `main`, at least one other human team member must review and approve the author's changes, with the review recorded on the PR. Human reviewers may use AI tools to assist their review, but must assess the changes and make the approval decision themselves. Self-review and AI review alone do not replace this requirement. Substantive later code changes require renewed review. Once approval, resolution of review blockers and required checks are complete, either the human task/PR author or the human reviewer may merge within repository permissions and protections. See [the PR rule](../AGENTS.md#3-pull-request-rule) and [contribution workflow](../CONTRIBUTING.md#6-commit-push-and-pull-request).
+
+**AI Git/GitHub boundaries — clarified by Chathuranga on 15 October 2026, Issue #165:** AI assistants must not create Git branches or open/merge Pull Requests. They provide branch commands and draft PR content/instructions for humans to perform those actions. They may draft or propose a GitHub Issue, but must obtain explicit user permission for that specific Issue before creating it; identifying a need does not grant permission. Other permitted Git operations retain their existing explicit-authorization controls.
+
+Use “COMP1884 lecturer” for the teaching role clarified by Chathuranga, and “module leader” only where that distinct role is evidenced. Teaching guidance does not establish a supervisor appointment or lecturer approval of project methodology. Record any specific confirmation required by the applicable module instructions separately.
+
+The [criteria checklist](greenwich-criteria-checklist.md) maps assessment evidence and unresolved requirements. It does not certify university compliance or grant experiment/Git permission.

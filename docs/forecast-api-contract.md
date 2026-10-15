@@ -1,7 +1,7 @@
 # Retained Forecast Export Contract — Fixed-Origin Handoff
 
 **Issue:** #132 — Phase 3: Define forecast API contract and hand off forecasting outputs to Tinosh
-**Owner:** Chathuranga Sudusinghe — forecasting-facing contract and output meaning
+**Responsible member:** Chathuranga Sudusinghe — forecasting-facing contract and output meaning
 **Implementer after handoff:** Tinosh Gamage — FastAPI endpoints, schemas, adapters and API tests
 **Date:** 2026-10-05 (Asia/Colombo)
 **Status:** Retained-export contract; exporter and synthetic checks are implemented, and a local export exists. Acceptance of its exact hash and Tinosh's consumer acceptance remain pending. The earlier stored-forecast runtime design is superseded by Chathuranga's explicit request for request-time saved-model inference on 2026-10-05. The active API contract is [Request-time forecast API](forecast-inference-api.md); the fixed-origin export remains a separate artifact.
@@ -58,11 +58,11 @@ Rules:
 4. The exporter MUST NOT call `verify_final_completed`, `verify_final_scientific` or `verify_sealed_predictions`: these perform model/baseline replay and/or scientific reconciliation beyond the export checks. Carry the recorded integrity result unchanged. Read-only binding/schema checks establish that this export uses the retained evidence; they are not a new scientific verification.
 5. Nothing may be written inside `artifacts/forecasting/final-20261003-02/`, `models/forecasting/final-20261003-02/` or the run's report directory ([storage policy](artifact-storage-policy.md#version-completion-and-archival-discipline)). No "latest run" discovery is allowed.
 
-## 3. Agreed design directions (owner discussion, 2026-10-05)
+## 3. Agreed design directions (discussion with Chathuranga, 2026-10-05)
 
 ### 3.1 Active inference API; retained export remains separate
 
-The owner explicitly requested that each presentation request supply new daily history and invoke a saved designated model. The active request, response and endpoint definitions are in [Request-time forecast API](forecast-inference-api.md). This supersedes the previous option A serving proposal, without changing the retained export or frozen producer mapping.
+Chathuranga explicitly requested that each presentation request supply new daily history and invoke a saved designated model. The active request, response and endpoint definitions are in [Request-time forecast API](forecast-inference-api.md). This supersedes the previous option A serving proposal, without changing the retained export or frozen producer mapping.
 
 | Behavior | Current purpose |
 |---|---|
@@ -111,7 +111,7 @@ Rules:
 
 1. A 7-, 14- or 28-day value is a single cumulative total. The export MUST NOT divide it into daily values or reinterpret it as a daily forecast. No daily path is implied (direct strategy, DR-008).
 2. Forecast origin and target start are different fields. `target_start_date` MUST NOT be presented as the origin.
-3. Forecast values are raw model outputs: copied unchanged, not rounded, clipped or floored. Zero remains zero. Non-finite or malformed quantities make the source unusable; they MUST NOT be repaired or replaced. Inventory handling of problematic forecasts remains a separate owner decision (B5); this contract authorizes no new source run.
+3. Forecast values are raw model outputs: copied unchanged, not rounded, clipped or floored. Zero remains zero. Non-finite or malformed quantities make the source unusable; they MUST NOT be repaired or replaced. Inventory handling of problematic forecasts remains a separate decision by Didilani (B5); this contract authorizes no new source run.
 4. Display rounding is presentation only. It MUST NOT change the value passed to downstream components.
 
 ## 6. Prospective forecast record
@@ -264,15 +264,15 @@ The export is a deterministic projection of the recorded verified bundle:
 6. Serialize with fixed key ordering/formatting and no NaN/infinity or changing export-time timestamps. Copy stored quantities and the recorded integrity result unchanged.
 7. Write outside retained evidence, without overwriting, and record the derivative export's SHA-256 separately.
 
-The derivative export's SHA-256 is recorded in this contract as an accepted-export entry (path, `export_schema`, source run and hash) after owner-authorized generation, and is included in the Issue #132 handoff. Any consumer of this retained export must pin that reviewed value. Before serving retained records, that consumer MUST compare the exact export bytes with the pinned hash; a missing export, missing pin or mismatch returns `source_unverified`. The active inference API does not consume the export; it pins the saved-model source manifest and receipt instead. The expected hash MUST NOT be read from the export itself or from a file stored beside it, and MUST NOT be silently refreshed.
+The derivative export's SHA-256 is recorded in this contract as an accepted-export entry (path, `export_schema`, source run and hash) after generation explicitly authorized by Chathuranga, and is included in the Issue #132 handoff. Any consumer of this retained export must pin that reviewed value. Before serving retained records, that consumer MUST compare the exact export bytes with the pinned hash; a missing export, missing pin or mismatch returns `source_unverified`. The active inference API does not consume the export; it pins the saved-model source manifest and receipt instead. The expected hash MUST NOT be read from the export itself or from a file stored beside it, and MUST NOT be silently refreshed.
 
 The same verified source always gives byte-identical output. The export stays local and ignored by Git (`.gitignore` already covers `data/processed/` and `artifacts/`). Do not commit generated output. Ignore coverage alone does not establish storage approval. The D2 location is now covered by the reviewed [storage-policy row](artifact-storage-policy.md#storage-responsibilities); generating a real export still requires the authorization below.
 
-Generating the real derivative export requires explicit owner authorization covering the named run, pinned manifest and approved destination. An existing authorization covering that same operation remains sufficient; do not request it again. Synthetic tests use temporary synthetic evidence only and do not require real-bundle execution authorization. Neither contract review nor exporter execution authorizes training, refitting, prediction generation or metric recalculation.
+Generating the real derivative export requires explicit authorization from Chathuranga covering the named run, pinned manifest and approved destination. An existing authorization covering that same operation remains sufficient; do not request it again. Synthetic tests use temporary synthetic evidence only and do not require real-bundle execution authorization. Neither contract review nor exporter execution authorizes training, refitting, prediction generation or metric recalculation.
 
-## 12. Owner-approved contract choices
+## 12. Contract choices approved by Chathuranga
 
-Owner approval: Chathuranga, 2026-10-05, by explicit instruction in the working session to adopt D1–D5, add the narrow storage-policy allowance and update the readiness reference. This approval covers the contract choices and documentation changes; it does not authorize a real export run or approve an implementation that has not yet been reviewed.
+Approval by Chathuranga: 2026-10-05, by explicit instruction in the working session to adopt D1–D5, add the narrow storage-policy allowance and update the readiness reference. This approval covers the contract choices and documentation changes; it does not authorize a real export run or approve an implementation that has not yet been reviewed.
 
 | ID | Decision | Approved choice |
 |---|---|---|
@@ -282,9 +282,9 @@ Owner approval: Chathuranga, 2026-10-05, by explicit instruction in the working 
 | D4 | Contract identifier | `issue-132-forecast-export-v1`. |
 | D5 | Decision record | Record these choices here and reference this contract in [integration readiness](integration-contract-readiness.md). No new Decision Record. |
 
-The logical request behaviour and reason-code precedence in Sections 8–9 are part of this approved contract. Chathuranga retains forecasting ownership; Tinosh reviews and implements the consumer. Exporter implementation and synthetic checks are complete, and the owner generated a local derivative export. Its accepted-export hash entry and consumer acceptance remain pending; existence alone does not establish acceptance. The active inference handoff has separate review and manual demonstration steps in [its contract](forecast-inference-api.md).
+The logical request behaviour and reason-code precedence in Sections 8–9 are part of this approved contract. Chathuranga retains forecasting ownership; Tinosh reviews and implements the consumer. Exporter implementation and synthetic checks are complete, and Chathuranga generated a local derivative export. Its accepted-export hash entry and consumer acceptance remain pending; existence alone does not establish acceptance. The active inference handoff has separate review and manual demonstration steps in [its contract](forecast-inference-api.md).
 
-Posting a decision comment on Issue #132 requires the owner's instruction; this documentation approval does not authorize posting one.
+Posting a decision comment on Issue #132 requires Chathuranga's instruction; this documentation approval does not authorize posting one.
 
 ## 13. Standards and references
 

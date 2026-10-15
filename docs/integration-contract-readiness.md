@@ -2,9 +2,9 @@
 
 **Issue:** #87 — Docs: map component handoff contracts and integration blockers
 **Prepares:** Issue #86 (later integration implementation; remains open)
-**Owner:** Tinosh Gamage — System Integration and Prototype Engineering
+**Responsible member:** Tinosh Gamage — System Integration and Prototype Engineering
 **Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
-**Updated:** 2026-10-05 for the owner-requested saved-model inference API and presentation inputs.
+**Updated:** 2026-10-05 for the saved-model inference API and presentation inputs requested by Chathuranga.
 **Status:** The retained exporter is implemented and a local derivative exists. Chathuranga has requested a saved-model request-time API in place of stored-forecast serving; its implementation and four synthetic input examples are prepared on the feature branch for review. Manual demonstration and Tinosh's consumer acceptance remain pending (B2). Other component decisions and review requirements are unchanged.
 
 ---
@@ -36,7 +36,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 |---|---|
 | **Implemented / frozen** | Exists in merged source code or in a human-approved, frozen record. |
 | **Structure-only agreement** | Accepted as a structure (field groups, concepts), with contents, names and types still open. |
-| **Proposed** | Written down as a method, but group / owner approval is still pending. |
+| **Proposed** | Written down as a method, but group / relevant component-member approval is still pending. |
 | **Unresolved** | Explicitly recorded as open by an existing source; no decision exists yet. |
 
 ---
@@ -52,7 +52,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 | [src/forecasting/experiment.py](../src/forecasting/experiment.py) | How origin and target dates are written for validation records |
 | [docs/forecasting-runner.md](forecasting-runner.md) | Run lifecycle, completion manifest, Issue #89 status |
 | [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Retained export contract and local/ignored derivative location; exporter exists, acceptance remains pending |
-| [Request-time forecast API](forecast-inference-api.md), [inference source](../src/forecasting/inference.py), [API source](../src/api/main.py) | Owner-requested active serving behavior; supplied-history request contract, four presentation examples and implementation pending review |
+| [Request-time forecast API](forecast-inference-api.md), [inference source](../src/forecasting/inference.py), [API source](../src/api/main.py) | Active serving behavior requested by Chathuranga; supplied-history request contract, four presentation examples and implementation pending review |
 | [docs/workflows/shared-data-foundation.md](workflows/shared-data-foundation.md) | Forecast-to-inventory timing contract and open contract decisions |
 | [docs/workflows/system-integration-and-prototype.md](workflows/system-integration-and-prototype.md) | Integration rules and adapter boundaries |
 | [docs/team/tinosh/group-project-overview.md](team/tinosh/group-project-overview.md) | Tinosh's expected inputs and boundaries |
@@ -66,7 +66,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 
 ## 3. Forecasting artifacts — actual implemented field names
 
-Retained validation run validation-20261002-01 and final evaluation run final-20261003-02 are completed evidence, with integrity verification confirmed by the owner. Numerical sources are indexed in [reports](../reports/README.md); current findings are in [final evaluation](forecasting-final-evaluation.md). The removed earlier validation run remains historical and is not the current evidence source.
+Retained validation run validation-20261002-01 and final evaluation run final-20261003-02 are completed evidence, with integrity verification confirmed by Chathuranga. Numerical sources are indexed in [reports](../reports/README.md); current findings are in [final evaluation](forecasting-final-evaluation.md). The removed earlier validation run remains historical and is not the current evidence source.
 
 ### 3.1 Run output files and storage
 
@@ -116,7 +116,7 @@ The forecasting names above are **real column names**. The names used by invento
 | `model`, `run_id`, `configuration_id`, … | "model / source provenance" | DR-011; DR-012 §8 |
 | *(none exists)* | `forecast_uncertainty`, forecast-error / uncertainty context | DR-011 (pending) |
 
-Any mapping from an actual field to a downstream concept requires owner agreement before implementation ([system integration workflow](workflows/system-integration-and-prototype.md)).
+Any mapping from an actual field to a downstream concept requires agreement by the relevant producing and consuming component members before implementation ([system integration workflow](workflows/system-integration-and-prototype.md)).
 
 ---
 
@@ -168,7 +168,7 @@ Rules recorded in sources:
 
 ## 6. Inventory-risk handoff requirements (forecasting → inventory-risk → decision support)
 
-Owner: Didilani. Primary source: [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) — **Proposed for group approval** (Issue #51).
+Responsible member: Didilani. Primary source: [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) — **Proposed for group approval** (Issue #51).
 
 ### 6.1 Inputs Didilani's component expects
 
@@ -183,7 +183,7 @@ Owner: Didilani. Primary source: [DR-012](decisions/DR-012-inventory-risk-replen
 | `Order_Quantity` as context only, after origin availability is established | Proposed; availability **unresolved** | DR-012 §5 |
 | `Stockout_Flag` as dataset limitation only (zero-variance) | Implemented / frozen rule | AGENTS.md §5; dataset.md |
 | Handling of negative or otherwise problematic forecasts (no clipping approved) | **Unresolved** | DR-012 §2; protocol.md §8 |
-| Original inventory scope is 1 / 7 / 14 days; 28-day downstream use | **Unresolved — owner/human approval required** | DR-012 §4 and 28-day review |
+| Original inventory scope is 1 / 7 / 14 days; 28-day downstream use | **Unresolved — relevant component-member/human approval required** | DR-012 §4 and 28-day review |
 
 ### 6.2 Outputs Didilani's component hands to Dewmi (DR-012 §8)
 
@@ -210,7 +210,7 @@ Concepts only — DR-012 does not lock names, types or format:
 
 ## 7. Responsible decision-support handoff requirements
 
-Owner: Dewmi. Primary source: [DR-011](decisions/DR-011-decision-support-output-structure.md) — **Accepted for structure only** (Issue #48).
+Responsible member: Dewmi. Primary source: [DR-011](decisions/DR-011-decision-support-output-structure.md) — **Accepted for structure only** (Issue #48).
 
 ### 7.1 Field groups (structure-only agreement)
 
@@ -241,7 +241,7 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 | Handoff | Available / frozen | Remaining acceptance or decision |
 |---|---|---|
 | Retrospective forecasting research | Completed validation/final evidence; approved configurations, fresh-refit policy and producer mapping | Preserve the reviewed final interpretation and retained evidence |
-| Prospective forecasting input/API | Retained exporter exists; owner-requested [inference API](forecast-inference-api.md), frozen DR-014 saved models and four synthetic request examples are prepared for review | Human code/schema review, manual four-horizon demonstration and Tinosh's consumer acceptance; retained-export hash acceptance is separate |
+| Prospective forecasting input/API | Retained exporter exists; [inference API](forecast-inference-api.md) requested by Chathuranga, frozen DR-014 saved models and four synthetic request examples are prepared for review | Human code/schema review, manual four-horizon demonstration and Tinosh's consumer acceptance; retained-export hash acceptance is separate |
 | Forecasting → inventory-risk | Grain/target meaning and documented dataset limits | Proposed DR-012 approval; origin snapshot semantics, problematic forecasts, schema, 28-day use and Order_Quantity availability |
 | Inventory-risk → responsible decision support | Advisory-only boundary and DR-011 structure-only field groups | Final schema, unavailable-state encoding, replenishment quantity, uncertainty and review rules |
 | Components → prototype/API | Ownership split and presentation-oriented boundary | Approved interchange/response schemas, adapters, tests and technical visual requirements |

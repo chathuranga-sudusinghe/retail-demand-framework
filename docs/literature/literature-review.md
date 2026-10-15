@@ -191,7 +191,7 @@ Supported by XAI and human-centred decision-support literature. The project shou
 
 The accepted forecasting feature/preprocessing contract, direct targets, horizons, chronological validation, matched boosting comparison, fixed supportive models, baseline formulas, metrics/aggregation/ties and final-refit decision are now resolved and implemented. Use [features](../forecasting-feature-engineering.md), [protocol](../protocol.md) and [DR-014](../decisions/DR-014-forecasting-selection-and-final-refit.md) for their exact definitions, without duplicating settings here.
 
-Forecasting validation and final evaluation are complete as confirmed by the owner. [Final results](../forecasting-final-evaluation.md) owns interpretation, unchanged producer mapping and prior-exposure/simulation limitations. Literature motivation is distinct from evidence that a method worked on this dataset; simpler supportive/baseline performance remains visible.
+Forecasting validation and final evaluation are complete as confirmed by Chathuranga. [Final results](../forecasting-final-evaluation.md) owns interpretation, unchanged producer mapping and prior-exposure/simulation limitations. Literature motivation is distinct from evidence that a method worked on this dataset; simpler supportive/baseline performance remains visible.
 
 Still open: inventory-risk/replenishment approvals and origin semantics, uncertainty, human-review logic, 28-day downstream use and final prospective/interchange/API contracts. [Integration readiness](../integration-contract-readiness.md) records their existing owners and boundaries. This literature alignment settles none of those methods.
 

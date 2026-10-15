@@ -1,18 +1,18 @@
 # DR-006 — Forecasting Metrics and Model-Selection Policy
 
-> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by the owner; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
+> **Current authority:** Exact forecasting methods and resolved settings are in the [protocol](../protocol.md); the approved configuration/producer freeze and final-refit policy are in [DR-014](DR-014-forecasting-selection-and-final-refit.md). Forecasting validation and final evaluation are complete as confirmed by Chathuranga; [final results](../forecasting-final-evaluation.md) owns current interpretation. Dated development/pending wording below preserves decision history and is not an execution instruction or unresolved current forecasting setting. No new approval is created here.
 
 **Original decision date:** 2026-09-22
 **Original decision status:** Accepted for the earlier 1/7/14-day baseline
 **Revision date:** 2026-09-28
 **Revision status:** Current forecasting design human-approved; separate execution/implementation gates remain
-**Documentation alignment:** 2026-09-29, on the project owner's explicit instruction
-**Owner:** Chathuranga
-**Supervisor confirmation:** Not required to record the current team methodology baseline. This record does not claim separate supervisor approval; any programme-required supervisor review remains subject to the team's review process.
+**Documentation alignment:** 2026-09-29, on Chathuranga's explicit instruction
+**Responsible member:** Chathuranga
+**University requirements:** This record asserts no separate lecturer approval. Any confirmation required by the applicable COMP1884 instructions remains subject to the team's review process; teaching guidance does not establish approval of this methodology.
 
 ## Context
 
-DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting design approved by the project owner. DR-005 defines the common four expanding-window validation folds and reserves the revised final evaluation interval for evaluation after model selection; see DR-005 for the December 3–16 prior-validation-exposure limitation.
+DR-002 fixes the forecasting grain as `SKU_ID + Warehouse_ID + Date` with `Units_Sold` as the target. Revised DR-004 records the human-selected 1-day, 7-day, 14-day, and 28-day forecasting design approved by Chathuranga. DR-005 defines the common four expanding-window validation folds and reserves the revised final evaluation interval for evaluation after model selection; see DR-005 for the December 3–16 prior-validation-exposure limitation.
 
 Those decisions establish what is forecast and where it is evaluated, but they do not define the primary metric or how fold-level results determine model selection. A common policy is required so candidate models are compared consistently without selecting from one favourable fold or using results from the revised final evaluation interval to revise earlier choices.
 
