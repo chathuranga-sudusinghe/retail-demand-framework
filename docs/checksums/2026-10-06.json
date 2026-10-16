@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "issue": 169,
+  "handoff_date": "2026-10-06",
+  "source_run_id": "final-20261003-02",
+  "reference_provenance": {
+    "member_files": "Original member HANDOFF/manifest.json records, verified against HANDOFF/SHA256SUMS and the sender outer ZIP SHA256SUMS",
+    "raw_source": "CSV SHA-256 from the existing data/raw/source-receipt.json; the receipt file's own SHA-256 was first registered from the retained local file for Issue #169, not independently corroborated by an earlier receipt-hash record",
+    "validation_anchor": "DR-014 retained validation manifest SHA-256",
+    "final_anchor": "Retained forecast contract and original handoff manifest anchor"
+  },
+  "status": "Byte identity references prepared for human review; no new research or consumer acceptance",
+  "profiles": {
+    "dewmi": {
+      "description": "Installed payload supplied to Dewmi Pramodya",
+      "source_repository_commit": "d9714bbffa3d52730991336b49e07b527e396cc7",
+      "source_run_id": "final-20261003-02",
+      "source_package_manifest_sha256": "d79e8553e630ec1b1270fcfeac1d2113a69adefbadf1495a608ddf3110ba028c",
+      "archive": {
+        "name": "dewmi-handoff-final-20261003-02.zip",
+        "sha256": "d5e8be7e4b7c68816553a9447c5bbd2b180905b97abb6e55cd82967a68b78a67"
+      },
+      "files": [
+        {
+          "path": "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json",
+          "bytes": 566670,
+          "sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863"
+        }
+      ]
+    },
+    "didilani": {
+      "description": "Installed payload supplied to Didilani Pathinayaka",
+      "source_repository_commit": "d9714bbffa3d52730991336b49e07b527e396cc7",
+      "source_run_id": "final-20261003-02",
+      "source_package_manifest_sha256": "a74e4f991fbcb00b7504e374726b200d3a5bae640ac0f503a3059328eb138497",
+      "archive": {
+        "name": "didilani-handoff-final-20261003-02.zip",
+        "sha256": "a500d7b5086b62a2d198acced448d370c346955978c9640172b242f40d22e758"
+      },
+      "files": [
+        {
+          "path": "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json",
+          "bytes": 566670,
+          "sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet",
+          "bytes": 450692,
+          "sha256": "20a5e31575a98999b0d54ce75ee735bbe1994c82d39e8a0a4d3bd23f37141f7b"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/schema.json",
+          "bytes": 3179,
+          "sha256": "faacd0ac073cc87d1b3405f8a790473cc6707c1169fdc6760ad7e58fbede5e9e"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/validation-audit.json",
+          "bytes": 5728,
+          "sha256": "edcd5b9e39a2cbbdbcf40b0bbaa783dce7ef245cb261aa9ca0a11aad53504eda"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/provenance.json",
+          "bytes": 3309,
+          "sha256": "35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f"
+        }
+      ]
+    },
+    "tinosh": {
+      "description": "Installed payload supplied to Tinosh Gamage",
+      "source_repository_commit": "d9714bbffa3d52730991336b49e07b527e396cc7",
+      "source_run_id": "final-20261003-02",
+      "source_package_manifest_sha256": "28baffa5335a2cfebeb56d6e6f830be95e7eeb753516cf1f46a16ab7b31c90cc",
+      "archive": {
+        "name": "tinosh-handoff-final-20261003-02.zip",
+        "sha256": "f1f24f7431af8098cc5111e0937bda65cc26f9114e08781000ed4dbbc8dc4d1b"
+      },
+      "files": [
+        {
+          "path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+          "bytes": 20214,
+          "sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+        },
+        {
+          "path": "artifacts/forecasting/final-20261003-02/run_metadata.json",
+          "bytes": 41236,
+          "sha256": "a1298ad0ac597dace739de545a360cfc9459ddc27473d2c3aed0c91861988d4d"
+        },
+        {
+          "path": "artifacts/forecasting/final-20261003-02/prediction_receipt.json",
+          "bytes": 18758,
+          "sha256": "853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692"
+        },
+        {
+          "path": "artifacts/forecasting/final-20261003-02/candidates.json",
+          "bytes": 120809,
+          "sha256": "818c1114e2cdce7a05d8a2c3b9c7067c5b88300c20369f7902849a0dcbb2e2bc"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/model.txt",
+          "bytes": 146622,
+          "sha256": "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/descriptor.json",
+          "bytes": 16358,
+          "sha256": "6bb22b6054b41b3cdd2ae2df51585a3a8ce3fe40dff550e5d5d9552b014fdfb5"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/state.json",
+          "bytes": 2820,
+          "sha256": "d88fea483a50beac15dd32437287db5c23c03efd5ed40188209bbbd59a0566cf"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/origin_features.json",
+          "bytes": 125685,
+          "sha256": "00fcd32047e111c935c20c622494a605681c8eec2c0a1f807a26a53ab0f18dfd"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/model.txt",
+          "bytes": 291810,
+          "sha256": "052b459d3a6e6df7beee2168d19803b2581a7c6d7d0b697dd6c84032ea94602f"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/descriptor.json",
+          "bytes": 16363,
+          "sha256": "73691f8df5b0493c417db1609bb85294bb6a4c674ff736b7a4748cbbda0287ce"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/state.json",
+          "bytes": 2820,
+          "sha256": "186d32706554f47a0e0b3eacb0f86d6a5e2ca963810dc9599179f2a117d2f71a"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/origin_features.json",
+          "bytes": 125685,
+          "sha256": "00fcd32047e111c935c20c622494a605681c8eec2c0a1f807a26a53ab0f18dfd"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/model.ubj",
+          "bytes": 511032,
+          "sha256": "6a0787fac515a34a1a0f5a6b768fbffbd8fbd4da4aac43263d947dd279db4a0c"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/descriptor.json",
+          "bytes": 22739,
+          "sha256": "79fbae6f63f40c2bbf609bd5aba14953a243cee8db9c33594482ee7de86199e6"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/state.json",
+          "bytes": 2820,
+          "sha256": "f6ca8afb1c397b29ae60f78715c4d67a14df38fcc58bd8045c811663539df20d"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/origin_features.json",
+          "bytes": 125685,
+          "sha256": "00fcd32047e111c935c20c622494a605681c8eec2c0a1f807a26a53ab0f18dfd"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/model.ubj",
+          "bytes": 1532328,
+          "sha256": "be15125e6b60f29b843521d2a10bdbdb16679d62ccf71b22d61d994bbed64207"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/descriptor.json",
+          "bytes": 22747,
+          "sha256": "f3b9a93fc0bf148b905155adcca82848f13fb2c813d0a2e9c2479a543d2e9131"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/state.json",
+          "bytes": 2820,
+          "sha256": "c26c7f925ffdc22f103bb5be0d14e13ee8746492030dd27c5f0336f002aa90ba"
+        },
+        {
+          "path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/origin_features.json",
+          "bytes": 125685,
+          "sha256": "00fcd32047e111c935c20c622494a605681c8eec2c0a1f807a26a53ab0f18dfd"
+        }
+      ]
+    },
+    "source": {
+      "description": "Original source CSV and its acquisition receipt; no data parsing",
+      "files": [
+        {
+          "path": "data/raw/supply_chain_dataset1.csv",
+          "sha256": "76dad280541a60f135442f3eeb3ef4804a28e48f6a9677f63ddba236ddc80491",
+          "bytes": 6552486
+        },
+        {
+          "path": "data/raw/source-receipt.json",
+          "sha256": "4f95b7e30acfecf5ae2b883dadd92c92ad419efa1212911e9b5eb68273096ef0",
+          "bytes": 326
+        }
+      ]
+    },
+    "validated": {
+      "description": "Validated dataset bundle as supplied in the Didilani package",
+      "files": [
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet",
+          "bytes": 450692,
+          "sha256": "20a5e31575a98999b0d54ce75ee735bbe1994c82d39e8a0a4d3bd23f37141f7b"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/schema.json",
+          "bytes": 3179,
+          "sha256": "faacd0ac073cc87d1b3405f8a790473cc6707c1169fdc6760ad7e58fbede5e9e"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/validation-audit.json",
+          "bytes": 5728,
+          "sha256": "edcd5b9e39a2cbbdbcf40b0bbaa783dce7ef245cb261aa9ca0a11aad53504eda"
+        },
+        {
+          "path": "data/processed/validated/supply-chain-dataset1-validated-v1/provenance.json",
+          "bytes": 3309,
+          "sha256": "35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f"
+        }
+      ]
+    },
+    "anchors": {
+      "description": "Completion-manifest anchors only; not a full bundle scan",
+      "files": [
+        {
+          "path": "artifacts/forecasting/validation-20261002-01/run_manifest.json",
+          "sha256": "4b82deefe6932d7fd619f49331b6a77ae0cc41009d1736f74d9bb557625ea3cc"
+        },
+        {
+          "path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+          "sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+        }
+      ]
+    }
+  },
+  "bundles": {
+    "validation": {
+      "path": "artifacts/forecasting/validation-20261002-01/run_manifest.json",
+      "sha256": "4b82deefe6932d7fd619f49331b6a77ae0cc41009d1736f74d9bb557625ea3cc",
+      "run_id": "validation-20261002-01",
+      "inventory_key": "artifacts"
+    },
+    "final": {
+      "path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+      "sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+      "run_id": "final-20261003-02",
+      "inventory_key": "files"
+    }
+  }
+}

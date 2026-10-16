@@ -26,6 +26,7 @@ Before modifying files, the AI agent must read:
 8. the relevant member overview under `docs/team/`
 9. the relevant workflow under `docs/workflows/`
 10. the assigned GitHub Issue or task description
+11. [Local file verification](docs/checksums/README.md) when using shared artifacts or checking repository/file identity
 
 If any instruction conflicts, stop and ask the user for clarification.
 
@@ -525,3 +526,9 @@ AI assistants must not:
 When approval is unclear, stop and ask the user rather than continuing based on assumption.
 
 Human review remains the final control point for all project work.
+
+## 20. Shared file identity verification
+
+Use the [local file verification guide](docs/checksums/README.md) and its versioned references before relying on supplied local artifacts. Select the relevant member profile; compare tracked source/configuration/documentation with an independently reviewed Git commit when required. Report the reference revision, reference SHA-256, repository HEAD, command, selected coverage, matched counts and any missing or changed files. Treat checks without an independently reviewed commit as provisional local matches.
+
+These checks read bytes only and do not authorize research execution or establish scientific correctness, origin availability or consumer acceptance. Do not overwrite files, silently replace expected hashes, discard local changes or run models to make a checksum pass. Files outside the chosen reference remain unverified. Full retained-bundle scans are opt-in and their disk-read scope must be explained before execution. Datasets and models remain local/Git-ignored. Keep handoff ZIPs and extracted HANDOFF folders under the ignored research-materials/ directory; ZIPs elsewhere are not automatically ignored. Only reviewed lightweight references belong in Git.
