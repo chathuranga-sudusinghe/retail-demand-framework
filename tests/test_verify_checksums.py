@@ -429,6 +429,51 @@ def test_reference_output_identifies_exact_bytes_and_head(
     assert "PROVISIONAL" not in output
 
 
+def test_checksum_reference_stays_lf_with_windows_autocrlf(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repo)], check=True)
+    git = ["git", "-C", str(repo)]
+    subprocess.run([*git, "config", "core.autocrlf", "true"], check=True)
+    subprocess.run([*git, "config", "user.name", "Checksum Test"], check=True)
+    subprocess.run(
+        [*git, "config", "user.email", "checksum@example.invalid"], check=True
+    )
+
+    attributes = repo / ".gitattributes"
+    attributes.write_bytes(b"/docs/checksums/2026-10-06.json text eol=lf\n")
+    reference_path = repo / "docs" / "checksums" / "2026-10-06.json"
+    reference_path.parent.mkdir(parents=True)
+    reference_path.write_bytes(b'{"schema_version": 1}\n')
+    unrelated = repo / "unrelated.txt"
+    unrelated.write_bytes(b"ordinary text\n")
+
+    subprocess.run([*git, "add", ".gitattributes", "docs", "unrelated.txt"], check=True)
+    subprocess.run([*git, "commit", "--quiet", "-m", "fixture"], check=True)
+    commit = subprocess.run(
+        [*git, "rev-parse", "HEAD"], check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+    reference_path.unlink()
+    unrelated.unlink()
+    subprocess.run(
+        [*git, "checkout", "--", "docs/checksums/2026-10-06.json", "unrelated.txt"],
+        check=True,
+    )
+
+    reference_bytes = reference_path.read_bytes()
+    assert b"\n" in reference_bytes
+    assert b"\r\n" not in reference_bytes
+    assert b"\r\n" in unrelated.read_bytes()
+
+    verify.report_reference(repo, reference_path, reference_bytes, commit)
+    output = capsys.readouterr().out
+    assert "Reference status: matches the supplied reviewed commit bytes." in output
+    assert "Reference unverified" not in output
+
+
 def test_rebaselined_local_reference_warns_even_if_payload_matches(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
