@@ -23,12 +23,36 @@ provenance, not a requirement to reset a member's current checkout.
 
 ## Member commands
 
-Open a WSL/Linux terminal in your existing retail-demand-framework repository
-root. Use the project's Python 3.12.3; no model dependencies are needed.
-The examples use python3; replace it with .venv/bin/python when that is your
-configured project interpreter. Python versions below 3.10 are not supported.
+Open PowerShell on Windows, or Terminal on macOS/Linux/WSL, in your existing
+retail-demand-framework repository root. Use the project's Python 3.12.3;
+Python 3.10 or later is supported. The verifier needs Git on PATH and uses only
+the Python standard library; no model dependencies are needed.
+Use your configured project interpreter if applicable: `.\.venv\Scripts\python.exe`
+on Windows or `.venv/bin/python` on macOS/Linux/WSL.
+
 Set reviewed_commit to an independently obtained full SHA containing these
 verification files; the historical package-source commit is not that revision.
+Run only your assigned member command.
+
+**Windows PowerShell:**
+
+~~~powershell
+$reviewed_commit = "FULL_40_CHARACTER_REVIEWED_COMMIT_SHA"
+
+# Dewmi: the installed forecast export (1 file)
+python -m src.data.verify_checksums --profile dewmi --tracked-ref "$reviewed_commit"
+
+# Didilani: installed export and validated dataset bundle (5 files)
+python -m src.data.verify_checksums --profile didilani --tracked-ref "$reviewed_commit"
+
+# Tinosh: installed saved-model bundles and metadata (20 files)
+python -m src.data.verify_checksums --profile tinosh --tracked-ref "$reviewed_commit"
+~~~
+
+If your Windows installation uses the Python launcher, replace python with py -3.
+Check that the selected interpreter meets the minimum version.
+
+**macOS/Linux/WSL (Bash or Zsh):**
 
 ~~~bash
 reviewed_commit="FULL_40_CHARACTER_REVIEWED_COMMIT_SHA"
@@ -42,6 +66,9 @@ python3 -m src.data.verify_checksums --profile didilani --tracked-ref "$reviewed
 # Tinosh: installed saved-model bundles and metadata (20 files)
 python3 -m src.data.verify_checksums --profile tinosh --tracked-ref "$reviewed_commit"
 ~~~
+
+Later multiline examples use Bash syntax. In PowerShell, put the command on one
+line and use your Windows interpreter.
 
 Output identifies the exact reference SHA-256, repository HEAD and matched
 reference revision. With --tracked-ref, the reference must match that commit
@@ -76,8 +103,68 @@ python3 -m src.data.verify_checksums --profile didilani \
   --archive /absolute/path/to/research-materials/didilani-handoff-final-20261003-02.zip
 ~~~
 
+Windows PowerShell equivalent (replace the path with your actual ZIP location):
+
+~~~powershell
+python -m src.data.verify_checksums --profile didilani --tracked-ref "$reviewed_commit" --archive "C:\path\to\retail-demand-framework\research-materials\didilani-handoff-final-20261003-02.zip"
+~~~
+
 The archive is checked in addition to the installed payload. A renamed archive
 can match by content. This option is only available for a named member profile.
+
+## Recover an existing Windows reference checkout
+
+[.gitattributes](../../.gitattributes) keeps docs/checksums/2026-10-06.json
+as LF on checkout. Without this rule, core.autocrlf=true can produce a CRLF
+working copy whose bytes differ from the committed reference, even though Git
+considers the text unchanged. The verifier correctly rejects those bytes.
+
+Adding or pulling the attributes rule does not necessarily rewrite an existing
+CRLF copy. Use this one-file recovery only for a confirmed line-ending issue in
+the checksum reference, after a human has reviewed the rule and approved updating
+to a revision containing it. Do not apply it to data, models, ZIPs or other
+mismatching payloads.
+
+1. From the repository root, inspect the local state and effective rule:
+
+   ~~~text
+   git status --short --branch
+   git diff HEAD -- docs/checksums/2026-10-06.json
+   git check-attr text eol -- docs/checksums/2026-10-06.json
+   git ls-files --eol -- docs/checksums/2026-10-06.json
+   ~~~
+
+   Stop and contact the sender if there are local edits, a substantive reference
+   difference, or uncertainty about the reviewed revision. The effective attributes
+   must report text: set and eol: lf. In the last command, i/lf w/crlf together
+   with attr/text eol=lf identifies the LF-in-Git/CRLF-in-working-copy condition.
+   An empty Git diff can coexist with those CRLF bytes. If it reports w/lf, the
+   working copy already has LF; stop and contact the sender about the mismatch.
+   For other states, including mixed line endings, contact the sender before recovery.
+
+2. Using your file manager, create a new, uniquely named backup folder under
+   research-materials/, for example `research-materials/checksum-recovery-<unique-name>/`.
+   **Move only** docs/checksums/2026-10-06.json into that folder, keeping its
+   filename. Preserve the backup; do not overwrite any earlier backup. The original
+   reference path must now be absent. This preserves the exact previous bytes.
+
+3. Restore that missing reference from the current reviewed checkout. This command
+   requires Git 2.23 or later and works in PowerShell and macOS/Linux/WSL terminals:
+
+   ~~~text
+   git restore --source=HEAD --worktree -- docs/checksums/2026-10-06.json
+   ~~~
+
+   Git recreates the file using the LF rule. A restore without first moving the
+   existing file may leave its old bytes unchanged. No reference hashes or payloads
+   are regenerated, and the backup remains local under ignored research-materials/.
+
+4. Rerun your member command with the independently supplied full reviewed commit
+   for the updated repository version. A previous revision may fail the tracked
+   comparison because this fix changes tracked files. Do not replace the supplied
+   revision with HEAD merely to make a check pass. Send the complete output,
+   including the reference revision, SHA-256, HEAD, matched counts and any errors.
+   If verification still fails, preserve both copies and contact the sender.
 
 ## Tracked source, configuration and documentation
 
@@ -177,7 +264,9 @@ To add another important artifact/version:
    separately from review/acceptance. Never derive a new expected hash from a
    mismatching recipient file merely to make it pass.
 3. Add a versioned reference/profile or a pinned existing bundle anchor and document
-   its scope and command. Keep original versioned references unchanged.
+   its scope and command. Keep original versioned references unchanged. For a new
+   checksum-reference JSON filename, add its explicit text eol=lf rule to
+   .gitattributes in the same reviewed change and test its checkout behavior.
 4. Run focused synthetic verifier tests and inspect the new metadata. Submit only
    lightweight references/code/docs through the human PR/review workflow.
 
