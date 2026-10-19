@@ -47,6 +47,37 @@ This is a purposive, case-based selection of 20 forecasting rows from the retain
 
 **Proposed record linkage:** Each selected forecast row will be traced by SKU_ID, Warehouse_ID, forecast origin and horizon against `src/decision_support/records.py`. Forecast predictions and provenance can inform the corresponding record fields, but no automatic record-generation or completed-record match has yet been established. The mapping between numeric export horizons and the string-valued `forecast_horizon` field requires confirmation. Test fixtures must not be treated as evaluated project records.
 
+
+**Verified forecast-key roster (mapping review pending):**
+
+The retained Issue #132 JSON export was inspected locally using Python 3.12.10. All 20 proposed forecast keys were found in the 1,000-row export. These are forecasting-evidence rows, not confirmed populated `DecisionSupportRecord` instances.
+
+| Assessment ID | SKU_ID | Warehouse_ID | Forecast origin | Horizon (days) | Record linkage |
+|---|---|---|---|---|---|
+| F01 | SKU_1 | WH_1 | 2024-12-02 | 1 | Unresolved |
+| F02 | SKU_1 | WH_1 | 2024-12-02 | 7 | Unresolved |
+| F03 | SKU_1 | WH_1 | 2024-12-02 | 14 | Unresolved |
+| F04 | SKU_1 | WH_1 | 2024-12-02 | 28 | Unresolved |
+| F05 | SKU_5 | WH_2 | 2024-12-02 | 1 | Unresolved |
+| F06 | SKU_5 | WH_2 | 2024-12-02 | 7 | Unresolved |
+| F07 | SKU_5 | WH_2 | 2024-12-02 | 14 | Unresolved |
+| F08 | SKU_5 | WH_2 | 2024-12-02 | 28 | Unresolved |
+| F09 | SKU_10 | WH_3 | 2024-12-02 | 1 | Unresolved |
+| F10 | SKU_10 | WH_3 | 2024-12-02 | 7 | Unresolved |
+| F11 | SKU_10 | WH_3 | 2024-12-02 | 14 | Unresolved |
+| F12 | SKU_10 | WH_3 | 2024-12-02 | 28 | Unresolved |
+| F13 | SKU_15 | WH_4 | 2024-12-02 | 1 | Unresolved |
+| F14 | SKU_15 | WH_4 | 2024-12-02 | 7 | Unresolved |
+| F15 | SKU_15 | WH_4 | 2024-12-02 | 14 | Unresolved |
+| F16 | SKU_15 | WH_4 | 2024-12-02 | 28 | Unresolved |
+| F17 | SKU_20 | WH_5 | 2024-12-02 | 1 | Unresolved |
+| F18 | SKU_20 | WH_5 | 2024-12-02 | 7 | Unresolved |
+| F19 | SKU_20 | WH_5 | 2024-12-02 | 14 | Unresolved |
+| F20 | SKU_20 | WH_5 | 2024-12-02 | 28 | Unresolved |
+
+**Mapping and approval status:** The forecasting keys are verified against the local export, but corresponding populated decision-support records have not been identified. Numeric forecast horizons still require reviewed mapping to the string-valued `forecast_horizon` field. Inventory-risk and replenishment evidence must be linked only where matching reviewed sources exist. The 28-day horizon remains restricted to forecast-transparency scope pending downstream approval. No transparency-check outcomes are claimed at this stage.
+
+
 **Downstream evidence boundary:** Reviewed inventory-risk and replenishment outputs will be linked only where an actual matching source exists. Missing evidence will be recorded explicitly with record-specific reasons rather than replaced with assumptions or used to silently exclude reviewable cases. Pending inventory-risk decisions under Issue #164 remain dependencies. The 28-day horizon is retained for forecast-transparency assessment only; downstream inventory and replenishment interpretation remains deferred.
 
 **Assessment status:** Selection proposed for Chathuranga's scope review. The eight transparency checks have not yet been applied to these rows. The readiness register below remains distinct from a completed record-level assessment matrix.
@@ -112,7 +143,8 @@ Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh im
 | Report-ready measured findings | A traceable assessment matrix and explicit reviewed/applicable populations and denominators. | Dewmi — #145. |
 | Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #145; Tinosh's integration under #86. |
 
-Issue #145 remains open until its required evidence and handoff are reviewed and its completion criteria are met. A PR containing only this preparation must describe its pending evaluation accurately and use `Related to #145` instead of `Closes #145`.
+
+Issue #145 and Issue #153 are closed. Their completed preparation and historical references remain relevant, but the unfinished record-mapping, transparency assessment and presentation handoff are now tracked under Issue #168. Issue #168 remains open until the required human approvals, record-level evidence, assessment outcomes and handoff reviews are completed. A mapping-only or preparation-only PR must reference Issue #168 without closing it.
 
 
 ## 7. Technical Verification of Decision-Support Records
