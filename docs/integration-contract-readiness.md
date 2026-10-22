@@ -328,21 +328,22 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 - **Real names only where they already exist.** Back-ticked forecasting names (`SKU_ID`, `Warehouse_ID`, `forecast_origin`, `horizon`, `target_start_date`, `target_end_date`, `prediction`, `observed_target`, `run_id`, `evaluation_stage`, `evidence_role`, `model`, `configuration_id`, `canonical_config_id`) are the implemented `predictions.csv` columns in [artifacts.py](../src/forecasting/artifacts.py). Downstream content is described in plain words, because final interchange names, types and encodings are not agreed (B6, B7, B9).
 - **No new defaults.** Where a value is missing or unapproved, a scenario only requires that this is visible with a reason. It does not choose a fallback, clipping rule, uncertainty method or review threshold.
 - **Two kinds of coverage.** *Component unit coverage* means an existing test checks the behaviour inside one component. *Integration / presentation check* means the behaviour still has to be shown across a handoff or in the prototype. The second kind is pending for every scenario.
+- **Issue references.** Current work is tracked by #132 (request-time forecast API), #164 (outstanding inventory-risk decisions) and #168 (remaining decision-support record mapping, transparency assessment and presentation handoff). #85, #145 and #153 are kept only as historical references (see 12.6).
 - **Positive** examples show acceptable behaviour. **Negative** examples show behaviour a later integration must reject or never produce.
 
 ### 12.2 Acceptance matrix
 
 | ID | Requirement | Authoritative reference | Synthetic scenario | Expected invariant / observable behaviour | Remaining dependency | Responsible reviewer |
 |---|---|---|---|---|---|---|
-| AS-01 | Identity preservation | AGENTS.md §5 (DR-002 grain); [protocol.md §6, §14](protocol.md); §3.2 | One forecast for `SKU_SYN_A` / `WH_SYN_1` passes through a handoff | The same `SKU_ID` + `Warehouse_ID` pair arrives unchanged; no merging, swapping or new identity; an unknown identity fails explicitly | #85; #132; #153 | Chathuranga; Didilani |
-| AS-02 | Forecast origin is not the target start | [protocol.md §2, §5](protocol.md); §4; shared-data foundation | Origin 2024-03-31, h = 28 | Origin shown as 2024-03-31; target start shown as 2024-04-01; never equal or swapped | #132; #85 | Chathuranga; Didilani |
+| AS-01 | Identity preservation | AGENTS.md §5 (DR-002 grain); [protocol.md §6, §14](protocol.md); §3.2 | One forecast for `SKU_SYN_A` / `WH_SYN_1` passes through a handoff | The same `SKU_ID` + `Warehouse_ID` pair arrives unchanged; no merging, swapping or new identity; an unknown identity fails explicitly | #164; #132; #168 | Chathuranga; Didilani |
+| AS-02 | Forecast origin is not the target start | [protocol.md §2, §5](protocol.md); §4; shared-data foundation | Origin 2024-03-31, h = 28 | Origin shown as 2024-03-31; target start shown as 2024-04-01; never equal or swapped | #132; #164 | Chathuranga; Didilani |
 | AS-03 | Inclusive target window | [protocol.md §2, §3](protocol.md); §4 | Origin 2024-11-04, h = 7 | Window is 2024-11-05 to 2024-11-11, both days included, exactly 7 days | #132 | Chathuranga |
-| AS-04 | Horizon preservation | DR-004; DR-008; [protocol.md §2](protocol.md); §4 | Same pair and origin with h = 1, 7, 14, 28 | Four separate records, each keeps its horizon; 7/14/28 stay cumulative totals; no daily path or cross-horizon total | #132; #85; B8 for 28-day downstream use | Chathuranga; Didilani; Dewmi |
-| AS-05 | Provenance preservation | [protocol.md §7.3, §11, §14](protocol.md); DR-011 source distinction; §3.4 | A primary and a supportive record from `syn-run-01` | Each record keeps `run_id`, `evaluation_stage`, `evidence_role`, `model`, `configuration_id`; supportive `canonical_config_id` stays empty; the producing component stays identifiable | #132; #85; #153 | Chathuranga; Dewmi |
-| AS-06 | Retrospective outcomes kept out of prospective presentation | [protocol.md §14](protocol.md); DR-012 §7; §5; system integration workflow | One record with `prediction` 14.0 and `observed_target` 15 | A retrospective view may show both, clearly labelled; a prospective view shows no `observed_target`, error or metric | #132; #153 | Chathuranga; Dewmi |
-| AS-07 | Unavailable information stays visible with a reason | DR-011 missing-value semantics; DR-012 §2; §7.2 | Origin inventory snapshot missing; upstream evidence missing | Shown as unavailable with a reason; never zero, never silently dropped, never scored | #85; #153; B9 | Didilani; Dewmi |
-| AS-08 | Advisory-only presentation | DR-011; AGENTS.md §8; system integration workflow | Exposure evidence shown to a manager | Presented as guidance for human consideration; no automatic or executable order | #153; B7; B10 | Dewmi; Didilani |
-| AS-09 | "Not assessed" with a reason, never `false` | DR-011 human review; DR-012 §8; §7.2 | A record before any review method is approved | Review status reads as not assessed, with a reason; never `false`, "no" or blank | #153; B9; B10 | Dewmi |
+| AS-04 | Horizon preservation | DR-004; DR-008; [protocol.md §2](protocol.md); §4 | Same pair and origin with h = 1, 7, 14, 28 | Four separate records, each keeps its horizon; 7/14/28 stay cumulative totals; no daily path or cross-horizon total | #132; #164; B8 for 28-day downstream use | Chathuranga; Didilani; Dewmi |
+| AS-05 | Provenance preservation | [protocol.md §7.3, §11, §14](protocol.md); DR-011 source distinction; §3.4 | A primary and a supportive record from `syn-run-01` | Each record keeps `run_id`, `evaluation_stage`, `evidence_role`, `model`, `configuration_id`; supportive `canonical_config_id` stays empty; the producing component stays identifiable | #132; #164; #168 | Chathuranga; Dewmi |
+| AS-06 | Retrospective outcomes kept out of prospective presentation | [protocol.md §14](protocol.md); DR-012 §7; §5; system integration workflow | One record with `prediction` 14.0 and `observed_target` 15 | A retrospective view may show both, clearly labelled; a prospective view shows no `observed_target`, error or metric | #132; #168 | Chathuranga; Dewmi |
+| AS-07 | Unavailable information stays visible with a reason | DR-011 missing-value semantics; DR-012 §2; §7.2 | Origin inventory snapshot missing; upstream evidence missing | Shown as unavailable with a reason; never zero, never silently dropped, never scored | #164; #168; B9 | Didilani; Dewmi |
+| AS-08 | Advisory-only presentation | DR-011; AGENTS.md §8; system integration workflow | Exposure evidence shown to a manager | Presented as guidance for human consideration; no automatic or executable order | #168; B7; B10 | Dewmi; Didilani |
+| AS-09 | "Not assessed" with a reason, never `false` | DR-011 human review; DR-012 §8; §7.2 | A record before any review method is approved | Review status reads as not assessed, with a reason; never `false`, "no" or blank | #168; B9; B10 | Dewmi |
 | AS-10 | Undefined metric stays unavailable | [protocol.md §8](protocol.md) | Retrospective group whose actual total is 0 | WAPE is unavailable (`undefined_zero_actual_total`), not 0 or infinity; supporting metrics are kept | None (retrospective only) | Chathuranga |
 
 ### 12.3 Existing coverage and pending checks
@@ -502,7 +503,7 @@ DR-011 separates three reasons: **no agreed method**, **does not apply**, and **
 
 | Acceptable | Must never happen |
 |---|---|
-| "Forecast threshold crossing within 7 days — for manager review" | "Order 120 units now" |
+| "Illustrative threshold-crossing evidence — advisory information. Human-review status remains not assessed; no automatic review trigger is implied." | "Order 120 units now" |
 | Evidence, assumptions and limitations shown next to the result | A button or action that creates a purchase order |
 | The final decision is clearly left with a responsible person | Wording that implies the system approved the action |
 
@@ -529,11 +530,17 @@ DR-011 separates three reasons: **no agreed method**, **does not apply**, and **
 | Depends on | Scenarios affected | What must exist first | Related blockers |
 |---|---|---|---|
 | #132 | AS-01 to AS-06 as shown by the request-time forecast API | Reviewed API, four-horizon demonstration and Tinosh's consumer acceptance | B2 |
-| #85 | AS-01, AS-02, AS-04, AS-05 and AS-07 carried across the forecasting → inventory-risk handoff | Agreed forecasting → inventory-risk contract; origin snapshot meaning; problematic-forecast handling | B3, B4, B5, B6, B13 |
-| #153 | AS-05 to AS-09 at decision-support record level and in presentation | Record-level assessment and presentation requirements | B7, B9, B10 |
+| #164 | AS-01, AS-02, AS-04, AS-05 and AS-07 carried across the forecasting → inventory-risk handoff | Outstanding inventory-risk decisions: agreed forecasting → inventory-risk contract; origin snapshot meaning; problematic-forecast handling | B3, B4, B5, B6, B13 |
+| #168 | AS-05 to AS-09 at decision-support record level and in presentation | Remaining decision-support record mapping, transparency assessment and presentation handoff | B7, B9, B10 |
 | No Issue yet / separate approval | Uncertainty display; any 28-day downstream content | Uncertainty decision; 28-day downstream approval | B8, B11 |
 
-**Note on #145:** #145 is closed, and its preparation work was merged through #152. The remaining decision-support dependency is tracked by #153. Merging #152 does not resolve B7 (final inventory-risk → decision-support schema), B9 (final unavailable-state encoding) or B10 (human-review rules and thresholds). These stay open.
+**Historical references:**
+
+- **#85** was the earlier pointer for the forecasting → inventory-risk contract. The outstanding inventory-risk decisions are now tracked under **#164**.
+- **#145** is closed; its preparation work was merged through #152.
+- **#153** is closed. The remaining decision-support record mapping, transparency assessment and presentation handoff are now tracked under **#168**.
+
+Moving the tracking to #164 and #168 does not resolve any approval boundary. B3–B6 and B13 (inventory-risk inputs and contract), B7 (final inventory-risk → decision-support schema), B9 (final unavailable-state encoding), B10 (human-review rules and thresholds), B8 (28-day downstream use) and B11 (uncertainty method) all stay open.
 
 ### 12.7 What this section does not do
 
