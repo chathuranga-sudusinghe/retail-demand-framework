@@ -1,10 +1,10 @@
 # Responsible Decision-Support Evaluation
 
-**Status:** Draft for human review. Evaluation evidence is pending; this document does not complete Issue #145.
+**Status:** Draft for human review. Evaluation evidence is pending; this document does not complete Issue #168.
 
 ## 1. Purpose
 
-This document prepares the responsible decision-support evaluation and presentation handoff for [Issue #145](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/145). It follows the existing measurable transparency criteria in the [approved methodology](responsible-decision-support-methodology.md#12-measurable-responsible-decision-support-and-human-review-criteria) and [DR-011](../decisions/DR-011-decision-support-output-structure.md).
+This document prepares the responsible decision-support evaluation and presentation handoff for [Issue #168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168). It follows the existing measurable transparency criteria in the [approved methodology](responsible-decision-support-methodology.md#12-measurable-responsible-decision-support-and-human-review-criteria) and [DR-011](../decisions/DR-011-decision-support-output-structure.md).
 
 The purpose is to assess whether reviewable decision-support records preserve the information needed for responsible management-facing interpretation. Each applicable transparency check is recorded as `met`, `not met`, or `not assessable`, with a short reason where required.
 
@@ -45,7 +45,47 @@ This is a purposive, case-based selection of 20 forecasting rows from the retain
 
 **Source and version:** `issue-132-forecast-export-v1.json`; export schema `issue-132-forecast-export-v1`; handoff `final-20261003-02`; forecast origin `2024-12-02`. The retained export contract is documented in `docs/forecast-api-contract.md`. One-day predictions represent next-day demand; 7-, 14- and 28-day predictions represent cumulative-window demand. Forecast uncertainty is reported unavailable (`no_agreed_method`).
 
+**Versioned checksum reference:** The selected forecasting evidence is
+`issue-132-forecast-export-v1.json` (566,670 bytes), from source run
+`final-20261003-02`. Its registered SHA-256 is
+`c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863`,
+recorded in the [versioned checksum reference](../checksums/2026-10-06.json) under
+`profiles.dewmi.files`. This reference establishes the expected file
+identity; downstream acceptance remains a separate human-reviewed
+requirement and is not claimed here.
+
 **Proposed record linkage:** Each selected forecast row will be traced by SKU_ID, Warehouse_ID, forecast origin and horizon against `src/decision_support/records.py`. Forecast predictions and provenance can inform the corresponding record fields, but no automatic record-generation or completed-record match has yet been established. The mapping between numeric export horizons and the string-valued `forecast_horizon` field requires confirmation. Test fixtures must not be treated as evaluated project records.
+
+
+**Verified forecast-key roster (mapping review pending):**
+
+The retained Issue #132 JSON export was inspected locally using Python 3.12.10. All 20 proposed forecast keys were found in the 1,000-row export. These are forecasting-evidence rows, not confirmed populated `DecisionSupportRecord` instances.
+
+| Assessment ID | SKU_ID | Warehouse_ID | Forecast origin | Horizon (days) | Record linkage |
+|---|---|---|---|---|---|
+| F01 | SKU_1 | WH_1 | 2024-12-02 | 1 | Unresolved |
+| F02 | SKU_1 | WH_1 | 2024-12-02 | 7 | Unresolved |
+| F03 | SKU_1 | WH_1 | 2024-12-02 | 14 | Unresolved |
+| F04 | SKU_1 | WH_1 | 2024-12-02 | 28 | Unresolved |
+| F05 | SKU_5 | WH_2 | 2024-12-02 | 1 | Unresolved |
+| F06 | SKU_5 | WH_2 | 2024-12-02 | 7 | Unresolved |
+| F07 | SKU_5 | WH_2 | 2024-12-02 | 14 | Unresolved |
+| F08 | SKU_5 | WH_2 | 2024-12-02 | 28 | Unresolved |
+| F09 | SKU_10 | WH_3 | 2024-12-02 | 1 | Unresolved |
+| F10 | SKU_10 | WH_3 | 2024-12-02 | 7 | Unresolved |
+| F11 | SKU_10 | WH_3 | 2024-12-02 | 14 | Unresolved |
+| F12 | SKU_10 | WH_3 | 2024-12-02 | 28 | Unresolved |
+| F13 | SKU_15 | WH_4 | 2024-12-02 | 1 | Unresolved |
+| F14 | SKU_15 | WH_4 | 2024-12-02 | 7 | Unresolved |
+| F15 | SKU_15 | WH_4 | 2024-12-02 | 14 | Unresolved |
+| F16 | SKU_15 | WH_4 | 2024-12-02 | 28 | Unresolved |
+| F17 | SKU_20 | WH_5 | 2024-12-02 | 1 | Unresolved |
+| F18 | SKU_20 | WH_5 | 2024-12-02 | 7 | Unresolved |
+| F19 | SKU_20 | WH_5 | 2024-12-02 | 14 | Unresolved |
+| F20 | SKU_20 | WH_5 | 2024-12-02 | 28 | Unresolved |
+
+**Mapping and approval status:** The forecasting keys are verified against the local export, but corresponding populated decision-support records have not been identified. Numeric forecast horizons still require reviewed mapping to the string-valued `forecast_horizon` field. Inventory-risk and replenishment evidence must be linked only where matching reviewed sources exist. The 28-day horizon remains restricted to forecast-transparency scope pending downstream approval. No transparency-check outcomes are claimed at this stage.
+
 
 **Downstream evidence boundary:** Reviewed inventory-risk and replenishment outputs will be linked only where an actual matching source exists. Missing evidence will be recorded explicitly with record-specific reasons rather than replaced with assumptions or used to silently exclude reviewable cases. Pending inventory-risk decisions under Issue #164 remain dependencies. The 28-day horizon is retained for forecast-transparency assessment only; downstream inventory and replenishment interpretation remains deferred.
 
@@ -104,15 +144,16 @@ Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh im
 
 | Pending check | Evidence needed before completion | Owner / tracking issue |
 |---|---|---|
-| Forecasting evidence access and acceptance | Make the chosen forecasting evidence accessible through an agreed handoff, retaining its source/version and provenance. If the retained export is used, supply the export and its reviewed hash reference; local existence alone does not establish consumer acceptance. Generated artifacts remain outside Git under the [storage policy](../artifact-storage-policy.md). | Chathuranga supplies forecasting evidence; Tinosh reviews technical consumption; Dewmi identifies the assessment source — [#132](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/132), [#145](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/145). |
-| Record-level transparency assessment | Identified, reviewable records with identity, timing, provenance and source/version references; an outcome and supporting evidence/reason for each applicable check. | Dewmi — [#145](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/145), using the criteria and implementation from #72/#73. |
-| Inventory-risk and recommendation interpretation | Didilani's reviewed evidence and downstream meaning handoff, with approval boundaries and unavailable reasons retained. | Didilani supplies and reviews upstream meaning; Dewmi preserves it in the assessment — [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), #145. |
-| Unavailable-state mapping | Reviewed mapping and encoding between upstream reason codes and decision-support states; retain the original reason while the mapping remains unresolved. | Dewmi with producing owners — [B9](../integration-contract-readiness.md#9-blockers), #72/#73; presentation implications tracked in #145. |
-| Visibility and readability in the prototype | Rendered screens/views from Tinosh showing labels, provenance, unavailable reasons, assumptions, limitations, advisory wording and human-review states/reasons. Record contents alone cannot establish that these are visible in the interface. | Tinosh implements the reviewed presentation; Dewmi evaluates it — [#86](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/86), #145, subject to the agreed integration scope. |
-| Report-ready measured findings | A traceable assessment matrix and explicit reviewed/applicable populations and denominators. | Dewmi — #145. |
-| Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #145; Tinosh's integration under #86. |
+| Forecasting evidence access and acceptance | Make the chosen forecasting evidence accessible through an agreed handoff, retaining its source/version and provenance. If the retained export is used, supply the export and its reviewed hash reference; local existence alone does not establish consumer acceptance. Generated artifacts remain outside Git under the [storage policy](../artifact-storage-policy.md). | Chathuranga supplies forecasting evidence; Tinosh reviews technical consumption; Dewmi identifies the assessment source — [#132](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/132), [#168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168). |
+| Record-level transparency assessment | Identified, reviewable records with identity, timing, provenance and source/version references; an outcome and supporting evidence/reason for each applicable check. | Dewmi — [#168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168), using the criteria and implementation from #72/#73. |
+| Inventory-risk and recommendation interpretation | Didilani's reviewed evidence and downstream meaning handoff, with approval boundaries and unavailable reasons retained. | Didilani supplies and reviews upstream meaning; Dewmi preserves it in the assessment — [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), #168. |
+| Unavailable-state mapping | Reviewed mapping and encoding between upstream reason codes and decision-support states; retain the original reason while the mapping remains unresolved. | Dewmi with producing owners — [B9](../integration-contract-readiness.md#9-blockers), #72/#73; presentation implications tracked in #168. |
+| Visibility and readability in the prototype | Rendered screens/views from Tinosh showing labels, provenance, unavailable reasons, assumptions, limitations, advisory wording and human-review states/reasons. Record contents alone cannot establish that these are visible in the interface. | Tinosh implements the reviewed presentation; Dewmi evaluates it — [#86](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/86), #168, subject to the agreed integration scope. |
+| Report-ready measured findings | A traceable assessment matrix and explicit reviewed/applicable populations and denominators. | Dewmi — #168. |
+| Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #168; Tinosh's integration under #86. |
 
-Issue #145 remains open until its required evidence and handoff are reviewed and its completion criteria are met. A PR containing only this preparation must describe its pending evaluation accurately and use `Related to #145` instead of `Closes #145`.
+
+Issue #145 and Issue #153 are closed. Their completed preparation and historical references remain relevant, but the unfinished record-mapping, transparency assessment and presentation handoff are now tracked under Issue #168. Issue #168 remains open until the required human approvals, record-level evidence, assessment outcomes and handoff reviews are completed. A mapping-only or preparation-only PR must reference Issue #168 without closing it.
 
 
 ## 7. Technical Verification of Decision-Support Records
