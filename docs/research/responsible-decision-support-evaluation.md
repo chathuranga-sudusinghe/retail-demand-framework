@@ -44,6 +44,14 @@ This is a purposive, case-based selection of 20 forecasting rows from the retain
 **Selection rule:** The five SKU–warehouse combinations were chosen using SKU numbers 1, 5, 10, 15 and 20, paired with warehouses 1–5 respectively. All four horizons are retained for each pair. The rule supports comparison across horizons and selected SKU–warehouse combinations but is not a representative sample.
 
 **Source and version:** `issue-132-forecast-export-v1.json`; export schema `issue-132-forecast-export-v1`; handoff `final-20261003-02`; forecast origin `2024-12-02`. The retained export contract is documented in `docs/forecast-api-contract.md`. One-day predictions represent next-day demand; 7-, 14- and 28-day predictions represent cumulative-window demand. Forecast uncertainty is reported unavailable (`no_agreed_method`).
+**Versioned checksum reference:** The selected forecasting evidence is
+`issue-132-forecast-export-v1.json` (566,670 bytes), from source run
+`final-20261003-02`. Its registered SHA-256 is
+`c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863`,
+recorded in `docs/checksums/2026-10-06.json` under
+`profiles.dewmi.files`. This reference establishes the expected file
+identity; downstream acceptance remains a separate human-reviewed
+requirement and is not claimed here.
 
 **Proposed record linkage:** Each selected forecast row will be traced by SKU_ID, Warehouse_ID, forecast origin and horizon against `src/decision_support/records.py`. Forecast predictions and provenance can inform the corresponding record fields, but no automatic record-generation or completed-record match has yet been established. The mapping between numeric export horizons and the string-valued `forecast_horizon` field requires confirmation. Test fixtures must not be treated as evaluated project records.
 
@@ -140,8 +148,8 @@ Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh im
 | Inventory-risk and recommendation interpretation | Didilani's reviewed evidence and downstream meaning handoff, with approval boundaries and unavailable reasons retained. | Didilani supplies and reviews upstream meaning; Dewmi preserves it in the assessment — [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), #145. |
 | Unavailable-state mapping | Reviewed mapping and encoding between upstream reason codes and decision-support states; retain the original reason while the mapping remains unresolved. | Dewmi with producing owners — [B9](../integration-contract-readiness.md#9-blockers), #72/#73; presentation implications tracked in #145. |
 | Visibility and readability in the prototype | Rendered screens/views from Tinosh showing labels, provenance, unavailable reasons, assumptions, limitations, advisory wording and human-review states/reasons. Record contents alone cannot establish that these are visible in the interface. | Tinosh implements the reviewed presentation; Dewmi evaluates it — [#86](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/86), #145, subject to the agreed integration scope. |
-| Report-ready measured findings | A traceable assessment matrix and explicit reviewed/applicable populations and denominators. | Dewmi — #145. |
-| Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #145; Tinosh's integration under #86. |
+| Report-ready measured findings | A traceable assessment matrix and explicit reviewed/applicable populations and denominators. | Dewmi — #168. |
+| Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #168; Tinosh's integration under #86. |
 
 
 Issue #145 and Issue #153 are closed. Their completed preparation and historical references remain relevant, but the unfinished record-mapping, transparency assessment and presentation handoff are now tracked under Issue #168. Issue #168 remains open until the required human approvals, record-level evidence, assessment outcomes and handoff reviews are completed. A mapping-only or preparation-only PR must reference Issue #168 without closing it.
