@@ -67,7 +67,7 @@ Chathuranga explicitly requested that each presentation request supply new daily
 | Behavior | Current purpose |
 |---|---|
 | Serve stored fixed-origin producer records | Retained export only; not the presentation API |
-| Invoke saved producers on supplied request history | Active presentation API, requested by Chathuranga on 2026-10-05; implementation subject to human review |
+| Invoke saved producers on supplied request history | Active presentation API, requested by Chathuranga on 2026-10-05; implementation merged; consumer acceptance remains separate |
 
 The retained export still represents forecasts issued at origin 2024-12-02. The active API uses the supplied request origin and history; it does not read the export as its output source.
 
@@ -205,7 +205,7 @@ These describe behaviour, not final URLs. Tinosh chooses route names, response m
 
 Optional `model` and `configuration_id` are exact source identifiers used solely as assertions. Each supplied assertion must match every requested horizon's designated producer. When `horizon` is omitted, the requested set is all four horizons; an assertion matching only some of them is rejected with `non_designated_producer`, not used to filter the response. Omitting both assertions resolves producers directly from DR-014.
 
-These logical operations are read-only. HTTP methods, routes, status codes, error-body formats and framework response models are deferred to Tinosh's later implementation and shared architecture review. They are not selected by Issue #132.
+These retained-export logical operations are read-only and are not the active serving API. The implemented request-time HTTP routes, responses and errors are documented in [the inference API](forecast-inference-api.md); final cross-component delivery remains subject to the shared architecture and consumer review.
 
 ## 9. Retained-export unavailable and lookup behaviour
 

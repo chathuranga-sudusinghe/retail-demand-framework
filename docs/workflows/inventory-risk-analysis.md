@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
+> **Current alignment — 23 October 2026, Issue #177:** [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records group approval of the 1/7/14-day fixed-origin/no-receipt method, reported by Chathuranga for the 12 October WhatsApp discussion. Implementation and constructed-scenario evidence exist. Unknown source timing, consumer acceptance and additional 28-day/replenishment/uncertainty/review methods remain separate; this update authorises no research execution.
 
 ## Owner
 
@@ -10,7 +10,7 @@ Primary COMP1884 owner: **Didilani**
 
 ## Goal
 
-Translate Chathuranga's demand forecast into **origin reorder-threshold exposure** under the proposed [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md), subject to group approval, with transparent evidence, assumptions and limitations.
+Translate Chathuranga's demand forecast into **origin reorder-threshold exposure** under the group-approved [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md), with transparent evidence, assumptions and limitations.
 
 ## Workflow
 
@@ -34,7 +34,7 @@ Visual interpretation and responsible decision-support handoff
 
 Didilani defines and reviews the analytical content of inventory-risk visuals and the business interpretation. Tinosh may implement approved chart/rendering code and prototype delivery. The inventory-risk evidence and assumptions passed onward remain Didilani's responsibility; technical integration must not create a new exposure or replenishment rule.
 
-## Proposed interpretation
+## Approved scenario interpretation
 
 For the same SKU-warehouse, `I_t` and `R_t` are inventory and reorder-point values available at origin `t`; `B_t = I_t - R_t`. Forecast demand covers `t+1` through `t+h`, inclusive.
 
@@ -44,9 +44,9 @@ For the same SKU-warehouse, `I_t` and `R_t` are inventory and reorder-point valu
 | `B_t > 0` and forecast cumulative demand `>= B_t` | Forecast threshold crossing within the horizon |
 | `B_t > 0` and forecast cumulative demand `< B_t` | No forecast threshold crossing within the horizon |
 
-The original proposed inventory scope applies separately to 1-day, 7-day cumulative and 14-day cumulative forecasts; the approved upstream 28-day forecasting input has not yet been approved for this downstream rule. Equality counts as reaching the threshold. Keep the origin threshold fixed and assume no receipts, transfers, returns, losses or other adjustments. Future inventory values must not be joined as origin inputs. Document snapshot availability and within-day interpretation before integration.
+The approved inventory method scope applies separately to 1-day, 7-day cumulative and 14-day cumulative forecasts; the approved upstream 28-day forecasting input has not yet been approved for this downstream rule. Equality counts as reaching the threshold. Keep the origin threshold fixed and assume no receipts, transfers, returns, losses or other adjustments. Future inventory values must not be joined as origin inputs. Document snapshot availability and within-day interpretation before integration.
 
-Missing/invalid required evidence produces unavailable/not assessed with a reason, not `FALSE`. DR-012 leaves problematic-forecast handling open and does not approve clipping. Negative arithmetic projected balances are not verified physical negative inventory.
+Missing/invalid required evidence produces unavailable/not assessed with a reason, not `FALSE`. The implemented mapping rejects malformed exports and retains finite negative forecasts as unavailable inventory inputs; no clipping is approved. Consumer acceptance remains separate. Negative arithmetic projected balances are not verified physical negative inventory.
 
 ## Context and output boundary
 
@@ -66,7 +66,7 @@ Origin reorder-threshold exposure supplies replenishment-related evidence. Final
 - `Stockout_Flag = 0` for all 91,250 rows. It must not be used to train or validate a stockout classifier.
 - `Order_Quantity > 0` occurs in 5,027 rows, while 86,223 rows have zero order quantity. Replenishment modelling must account for this sparsity.
 - Source `Demand_Forecast` is not Chathuranga's project model output.
-- The proposed exposure output is a constructed scenario proxy, not actual stockout prediction or actual shortage ground truth.
+- The exposure output is a constructed scenario proxy, not actual stockout prediction or actual shortage ground truth.
 
 ## Critical limitation
 
@@ -80,7 +80,7 @@ Use DR-012's explicitly defined counts, event prevalence, missed-crossing rate, 
 
 The retrospective margin is `B_t - realised_demand`. Near-zero predicted or retrospective margins indicate sensitivity, but no numeric tolerance is approved. Retrospective evidence must not enter forecast-time inputs or review triggers.
 
-Subject to group approval, DR-012 would supply the method for later forecast-to-decision evaluation. The A/C/D cross-component protocol, uncertainty method, human-review rules and implementation remain separate work. DR-006 forecasting selection remains WAPE-based.
+The [retained human-run evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) reports the constructed-origin scenario separately for 1/7/14 days. The A/C/D cross-component protocol, further robustness work, uncertainty and human-review rules remain separate. The group approval does not settle those decisions. DR-006 forecasting selection remains WAPE-based.
 
 ## 28-day compatibility review — downstream approval pending
 
@@ -89,8 +89,7 @@ proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended
 scenario may be more sensitive to omitted receipts and other adjustments.
-**28-day downstream use requires component-owner/human approval.** DR-012 remains
-proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+**28-day downstream use requires component-owner/human approval.** DR-012 approval covers 1/7/14-day scenario exposure; it does not extend to h=28. Origin snapshot semantics, reorder-threshold meaning,
 lead-time context, formulas and metric denominators remain unchanged. Lead times
 are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
 or invent replenishment quantities or review thresholds. If/when the relevant

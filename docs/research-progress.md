@@ -1,6 +1,6 @@
 # Research and Project Progress Log
 
-**Current status:** Forecasting research, retained validation and corrected final evaluation are complete; integrity verification is confirmed by Chathuranga. Entries below are dated administrative history, not current execution instructions or a second methods/results authority. Current interpretation is in [final evaluation](forecasting-final-evaluation.md).
+**Current status:** Forecasting research, retained validation and corrected final evaluation are complete; integrity verification is confirmed by Chathuranga. Constructed-origin inventory results and 20 inventory-linked records with 160 record-level checks are published. DR-012 group approval and repository status alignment are recorded under [#177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177); Chathuranga reported the approval for 12 October. Entries below are dated history; methods/results remain in their canonical documents, including the [final evaluation](forecasting-final-evaluation.md).
 
 ## Purpose and boundaries
 
@@ -102,3 +102,19 @@ The following is a template, not an event:
 - Evidence: [university AI-use note](university-ai-guidance.md) records the first-semester declaration, 2025/26 handbook, inspected 9 September 2026 website update, access date, file identities and verification limits. Original documents remain local/ignored; the supplied declaration was copied without changing its bytes, and the existing handbook copy matches the supplied file.
 - Boundaries: COMP1884 tier, permitted activities and applicable acknowledgement format remain unconfirmed; no research methodology, component ownership, experiment permission or Git finalisation is approved by this note.
 - Next action: human review of the source summary and references, followed by assessment/cohort-specific confirmation of applicable AI guidance. No commit, push or Pull Request has been performed.
+
+
+### 2026-10-12 — Inventory method approved in group discussion (reported retrospectively)
+
+- Recorded: 2026-10-23; reporting member: Chathuranga.
+- Type/status: reported group methodology decision. Chathuranga confirmed that the group approved the discussed DR-012 fixed-origin/no-receipt exposure method in its Monday WhatsApp discussion.
+- Evidence: his explicit working-conversation instruction recorded in [Issue #177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177) and the [DR-012 approval record](decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record). The private discussion was not independently inspected.
+- Boundary: record the approval without rewriting original run labels or inferring additional 28-day inventory, replenishment, uncertainty, source-timing or research-run approval.
+
+### 2026-10-23 — Downstream evidence published; repository status refinement prepared
+
+- Recorded: 2026-10-23; coordinator: Chathuranga; AI-assisted implementation/documentation prepared under #177.
+- Delivered evidence: [PR #174](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/174) merged the inventory mapping/runner, human-run constructed-origin results and linked records. [PR #175](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/175) merged the completed record-level assessment and closed #164/#168 as evidence milestones. Chathuranga remains the recorded executor/assessor; component responsibilities are unchanged.
+- CI: [PR #176](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/176) merged documentation/report change-scope optimisation. The two main-branch CI runs at baseline `33b4492` completed successfully; these checks cover that baseline. Validation of the #177 changes must be assessed separately through their own checks and human review.
+- Current changes: align stale current documentation and approval labels; retain historical proposed-status bundle consumption without changing calculations or evidence bytes. No research execution or Git finalisation occurs in this refinement.
+- Next action: review the refinement and its checks, then a human opens/merges the PR. Inspect the resulting baseline before publishing the [next member-owned issue scopes](integration-contract-readiness.md#13-remaining-work-handoff-after-issue-177).

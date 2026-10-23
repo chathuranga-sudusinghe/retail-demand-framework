@@ -173,10 +173,17 @@ def test_same_sku_warehouse_origin_model_and_configuration_allow_distinct_horizo
     assert prepared["horizon"].tolist() == list(horizons)
     assert prepared["forecast_input_status"].tolist() == ["available"] * len(horizons)
     assert prepared["downstream_use_status"].tolist() == [
-        "proposed_method_not_group_approved",
-        "proposed_method_not_group_approved",
-        "proposed_method_not_group_approved",
+        "approved_method",
+        "approved_method",
+        "approved_method",
         "not_approved_for_downstream_use",
+    ]
+    assert prepared["methodology_status"].tolist() == ["group_approved"] * 4
+    assert prepared["downstream_use_reason"].tolist() == [
+        "",
+        "",
+        "",
+        "28_day_downstream_use_requires_separate_approval",
     ]
 
 

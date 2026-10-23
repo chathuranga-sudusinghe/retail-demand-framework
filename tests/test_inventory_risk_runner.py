@@ -482,13 +482,78 @@ def test_loader_accepts_consistent_source_and_scenario_policies(
 @pytest.mark.parametrize(
     "policy", ["unknown", "source-confirmed", "constructed-origin"]
 )
+def test_legacy_bundle_remains_consumable_without_relabelling(
+    inputs, policy_results, tmp_path, monkeypatch, policy
+):
+    result = deepcopy(policy_results[policy])
+    for row in result["prospective"]["records"]:
+        row["methodology_status"] = "proposed_for_group_approval"
+        if row["horizon"] != 28:
+            row["downstream_use_status"] = "proposed_method_not_group_approved"
+            row["downstream_use_reason"] = "DR-012_remains_proposed_for_group_approval"
+        row["method_limitations"][0] = (
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification."
+        )
+    output, _ = publish(result, tmp_path, monkeypatch)
+    original = {p.name: p.read_bytes() for p in output.iterdir()}
+    loaded = assessment.load_inventory_evidence(output / "prospective.json", inputs[0])
+    records = assessment.build_review_records(inputs[0], loaded)
+    assert all(
+        row["methodology_status"] == "proposed_for_group_approval"
+        for row in loaded["rows"].values()
+    )
+    for entry in records["records"]:
+        evidence = entry["record"]["inventory_risk_evidence"]
+        if evidence is not None:
+            assert evidence["methodology_status"] == "proposed_for_group_approval"
+    assert {p.name: p.read_bytes() for p in output.iterdir()} == original
+
+
+def test_group_approval_does_not_confirm_source_timing_or_extend_horizons(
+    policy_results,
+):
+    for policy, result in policy_results.items():
+        document = result["prospective"]
+        for row in document["records"]:
+            assert row["methodology_status"] == "group_approved"
+            runner.validate_prospective_state(row, document["source"])
+            if row["horizon"] == 28:
+                assert row["downstream_use_status"] == "not_approved_for_downstream_use"
+                assert not row["analysis_inventory_state_available"]
+            else:
+                assert row["downstream_use_status"] == "approved_method"
+                assert row["downstream_use_reason"] == ""
+            if policy != "source-confirmed":
+                assert row["origin_snapshot_status"] == "unknown"
+                assert row["inventory_state_available"] is False
+            if policy == "unknown":
+                assert row["analysis_inventory_state_available"] is False
+
+
+@pytest.mark.parametrize("horizon", [1, 7, 14])
+def test_mixed_current_and_legacy_approval_fields_are_rejected(
+    constructed_result, horizon
+):
+    document = constructed_result["prospective"]
+    row = deepcopy(next(r for r in document["records"] if r["horizon"] == horizon))
+    row["methodology_status"] = "proposed_for_group_approval"
+    with pytest.raises(ValueError, match="Downstream use status/reason differs"):
+        runner.validate_prospective_state(row, document["source"])
+
+
+@pytest.mark.parametrize(
+    "policy", ["unknown", "source-confirmed", "constructed-origin"]
+)
 @pytest.mark.parametrize("horizon", [1, 7, 14, 28])
 @pytest.mark.parametrize(
     "change, message",
     [
         ({"methodology_status": "approved"}, "Methodology status differs"),
         ({"downstream_use_status": "approved"}, "Downstream use status/reason differs"),
-        ({"downstream_use_reason": ""}, "Downstream use status/reason differs"),
+        (
+            {"downstream_use_reason": "invented_reason"},
+            "Downstream use status/reason differs",
+        ),
         ({"evidence_role": "supportive"}, "Forecast evidence role differs"),
     ],
 )
@@ -507,7 +572,11 @@ def test_status_and_role_validation_preserves_contract_across_policies_and_horiz
     [
         ("methodology_status", "approved", "Methodology status differs"),
         ("downstream_use_status", "approved", "Downstream use status/reason differs"),
-        ("downstream_use_reason", "", "Downstream use status/reason differs"),
+        (
+            "downstream_use_reason",
+            "invented_reason",
+            "Downstream use status/reason differs",
+        ),
         ("evidence_role", "supportive", "Forecast evidence role differs"),
     ],
 )

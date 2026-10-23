@@ -25,11 +25,11 @@ Chathuranga's forecasting research is complete: preparation, development, valida
 
 The mapping was frozen before final evaluation and remains unchanged. Ridge and Seasonal Naive outperform frozen producers on some final horizons; see the complete report. Numerical evidence: [validation-20261002-01](reports/forecasting/validation-20261002-01/comparison.md) and [final-20261003-02](reports/forecasting/final-20261003-02/comparison.md). These generated snapshots remain immutable.
 
-**The full group project remains in progress.** Inventory-risk and replenishment methodology/implementation, responsible decision-support content and prospective API/integration acceptance remain separate work. DR-012 group approval, origin-time inventory semantics, unavailable-input handling, uncertainty and 28-day downstream approval are not settled by forecasting completion. [Integration readiness](docs/integration-contract-readiness.md) lists the remaining handoff work.
+**The full group project remains in progress.** Forecast-to-inventory mapping, the inventory runner and a human-run constructed-origin 1/7/14-day evaluation are implemented. Twenty inventory-linked decision-support records and 160 human-confirmed record-level checks are published in the [evidence index](reports/README.md). [DR-012 group approval](docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) was reported by Chathuranga on 23 October for the 12 October WhatsApp discussion. Source inventory timing, consumer acceptance, final integration, visuals and rendered-presentation acceptance remain separate; uncertainty, numerical replenishment, overstock and 28-day downstream use are not supplied by that approval.
 
 ## System architecture
 
-Green indicates completed research or components; amber indicates implemented structures or utilities with pending analysis or approval; blue indicates planned integration. Dashed arrows indicate pending handoffs.
+Green indicates completed forecasting research; amber indicates delivered downstream implementation/evidence with remaining review or acceptance; blue indicates planned prototype integration. Dashed arrows indicate pending handoffs.
 
 ~~~mermaid
 flowchart TB
@@ -55,19 +55,19 @@ flowchart TB
 
     subgraph DI["Didilani — Inventory Risk and Replenishment"]
         SNAPSHOT["Inventory information available at forecast origin<br/>Snapshot timing still requires agreement"]
-        INVENTORY["Preparation and exposure-evaluation utilities implemented<br/>DR-012 approval and analytical evidence pending"]
-        INTERPRET["Inventory interpretation and visual specification<br/>Issue 85"]
+        INVENTORY["Mapping and scenario evaluation implemented<br/>Method approved; source timing unknown"]
+        INTERPRET["Visual specification exists; interpretation review<br/>and technical rendering remain"]
 
         SNAPSHOT -.-> INVENTORY
         INVENTORY -.-> INTERPRET
     end
 
     PREP -.-> SNAPSHOT
-    FORECAST -.->|"Agree forecast-to-inventory contract"| INVENTORY
+    FORECAST -.->|"Retained-export mapping implemented; acceptance pending"| INVENTORY
 
     subgraph DE["Dewmi — Responsible Decision Support"]
         RECORD["DecisionSupportRecord implemented<br/>Forecast, risk, provenance and unavailable reasons"]
-        ASSESS["Transparency assessment and presentation handoff<br/>Issue 153"]
+        ASSESS["20 records; 160 record-level checks completed<br/>Rendered presentation acceptance pending"]
 
         RECORD -.-> ASSESS
     end

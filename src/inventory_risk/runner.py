@@ -31,7 +31,11 @@ from src.inventory_risk.forecast_handoff import (
     forecast_inventory_inputs,
     load_forecast_handoff,
 )
-from src.inventory_risk.input_preparation import EVALUABLE_HORIZONS, METHOD_STATUS
+from src.inventory_risk.input_preparation import (
+    EVALUABLE_HORIZONS,
+    LEGACY_METHOD_STATUS,
+    METHOD_STATUS,
+)
 
 RUN_SCHEMA = "inventory-risk-evaluation-v1"
 PROSPECTIVE_SCHEMA = "inventory-risk-prospective-v1"
@@ -124,7 +128,7 @@ def validate_prospective_state(row: dict[str, Any], source: dict[str, Any]) -> N
     status meanings. They require no observations or retrospective calculations.
     """
     _require(
-        row["methodology_status"] == METHOD_STATUS,
+        row["methodology_status"] in (METHOD_STATUS, LEGACY_METHOD_STATUS),
         "Methodology status differs from the producer contract.",
     )
     _require(
@@ -185,8 +189,12 @@ def validate_prospective_state(row: dict[str, Any], source: dict[str, Any]) -> N
         )
         if gated
         else (
-            "proposed_method_not_group_approved",
-            "DR-012_remains_proposed_for_group_approval",
+            (
+                "proposed_method_not_group_approved",
+                "DR-012_remains_proposed_for_group_approval",
+            )
+            if row["methodology_status"] == LEGACY_METHOD_STATUS
+            else ("approved_method", "")
         )
     )
     _require(

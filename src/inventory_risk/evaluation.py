@@ -1,8 +1,9 @@
-"""Proposed DR-012 exposure evidence and retrospective comparison utilities.
+"""DR-012 scenario exposure evidence and retrospective comparison utilities.
 
 Outputs are structured evidence for later analysis, not approved risk
 classifications, actual-stockout predictions, replenishment recommendations,
-or a final cross-component schema. DR-012 remains proposed for group approval.
+or a final cross-component schema. Group approval of DR-012 does not establish
+source snapshot timing or operational effectiveness.
 The function keeps each forecast origin and horizon separate and never pools
 across origins or horizons.
 """
@@ -276,7 +277,7 @@ def _summary_for_group(group: pd.DataFrame) -> dict[str, object]:
 def evaluate_inventory_risk(
     records: pd.DataFrame, *, scenario_basis: str | None = None
 ) -> dict[str, pd.DataFrame]:
-    """Return proposed exposure cases and per-origin/horizon comparison metrics.
+    """Return scenario exposure cases and per-origin/horizon comparison metrics.
 
     The primary retrospective comparison includes only initially-above-threshold
     rows with both a valid forecast and a complete realised cumulative target.

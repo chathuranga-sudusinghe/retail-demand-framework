@@ -30,7 +30,7 @@ Each decision record should include:
 - [DR-009 — Gradient-Boosting Model Choice](DR-009-gradient-boosting-model-choice.md) — Superseded by DR-013.
 - [DR-010 — Forecasting Hyperparameter-Search Strategy](DR-010-hyperparameter-search-strategy.md) — Primary search design superseded by DR-013.
 - [DR-011 — Responsible Decision-Support Output Structure](DR-011-decision-support-output-structure.md)
-- [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Proposed for group approval.
+- [DR-012 — Inventory-Risk and Replenishment Methodology](DR-012-inventory-risk-replenishment-methodology.md) — Group-approved fixed-origin/no-receipt method for 1/7/14 days; approval reported by Chathuranga on 23 October for the 12 October WhatsApp discussion. Historical outputs retain their original status.
 - [DR-013 — Matched Gradient-Boosting RQ2 Comparison](DR-013-matched-gradient-boosting-comparison.md) — Current matched primary RQ2 comparison authority.
 - [DR-014 — Forecasting Selection and Final Refit](DR-014-forecasting-selection-and-final-refit.md) — Scientific freeze/refit policy and Documentation Step 1 approved by Chathuranga; Phase 1 merged in PR #133 and explicitly accepted under Issue #131. Historical-only preflight completed successfully on 2026-10-03: `READY FOR AUTHORIZATION PREPARATION`. The original `final-20261003-01` execution failed after outcome reveal; Chathuranga explicitly authorized corrected run `final-20261003-02` following PR #141, preserving the scientific scope.
 
@@ -43,11 +43,10 @@ RQ2 subordinate hypotheses and interpretation are approved as comparative and de
 Examples include:
 
 - exact retained-model set/audit exceptions and archive responsibilities under the storage policy;
-- verification and human-reviewed reporting for the explicitly authorized `final-20261003-02`, preserving the failed first execution and outcome-exposure history;
 - separate downstream 28-day approval (forecasting baseline formulas are already approved);
 - demand-regime definitions;
 - uncertainty representation;
-- remaining inventory input-contract details, overstock/excess-stock evaluation and numerical replenishment quantities beyond DR-012's proposed origin reorder-threshold exposure method;
+- remaining inventory input-contract details, overstock/excess-stock evaluation and numerical replenishment quantities beyond DR-012's approved origin reorder-threshold exposure method;
 - cross-component forecast-to-decision evaluation and human-review rules;
 - final operationalisation of the primary group-level and secondary forecasting hypotheses.
 

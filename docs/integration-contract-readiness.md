@@ -1,11 +1,11 @@
 # Integration Contract Readiness — Component Handoff Map
 
 **Issue:** #87 — Docs: map component handoff contracts and integration blockers
-**Prepares:** Issue #86 (later integration implementation; remains open)
+**Tracking:** [Issue #177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177) aligns the current baseline. #86 is closed as premature/superseded; #101 delivered the scenario specification. Follow-up member tasks are scoped after this refinement is reviewed and merged.
 **Responsible member:** Tinosh Gamage — System Integration and Prototype Engineering
 **Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
-**Updated:** 2026-10-05 for the saved-model inference API and presentation inputs requested by Chathuranga.
-**Status:** The retained exporter is implemented and a local derivative exists. Chathuranga has requested a saved-model request-time API in place of stored-forecast serving; its implementation and four synthetic input examples are prepared on the feature branch for review. Manual demonstration and Tinosh's consumer acceptance remain pending (B2). Other component decisions and review requirements are unchanged.
+**Updated:** 23 October 2026, Issue #177; inspection baseline `33b44928c12ccd0e0bf8154dec899be51fa39b5f`.
+**Status:** The retained exporter, request-time forecast API, inventory mapping/runner and prospective record bridge are merged. Constructed-origin inventory results and all 160 checks on 20 inventory-linked records are published. [DR-012 approval](decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) was reported by Chathuranga for 12 October. Source timing, consumer contracts, rendered visuals and final prototype acceptance remain separate. Closed issue references below identify historical requirements, not open assignments.
 
 ---
 
@@ -18,7 +18,7 @@ This document maps the handoffs that currently exist, or are currently documente
 3. responsible decision support (Dewmi);
 4. later prototype / API integration (Tinosh, with Chathuranga for API architecture).
 
-It records what each source already says, separates what is implemented from what is only agreed or proposed, and lists the blockers that must be resolved before Issue #86 can be implemented.
+It records what each source already says, separates what is implemented from what is only agreed or proposed, and lists remaining decisions and acceptance work for the next reviewed integration slice.
 
 This document does **not**:
 
@@ -36,7 +36,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 |---|---|
 | **Implemented / frozen** | Exists in merged source code or in a human-approved, frozen record. |
 | **Structure-only agreement** | Accepted as a structure (field groups, concepts), with contents, names and types still open. |
-| **Proposed** | Written down as a method, but group / relevant component-member approval is still pending. |
+| **Proposed** | A genuinely unresolved proposal, or explicitly historical metadata; it is not the current DR-012 approval status. |
 | **Unresolved** | Explicitly recorded as open by an existing source; no decision exists yet. |
 
 ---
@@ -52,12 +52,12 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 | [src/forecasting/experiment.py](../src/forecasting/experiment.py) | How origin and target dates are written for validation records |
 | [docs/forecasting-runner.md](forecasting-runner.md) | Run lifecycle, completion manifest, Issue #89 status |
 | [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Retained export contract and local/ignored derivative location; exporter exists, acceptance remains pending |
-| [Request-time forecast API](forecast-inference-api.md), [inference source](../src/forecasting/inference.py), [API source](../src/api/main.py) | Active serving behavior requested by Chathuranga; supplied-history request contract, four presentation examples and implementation pending review |
+| [Request-time forecast API](forecast-inference-api.md), [inference source](../src/forecasting/inference.py), [API source](../src/api/main.py) | Active serving behavior requested by Chathuranga; supplied-history request contract, four presentation examples and merged implementation; consumer acceptance remains separate |
 | [docs/workflows/shared-data-foundation.md](workflows/shared-data-foundation.md) | Forecast-to-inventory timing contract and open contract decisions |
 | [docs/workflows/system-integration-and-prototype.md](workflows/system-integration-and-prototype.md) | Integration rules and adapter boundaries |
 | [docs/team/tinosh/group-project-overview.md](team/tinosh/group-project-overview.md) | Tinosh's expected inputs and boundaries |
 | [DR-011](decisions/DR-011-decision-support-output-structure.md) | Responsible decision-support output structure (accepted for structure only) |
-| [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) | Inventory-risk / replenishment method (proposed for group approval) |
+| [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) | Group-approved 1/7/14-day scenario method; approval attribution is recorded in DR-012 |
 | [Inventory-risk workflow](workflows/inventory-risk-analysis.md), [Didilani overview](team/didilani/group-project-overview.md) | Inventory-side inputs, candidate outputs, constraints |
 | [Responsible decision-support workflow](workflows/responsible-decision-support.md), [Dewmi overview](team/dewmi/group-project-overview.md) | Decision-support inputs, candidate fields, human-review direction |
 | GitHub Issues #70, #85, #72, #73, #78, #86 | Referenced as listed in Issue #87; see Section 8 note |
@@ -152,8 +152,8 @@ Sources require these two kinds of information to stay separate at every handoff
 | `target_1_day` … `target_28_day` labels | `forecast_origin`, `horizon`, `target_start_date`, `target_end_date` |
 | `wape`, `mae`, `rmse`, `bias`, `wape_denominator`, `mean_*` | `prediction` |
 | Signed / absolute errors | Model / run provenance fields |
-| Retrospective exposure state (`Y_t,h` against `B_t`) | Origin-available `Inventory_Level`, `Reorder_Point` (DR-012, proposed) |
-| `retrospective_margin = B_t - Y_t,h` | `predicted_margin = B_t - F_t,h` (DR-012, proposed) |
+| Retrospective exposure state (`Y_t,h` against `B_t`) | Origin-available `Inventory_Level`, `Reorder_Point` (DR-012 scenario method) |
+| `retrospective_margin = B_t - Y_t,h` | `predicted_margin = B_t - F_t,h` (DR-012 scenario method) |
 | TP / TN / FN / FP counts and DR-012 rates | Origin-available `Supplier_Lead_Time_Days` (context only) |
 
 Rules recorded in sources:
@@ -162,32 +162,32 @@ Rules recorded in sources:
 - The retrospective margin is evaluation evidence and must not become a prospective review input (DR-012 §7).
 - The API must not use future outcome information in prospective views ([system integration workflow](workflows/system-integration-and-prototype.md)).
 
-**Current state:** the [retained-export contract](forecast-api-contract.md) remains applicable to its fixed-origin artifact; exporter code and a local derivative exist. The active [forecast inference API](forecast-inference-api.md) builds fresh request features and invokes the frozen saved producer. Its code and four synthetic JSON inputs are prepared for review; manual demonstration and Tinosh's acceptance remain pending (B2). No retrospective outcome is used by this runtime.
+**Current state:** the [retained-export contract](forecast-api-contract.md) applies to its exact fixed-origin artifact. The merged [forecast inference API](forecast-inference-api.md) accepts supplied history and invokes the frozen saved producer. Initial manual success was reported by Chathuranga; revised-example demonstration and Tinosh's consumer acceptance remain unverified (B2). Its response is not interchangeable with the pinned 1,000-key research export; a reviewed adapter or clearly separated views are required. No retrospective outcomes are used by the runtime.
 
 ---
 
 ## 6. Inventory-risk handoff requirements (forecasting → inventory-risk → decision support)
 
-Responsible member: Didilani. Primary source: [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) — **Proposed for group approval** (Issue #51).
+Responsible member: Didilani. Primary source: [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) — **group-approved 1/7/14-day scenario method**, reported by Chathuranga for the 12 October WhatsApp discussion. Method approval is distinct from source timing and consumer acceptance.
 
 ### 6.1 Inputs Didilani's component expects
 
 | Requirement | Status | Source |
 |---|---|---|
-| Scenario identity: `SKU_ID`, `Warehouse_ID`, origin `t`, horizon `h` | Proposed (DR-012) | DR-012 §1 |
-| Project model forecast `F_t,h` with model provenance and horizon meaning retained | Proposed | DR-012 §5 |
+| Scenario identity: `SKU_ID`, `Warehouse_ID`, origin `t`, horizon `h` | Approved method; implemented internal mapping | DR-012 §1 |
+| Project model forecast `F_t,h` with model provenance and horizon meaning retained | Implemented internal mapping; consumer acceptance separate | DR-012 §5 |
 | Source `Demand_Forecast` must not substitute for the project forecast | Implemented / frozen rule | AGENTS.md §5; DR-012 §5 |
-| `Inventory_Level` and `Reorder_Point` at the origin, same SKU-warehouse; snapshot date and availability assumption retained | Proposed | DR-012 §1; shared-data foundation |
+| `Inventory_Level` and `Reorder_Point` at the origin, same SKU-warehouse; snapshot date and availability assumption retained | Implemented exact-origin mapping; source timing unresolved, constructed basis explicit | DR-012 §1; shared-data foundation |
 | Within-day meaning of a same-date inventory row (before / after sales) | **Unresolved** | DR-012 §1; shared-data foundation item 5 |
-| `Supplier_Lead_Time_Days` as context only (shorter / equal / longer than horizon) | Proposed | DR-012 §4 |
-| `Order_Quantity` as context only, after origin availability is established | Proposed; availability **unresolved** | DR-012 §5 |
+| `Supplier_Lead_Time_Days` as context only (shorter / equal / longer than horizon) | Approved context-only rule; availability remains independent | DR-012 §4 |
+| `Order_Quantity` as context only, after origin availability is established | Approved context-only boundary; availability **unresolved** | DR-012 §5 |
 | `Stockout_Flag` as dataset limitation only (zero-variance) | Implemented / frozen rule | AGENTS.md §5; dataset.md |
-| Handling of negative or otherwise problematic forecasts (no clipping approved) | **Unresolved** | DR-012 §2; protocol.md §8 |
-| Original inventory scope is 1 / 7 / 14 days; 28-day downstream use | **Unresolved — relevant component-member/human approval required** | DR-012 §4 and 28-day review |
+| Handling of negative or otherwise problematic forecasts (no clipping approved) | Implemented rejection/unavailable handling; consumer acceptance separate | DR-012 §2; inventory protocol §6.1 |
+| Original inventory scope is 1 / 7 / 14 days; 28-day downstream use | 1/7/14-day method approved; h=28 **requires separate approval** | DR-012 §4 and 28-day review |
 
 ### 6.2 Outputs Didilani's component hands to Dewmi (DR-012 §8)
 
-Concepts only — DR-012 does not lock names, types or format:
+The internal prospective adapter implements these concepts. DR-012 does not lock the final API names, types or format:
 
 - identity, forecast origin and horizon, model/source provenance;
 - origin inventory and policy evidence, buffer `B_t = I_t - R_t`;
@@ -200,11 +200,11 @@ Concepts only — DR-012 does not lock names, types or format:
 
 | Item | Status |
 |---|---|
-| Three-state exposure rule and equality rule | Proposed (DR-012) |
+| Three-state exposure rule and equality rule | Approved method; implemented internal mapping |
 | Numerical replenishment quantity | **Unresolved** (provisional) |
 | Overstock / excess-stock evaluation | **Unresolved** (provisional) |
 | Final column names, types, interchange format | **Unresolved** |
-| Implementation | Not started (`src/inventory_risk/` contains only `.gitkeep`) |
+| Implementation | Mapping, preparation, evaluation and runner implemented; retained scenario results and record bridge published |
 
 ---
 
@@ -220,13 +220,13 @@ identity / time; forecast; forecast-error / uncertainty context; inventory risk;
 
 | Requirement | Status | Source |
 |---|---|---|
-| Preserve `SKU_ID`, `Warehouse_ID`, forecast-origin date, forecast horizon; origin and horizon kept separate | Structure-only agreement | DR-011 |
-| Each field / group identifies its producing component (forecasting; inventory-risk / replenishment; responsible decision support) | Structure-only agreement | DR-011 |
-| Missing values never shown as zero; reason distinguishes: no agreed method / not applicable / waiting on another component | Structure-only agreement; concrete encoding **unresolved** | DR-011 |
-| Human-review status with reason(s); unassessed cases shown as `not assessed`, never `false` | Structure-only agreement | DR-011 |
+| Preserve `SKU_ID`, `Warehouse_ID`, forecast-origin date, forecast horizon; origin and horizon kept separate | Implemented in internal records; final presentation acceptance separate | DR-011 |
+| Each field / group identifies its producing component (forecasting; inventory-risk / replenishment; responsible decision support) | Implemented in internal records; final presentation acceptance separate | DR-011 |
+| Missing values never shown as zero; reason distinguishes: no agreed method / not applicable / waiting on another component | Internal reasons retained; final cross-component/API vocabulary **unresolved** | DR-011 |
+| Human-review status with reason(s); unassessed cases shown as `not assessed`, never `false` | Implemented in internal records; final presentation acceptance separate | DR-011 |
 | Advisory-only presentation; never an executable purchase order | Implemented / frozen rule | DR-011; AGENTS.md §8 |
 | Standing limitations: publisher-simulated Kaggle dataset; zero-variance `Stockout_Flag` | Implemented / frozen rule | DR-011 |
-| Eight transparency criteria for evaluation | Structure-only agreement | DR-011 |
+| Eight transparency criteria for evaluation | Implemented in internal records; final presentation acceptance separate | DR-011 |
 | Uncertainty method | **Unresolved** | DR-011 dependency table |
 | Human-review rules and numerical thresholds | **Unresolved** | DR-011; responsible DS workflow |
 | 28-day review triggers / 28-day downstream population | **Unresolved — approval required** | DR-011 revised interface section |
@@ -241,12 +241,12 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 | Handoff | Available / frozen | Remaining acceptance or decision |
 |---|---|---|
 | Retrospective forecasting research | Completed validation/final evidence; approved configurations, fresh-refit policy and producer mapping | Preserve the reviewed final interpretation and retained evidence |
-| Prospective forecasting input/API | Retained exporter exists; [inference API](forecast-inference-api.md) requested by Chathuranga, frozen DR-014 saved models and four synthetic request examples are prepared for review | Human code/schema review, manual four-horizon demonstration and Tinosh's consumer acceptance; retained-export hash acceptance is separate |
-| Forecasting → inventory-risk | Grain/target meaning and documented dataset limits | Proposed DR-012 approval; origin snapshot semantics, problematic forecasts, schema, 28-day use and Order_Quantity availability |
-| Inventory-risk → responsible decision support | Advisory-only boundary and DR-011 structure-only field groups | Final schema, unavailable-state encoding, replenishment quantity, uncertainty and review rules |
+| Prospective forecasting input/API | Retained exporter exists; [inference API](forecast-inference-api.md) requested by Chathuranga, frozen DR-014 saved models and four synthetic request examples are merged; consumer review remains | Human code/schema review, manual four-horizon demonstration and Tinosh's consumer acceptance; retained-export hash acceptance is separate |
+| Forecasting → inventory-risk | Group-approved method, implemented retained-export mapping, human-run scenario evidence | Source timing and contextual Order_Quantity availability; exact-export/consumer acceptance; final schema and separate h=28 scope |
+| Inventory-risk → responsible decision support | Prospective bridge, populated records and completed record-level assessment | Final consumer/schema and rendered acceptance; uncertainty, numerical replenishment and review rules remain unavailable |
 | Components → prototype/API | Ownership split and presentation-oriented boundary | Approved interchange/response schemas, adapters, tests and technical visual requirements |
 
-Completed retrospective evidence resolves the former absence-of-validation-evidence blocker. It does not resolve prospective contract acceptance or other members' methodologies. Issue references below are existing task pointers, not freshly checked GitHub status.
+Completed retrospective evidence resolves the former absence-of-validation-evidence blocker. It does not resolve prospective contract acceptance or other members' methodologies. Closed issue references below identify historical requirements; #177 is the current refinement task.
 
 ## 9. Blockers
 
@@ -256,50 +256,51 @@ B1 (retained forecasting evidence availability) is resolved by the completed val
 
 **Human-run evidence update — 23 October 2026:** Chathuranga completed the constructed-origin inventory evaluation and prepared its inventory-linked decision-support records. Shared review copies are indexed under [inventory evidence](../reports/README.md#inventory-risk-evaluation-evidence) and [inventory-linked records](../reports/README.md#inventory-linked-records). The evaluation has 239 paired comparisons plus 11 scenario-at/below-threshold cases per 1/7/14-day horizon. Fifteen selected records contain inventory evidence; five h=28 records remain gated. Chathuranga subsequently confirmed all 160 record-level assessment outcomes; Codex transcribed them with his assessor name and date `2026-10-23`. Chathuranga manually generated the [assessment summary](../reports/decision-support/issue-168-inventory-v1/summary.md), which retains all 20 applicable cases per criterion and their unavailable outcomes. This individual assessment does not establish group methodology approval, component acceptance or prototype presentation quality.
 
-The seven decision rows below summarize Issue #164; detailed method and protocol definitions remain in [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) and the [inventory-risk evaluation protocol](research/inventory-risk-evaluation-protocol.md). Existing issue references are tracking pointers, not a claim about their current live status. A separate issue may be considered only for substantial work after checking live GitHub for overlap; no issue is created or assigned here.
+The decision rows below reconcile the historical Issue #164 milestone with current acceptance work; detailed method and protocol definitions remain in [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) and the [inventory-risk evaluation protocol](research/inventory-risk-evaluation-protocol.md). Existing issue references are tracking pointers, not a claim about their current live status. A separate issue may be considered only for substantial work after checking live GitHub for overlap; no issue is created or assigned here.
 
 | ID | Decision | Evidence and approval status | Required reviewers | Remaining action | Existing tracking issue / document | Separate issue? |
 |---|---|---|---|---|---|---|
-| B2 | **Forecasting API review and consumer handoff** | The request-time API and four synthetic examples are prepared for review; manual demonstration and Tinosh's consumer acceptance remain pending. This is separate from the retained-export checksum result above. | Chathuranga, with Tinosh for delivery | Review the [inference API](forecast-inference-api.md), run the four manual input examples against saved models, and obtain Tinosh's consumer acceptance. Accept a retained-export hash only if that artifact is consumed. | #132; #86; this readiness document | Not an inventory-risk decision; retain existing tracking. |
+| B2 | **Forecasting API review and consumer handoff** | The request-time API and four synthetic examples are merged. Initial manual success was reported by Chathuranga; revised-example demonstration and Tinosh's consumer acceptance remain unverified. This is separate from the retained-export checksum result above. | Chathuranga, with Tinosh for delivery | Review the [inference API](forecast-inference-api.md), run the four manual input examples against saved models, and obtain Tinosh's consumer acceptance. Accept a retained-export hash only if that artifact is consumed. | #132; #86; this readiness document | Follow-up consumer task is scoped after #177; closed references are historical. |
 | B14 | **Forecast export acceptance and provenance** | The retained export is identified as run `final-20261003-02`. The reported checksum result establishes identity/integrity only; producer and consumer acceptance remain unverified. | Chathuranga (producer); Didilani (consumer); Tinosh (technical representation) | Record producer-side review and consumer acceptance separately; retain provenance at its actual source scope. | #164; #132; #162; Issue #169; [checksum reference](checksums/2026-10-06.json); [protocol](research/inventory-risk-evaluation-protocol.md) | Possibly, if standalone and substantial; first check live GitHub for overlap. |
 | B3, B13 | **Origin inventory snapshot timing and availability** | Source timing remains unknown. The runner provides an explicit constructed-origin scenario with separate assumption, analysis-availability and scenario-state fields; it never changes unknown source timing to verified availability. `Order_Quantity` is not treated as receipts. | Didilani; relevant dataset/source owner if identifiable; Chathuranga for forecast-time alignment | Select and disclose the specific run's snapshot policy using [protocol §12.2](research/inventory-risk-evaluation-protocol.md#122-run-the-implemented-inventory-evaluation); retain unknown source timing and distinguish conditional scenario evidence from source-confirmed evidence. | #164; #162; #51; #70 / #85; [dataset](dataset.md); [protocol](research/inventory-risk-evaluation-protocol.md) | Existing implementation; source semantics remain distinct. |
 | B6 | **Forecast-to-inventory field mapping** | The exact retained-export mapping is implemented in `src/inventory_risk/forecast_handoff.py`: validated identity/timing, explicit status and source-forecast eligibility, source-bound primary role and provenance propagation. Snapshot availability remains an independent input. | Chathuranga, Didilani, and Tinosh jointly | Inspect the completed human-run evidence in [protocol §12.3](research/inventory-risk-evaluation-protocol.md#123-retained-human-run-evidence); record actual consumer acceptance and retain unknown snapshot timing rather than inferring it. | #164; #162; #70 / #85; shared-data foundation item 6; [protocol §4.1](research/inventory-risk-evaluation-protocol.md#41-implemented-forecast-to-inventory-mapping) | Existing implementation; no replacement issue created. |
 | B5 | **Problematic forecast handling** | Implemented validation rejects invalid source exports and retains finite negative values as unavailable inventory inputs; no rounding, clipping, substitution or row deletion. | Chathuranga and Didilani; Tinosh for technical error handling | Review the implemented distinctions between whole-input failure and retained-row unavailability in [protocol §6.1](research/inventory-risk-evaluation-protocol.md#61-implemented-validation-and-error-behaviour). | #164; #162; #70 / #85 | Existing implementation; no replacement issue created. |
-| B4, B8, B12 | **DR-012 scenario and horizon assumptions** | DR-012 remains **Proposed for group approval**. The proposed downstream scope is horizon-specific 1/7/14-day exposure. Upstream 28-day forecasting is approved, but 28-day downstream use is gated; numerical replenishment quantity and overstock evaluation remain provisional. | COMP1884 group; Didilani presents; Chathuranga reviews forecast meaning; Dewmi for downstream review-trigger boundaries | Group to approve, revise, or leave DR-012 proposed. Keep 28-day use separately gated and replenishment/overstock outputs unavailable unless separately justified and approved. | #164; #51; #70 / #85; #72 / #73; [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md) | No separate issue is indicated by the local references; check live coverage before proposing one. |
+| B4 | **DR-012 group approval — recorded** | The group approved the 1/7/14-day fixed-origin/no-receipt exposure method on 12 October, as reported by Chathuranga on 23 October under #177. Historical run labels remain unchanged. | COMP1884 group; reporting attribution: Chathuranga | Use the [approval record](decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record); do not obtain the same approval again. | #177; historical #164/#51 | Resolved approval-record gap. |
+| B8, B12 | **Additional horizon/replenishment scope** | The DR-012 approval does not extend to h=28 inventory use, numerical replenishment or overstock evaluation. | Didilani and relevant human/team reviewers | Keep these outputs unavailable unless a separately justified decision is made. | [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md); follow-up planning after #177 | Conditional scope, not an automatic implementation task. |
 | B15 | **Retrospective evaluation eligibility** | The implemented runner requires exact complete daily `Units_Sold` windows for 1/7/14-day targets and reports the existing DR-012 metrics separately by horizon. Invalid/missing targets remain unavailable; duplicate daily keys fail. The completed human-run constructed-scenario results are distinct from implementation tests. | Didilani; Chathuranga for forecast/temporal evidence; group review of methodology | Review the retained run in [protocol §12.3](research/inventory-risk-evaluation-protocol.md#123-retained-human-run-evidence); retain Dec 3–16 prior validation exposure and full-year exploratory-exposure disclosures. | #164; #162; [evaluation protocol](research/inventory-risk-evaluation-protocol.md); [DR-005](decisions/DR-005-forecast-validation-design.md) | Existing runner implemented at Chathuranga's explicit request; no issue created. |
-| B7, B9 | **Inventory-risk-to-decision-support handoff** | A concrete internal prospective-only adapter is implemented: manifest/hash/source-bound 1,000-key evidence feeds the 20 decision-support records. Snapshot assumptions, source status, method limitations and unavailable reasons are preserved; retrospective fields and h=28 inventory interpretation are rejected/gated. This does not establish final API or presentation acceptance. | Didilani and Dewmi; Tinosh for technical representation | Inspect the completed inventory-backed [record preparation](research/responsible-decision-support-evaluation.md#22-prepare-records-and-record-the-human-assessment) and complete its assessment/presentation handoff. No human-review threshold or new uncertainty method is introduced. | #164 (inventory-side decisions); #168 (record mapping, transparency assessment and presentation handoff); #153 (historical context); #85; #72 / #73; [DR-011](decisions/DR-011-decision-support-output-structure.md) | Existing internal adapter implemented; final shared API/presentation remains separate. |
+| B7, B9 | **Inventory-risk-to-decision-support handoff** | A concrete internal prospective-only adapter is implemented: manifest/hash/source-bound 1,000-key evidence feeds the 20 decision-support records. Snapshot assumptions, source status, method limitations and unavailable reasons are preserved; retrospective fields and h=28 inventory interpretation are rejected/gated. This does not establish final API or presentation acceptance. | Didilani and Dewmi; Tinosh for technical representation | Inspect the completed inventory-backed [record preparation](research/responsible-decision-support-evaluation.md#22-prepare-records-and-record-the-human-assessment) and complete the remaining component/presentation acceptance; the 160 record-level checks are already delivered. No human-review threshold or new uncertainty method is introduced. | #164 (inventory-side decisions); #168 (record mapping, transparency assessment and presentation handoff); #153 (historical context); #85; #72 / #73; [DR-011](decisions/DR-011-decision-support-output-structure.md) | Existing internal adapter implemented; final shared API/presentation remains separate. |
 | B10 | Human-review rules, thresholds and combination of reasons not approved. | Not approved. | Dewmi | Approve a review method; no human-review rule is introduced by this register. | #72 / #73 | Separate Dewmi-owned blocker; unchanged. |
 | B11 | Forecast uncertainty method not defined. | Unresolved. | Chathuranga | Decide a forecasting uncertainty method, or explicitly agree it is unavailable. | Not yet assigned to an Issue (DR-011 dependency table) | Separate forecasting-owned blocker; unchanged. |
 
 ---
 
-## 10. Issue #86 — what can begin and what must wait
+## 10. Next integration task — available work and dependencies
 
 ### 10.1 Can begin after this document is reviewed
 
-- Narrow Issue #86 to **one** reviewed handoff and a concrete, testable interface, as Issue #87 requires.
+- Narrow the next integration task to **one** reviewed handoff and a concrete, testable interface, using the reviewed readiness requirements.
 - Draft that narrowed interface as a proposal for the relevant owner's review (draft only; not a final schema).
 - Prepare test-case descriptions from requirements that are already frozen: identity preservation, separate origin and horizon, `target_start_date` = origin + 1, `target_end_date` = origin + h, no `observed_target` in prospective views, advisory-only output, `not assessed` instead of `false`.
-- Any technical reading of the existing frozen forecasting artifact schema (`issue-65-v2`) using synthetic fixtures only, labelled as retrospective validation evidence — **only if Chathuranga confirms this is in scope for the narrowed #86.**
+- Any technical reading of the existing frozen forecasting artifact schema (`issue-65-v2`) using synthetic fixtures only, labelled as retrospective validation evidence — **only if Chathuranga confirms this is in scope for the narrowed integration task.**
 
 ### 10.2 Must wait
 
-| Work in #86 | Waits for |
+| Work in the next integration task | Waits for |
 |---|---|
-| Forecast → inventory-risk adapter | B2, B3, B4, B5, B6 |
-| Inventory-risk → decision-support adapter | B4, B7, B9, B12 |
-| Accept or extend prospective forecast API endpoints | B2 (initial inference implementation is prepared for review) |
-| Any 28-day downstream view or review trigger | B8 |
-| Human-review flags or reasons in the prototype | B10 |
-| Uncertainty display | B11 |
+| Accept/extend the implemented retained-export mapping or connect live inference | B2, B3, B5, B6; existing mapping is not pending implementation |
+| Accept/extend the implemented record bridge for final delivery | B7, B9; B12 only if numerical replenishment is added |
+| Accept or extend prospective forecast API endpoints | B2 (initial inference implementation is merged) |
+| 28-day inventory calculation or review trigger | B8; forecast identity and explicit unavailability can already be shown |
+| New automatic human-review triggers | B10; existing not_assessed status and reasons can be rendered under reviewed record semantics |
+| Numerical uncertainty values | B11; an unavailable field with its existing reason can already be rendered |
 | Inventory-risk visual components | Didilani's approved analytical visual specification |
 | Decision-support record presentation | Dewmi's reviewed record semantics (B7, B9, B10) |
 | Any use of real run outputs | Stage-specific verified run_manifest.json and human acceptance of the exact handoff |
 
-### 10.3 Start checklist for Issue #86
+### 10.3 Start checklist for the next integration task
 
 - [ ] This document is reviewed by Chathuranga, Didilani and Dewmi.
-- [ ] Issue #86 is narrowed to one handoff with a named producer, consumer and reviewer.
+- [ ] The next integration task is narrowed to one handoff with a named producer, consumer and reviewer.
 - [ ] The producing component's output for that handoff is human-reviewed and available (not only planned).
 - [ ] Field names, types and format for that handoff are agreed by the producing owner.
 - [ ] Origin, horizon and target-interval meaning for that handoff match Section 4.
@@ -307,7 +308,7 @@ The seven decision rows below summarize Issue #164; detailed method and protocol
 - [ ] Unavailable-state reasons for that handoff are agreed (no zero or `false` substitutes).
 - [ ] Any 28-day content is either approved or explicitly marked unavailable.
 - [ ] No pending decision in Section 9 is settled through an adapter default.
-- [ ] Concrete, testable acceptance criteria are written into the narrowed #86.
+- [ ] Concrete, testable acceptance criteria are written into the narrowed integration task.
 
 ---
 
@@ -332,7 +333,7 @@ The seven decision rows below summarize Issue #164; detailed method and protocol
 - **Real names only where they already exist.** Back-ticked forecasting names (`SKU_ID`, `Warehouse_ID`, `forecast_origin`, `horizon`, `target_start_date`, `target_end_date`, `prediction`, `observed_target`, `run_id`, `evaluation_stage`, `evidence_role`, `model`, `configuration_id`, `canonical_config_id`) are the implemented `predictions.csv` columns in [artifacts.py](../src/forecasting/artifacts.py). Downstream content is described in plain words, because final interchange names, types and encodings are not agreed (B6, B7, B9).
 - **No new defaults.** Where a value is missing or unapproved, a scenario only requires that this is visible with a reason. It does not choose a fallback, clipping rule, uncertainty method or review threshold.
 - **Two kinds of coverage.** *Component unit coverage* means an existing test checks the behaviour inside one component. *Integration / presentation check* means the behaviour still has to be shown across a handoff or in the prototype. The second kind is pending for every scenario.
-- **Issue references.** Current work is tracked by #132 (request-time forecast API), #164 (outstanding inventory-risk decisions) and #168 (remaining decision-support record mapping, transparency assessment and presentation handoff). #85, #145 and #153 are kept only as historical references (see 12.6).
+- **Issue references.** #132, #164, #168, #85, #145 and #153 are closed historical requirement/evidence references. #101/#157 delivered these scenarios. #177 establishes the refined baseline; later member issues will track only verified remaining work. Closure does not replace missing acceptance evidence.
 - **Positive** examples show acceptable behaviour. **Negative** examples show behaviour a later integration must reject or never produce.
 
 ### 12.2 Acceptance matrix
@@ -521,7 +522,7 @@ DR-011 separates three reasons: **no agreed method**, **does not apply**, and **
 
 ### 12.6 Ready to specify now versus waiting on dependencies
 
-**Ready to specify now** (frozen sources and component tests exist; no pending decision is needed to write the expected behaviour):
+**Specified requirements with existing component coverage** (frozen sources and component tests exist; no pending decision is needed to write the expected behaviour):
 
 - AS-01 to AS-06 inside the forecasting component, using the implemented `predictions.csv` fields and synthetic records;
 - AS-01, AS-02, AS-04, AS-05 and the unavailable-snapshot case of AS-07 inside the inventory-risk preparation and evaluation components;
@@ -533,18 +534,18 @@ DR-011 separates three reasons: **no agreed method**, **does not apply**, and **
 
 | Depends on | Scenarios affected | What must exist first | Related blockers |
 |---|---|---|---|
-| #132 | AS-01 to AS-06 as shown by the request-time forecast API | Reviewed API, four-horizon demonstration and Tinosh's consumer acceptance | B2 |
-| #164 | AS-01, AS-02, AS-04, AS-05 and AS-07 carried across the forecasting → inventory-risk handoff | Outstanding inventory-risk decisions: agreed forecasting → inventory-risk contract; origin snapshot meaning; problematic-forecast handling | B3, B4, B5, B6, B13 |
-| #168 | AS-05 to AS-09 at decision-support record level and in presentation | Remaining decision-support record mapping, transparency assessment and presentation handoff | B7, B9, B10 |
+| Historical #132; follow-up after #177 | AS-01 to AS-06 as shown by the request-time forecast API | Reviewed API, four-horizon demonstration and Tinosh's consumer acceptance | B2 |
+| Historical #164; follow-up after #177 | AS-01, AS-02, AS-04, AS-05 and AS-07 across forecasting → inventory | Review implemented mapping/error handling and accept the actual source/consumer contract; source timing stays unknown or explicitly constructed | B3, B5, B6, B13 |
+| Historical #168; follow-up after #177 | AS-05 to AS-09 in the prototype | Record mapping and 160 record checks are complete; final component/presentation acceptance remains | B7, B9, B10 |
 | No Issue yet / separate approval | Uncertainty display; any 28-day downstream content | Uncertainty decision; 28-day downstream approval | B8, B11 |
 
 **Historical references:**
 
-- **#85** was the earlier pointer for the forecasting → inventory-risk contract. The outstanding inventory-risk decisions are now tracked under **#164**.
+- **#85** supplied the analytical visual specification. #164 delivered the mapping/evaluation milestone; remaining interpretation and rendered visual work is scoped from #177.
 - **#145** is closed; its preparation work was merged through #152.
-- **#153** is closed. The remaining decision-support record mapping, transparency assessment and presentation handoff are now tracked under **#168**.
+- **#153** is historical. #168 subsequently delivered populated records and completed record-level assessment; rendered presentation acceptance is separate.
 
-Moving the tracking to #164 and #168 does not resolve any approval boundary. B3–B6 and B13 (inventory-risk inputs and contract), B7 (final inventory-risk → decision-support schema), B9 (final unavailable-state encoding), B10 (human-review rules and thresholds), B8 (28-day downstream use) and B11 (uncertainty method) all stay open.
+The closures of #164/#168 do not settle other decisions. B4 group approval is now recorded separately under #177. Source timing (B3/B13), exact handoff acceptance (B5/B6), final API/encoding (B7/B9), review rules (B10), h=28 inventory use (B8) and uncertainty (B11) retain their stated boundaries.
 
 ### 12.7 What this section does not do
 
@@ -552,3 +553,17 @@ Moving the tracking to #164 and #168 does not resolve any approval boundary. B3�
 - It does not define final shared or interchange schemas, field names, encodings or defaults.
 - It does not choose an uncertainty method, review threshold, clipping rule or replenishment quantity.
 - It does not change any research methodology or authorise any experiment.
+
+
+## 13. Remaining-work handoff after Issue #177
+
+Before opening member tasks, inspect the reviewed/merged refinement revision and live GitHub trackers again. Record that exact revision in each new issue; do not treat an AI completion estimate as a project-approved measure. The following are candidate scopes, not newly published issues or new research approvals.
+
+| Responsible member | Delivered starting point | Next focused scope and dependencies |
+|---|---|---|
+| Chathuranga | Completed forecasting study, frozen producers, retained export and merged inference API | Review forecasting-facing handoff with Tinosh; coordinate team disposition of the integrated hypothesis and assessment requirements. Do not rerun completed forecasting or add an RQ2 significance test. |
+| Didilani | Group-approved DR-012 method, mapping/evaluator, human-run scenario results, analytical visual specification | Review scenario interpretation/missed crossings and consumer evidence; update analytical visual requirements. Decide any bounded robustness work before a separately authorised human run. No repeat request for DR-012 approval. |
+| Dewmi | Populated records, 160 record-level checks assessed by Chathuranga, presentation requirements | Review downstream meaning and final reason vocabulary; evaluate actual rendered views with Tinosh. Preserve attribution and reuse unchanged record assessments. |
+| Tinosh | Merged forecast API, retained-evidence adapters and specified AS-01–AS-10 scenarios | Accept consumer contracts, implement one agreed prototype slice and analytical visuals, and execute synthetic integration/presentation checks. Preserve the difference between live inference and retained fixed-origin evidence. |
+
+All members contribute their report sections, individual reflections and presentation/rehearsal. Official deadlines, rubric and submission formats still require confirmation against the applicable brief. Additional uncertainty, numerical replenishment, overstock and h=28 inventory methods are conditional extensions; unavailable outputs must be explicit. Approval of the current method is not evidence of significant improvement in managerial decisions or completion of the group hypothesis.

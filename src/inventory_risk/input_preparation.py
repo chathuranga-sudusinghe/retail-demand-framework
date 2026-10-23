@@ -7,7 +7,8 @@ The caller must supply explicit evidence that the inventory snapshot was
 available at the forecast origin before snapshot values can support exposure
 evidence.
 
-The DR-012 exposure method is retained as *proposed for group approval*. Source
+The DR-012 fixed-origin/no-receipt method has group approval recorded under
+Issue #177. Method approval does not establish source snapshot availability. Source
 ``Demand_Forecast`` is preserved if present but is never used as the project
 forecast. Values are not clipped, rounded, imputed, or silently dropped.
 """
@@ -21,7 +22,8 @@ import numpy as np
 import pandas as pd
 from pandas.api.typing import NaTType
 
-METHOD_STATUS = "proposed_for_group_approval"
+METHOD_STATUS = "group_approved"
+LEGACY_METHOD_STATUS = "proposed_for_group_approval"
 SUPPORTED_HORIZONS = (1, 7, 14, 28)
 EVALUABLE_HORIZONS = (1, 7, 14)
 
@@ -53,12 +55,12 @@ REQUIRED_PROVENANCE_COLUMNS = (
 
 METHOD_ASSUMPTIONS = (
     "Inventory_Level and Reorder_Point support exposure only when their origin availability is explicitly established.",
-    "Reorder_Point is held fixed for the proposed scenario.",
+    "Reorder_Point is held fixed for the no-receipt scenario.",
     "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
     "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
 )
 METHOD_LIMITATIONS = (
-    "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+    "DR-012 group approval covers the scenario method, not actual stockout accuracy or an operational risk classification.",
     "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
     "Source Demand_Forecast is a reference field, not the project forecast input.",
     "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
@@ -293,8 +295,8 @@ def prepare_inventory_risk_inputs(records: pd.DataFrame) -> pd.DataFrame:
             downstream_status = "not_approved_for_downstream_use"
             downstream_reason = "28_day_downstream_use_requires_separate_approval"
         elif horizon in EVALUABLE_HORIZONS:
-            downstream_status = "proposed_method_not_group_approved"
-            downstream_reason = "DR-012_remains_proposed_for_group_approval"
+            downstream_status = "approved_method"
+            downstream_reason = ""
         else:
             downstream_status = "unavailable"
             downstream_reason = "unsupported_or_invalid_forecast_horizon"

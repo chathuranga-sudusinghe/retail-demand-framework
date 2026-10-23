@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
+> **Current alignment — 23 October 2026, Issue #177:** DR-011 retains structure-only acceptance. [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records the separately reported group approval of 1/7/14-day scenario exposure. Records and record-level assessment are delivered; rendered presentation, consumer acceptance, uncertainty, replenishment and review rules remain separate. This update authorises no research execution.
 
 ## Responsible member
 
@@ -134,7 +134,7 @@ Cumulative quantities do not imply a daily forecast path. Preserve origin and ho
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate
 28-day inventory states, replenishment recommendations or human-review triggers
-by silently extending another component's proposed method. Unavailable/unapproved
+by silently extending another component's approved 1/7/14-day method. Unavailable/unapproved
 outputs need an explicit reason. No uncertainty method, threshold or decision rule
 is approved by this interface update. Ownership and existing responsible-use
 principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.

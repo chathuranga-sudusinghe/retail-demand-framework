@@ -3,7 +3,7 @@
 **Responsible member:** Chathuranga — forecasting meaning and shared API architecture.
 **Integration reviewer:** Tinosh — endpoint, schema and adapter acceptance.
 **Date:** 2026-10-05 (Asia/Colombo).
-**Status:** Implementation prepared for human review. Chathuranga explicitly requested request-time predictions from supplied JSON histories in the working session. Chathuranga reported that the initial manual API demonstration worked. The revised synthetic examples require a fresh manual presentation check; later PR review and consumer acceptance remain pending. This does not close Issue #132.
+**Status:** Implementation and four synthetic JSON examples are merged through [PR #151](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/151); #132 is closed. Chathuranga reported that the initial manual demonstration worked. Revised-example demonstration and Tinosh's consumer acceptance are not established by that closure. The API is a presentation prototype, not completed group-wide integration.
 
 ## 1. Active serving behavior
 
@@ -23,7 +23,7 @@ The FastAPI service demonstrates request-time inference using the saved forecast
 
 The demonstration preserves the research questions, hypotheses, targets, feature definitions, producer mapping, saved models and retained numerical evidence. Synthetic requests and their responses are illustrative presentation material and must be labelled accordingly in slides and recordings. Changing an example input does not create an additional research result. The API neither establishes replenishment quantities nor approves downstream 28-day use.
 
-Chathuranga authorises preparing this demo on the existing feature branch. Tinosh may review the code later through the normal PR process; his prior review is not a prerequisite for preparing or pushing the demo branch. This collaboration does not transfer the team's documented component ownership or claim integration acceptance.
+**Historical preparation instruction — 5 October 2026:** Chathuranga authorised preparing the demo on its then-existing feature branch; prior Tinosh review was not required for preparation. That instruction is not standing Git authorisation. The implementation is now merged; component ownership and remaining consumer acceptance are unchanged.
 
 ## 2. Models and source bindings
 
