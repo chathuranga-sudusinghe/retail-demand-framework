@@ -15,6 +15,45 @@ The research uses Ziya's published [High-Dimensional Supply Chain Inventory Data
 
 Chathuranga confirms both retained runs completed and integrity verification passed. This index performs no fresh bundle verification. Both comparisons are immutable generated evidence: old pending/finalizing/blocked wording inside them is historical, not current project status. Current decisions remain in [DR-014](../docs/decisions/DR-014-forecasting-selection-and-final-refit.md), and current findings/review status in the final report. No final-result-driven reselection is allowed.
 
+## Inventory-risk evaluation evidence
+
+Chathuranga manually ran the constructed-origin evaluation on 23 October 2026 and authorised its four output files for shared GitHub review. These are unchanged copies of `research-materials/inventory-risk/issue-164/evaluation-v1/`, totalling 8,481,777 bytes.
+
+| File | What to review |
+|---|---|
+| [report.md](inventory-risk/issue-164/evaluation-v1/report.md) | Start here: the per-horizon counts, proxy metrics, denominators and scenario limitations. |
+| [prospective.json](inventory-risk/issue-164/evaluation-v1/prospective.json) | The 1,000-key handoff; inventory exposure is available only for horizons 1/7/14. H=28 remains gated. No realised targets or retrospective metrics. |
+| [evaluation.json](inventory-risk/issue-164/evaluation-v1/evaluation.json) | The 750 retrospective cases and three horizon summaries, kept separate from prospective inputs. |
+| [manifest.json](inventory-risk/issue-164/evaluation-v1/manifest.json) | Original output hashes, source bindings, snapshot basis, operator, timestamp and implementation hashes. |
+
+Each horizon has 239 paired forecast comparisons and 11 scenario-at/below-threshold cases. These results use hypothetical starting inventory, a fixed reorder point and no receipts; they do not establish actual stockout accuracy or real-retailer effectiveness. The [protocol's retained-run record](../docs/research/inventory-risk-evaluation-protocol.md#123-retained-human-run-evidence) records the execution and identity-check scope. These files support review; publication alone does not establish methodology approval or close Issue #164.
+
+## Decision-support review evidence
+
+Chathuranga authorised the limited [Issue #168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168) snapshot below for GitHub sharing on 23 October 2026. The four files are unchanged copies from `research-materials/decision-support/issue-168-json/`, totalling 209,854 bytes. All members can inspect them here without receiving separate copies or running the preparation command.
+
+| File | What to review |
+|---|---|
+| [records.md](decision-support/issue-168-json/records.md) | Start here: the 20 populated forecast-only records F01–F20, with identity, horizon meaning, assumptions, limitations and explicit unavailable evidence. |
+| [records.json](decision-support/issue-168-json/records.json) | The same records in machine-readable form, linked to the exact forecast source. |
+| [review.json](decision-support/issue-168-json/review.json) | The eight checks per record: 24 human-confirmed outcomes for F01–F03; the remaining 136 checks for F04–F20 are blank. |
+| [manifest.json](decision-support/issue-168-json/manifest.json) | The unchanged preparation receipt, including source and record hashes, original generator hashes, operator and preparation time. |
+
+The manifest's assessment-status text and blank-template hash describe initial preparation; they do not describe the later partial checklist. Its code hashes identify the historical generator, not today's source. This historical forecast-only snapshot remains separate from the inventory-linked bundle below. Publishing either bundle does not establish peer approval or complete Issue #168. No complete assessment summary exists yet. The [evaluation document](../docs/research/responsible-decision-support-evaluation.md) records the mapping, partial findings and presentation requirements. The [storage policy](../docs/artifact-storage-policy.md) limits sharing to the named review bundles. Actual preparation and summarisation continue to use ignored local directories; tracked copies support inspection without changing the command-line interface.
+
+### Inventory-linked records
+
+Chathuranga prepared this separate bundle on 23 October 2026 using the inventory evaluation above. Its four unchanged copies total 335,948 bytes.
+
+| File | What to review |
+|---|---|
+| [records.md](decision-support/issue-168-inventory-v1/records.md) | Start here: 20 populated records, including inventory evidence for the 15 selected 1/7/14-day cases. |
+| [records.json](decision-support/issue-168-inventory-v1/records.json) | The same records with exact inventory/source bindings; five h=28 cases retain gated inventory fields. |
+| [review.json](decision-support/issue-168-inventory-v1/review.json) | All 160 checks remain blank; the inventory-linked records have not been assessed. |
+| [manifest.json](decision-support/issue-168-inventory-v1/manifest.json) | Original preparation receipt and bindings for the records, readable copy and initial blank checklist. |
+
+The historical F01–F03 outcomes above are not transferred to these changed records. Members should review this bundle's actual contents and record their assessments explicitly. The generator and summarizer still operate on the local working directory under `research-materials/`; GitHub copies provide shared inspection access without executing research. For local CLI use, copy a complete four-file bundle into a fresh directory under ignored `research-materials/`, keeping its filenames and bytes unchanged. The inventory consumer needs all four files together because it checks the adjacent manifest and companion hashes; do not overwrite an existing local bundle.
+
 ## Descriptive evidence
 
 - [Demand EDA](demand-eda.md) and its figures: historical descriptive analysis, including full-year exposure; not a feature-selection experiment or current protocol.

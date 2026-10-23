@@ -3,7 +3,7 @@
 > **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
 **Date:** 2026-09-28
-**Status:** Proposed for group approval; implementation and the open decisions below remain pending.
+**Status:** Proposed for group approval; calculation utilities and a human-run evaluation command are implemented. Source-timing and other open decisions remain distinct from implementation availability.
 **Responsible member:** Didilani
 **Decision owners:** COMP1884 group
 **Related issue:** [#51 — Formalise inventory-risk and replenishment methodology](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/51)
@@ -154,6 +154,12 @@ Near-zero margins indicate sensitivity to small demand changes. No numerical nea
 The handoff to Dewmi should preserve identity, forecast origin and horizon, model/source provenance, origin inventory and policy evidence, buffer, exposure state and reason, conceptual margin where available, contextual lead time, assumptions, limitations and availability reasons. Replenishment quantity and uncertainty information remain explicitly provisional/unavailable where no approved method produces them.
 
 Keep retrospective labels and errors distinguishable from information available when the forecast was issued. Follow DR-011's field groups and missing-information semantics; this record does not lock final column names, types or interchange formats. Human-review status remains `not assessed` until a review method is approved, independently of whether exposure itself can be assessed.
+
+## Implementation interface
+
+[The inventory runner](../../src/inventory_risk/runner.py) implements the formulas above with exact-window daily-target completeness and separate horizon summaries. Its required snapshot policy distinguishes unknown availability, an explicit source-confirmed assertion, and an explicitly selected constructed-origin scenario. The latter uses recorded same-origin quantities as hypothetical starting balances; it preserves unknown source timing and labels scenario states/counts separately. It does not retrospectively establish inventory availability or change this decision's approval status. See [protocol §12.2](../research/inventory-risk-evaluation-protocol.md#122-run-the-implemented-inventory-evaluation) for the exact settings, output contract and human-run command.
+
+Prospective evidence excludes realised targets, retrospective margins, confusion cells and metrics. Numerical replenishment, uncertainty and h=28 inventory evaluation are not introduced by this implementation.
 
 ## Dependencies
 

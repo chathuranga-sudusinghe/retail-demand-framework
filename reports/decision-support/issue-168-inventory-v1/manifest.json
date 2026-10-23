@@ -1,0 +1,16 @@
+{
+  "assessment_status": "not performed; review.json contains blank human-entered fields",
+  "code_sha256": {
+    "src/decision_support/assessment.py": "e6bdfe824667252405345e2258bfef5e3d56763d28ca14469674893dfb4d2842",
+    "src/decision_support/records.py": "92c9cceeac7dddfce50687bde60f3fc40513cf4bc507ad79529c445538d5027d",
+    "src/inventory_risk/forecast_handoff.py": "f80c58e4c6795dad5cb43452fa28e9b69785cbe4351ad2fc30b88392b50e58ea"
+  },
+  "initial_review_template_sha256": "e709d3b03b85c32b7c6621f755944b95f83fbf60b50e5928b47b3c3c6aa1040d",
+  "mapping_version": "issue-164-168-v1",
+  "operator": "Chathuranga",
+  "prepared_at": "2026-10-23T06:09:37.526263+00:00",
+  "records_markdown_sha256": "ff0a4f3eafb4d4348a583fc5fbfc32bebab2cd011f614fa986aef4e9289f536d",
+  "records_sha256": "dc029ba66c07009202f17643a3565f550e7ac2aa7c23ac411ea15f964c91937a",
+  "review_schema": "issue-168-review-v2",
+  "source_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863"
+}

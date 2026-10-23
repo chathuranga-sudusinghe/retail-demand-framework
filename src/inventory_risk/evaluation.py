@@ -19,7 +19,13 @@ from src.inventory_risk.input_preparation import (
     prepare_inventory_risk_inputs,
 )
 
+SCENARIO_LIMITATION = (
+    "Constructed starting balances are hypothetical; source origin availability "
+    "is not established by this scenario."
+)
+
 _GROUP_FIELDS = (
+    "inventory_basis",
     "run_id",
     "evaluation_stage",
     "evidence_role",
@@ -36,8 +42,26 @@ _GROUP_FIELDS = (
 )
 
 
-def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
+def _case_evidence(
+    prepared: pd.DataFrame, *, scenario_basis: str | None = None
+) -> pd.DataFrame:
     cases = prepared.copy(deep=True)
+    cases["inventory_basis"] = (
+        "constructed_origin_scenario" if scenario_basis else "source_availability"
+    )
+    cases["snapshot_assumption"] = scenario_basis
+    cases["scenario_inventory_state_available"] = False
+    cases["analysis_inventory_state_available"] = cases["inventory_state_available"]
+    if scenario_basis:
+        cases["method_assumptions"] = cases["method_assumptions"].map(
+            lambda values: (*values[1:], scenario_basis)
+        )
+        cases["method_limitations"] = cases["method_limitations"].map(
+            lambda values: (
+                *values,
+                SCENARIO_LIMITATION,
+            )
+        )
     cases["inventory_buffer"] = pd.NA
     cases["origin_exposure_state"] = "unavailable"
     cases["forecast_exposure_state"] = "unavailable"
@@ -53,7 +77,20 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
     reason_cells = cast(Any, cases.at)
     for index, row in cases.iterrows():
         reasons: list[str] = []
-        if not bool(row["inventory_state_available"]):
+        inventory_available = bool(row["inventory_state_available"])
+        if scenario_basis:
+            inventory_available = bool(
+                pd.notna(row["_forecast_origin_date"])
+                and pd.notna(row["_inventory_record_date"])
+                and row["_forecast_origin_date"] == row["_inventory_record_date"]
+                and pd.notna(row["_inventory_level_value"])
+                and pd.notna(row["_reorder_point_value"])
+            )
+            cases.at[index, "scenario_inventory_state_available"] = inventory_available
+            cases.at[index, "analysis_inventory_state_available"] = inventory_available
+        if not inventory_available:
+            if scenario_basis:
+                reasons.append("scenario_origin_snapshot_missing_or_invalid")
             reasons.extend(row["preparation_unavailable_reasons"])
             reasons.append(str(row["origin_snapshot_reason"]))
             cases.at[index, "comparison_case"] = "unavailable"
@@ -67,17 +104,33 @@ def _case_evidence(prepared: pd.DataFrame) -> pd.DataFrame:
         buffer = inventory - reorder
         cases.at[index, "inventory_buffer"] = buffer
         if buffer <= 0:
-            cases.at[index, "origin_exposure_state"] = "already_at_or_below_threshold"
+            cases.at[index, "origin_exposure_state"] = (
+                "scenario_already_at_or_below_threshold"
+                if scenario_basis
+                else "already_at_or_below_threshold"
+            )
             # This is origin-known evidence, not a forecast skill comparison.
-            cases.at[index, "forecast_exposure_state"] = "not_needed_origin_state_known"
+            cases.at[index, "forecast_exposure_state"] = (
+                "not_needed_scenario_origin_state"
+                if scenario_basis
+                else "not_needed_origin_state_known"
+            )
             cases.at[index, "retrospective_exposure_state"] = (
                 "not_in_primary_comparison"
             )
-            cases.at[index, "comparison_case"] = "origin_known_at_or_below_threshold"
+            cases.at[index, "comparison_case"] = (
+                "scenario_at_or_below_threshold"
+                if scenario_basis
+                else "origin_known_at_or_below_threshold"
+            )
             reason_cells[index, "evaluation_unavailable_reasons"] = []
             continue
 
-        cases.at[index, "origin_exposure_state"] = "initially_above_threshold"
+        cases.at[index, "origin_exposure_state"] = (
+            "scenario_initially_above_threshold"
+            if scenario_basis
+            else "initially_above_threshold"
+        )
         horizon = row["_horizon_days"]
         forecast_ready = (
             horizon in EVALUABLE_HORIZONS
@@ -152,6 +205,9 @@ def _metric(numerator: int, denominator: int) -> tuple[float | None, str]:
 
 
 def _summary_for_group(group: pd.DataFrame) -> dict[str, object]:
+    initially_above = group["origin_exposure_state"].isin(
+        ("initially_above_threshold", "scenario_initially_above_threshold")
+    )
     cells = group["confusion_cell"]
     tp = int(cells.eq("TP").sum())
     tn = int(cells.eq("TN").sum())
@@ -185,14 +241,15 @@ def _summary_for_group(group: pd.DataFrame) -> dict[str, object]:
         "origin_known_at_or_below_count": int(
             group["comparison_case"].eq("origin_known_at_or_below_threshold").sum()
         ),
-        "initially_above_threshold_count": int(
-            group["origin_exposure_state"].eq("initially_above_threshold").sum()
+        "scenario_at_or_below_count": int(
+            group["comparison_case"].eq("scenario_at_or_below_threshold").sum()
         ),
+        "initially_above_threshold_count": int(initially_above.sum()),
         "evaluable_paired_case_count": n,
         "unavailable_case_count": int(group["comparison_case"].eq("unavailable").sum()),
         "forecast_unavailable_or_gated_count": int(
             (
-                group["origin_exposure_state"].eq("initially_above_threshold")
+                initially_above
                 & (
                     group["forecast_input_status"].ne("available")
                     | ~group["_horizon_days"].isin(EVALUABLE_HORIZONS)
@@ -201,7 +258,7 @@ def _summary_for_group(group: pd.DataFrame) -> dict[str, object]:
         ),
         "retrospective_unavailable_or_gated_count": int(
             (
-                group["origin_exposure_state"].eq("initially_above_threshold")
+                initially_above
                 & (
                     group["retrospective_input_status"].ne("available")
                     | ~group["_horizon_days"].isin(EVALUABLE_HORIZONS)
@@ -216,7 +273,9 @@ def _summary_for_group(group: pd.DataFrame) -> dict[str, object]:
     return result
 
 
-def evaluate_inventory_risk(records: pd.DataFrame) -> dict[str, pd.DataFrame]:
+def evaluate_inventory_risk(
+    records: pd.DataFrame, *, scenario_basis: str | None = None
+) -> dict[str, pd.DataFrame]:
     """Return proposed exposure cases and per-origin/horizon comparison metrics.
 
     The primary retrospective comparison includes only initially-above-threshold
@@ -230,9 +289,22 @@ def evaluate_inventory_risk(records: pd.DataFrame) -> dict[str, pd.DataFrame]:
     component-owner/human approval is granted. ``observed_target`` is consumed
     only for retrospective evidence. Source ``Demand_Forecast`` and
     ``Stockout_Flag`` are never used by these calculations.
+
+    An explicit nonblank ``scenario_basis`` evaluates a hypothetical scenario
+    from same-origin recorded balances. It never changes source availability
+    markers/statuses. Scenario origin states and counts are labelled separately
+    from origin-known source evidence. Omitting it retains the existing gate.
+    An explicit False marker also remains unavailable as source evidence; an
+    explicitly requested counterfactual can still use valid same-origin quantities
+    as hypothetical starting balances. It does not assert that those balances
+    were actually available at forecast issuance.
     """
+    if scenario_basis is not None and (
+        not isinstance(scenario_basis, str) or not scenario_basis.strip()
+    ):
+        raise ValueError("A constructed scenario requires a nonblank snapshot basis.")
     prepared = prepare_inventory_risk_inputs(records)
-    cases = _case_evidence(prepared)
+    cases = _case_evidence(prepared, scenario_basis=scenario_basis)
     group_fields = [column for column in _GROUP_FIELDS if column in cases.columns]
     summary_rows: list[dict[str, object]] = []
     for values, group in cases.groupby(
