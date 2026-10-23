@@ -1,17 +1,29 @@
 # DR-012 — Inventory-Risk and Replenishment Methodology
 
-> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
+> **Current status — 23 October 2026, Issue #177:** The COMP1884 group approved the documented fixed-origin, fixed-reorder-point, no-receipt exposure method for 1/7/14-day analysis on 12 October 2026, as reported by Chathuranga on 23 October. See the approval record below. Source timing, consumer acceptance and additional downstream methods remain separate.
+>
+> **Historical documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
 **Date:** 2026-09-28
-**Status:** Proposed for group approval; calculation utilities and a human-run evaluation command are implemented. Source-timing and other open decisions remain distinct from implementation availability.
+**Status:** Approved by the COMP1884 group for the documented 1/7/14-day fixed-origin/no-receipt method; calculation utilities and a human-run evaluation are implemented. Method approval does not establish source snapshot timing or operational effectiveness.
 **Responsible member:** Didilani
 **Decision owners:** COMP1884 group
 **Related issue:** [#51 — Formalise inventory-risk and replenishment methodology](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/51)
 **University requirements:** This record asserts no separate lecturer approval. Any confirmation required by the applicable COMP1884 instructions remains subject to the team's review process; teaching guidance does not establish approval of this methodology.
 
+## Group approval record
+
+- **Approval date:** 12 October 2026 (Monday).
+- **Communication source:** WhatsApp group discussion.
+- **Reported by:** Chathuranga, in the working conversation on 23 October 2026; recorded under [Issue #177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177).
+- **Scope:** The documented origin reorder-threshold exposure method and fixed-origin, fixed-reorder-point, no-receipt scenario for horizons 1/7/14. The original decision date above is preserved; this is a later repository record of the reported group decision.
+- **Boundary:** The private discussion was not independently inspected. This record does not infer approval of source-confirmed timing, 28-day inventory use, numerical replenishment, overstock, uncertainty estimation, automatic review rules or a new research execution.
+
+The 23 October retained evaluation and assessment bundles still contain their original `proposed_for_group_approval` status. Preserve their bytes and preparation metadata: those labels record what the generator emitted, not the current approval record. New outputs use `group_approved`; the prospective consumer accepts both historical and current statuses without relabelling evidence. For 1/7/14-day rows, `approved_method` with an empty downstream reason denotes method scope only, not inventory availability or consumer acceptance. Historical rows retain `proposed_method_not_group_approved` and their original reason. H=28 remains gated under either status.
+
 ## Context
 
-The [inventory methodology research brief](../research/inventory-risk-methodology.md) identified candidate methods and unresolved timing and evaluation questions. This record proposes the initial method for group approval: **origin reorder-threshold exposure**. It supplies a common downstream interpretation of Chathuranga's forecasts while preserving Didilani's inventory-analysis ownership and Dewmi's responsible decision-support ownership.
+The [inventory methodology research brief](../research/inventory-risk-methodology.md) identified candidate methods and unresolved timing and evaluation questions. This record defines the group-approved initial method: **origin reorder-threshold exposure**. It supplies a common downstream interpretation of Chathuranga's forecasts while preserving Didilani's inventory-analysis ownership and Dewmi's responsible decision-support ownership.
 
 The [dataset contract](../dataset.md) documents publisher-simulated SKU-warehouse records downloaded from Kaggle, one observed year, a zero-variance `Stockout_Flag`, and sparse `Order_Quantity`. These data cannot validate actual stockout prediction or establish an optimal ordering policy. The method below produces constructed scenario evidence, not actual shortage ground truth or a reconstruction of realised inventory evolution.
 
@@ -21,7 +33,7 @@ The source `Reorder_Point` provides a documented policy reference. Comparing ori
 
 Separating cases already at/below the threshold from new forecast crossings makes the information supplied by the forecast visible. Otherwise, states known at the origin could inflate retrospective agreement. A no-receipt scenario avoids silently treating recorded orders as received stock when their timing and operational meaning remain unresolved.
 
-The repository's [literature review](../literature/literature-review.md) motivates evaluating the forecasting-to-inventory relationship. It does not validate this particular proxy. Evidence from the eventual evaluation must remain conditional on the simulated data and the assumptions below.
+The repository's [literature review](../literature/literature-review.md) motivates evaluating the forecasting-to-inventory relationship. It does not validate this particular proxy. The [retained constructed-origin evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) remains conditional on the simulated data and the assumptions below.
 
 ## Alternatives considered
 
@@ -36,9 +48,9 @@ The repository's [literature review](../literature/literature-review.md) motivat
 
 ## Impact
 
-If approved, future inventory implementation will use a common three-state interpretation and preserve origin, horizon, and warehouse identity. Retrospective forecast comparison will focus on initially above-threshold cases. This record aligns the research design, inventory workflow, member overview, and shared timing contract.
+The implemented inventory utilities use a common three-state interpretation and preserve origin, horizon, and warehouse identity. Retrospective forecast comparison will focus on initially above-threshold cases. This record aligns the research design, inventory workflow, member overview, and shared timing contract.
 
-DR-002's grain, DR-004's horizons, DR-005's validation boundaries, DR-006's WAPE-based forecasting selection, and DR-008's direct cumulative targets remain unchanged. This record adds no implementation, experiment results, final uncertainty method, or human-review rule.
+DR-002's grain, DR-004's horizons, DR-005's validation boundaries, DR-006's WAPE-based forecasting selection, and DR-008's direct cumulative targets remain unchanged. Recording approval changes no implementation formulas, experiment results, uncertainty method or human-review rule.
 
 ## Decision
 
@@ -85,7 +97,7 @@ Missing or invalid information required for an output makes that output unavaila
 
 ### 4. Horizons and supplier lead time
 
-The original proposed inventory scope covers 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand. Current forecasting DR-004 / DR-008 includes an approved upstream 28-day cumulative input; that inventory extension is not approved by this record. Do not combine horizons into one score or treat the cumulative totals as daily forecast paths.
+The approved inventory scope covers 1-day next-day demand, 7-day cumulative demand, and 14-day cumulative demand. Current forecasting DR-004 / DR-008 includes an approved upstream 28-day cumulative input; that inventory extension is not approved by this record. Do not combine horizons into one score or treat the cumulative totals as daily forecast paths.
 
 Retain origin-available `Supplier_Lead_Time_Days` as contextual evidence only. Describe each horizon as shorter than, equal to, or longer than that lead time. Do not round lead time to a horizon, interpolate a daily path, or claim an exact lead-time-demand forecast. Unavailable lead-time context must be marked explicitly; it is not a term in the exposure formula.
 
@@ -93,7 +105,7 @@ Different exposure states across different horizons are not automatically confli
 
 ### 5. Roles of source variables and replenishment scope
 
-| Input | Proposed role / boundary |
+| Input | Role / boundary |
 |---|---|
 | Project model forecast | Demand input from Chathuranga's component, with model provenance and horizon meaning retained. |
 | `Inventory_Level`, `Reorder_Point` | Origin snapshot and fixed policy reference for the scenario. |
@@ -183,9 +195,9 @@ No new low/medium/high categories, lead-time interpolation, model-selection obje
 
 ## Consequences
 
-If approved, this record will provide the group with a common, explicit inventory-pressure interpretation for later implementation and evaluation. The primary comparison separates forecast-added crossing evidence from states already known at the origin. The fixed-reference, no-receipt assumptions make the calculation inspectable but restrict its operational meaning, particularly over longer horizons where real receipts or policy changes could matter.
+This record provides the group with a common, explicit inventory-pressure interpretation used by the implemented utilities and retained constructed-scenario evaluation. The primary comparison separates forecast-added crossing evidence from states already known at the origin. The fixed-reference, no-receipt assumptions make the calculation inspectable but restrict its operational meaning, particularly over longer horizons where real receipts or policy changes could matter.
 
-Results may describe agreement with the constructed retrospective proxy, missed crossings, false alerts and boundary behaviour within the simulated dataset. They cannot establish actual stockout accuracy, optimal purchasing, reduced cost, improved service level or improved managerial decisions. Event rarity, the one-year history and dependent time-series observations limit stronger inference. Shared implementation must be separately authorised after its remaining input-contract decisions are resolved and must be tested without treating this documentation change as an empirical result.
+Results may describe agreement with the constructed retrospective proxy, missed crossings, false alerts and boundary behaviour within the simulated dataset. They cannot establish actual stockout accuracy, optimal purchasing, reduced cost, improved service level or improved managerial decisions. Event rarity, the one-year history and dependent time-series observations limit stronger inference. The existing implementation and human-run evidence remain separate from acceptance of a final consumer interface. Further research execution requires its own specific human authorisation; this approval record is not new empirical evidence.
 
 ## 28-day compatibility review — downstream approval pending
 
@@ -194,8 +206,7 @@ proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended
 scenario may be more sensitive to omitted receipts and other adjustments.
-**28-day downstream use requires component-owner/human approval.** DR-012 remains
-proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+**28-day downstream use requires component-owner/human approval.** The 1/7/14-day method has group approval; this does not approve h=28. Origin snapshot semantics, reorder-threshold meaning,
 lead-time context, formulas and metric denominators remain unchanged. Lead times
 are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
 or invent replenishment quantities or review thresholds. Cross-component

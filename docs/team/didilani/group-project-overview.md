@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../../workflows/shared-data-foundation.md), [storage and retention](../../artifact-storage-policy.md), [applied MLOps](../../workflows/applied-mlops.md), [research reporting](../../../reports/README.md), and [continuous progress log](../../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../../forecasting-final-evaluation.md#9-limitations).
+> **Current alignment — 23 October 2026, Issue #177:** [DR-012](../../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records group approval of the 1/7/14-day fixed-origin/no-receipt method, reported by Chathuranga for the 12 October WhatsApp discussion. Implementation and constructed-scenario evidence exist. Unknown source timing, consumer acceptance and additional 28-day/replenishment/uncertainty/review methods remain separate; this update authorises no research execution.
 
 ## Member details
 
@@ -16,7 +16,7 @@ Repository-wide authorities: [data lifecycle](../../workflows/shared-data-founda
 
 This component receives Chathuranga's demand forecast and translates it into inventory-risk and replenishment information using the inventory variables available in the selected dataset.
 
-[DR-012](../../decisions/DR-012-inventory-risk-replenishment-methodology.md) proposes the initial method as **origin reorder-threshold exposure** under a fixed-origin, no-receipt scenario. Group approval is pending; implementation remains separate work.
+[DR-012](../../decisions/DR-012-inventory-risk-replenishment-methodology.md) defines **origin reorder-threshold exposure** under a fixed-origin/no-receipt scenario. Mapping and evaluation utilities exist. Chathuranga executed the retained evaluation on 23 October; Didilani retains methodology, interpretation and analytical visual responsibility.
 
 Didilani does **not** forecast demand a second time.
 
@@ -45,7 +45,7 @@ Primary inputs include:
 
 ## Responsibilities
 
-1. Following group approval, implement and evaluate DR-012's documented origin reorder-threshold exposure method in separately authorised work.
+1. Review DR-012's implemented exposure method and retained constructed-scenario evaluation; any additional research is separately authorised and human-executed.
 2. Compare forecast demand with relevant inventory state and policy variables.
 3. Distinguish already-at/below-threshold states from forecast threshold crossings and no forecast crossings.
 4. Keep excess/overstock evaluation provisional until a defensible method is separately approved.
@@ -106,7 +106,7 @@ If a numerical replenishment method is later justified and approved, any quantit
 
 This is not a dashboard-only contribution. The visual layer communicates a substantive inventory-risk and replenishment-analysis method.
 
-Didilani retains inventory-risk visual analysis, documentation, interpretation and conclusions. Tinosh implements approved reusable charts, rendering and prototype visuals after the relevant analytical requirements are defined and reviewed. Existing Issue #71 work remains with Didilani; this ownership split does not reassign that Issue.
+Didilani retains inventory-risk visual analysis, documentation, interpretation and conclusions. Tinosh implements approved reusable charts, rendering and prototype visuals after the relevant analytical requirements are defined and reviewed. Closed Issues #71/#85 are historical context, not current assignments. Follow-up work is scoped from the refined readiness baseline under #177.
 
 ## 28-day compatibility review — downstream approval pending
 
@@ -115,8 +115,7 @@ proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended
 scenario may be more sensitive to omitted receipts and other adjustments.
-**28-day downstream use requires component-owner/human approval.** DR-012 remains
-proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+**28-day downstream use requires component-owner/human approval.** DR-012 approval covers 1/7/14-day scenario exposure; it does not extend to h=28. Origin snapshot semantics, reorder-threshold meaning,
 lead-time context, formulas and metric denominators remain unchanged. Lead times
 are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
 or invent replenishment quantities or review thresholds. If/when the relevant

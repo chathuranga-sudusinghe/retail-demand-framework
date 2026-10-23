@@ -93,7 +93,7 @@ def test_evaluation_reports_documented_counts_rates_and_margin_evidence():
     assert cases.loc["KNOWN", "comparison_case"] == "origin_known_at_or_below_threshold"
     assert cases.loc["TP", "predicted_margin"] == 0
     assert cases.loc["TP", "retrospective_margin"] == 0
-    assert cases.loc["TP", "methodology_status"] == "proposed_for_group_approval"
+    assert cases.loc["TP", "methodology_status"] == "group_approved"
 
 
 def test_28_day_keeps_origin_evidence_but_does_not_calculate_downstream_crossing():
@@ -214,7 +214,7 @@ def test_source_forecast_and_stockout_flag_do_not_change_evaluation():
 
 
 @pytest.mark.parametrize("horizon", [1, 7, 14])
-def test_documented_proposed_horizons_are_kept_separate(horizon):
+def test_documented_approved_horizons_are_kept_separate(horizon):
     end_date = pd.Timestamp("2024-01-01") + pd.Timedelta(days=horizon)
     start_date = pd.Timestamp("2024-01-02")
     result = evaluate_inventory_risk(
@@ -234,7 +234,7 @@ def test_documented_proposed_horizons_are_kept_separate(horizon):
     case = result["cases"].iloc[0]
 
     assert case["confusion_cell"] == "TP"
-    assert case["methodology_status"] == "proposed_for_group_approval"
+    assert case["methodology_status"] == "group_approved"
 
 
 def assert_invalid_case_is_not_scored(result, reason):

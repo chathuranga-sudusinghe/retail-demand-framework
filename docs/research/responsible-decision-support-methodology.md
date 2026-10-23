@@ -4,6 +4,8 @@ Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundatio
 
 > **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
 
+**Current delivery alignment — 23 October 2026, Issue #177:** Record implementation (#73), 20 inventory-linked records and all 160 record-level checks are delivered; Chathuranga is the recorded assessor. [Evaluation](responsible-decision-support-evaluation.md) distinguishes these findings from unperformed prototype visibility/readability checks. [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records the separately reported group method approval. No uncertainty, replenishment or automatic review rule is supplied by that approval.
+
 ## 1. Problem Definition
 
 This project combines demand forecasting with inventory-risk and replenishment analysis to support retail decision-making. However, a forecast or replenishment recommendation should not be presented to a manager as an automatic or unquestionable decision. Forecasts can contain errors and uncertainty, while inventory-risk outputs also depend on the available data, assumptions, and methods used in the project.
@@ -47,7 +49,7 @@ The decision-support view needs to give managers enough information to understan
 | `management_consideration` | Provides information for managerial consideration without presenting it as an automatic instruction. |
 | `human_review_flag` | Indicates whether explicit human review is required under an approved review method. |
 
-These fields remain candidates because the final outputs from the forecasting and inventory-risk components are still being developed. A field should only be included when the required information is actually available from the upstream analysis. For example, the system should not display a replenishment quantity or uncertainty value if a defensible value has not been produced.
+These field names remain candidates for the final shared interface; forecasting outputs, inventory scenario evidence and populated internal records already exist. A field should only be included when the required information is actually available from the upstream analysis. For example, the system should not display a replenishment quantity or uncertainty value if a defensible value has not been produced.
 
 The final field names, formats, and cross-component schema therefore remain subject to group agreement.
 
@@ -137,7 +139,7 @@ Some parts of the decision-support methodology still require agreement from the 
 
 ## 11. Current Decision Record and Provisional Contents
 
-[DR-011](../decisions/DR-011-decision-support-output-structure.md) defines the management-facing output structure and is accepted for structure only. Fields depending on inventory-risk, replenishment, forecasting uncertainty, recommendation rules or human-review thresholds remain provisional until their related methodology decisions are approved. This structural acceptance does not approve substantive downstream logic. No thresholds should be invented; unresolved thresholds remain open.
+[DR-011](../decisions/DR-011-decision-support-output-structure.md) defines the management-facing output structure and is accepted for structure only. DR-012 scenario exposure has separate group approval and retained evidence. Numerical replenishment, forecasting uncertainty, recommendation rules and human-review thresholds remain provisional; final interchange/presentation acceptance is separate from available internal records. This structural acceptance does not approve substantive downstream logic. No thresholds should be invented; unresolved thresholds remain open.
 
 ## Revised forecasting interface and component review
 
@@ -146,7 +148,7 @@ Cumulative quantities do not imply a daily forecast path. Preserve origin and ho
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate
 28-day inventory states, replenishment recommendations or human-review triggers
-by silently extending another component's proposed method. Unavailable/unapproved
+by silently extending another component's approved 1/7/14-day method. Unavailable/unapproved
 outputs need an explicit reason. No uncertainty method, threshold or decision rule
 is approved by this interface update. Ownership and existing responsible-use
 principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.
@@ -210,7 +212,7 @@ The results of the responsible decision-support evaluation should be recorded in
 
 Where a check is marked as `not met` or `not assessable`, a short reason should also be included. This provides evidence for the evaluation and makes it possible to identify which parts of the decision-support output need further improvement.
 
-The evaluation can then report the number or proportion of records meeting each transparency check. These results describe how consistently the prototype presents the required information. They should not be interpreted as evidence that the system improves managerial trust, business performance or decision quality, as those outcomes would require a separate form of evaluation.
+The evaluation can then report the number or proportion of records meeting each transparency check. Record-level results describe the contents of the assessed records; visibility and readability in a rendered prototype require a separate presentation assessment. They should not be interpreted as evidence that the system improves managerial trust, business performance or decision quality, as those outcomes would require a separate form of evaluation.
 
 ### 12.6 Interpretation of the Evaluation
 
@@ -242,7 +244,7 @@ This methodology does not recalculate forecasting outputs or redefine the invent
 
 ### 12.9 Handoff and Implementation Boundary
 
-This research note defines the responsible decision-support meaning, evaluation criteria and human-review requirements. The next stage is Issue #73, where responsible decision-support records can be created and tested against these requirements.
+This research note defines responsible decision-support meaning, evaluation criteria and human-review requirements. Issue #73 delivered record implementation; #168 delivered the inventory-linked records and completed record-level assessment. The next stage is review of the actual rendered presentation with Tinosh, scoped from the [#177 readiness handoff](../integration-contract-readiness.md#13-remaining-work-handoff-after-issue-177).
 
 The implementation should preserve the transparency checks, missing-information states, human-review reasons, assumptions, limitations and source distinctions defined here. Any information that depends on an upstream component should remain identifiable rather than being replaced with an assumed value.
 

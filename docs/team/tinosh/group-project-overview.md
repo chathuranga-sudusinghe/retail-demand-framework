@@ -23,6 +23,10 @@ Tinosh makes the reviewed forecasting, inventory-risk and responsible decision-s
 
 The final schemas remain open. A 28-day forecast can be represented without implying approval for 28-day inventory interpretation or human-review triggers.
 
+## Current starting point
+
+The forecast API, retained-export inventory mapping and prospective record bridge are merged. [Issue #101](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/101) delivered acceptance scenarios, not completed cross-component acceptance. Tinosh's next work is reviewed consumer handoff, an agreed prototype slice, executable integration checks and approved visual rendering. The live inference request format and fixed-origin research export are distinct contracts; do not imply that stored scenario results update when request history changes. See [integration readiness](../../integration-contract-readiness.md).
+
 ## Responsibilities
 
 1. Implement agreed cross-component adapters and interchange contracts without changing the producing component's calculations.

@@ -2,7 +2,7 @@
 
 Repository-wide authorities: [data lifecycle](../../workflows/shared-data-foundation.md), [storage and retention](../../artifact-storage-policy.md), [applied MLOps](../../workflows/applied-mlops.md), [research reporting](../../../reports/README.md), and [continuous progress log](../../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-011 remains accepted for structure only. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../../forecasting-final-evaluation.md#9-limitations).
+> **Current alignment — 23 October 2026, Issue #177:** DR-011 retains structure-only acceptance. [DR-012](../../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records the separately reported group approval of 1/7/14-day scenario exposure. Records and record-level assessment are delivered; rendered presentation, consumer acceptance, uncertainty, replenishment and review rules remain separate. This update authorises no research execution.
 
 ## Member details
 
@@ -91,6 +91,10 @@ Dewmi does not calculate the primary demand forecast or the inventory replenishm
 Her component consumes the outputs of Chathuranga and Didilani and implements the responsible-use and decision-support layer of the integrated data-science product. This contribution is therefore not an ethics essay attached after modelling.
 
 
+## Current delivery and remaining review
+
+Twenty inventory-linked records and all 160 record-level assessment outcomes are available in the [evidence index](../../../reports/README.md#inventory-linked-records). Chathuranga is the recorded executor/assessor; this does not transfer Dewmi's component responsibility. Dewmi reviews downstream meaning and the rendered presentation with Tinosh. Do not repeat unchanged record checks as a substitute for prototype acceptance.
+
 ## Decision-support output alignment
 
 The responsible decision-support layer will keep the forecasting identity and timing information visible when it combines outputs from the different project components. This includes `SKU_ID`, `Warehouse_ID`, the forecast origin, and the forecast horizon.
@@ -104,7 +108,7 @@ The approved upstream forecast-interface horizons are:
 
 The 7-day, 14-day and 28-day forecasts represent cumulative demand over those periods; 28 days is four-week / approximately monthly planning, not an exact calendar month. This information should remain clear when forecasts are combined with inventory-risk and replenishment information.
 
-DR-011 defines the overall structure for this management-facing output. Details that depend on forecasting uncertainty, inventory-risk methods, replenishment rules, or human-review thresholds will remain provisional until the relevant group decisions are approved.
+DR-011 defines the overall structure for this management-facing output. Details that depend on forecasting uncertainty, numerical replenishment or human-review thresholds remain provisional. Approval of the DR-012 exposure method does not settle those separate methods or final presentation acceptance.
 
 ## Revised forecasting interface and component review
 
@@ -113,7 +117,7 @@ Cumulative 7/14/28-day quantities do not imply a daily forecast path. Preserve o
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate
 28-day inventory states, replenishment recommendations or human-review triggers
-by silently extending another component's proposed method. Unavailable/unapproved
+by silently extending another component's approved 1/7/14-day method. Unavailable/unapproved
 outputs need an explicit reason. No uncertainty method, threshold or decision rule
 is approved by this interface update. Ownership and existing responsible-use
 principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.

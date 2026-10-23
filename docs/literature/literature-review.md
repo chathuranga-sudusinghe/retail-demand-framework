@@ -128,7 +128,7 @@ forecast demand
 
 Because `Stockout_Flag` has no positive examples, the project cannot empirically learn or validate a stockout classifier from this dataset. A more defensible output is therefore a **stockout-pressure**, **shortage-risk**, **overstock-pressure**, or **replenishment-risk** indicator derived from documented relationships among forecast demand and inventory-state variables.
 
-The exact formula, threshold levels, and replenishment quantity rule remain open research decisions. Literature can inform them, but the final implementation must also be tested against the empirical ranges and relationships in this specific dataset.
+The adopted [DR-012 scenario method](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) now defines the buffer, crossing rule and metric denominators; group approval is recorded and constructed-scenario results are retained. The indicator alternatives above are not all approved outputs. Numerical risk bands, overstock and replenishment quantities remain separate decisions. Literature motivation does not establish operational effectiveness.
 
 ## 7. Responsible and explainable decision support
 
@@ -193,7 +193,7 @@ The accepted forecasting feature/preprocessing contract, direct targets, horizon
 
 Forecasting validation and final evaluation are complete as confirmed by Chathuranga. [Final results](../forecasting-final-evaluation.md) owns interpretation, unchanged producer mapping and prior-exposure/simulation limitations. Literature motivation is distinct from evidence that a method worked on this dataset; simpler supportive/baseline performance remains visible.
 
-Still open: inventory-risk/replenishment approvals and origin semantics, uncertainty, human-review logic, 28-day downstream use and final prospective/interchange/API contracts. [Integration readiness](../integration-contract-readiness.md) records their existing owners and boundaries. This literature alignment settles none of those methods.
+DR-012 group approval and implemented scenario evaluation are recorded separately from this synthesis. Still open: source origin semantics and consumer acceptance, numerical replenishment/overstock, uncertainty, human-review logic, 28-day inventory use and final cross-component/API contracts. [Integration readiness](../integration-contract-readiness.md) records their existing owners and boundaries. This literature alignment settles none of those methods.
 
 ## 11. References
 

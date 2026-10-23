@@ -157,16 +157,18 @@ These criteria are used to evaluate how clearly the prototype communicates its d
 
 ## Dependency Status
 
+**Current alignment — 23 October 2026, Issue #177:** The table reflects delivered implementation and evidence. DR-011 remains accepted for structure only; the separate [DR-012 approval record](DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) covers 1/7/14-day scenario exposure. Dated alternatives/rationale above retain their original decision context.
+
 Some parts of the output structure are already supported by approved project decisions, while others still depend on work being completed elsewhere in the project.
 
 | Field group | Source / owner | Current status |
 |---|---|---|
 | Identity and forecast horizon | Forecasting | Structure approved; upstream 1/7/14/28 horizons human-approved, downstream 28-day use requires separate component-owner/human approval |
-| Forecast output | Forecasting | Approved in principle, subject to implementation |
-| Forecast-error / uncertainty context | Forecasting | Pending further forecasting decision |
-| Inventory-risk information | Inventory-risk / replenishment | Pending Issue #51 / DR-012 |
-| Replenishment information | Inventory-risk / replenishment | Pending Issue #51 / DR-012 |
-| Evidence and explanation | Responsible decision support | Structure approved; content remains provisional |
+| Forecast output | Forecasting | Completed research, retained export and request-time inference API implemented; final consumer acceptance remains separate |
+| Forecast-error / uncertainty context | Forecasting | Retrospective error evidence exists; prospective uncertainty remains unavailable without an agreed method |
+| Inventory-risk information | Inventory-risk / replenishment | DR-012 method approval recorded; constructed-scenario results and internal record bridge available; source timing and final acceptance separate |
+| Replenishment information | Inventory-risk / replenishment | Numerical quantity unavailable; DR-012 exposure is replenishment-related evidence, not an order calculation |
+| Evidence and explanation | Responsible decision support | Twenty inventory-linked records and 160 record checks published; final interpretation/rendered acceptance remains separate |
 | Assumptions and limitations | Responsible decision support | Approved for inclusion |
 | Management consideration | Responsible decision support | Structure approved; wording remains provisional |
 | Human-review information | Responsible decision support | Structure approved; thresholds and rules remain pending |
@@ -209,7 +211,7 @@ horizon in explanations; 28 days is
 four weeks / approximately monthly planning, not an exact calendar month.
 **28-day downstream use requires component-owner/human approval.** Do not populate
 28-day inventory states, replenishment recommendations or human-review triggers
-by silently extending another component's proposed method. Unavailable/unapproved
+by silently extending another component's approved 1/7/14-day method. Unavailable/unapproved
 outputs need an explicit reason. No uncertainty method, threshold or decision rule
 is approved by this interface update. Ownership and existing responsible-use
 principles remain unchanged. Where reporting uses results from the revised final evaluation interval, disclose its prior validation exposure in accordance with DR-005.

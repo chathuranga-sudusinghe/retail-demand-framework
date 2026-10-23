@@ -2,9 +2,9 @@
 
 Repository-wide authorities: [data lifecycle](../workflows/shared-data-foundation.md), [storage and retention](../artifact-storage-policy.md), [applied MLOps](../workflows/applied-mlops.md), [research reporting](../../reports/README.md), and [continuous progress log](../research-progress.md). These connect existing scientific/component contracts without replacing them.
 
-> **Documentation alignment — 2026-09-29:** DR-012 remains Proposed for group approval. Upstream direct 1/7/14/28-day forecasting and its [feature contract](../forecasting-feature-engineering.md) are human-approved. Downstream 28-day use and substantive inventory/replenishment/uncertainty/review rules require their separate component-member/human approvals. No experiment execution is authorised. See [final results and limitations](../forecasting-final-evaluation.md#9-limitations).
+> **Current alignment — 23 October 2026, Issue #177:** [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records group approval of the 1/7/14-day fixed-origin/no-receipt method, reported by Chathuranga for the 12 October WhatsApp discussion. Implementation and constructed-scenario evidence exist. Unknown source timing, consumer acceptance and additional 28-day/replenishment/uncertainty/review methods remain separate; this update authorises no research execution.
 
-**Status:** Working research brief; earlier candidate discussion is provenance, not an approved method. [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md) is the current proposed origin reorder-threshold exposure direction, still awaiting group approval.
+**Status:** Historical research brief and candidate discussion. [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) is the current group-approved origin reorder-threshold exposure method; the [retained evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) supplies constructed-scenario results. Candidate methods below are not new approvals.
 **Owner:** Didilani
 **Related work:** Issue #22; [inventory-risk workflow](../workflows/inventory-risk-analysis.md); [dataset contract](../dataset.md); [research design](../research-design.md); [project boundaries](../project-boundaries.md).
 
@@ -40,9 +40,9 @@ The selected source is the published High-Dimensional Supply Chain Inventory Dat
 | Variable | Documented meaning / potential role | Status or caution |
 |---|---|---|
 | `Date`, `SKU_ID`, `Warehouse_ID` | Identify the daily SKU-warehouse record and preserve the join grain. | **Approved grain** under DR-002. A forecast join must preserve warehouse identity. |
-| Chathuranga's forecast output | Future demand evidence at the forecast origin and SKU–warehouse grain. The original downstream scope is next-day and cumulative 7- and 14-day demand; the approved upstream forecasting design includes a 28-day cumulative input. | Forecasting decisions under DR-004 and DR-008 and the cross-component contract remain separate; schema and exact period-date alignment remain open in the shared-data workflow. Downstream 28-day use requires separate component-owner/human approval. |
+| Chathuranga's forecast output | Future demand evidence at the forecast origin and SKU–warehouse grain. The original downstream scope is next-day and cumulative 7- and 14-day demand; the approved upstream forecasting design includes a 28-day cumulative input. | The retained-export mapping implements exact origin and inclusive period-date alignment; final consumer/API acceptance remains separate from DR-004/DR-008 forecasting decisions. Downstream 28-day use requires separate component-owner/human approval. |
 | `Inventory_Level` | Simulated stock on hand for the recorded warehouse observation. | Candidate inventory-state input. Do not assume a future value is available at the forecast origin. |
-| `Reorder_Point` | Simulated policy threshold at which replenishment should be considered. | Candidate policy evidence; not a stockout label and not yet a project risk threshold. |
+| `Reorder_Point` | Simulated policy threshold at which replenishment should be considered. | Fixed policy reference in the approved DR-012 scenario; not a stockout label or evidence of an optimal policy. |
 | `Supplier_Lead_Time_Days` | Simulated expected days between ordering and receipt; verified range is 2–14 days. | Candidate supply-exposure evidence. How this range maps to the revised 1/7/14/28-day forecast inputs is not approved; 28 days exceeds the verified lead-time range and requires separate downstream review. |
 | `Order_Quantity` | Recorded replenishment quantity; non-zero in 5,027 of 91,250 records. | Sparse historical activity. Its meaning relative to forecast origin and whether it is on-order, placed, or received inventory is not defined sufficiently for direct target use. |
 | `Units_Sold` | Historical observed demand; the approved forecasting target. | Use as demand history through the forecasting output contract, not as a future known value. |
@@ -53,7 +53,7 @@ The forecasting component's currently approved targets are next-day demand and d
 
 ## 4. Earlier candidate inventory-risk / replenishment methods — historical
 
-This section preserves the pre-DR-012 candidate discussion, including references to the workflow as it existed then. The current workflow documents proposed DR-012 exposure rather than this earlier catalogue. These conceptual prompts are not current executable formulas, ordering rules or approval for downstream 28-day use.
+This section preserves the pre-DR-012 candidate discussion, including references to the workflow as it existed then. The current workflow documents DR-012 scenario exposure rather than this earlier catalogue. These conceptual prompts are not current executable formulas, ordering rules or approval for downstream 28-day use.
 
 The inventory workflow explicitly lists candidate evidence: forecast demand, inventory level, an inventory/forecast gap, reorder point, supplier lead time, recent/available order quantity, and forecast error or uncertainty where available. It also lists rule-based, scoring, or another justified analytical method as possibilities. These are **candidates**, not approved definitions ([inventory-risk workflow](../workflows/inventory-risk-analysis.md)).
 
@@ -105,7 +105,7 @@ No new operational assumptions are adopted by this brief.
 
 ## 8. Earlier research direction and open integration questions
 
-**Historical candidate direction; current proposed method is DR-012:** Develop a transparent, SKU-warehouse-level inventory-pressure method that retains the approved forecasting grain, uses the selected model's forecast output as its forecast input, and relates that forecast to inventory state/policy and supplier lead-time context only after the timing contract is fixed. Begin by evaluating whether the documented reorder-point relationship provides a defensible baseline; then assess whether approved horizon-specific forecasts add useful shortage/excess evidence. Treat historical order quantities as sparse context rather than ground truth. Make any risk categories or replenishment recommendation conditional on explicit justification, sensitivity analysis, and an evaluation strategy that does not rely on `Stockout_Flag`.
+**Historical candidate direction; current method is DR-012:** Develop a transparent, SKU-warehouse-level inventory-pressure method that retains the approved forecasting grain, uses the selected model's forecast output as its forecast input, and relates that forecast to inventory state/policy and supplier lead-time context only after the timing contract is fixed. Begin by evaluating whether the documented reorder-point relationship provides a defensible baseline; then assess whether approved horizon-specific forecasts add useful shortage/excess evidence. Treat historical order quantities as sparse context rather than ground truth. Make any risk categories or replenishment recommendation conditional on explicit justification, sensitivity analysis, and an evaluation strategy that does not rely on `Stockout_Flag`.
 
 This direction is consistent with the project's stated need for transparent forecast-to-inventory decision support and with research that treats forecasting and inventory performance as connected problems. It does **not** choose the calculation, horizon-to-lead-time mapping, risk labels, thresholds, or replenishment rule. Those remain research decisions for team review and, where needed, a separate accepted decision record before implementation.
 
@@ -133,8 +133,7 @@ proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
 not validate the longer no-receipt scenario or approve its use. The extended
 scenario may be more sensitive to omitted receipts and other adjustments.
-**28-day downstream use requires component-owner/human approval.** DR-012 remains
-proposed for group approval. Origin snapshot semantics, reorder-threshold meaning,
+**28-day downstream use requires component-owner/human approval.** DR-012 approval covers 1/7/14-day scenario exposure; it does not extend to h=28. Origin snapshot semantics, reorder-threshold meaning,
 lead-time context, formulas and metric denominators remain unchanged. Lead times
 are 2–14 days; do not reinterpret 28 days as lead time, interpolate daily paths,
 or invent replenishment quantities or review thresholds. If/when the relevant
