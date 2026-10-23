@@ -4,6 +4,8 @@
 >
 > This document prepares the input-contract and evaluation decisions requested by [Issue #162](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/162). It records current evidence and proposes a reproducible protocol for later review. It does not approve DR-012, a final interchange schema, or any dataset-backed analysis.
 
+The remaining decisions are tracked under [Issue #164](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/164). Sections [4.1](#41-forecasting-side-mapping-proposal-for-issue-164) and [6.1](#61-validation-failure-and-unavailable-output-proposal) make the forecasting-side B5/B6 proposals concrete for joint review; they do not record an approved contract.
+
 ## 1. Purpose and status
 
 The purpose is to make the proposed forecast-to-inventory input mapping and any later retrospective evaluation reviewable before execution. The source of method definitions is [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md), which remains **Proposed for group approval**. The Issue #70 preparation and evaluation utilities implement that proposal as structured evidence; they do not turn it into an approved method or establish results from the supplied data.
@@ -77,6 +79,24 @@ The Issue #70 input format is an internal preparation format, not a final shared
 
 Any final field names, types, nesting, row-level provenance propagation, or status translation require review by the relevant producing and consuming component members. This table is a proposal, not the final forecast-to-inventory schema.
 
+### 4.1 Forecasting-side mapping proposal for Issue #164
+
+**Status:** Proposed for human review on 23 October 2026. No mapping approval, export acceptance, implementation readiness or execution authorization is recorded by this section. The unresolved entries above describe the current approval state; the translations below are candidates for review only.
+
+**Evidence baseline:** Repository revision `662a3f678c0e6590bd93817c2f191787adf3f186`; [forecast contract §§5–6.1](../forecast-api-contract.md#5-forecast-meaning), [export source](../../src/forecasting/export.py), and [internal preparation source](../../src/inventory_risk/input_preparation.py). This proposal was prepared from tracked documentation and code, without inspecting or re-verifying local data, forecasts or model payloads.
+
+| Source → proposed internal field | Type and missing-value rule | Proposed translation / validation | Required human review |
+|---|---|---|---|
+| Forecast-row `SKU_ID`, `Warehouse_ID`, `forecast_origin`, `horizon`, `target_start_date`, `target_end_date`, `prediction`, `model`, `configuration_id` → same names | Identity/model/configuration: nonblank strings; dates: ISO calendar dates; horizon: integer 1/7/14/28, excluding booleans; prediction: finite JSON number, excluding booleans. Required by the source contract; no substituted values. | Preserve source values and unit `units`; check start = origin + 1 and end = origin + horizon, inclusive, and retain the frozen producer/configuration for each horizon. No rounding, clipping, daily disaggregation or source `Demand_Forecast` substitution. This restates forecast meaning; it does not establish inventory availability or approve h=28 downstream use. | Chathuranga: forecast meaning; Didilani: inventory interpretation; Tinosh: technical representation. |
+| Forecast-row `forecast_status` → `prediction_status` | Source and destination strings; proposed destination value `available` only for a source record with `forecast_status=available` that passes source-contract validation. Missing or unsupported source status is not defaulted. | Propose this explicit translation while retaining original `forecast_status` and the mapping reference. `prediction_status=available` means the source forecast is available, not that inventory inputs are eligible, the snapshot is known or exposure can be computed. Other states need separate reviewed treatment. | Chathuranga and Didilani: status meaning; Tinosh: validation and representation. |
+| Export-level `source.run_id` → internal row `run_id`; `source.evaluation_stage` → internal row `evaluation_stage` | Nonblank strings required by the current internal function; no null or invented identifiers. | Propose copying the containing export's exact values into each derived row, retaining the original export-level `source` and a traceable reference to the export/version/hash. This is explicit propagation, not independent row-level source evidence. Missing or inconsistent provenance fails validation; do not borrow it from another export or infer it from `producer_status`. | Chathuranga and Didilani: provenance meaning; Tinosh: parent-export linkage and representation. |
+| Absent export `evidence_role` → required internal `evidence_role` | The current function requires a nonblank string; neither an omitted column nor a blank/null placeholder satisfies that requirement. | Leave the mapping unresolved. Do not infer `primary` from `designated_producer`, model family or source stage. A reviewed source-backed definition, or separately approved internal-contract change, is needed before preparing these records. | Chathuranga: evidence-role definition; Didilani and Tinosh: downstream compatibility. |
+| Absent export `eligibility_status` → internal `eligibility_status` | No default is proposed. The current function accepts only the string `eligible` for forecast availability; missing or other values make forecast-dependent output unavailable. | Leave the eligibility definition unresolved. Do not create `eligible` from `forecast_status`, `prediction_status` or `producer_status`. Any later eligibility rule must have its own evidence, scope and joint review. | Chathuranga and Didilani: eligibility meaning; Tinosh: representation. |
+
+**Current implementation consequence:** An export row cannot be passed directly to `prepare_inventory_risk_inputs`. In particular, absent `evidence_role` is a missing-required-column error; an empty placeholder is also rejected. If the structural requirements are otherwise satisfied, missing `prediction_status` or `eligibility_status` retains the row but makes forecast-dependent output unavailable with `forecast_prediction_status_not_provided` or `forecast_eligibility_status_not_provided`. The status translation alone does not resolve B6. Retrospective `observed_target` / `target_status` remain separate from this prospective mapping.
+
+For each proposed translation, record the approving or revising humans, review date/reference and accepted revision under #164 before describing it as frozen. Chathuranga reviews forecast meaning, Didilani reviews inventory interpretation, and Tinosh reviews technical representation; Dewmi reviews any mapping into decision-support unavailable states. Snapshot timing, `Order_Quantity` semantics, DR-012, h=28 downstream use and exact-export producer/consumer acceptance remain separate gates.
+
 ## 5. Origin inventory snapshot gate
 
 `Inventory_Level` and `Reorder_Point` are present in the validated daily dataset, but the available source documentation does not establish that their values were available at the moment the forecast was issued. The export's forecast origin is `2024-12-02`; a dataset row with the same `Date` is not proof of origin-time availability.
@@ -102,6 +122,20 @@ The forecast contract preserves raw predictions without rounding, clipping, or f
 | Invalid identity, horizon, dates, status, or duplicate forecast key | Treat as a schema/contract failure according to the relevant source and preparation checks. Do not silently repair, round, or drop rows. Retain the source artifact and report the failure explicitly. |
 
 Chathuranga must review forecast meaning and source validity; Didilani must review the downstream disposition. No row/value repair rule is approved by this proposal.
+
+### 6.1 Validation-failure and unavailable-output proposal
+
+The following distinguishes source validity, structural preparation failures and retained unavailable rows. It supplements Section 6 for B5/B6 review; it does not define an error schema, HTTP response, adapter or approved handling policy.
+
+| Condition | Existing evidence / behaviour | Proposed consumer-visible disposition for review |
+|---|---|---|
+| Source export fails its contract, including malformed/non-finite prediction quantities | The forecast contract treats the source as unusable; export source rejects nonnumeric/non-finite quantities. | Report the source-validation failure with its artifact/version reference and diagnostic. Preserve the source; do not repair it or present a partial input as an accepted export. |
+| Missing required columns, invalid identity/provenance strings or duplicate forecast keys | Internal preparation raises `ValueError` before returning a prepared panel. | Report preparation failure for the input with the diagnostic and source reference. Do not claim successful preparation, silently drop rows, or fabricate normal per-row output from a failed call. |
+| Missing, malformed or non-finite prediction cell in an otherwise structurally valid internal panel | Preparation retains raw cells; unusable numeric values receive `forecast_missing_or_nonfinite`. Its numeric parser can accept numeric-looking strings internally; this does not establish source-contract validity. | Preserve the original value and diagnostic, and keep forecast-dependent inventory output unavailable. Do not use internal parsing as permission to accept malformed exported values. |
+| Finite negative prediction | Raw forecast values are not clipped. Preparation retains the row with `negative_forecast_handling_not_approved`. | Propose retaining the raw value/provenance and keeping dependent inventory output unavailable. Didilani's reviewed downstream handling decision remains required; no repair is proposed. |
+| Invalid horizon, target interval or prediction/eligibility status in an otherwise structurally valid internal panel | Preparation retains the row and records the applicable interval/status reason. | Keep the affected forecast-dependent output unavailable and expose the original reason. Do not translate a failure to zero, a negative exposure finding or silent exclusion. |
+
+Chathuranga reviews source validity and forecast meaning; Didilani reviews which inventory outputs remain unavailable; Tinosh reviews how failures and retained-row reasons reach the consumer. Retain original producer/preparation reasons until those humans agree a representation, with Dewmi reviewing any later decision-support mapping. No new reason codes or final error encoding are chosen here.
 
 ## 7. Retrospective evaluation protocol
 
@@ -222,6 +256,7 @@ Didilani retains responsibility for inventory-risk methodology and evaluation an
 - [ ] Define or explicitly leave unresolved `evidence_role`; do not infer it from `producer_status`.
 - [ ] Review meanings and mapping of forecast, prediction, eligibility, and target statuses.
 - [ ] Review the proposed handling of negative, missing, malformed, non-finite, and invalid forecast records.
+- [ ] Record the disposition and review reference for the concrete Issue #164 proposals in Sections 4.1 and 6.1, jointly with Didilani and Tinosh where applicable; keep unresolved definitions and separate acceptance gates explicit.
 
 ### Dewmi
 
@@ -243,6 +278,7 @@ Didilani retains responsibility for inventory-risk methodology and evaluation an
 
 ## References
 
+- [Issue #164 — inventory-risk scenario assumptions and forecast input mapping](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/164); current decision tracker, with substantive approvals still required.
 - [Issue #162 — Research: resolve inventory-risk input contracts and prepare the evaluation protocol](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/162)
 - [Issue #153 — decision-support transparency assessment](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/153); coordination only, with Dewmi retaining its assessment.
 - [Issue #101 — integration acceptance scenarios](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/101); Tinosh owns technical scenario work.
