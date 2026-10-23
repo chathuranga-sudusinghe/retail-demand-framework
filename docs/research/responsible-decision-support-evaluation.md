@@ -1,6 +1,6 @@
 # Responsible Decision-Support Evaluation
 
-**Status:** Chathuranga confirmed the record-level assessment of all 20 inventory-linked records and manually generated its summaries on 23 October 2026. All 160 outcomes, criterion counts and denominators are retained. Prototype/presentation checks and component handoff acceptance remain separate. Historical forecast-only F01–F03 outcomes remain unchanged. This document does not declare Issue #168 complete.
+**Status:** Chathuranga confirmed the record-level assessment of all 20 inventory-linked records and manually generated its summaries on 23 October 2026. All 160 outcomes, criterion counts and denominators are retained. He subsequently directed that the current assessment PR close both #164 and #168 as the existing implementation/evidence milestone, with remaining work reassessed in the next project-planning review. Prototype/presentation checks and component handoff acceptance remain separate. Historical forecast-only F01–F03 outcomes remain unchanged; issue closure does not declare the full project or every earlier acceptance item complete.
 
 ## 1. Purpose
 
@@ -305,7 +305,7 @@ Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh im
 | Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #168; Tinosh's integration under #86. |
 
 
-Issue #145 and Issue #153 are closed. Their completed preparation and historical references remain relevant, but the unfinished record-mapping, transparency assessment and presentation handoff are now tracked under Issue #168. Issue #168 remains open until the required human approvals, record-level evidence, assessment outcomes and handoff reviews are completed. A mapping-only or preparation-only PR must reference Issue #168 without closing it.
+**Issue closeout scope — instructed by Chathuranga on 23 October 2026:** The current assessment PR is to close both #164 and #168 after human review and merge. This replaces the earlier tracking direction to leave these issues open or close them separately. Closure covers the delivered forecast/input mapping, inventory scenario runner and human-run evidence, 20 populated inventory-linked records, 160 human-confirmed transparency outcomes, summaries and documented presentation requirements. It does not assert that every original acceptance item was satisfied, change DR-012 from Proposed, establish verified source timing, or claim completed prototype/presentation acceptance. The unresolved items in this table remain visible with their existing component responsibilities and integration references. Chathuranga plans a separate full local/GitHub project review to assess project-wide completeness, remaining work and any new issue scopes. Issues #145 and #153 remain historical references.
 
 
 ## 7. Technical Verification of Decision-Support Records
@@ -320,4 +320,4 @@ The implementation also requires explicit reasons when specified upstream inform
 
 **Interpretation:** These findings provide evidence that the record structure and its tested validation behaviour support responsible decision-support requirements. However, they do not demonstrate that populated records satisfy every transparency criterion or that the information is clearly presented to managers.
 
-The record-level evaluation outcomes therefore remain pending until applicable decision-support records and supporting upstream evidence have been reviewed. Prototype visibility, managerial interpretation, and final presentation acceptance also require separate assessment.
+The completed inventory-linked record-level outcomes and human-generated summary are recorded in Sections 3.1–3.2. Prototype visibility, managerial interpretation and final presentation acceptance require separate assessment; closing the current milestone issues does not represent those checks as completed.

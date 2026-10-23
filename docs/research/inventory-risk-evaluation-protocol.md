@@ -4,7 +4,9 @@
 >
 > This document prepares the input-contract and evaluation decisions requested by [Issue #162](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/162). It records current evidence and proposes a reproducible protocol for later review. It does not approve DR-012, a final interchange schema, or any dataset-backed analysis.
 
-The remaining decisions are tracked under [Issue #164](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/164). Sections [4.1](#41-implemented-forecast-to-inventory-mapping) and [6.1](#61-implemented-validation-and-error-behaviour) document the executable forecasting-side B5/B6 mapping and error handling. Section 12.1 gives the human-run preparation command; Section 12.2 gives the evaluation command implemented at Chathuranga's request in the working conversation on 23 October 2026.
+The original decision work is tracked under [Issue #164](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/164). Sections [4.1](#41-implemented-forecast-to-inventory-mapping) and [6.1](#61-implemented-validation-and-error-behaviour) document the executable forecasting-side B5/B6 mapping and error handling. Section 12.1 gives the human-run preparation command; Section 12.2 gives the evaluation command implemented at Chathuranga's request in the working conversation on 23 October 2026.
+
+**Issue closeout scope — instructed by Chathuranga on 23 October 2026:** The current decision-support assessment PR is to close both #164 and #168 as the delivered implementation/evidence milestone, following human review and merge. This is a change to issue tracking, not a claim that every original decision-freeze acceptance item is satisfied. The mapping, runner, constructed-scenario evaluation and downstream records/assessment are retained for review. DR-012's recorded Proposed status, unknown source timing, component acceptance and other unresolved decisions remain explicit; none becomes approved or completed through closure alone. A separate full local/GitHub project review will reassess the remaining work before any new issues are planned.
 
 ## 1. Purpose and status
 
