@@ -1,6 +1,6 @@
 # Responsible Decision-Support Evaluation
 
-**Status:** Draft for human review. Evaluation evidence is pending; this document does not complete Issue #168.
+**Status:** Chathuranga confirmed the record-level assessment of all 20 inventory-linked records and manually generated its summaries on 23 October 2026. All 160 outcomes, criterion counts and denominators are retained. Prototype/presentation checks and component handoff acceptance remain separate. Historical forecast-only F01–F03 outcomes remain unchanged. This document does not declare Issue #168 complete.
 
 ## 1. Purpose
 
@@ -31,7 +31,7 @@ For each applicable check, the assessment outcome is recorded as `met`, `not met
 
 ### 20-Row Forecast Evidence Selection
 
-This is a purposive, case-based selection of 20 forecasting rows from the retained Issue #132 fixed-origin export. Chathuranga's human-run preparation on 23 October 2026 populated all 20 `DecisionSupportRecord` instances. Chathuranga has since confirmed all eight record-level transparency outcomes for each of F01–F03; F04–F20 remain unassessed. The selection does not claim population-wide representativeness.
+This is a purposive, case-based selection of 20 forecasting rows from the retained Issue #132 fixed-origin export. Chathuranga's human-run preparation on 23 October 2026 populated all 20 `DecisionSupportRecord` instances. The historical forecast-only bundle has confirmed outcomes for F01–F03 and leaves F04–F20 unassessed. The separate inventory-linked bundle now has confirmed outcomes for all 20 records, recorded in Section 3.1. The selection does not claim population-wide representativeness.
 
 | Assessment IDs | SKU_ID | Warehouse_ID | Forecast origin | Horizons (days) | Rows |
 |---|---|---|---|---|---|
@@ -88,7 +88,7 @@ The historical roster verification found all 20 selected forecast keys in the 1,
 | F19 | SKU_20 | WH_5 | 2024-12-02 | 14 | `records[18]` |
 | F20 | SKU_20 | WH_5 | 2024-12-02 | 28 | `records[19]` |
 
-**Record linkage status:** All selected forecasting keys now have populated decision-support records. Numeric forecast horizons map to explicit string labels through Section 2.1, with target meaning retained in evidence. Inventory-risk and replenishment evidence remains unavailable where no matching source was supplied. The 28-day horizon remains restricted to forecast-transparency scope. Confirmed outcomes are currently limited to F01–F03, as recorded in Section 3.
+**Record linkage status:** All selected forecasting keys now have populated decision-support records. Numeric forecast horizons map to explicit string labels through Section 2.1, with target meaning retained in evidence. Inventory-risk and replenishment evidence remains unavailable where no matching source was supplied. The 28-day horizon remains restricted to forecast-transparency scope. Section 3 preserves the historical forecast-only F01–F03 findings; Section 3.1 records the separately confirmed assessment of all 20 inventory-linked records.
 
 
 **Downstream evidence boundary:** Reviewed inventory-risk and replenishment outputs will be linked only where an actual matching source exists. Missing evidence will be recorded explicitly with record-specific reasons rather than replaced with assumptions or used to silently exclude reviewable cases. Pending inventory-risk decisions under Issue #164 remain dependencies. The 28-day horizon is retained for forecast-transparency assessment only; downstream inventory and replenishment interpretation remains deferred.
@@ -153,15 +153,15 @@ The bridge verifies the adjacent manifest, all three output-file hashes, registe
 
 This creates the same JSON/Markdown outputs with a fresh blank checklist. The historical forecast-only F01–F03 assessments below remain attached to their original record bundle and are not transferred to changed records. The bridge does not automatically assign human-review states or transparency outcomes.
 
-**Inventory-linked preparation completed — 23 October 2026:** Chathuranga manually ran the inventory-backed command above. Its manifest records preparation time `2026-10-23T06:09:37.526263+00:00`, operator `Chathuranga` and review schema `issue-168-review-v2`. The original local directory is `research-materials/decision-support/issue-168-inventory-v1/`; unchanged shared copies are available as [records.md](../../reports/decision-support/issue-168-inventory-v1/records.md), [records.json](../../reports/decision-support/issue-168-inventory-v1/records.json), [review.json](../../reports/decision-support/issue-168-inventory-v1/review.json) and [manifest.json](../../reports/decision-support/issue-168-inventory-v1/manifest.json). Fifteen selected 1/7/14-day records contain matching constructed-scenario inventory evidence; the five h=28 records retain gated inventory fields. All 160 checklist outcomes are blank. No inventory-linked assessment or complete summary is claimed.
+**Inventory-linked preparation completed — 23 October 2026:** Chathuranga manually ran the inventory-backed command above. Its manifest records preparation time `2026-10-23T06:09:37.526263+00:00`, operator `Chathuranga` and review schema `issue-168-review-v2`. The original local directory is `research-materials/decision-support/issue-168-inventory-v1/`; shared files are available as [records.md](../../reports/decision-support/issue-168-inventory-v1/records.md), [records.json](../../reports/decision-support/issue-168-inventory-v1/records.json), [review.json](../../reports/decision-support/issue-168-inventory-v1/review.json) and [manifest.json](../../reports/decision-support/issue-168-inventory-v1/manifest.json). Fifteen selected 1/7/14-day records contain matching constructed-scenario inventory evidence; the five h=28 records retain gated inventory fields. Preparation initially left all 160 checklist outcomes blank. Chathuranga subsequently confirmed the full assessment in Section 3.1; only the editable checklist was changed, identically in the local and tracked copies. His completed summary run is recorded in Section 3.2; the original records and preparation manifest remain unchanged.
 
 The new record-bundle SHA-256 is `dc029ba66c07009202f17643a3565f550e7ac2aa7c23ac411ea15f964c91937a`. Its source binds prospective SHA-256 `5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4` and inventory-manifest SHA-256 `5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9`; the review's v2 record hash binds this new context. Publication checks matched the JSON/Markdown/template hashes and all four copied files without assigning outcomes or changing the historical F01–F03 checklist. These are local identity checks, not independent peer review. The [evidence index](../../reports/README.md#inventory-linked-records) distinguishes both assessment contexts.
 
-The completed human preparation establishes record links and execution attribution above. F01–F03's human-confirmed findings are recorded below; the complete 20-record summary remains pending until the remaining checklist entries are completed. Keep selected, prepared and reviewed populations separate. No outcome is claimed from synthetic tests or a blank template. Prototype-dependent visibility and final presentation acceptance remain separate from record-content assessment.
+The completed human preparations establish record links and execution attribution above. The historical forecast-only bundle retains its partial F01–F03 findings; the inventory-linked bundle has the separately confirmed full-roster assessment in Section 3.1 and human-generated summaries in Section 3.2. Keep selected, prepared and reviewed populations separate. No outcome is claimed from synthetic tests or a blank template. Prototype-dependent visibility and final presentation acceptance remain separate from record-content assessment.
 
-## 3. Evaluation Readiness and Pending Evidence
+## 3. Recorded Assessments and Remaining Evidence
 
-F01–F03 (`SKU_1`, `WH_1`, origin `2024-12-02`, horizons `1-day`, `7-day` and `14-day` respectively) each have eight human-confirmed record-level assessments dated 23 October 2026, with assessor Chathuranga. The matrix below transcribes those outcomes; all checks are recorded as applicable. Detailed field references and reasons are available in the tracked [review.json](../../reports/decision-support/issue-168-json/review.json), linked by assessment ID and criterion to [records.json](../../reports/decision-support/issue-168-json/records.json) entries `records[0]`, `records[1]` and `records[2]` respectively. The ignored local originals remain unchanged. The source record-bundle hash is documented in Section 2. F04–F20's 136 checks remain blank and are excluded from this partial matrix.
+**Historical forecast-only assessment:** F01–F03 (`SKU_1`, `WH_1`, origin `2024-12-02`, horizons `1-day`, `7-day` and `14-day` respectively) each have eight human-confirmed record-level assessments dated 23 October 2026, with assessor Chathuranga. The matrix below transcribes those outcomes; all checks are recorded as applicable. Detailed field references and reasons are available in the tracked [review.json](../../reports/decision-support/issue-168-json/review.json), linked by assessment ID and criterion to [records.json](../../reports/decision-support/issue-168-json/records.json) entries `records[0]`, `records[1]` and `records[2]` respectively. The ignored local originals remain unchanged. The source record-bundle hash is documented in Section 2. F04–F20's 136 checks remain blank in this historical bundle and are excluded from this partial matrix.
 
 | Record | Transparency check | Outcome | Evidence / reason |
 |---|---|---|---|
@@ -190,17 +190,84 @@ F01–F03 (`SKU_1`, `WH_1`, origin `2024-12-02`, horizons `1-day`, `7-day` and `
 | F03 | Human-review transparency | `met` | `not_assessed` is accompanied by its explanatory human-review reason; visibility does not establish completed managerial review. |
 | F03 | Source distinction | `met` | Forecast provenance, component ownership and reasons for missing inventory provenance remain distinguishable. |
 
-Each assessed record has five `met` and three `not assessable` checks. Each criterion currently has three assessed applicable cases; the other 17 selected cases remain unassessed. No 20-record completion rate or aggregate transparency proportion is reported, and no summary command has been executed on this partial checklist. Missing upstream information remains explicit rather than being replaced with assumed values.
+Within this historical forecast-only bundle, each assessed record has five `met` and three `not assessable` checks. Each criterion has three assessed applicable cases; the other 17 selected cases remain unassessed. No full-roster completion rate or aggregate transparency proportion is reported for this historical bundle, and no summary command has been executed on its partial checklist. Missing upstream information remains explicit rather than being replaced with assumed values.
 
 Before recording an assessment, identify each reviewed record using `SKU_ID`, `Warehouse_ID`, forecast origin and horizon, together with its source artifact/version and upstream provenance. For each applicable check, retain the outcome and a record-specific evidence reference or reason. Do not treat a checklist row as a reviewed record or treat an unperformed review as an observed failure.
 
+### 3.1 Human-confirmed inventory-linked record assessment
+
+**Human confirmation — 23 October 2026:** Codex prepared the complete 20-record draft with case-specific evidence for human review. After being shown the proposed outcomes, their scope, assessor attribution and assessment date, Chathuranga explicitly replied, "confirmed. let's move" in the project working conversation. Codex then transcribed those confirmed decisions into both copies of the inventory-linked `review.json`, with assessor `Chathuranga` and date `2026-10-23`. No Dewmi assessment, group approval or independent peer review is inferred from that individual confirmation. Chathuranga subsequently ran the summarizer himself, as recorded in Section 3.2. The historical F01–F03 outcomes above remain unchanged and are not reused for this context.
+
+The confirmed assessment covers all 20 records in [inventory-linked records.json](../../reports/decision-support/issue-168-inventory-v1/records.json), SHA-256 `dc029ba66c07009202f17643a3565f550e7ac2aa7c23ac411ea15f964c91937a`, and the matching [readable records](../../reports/decision-support/issue-168-inventory-v1/records.md). The source index in each row identifies the exact zero-based `records` entry; the existing SKU/warehouse/origin/horizon roster in Section 2 applies to these identities. Only the contents of the prepared records are considered. Visibility/readability in a rendered prototype remains a separate check.
+
+All eight checks are recorded as applicable for all 20 cases, including cases with unavailable upstream evidence, as confirmed by Chathuranga. Following [methodology §12.2](responsible-decision-support-methodology.md#122-measurable-transparency-checks), an unavailable output is recorded as `not assessable`, with its reason retained, rather than treated as a failure or silently removed.
+
+| Code | Existing criterion | Confirmed outcome and record-specific evidence basis |
+|---|---|---|
+| FV | Forecast visibility | `met`: `record.forecast_demand`, `forecast_origin` and `forecast_horizon` are populated; `evidence` and `assumptions` identify units, inclusive target dates and next-day/cumulative-window meaning. |
+| RV | Risk visibility | `met` for the 15 1/7/14-day cases: `record.inventory_risk_evidence` exposes the conditional scenario basis, source status, origin/forecast exposure state, buffer, margin and method status; `inventory_risk_provenance` links the supplied source. This finding concerns visibility of conditional reorder-threshold exposure, not approval of DR-012, a high/low risk classification or actual stockout accuracy. For the five h=28 cases, the outcome is `not assessable`: evidence/provenance are null and their `unavailable_fields` reasons retain `28_day_downstream_use_requires_separate_approval`. |
+| RT | Recommendation traceability | `not assessable`: `record.replenishment_recommendation` is null in each case; `unavailable_fields.replenishment_recommendation` states that no approved numerical replenishment output was supplied. An exposed reason does not establish traceability of an actual recommendation. |
+| UV | Uncertainty visibility | `not assessable`: `record.uncertainty_or_error` is null in each case; `unavailable_fields.uncertainty_or_error` preserves `no_agreed_method`. Retrospective errors are not substituted for prospective uncertainty. |
+| AV | Assumption visibility | `met`: `record.assumptions` states each target window, horizon meaning, fixed reorder point, no-receipt/adjustment scenario and hypothetical starting-balance basis. Their presence in a record does not prove manager-facing display. |
+| LV | Limitation visibility | `met`: `record.limitations` discloses publisher-simulated data, zero-variance stockout labels, purposive selection, prior validation/exploratory exposure, unknown source timing and method/unsupported-output restrictions. The h=28 cases additionally retain their scope restriction. |
+| HR | Human-review transparency | `met`: `record.human_review_status` is `not_assessed`, accompanied by `human_review_reasons`. The state and reason are visible; this finding does not assert managerial review or clearance. Completing this transparency checklist does not change the managerial-review state inside the immutable prepared records. |
+| SD | Source distinction | `met`: `record.forecast_provenance`, `component_provenance`, `evidence` and, where supplied, `inventory_risk_provenance` distinguish the component sources. Gated h=28 inventory provenance remains null with its explicit reason. A component name alone is not treated as evidence of an available inventory result. |
+
+In the matrix, **M means human-confirmed `met`** and **U means human-confirmed `not assessable`**. All source indices below refer to this inventory-linked bundle, not the historical forecast-only bundle. The completed checklist SHA-256 is `91585207e718ada57aa29ffad782eb513638a62d0a98ae8a5a36b3fea1978fa7`. The original manifest still binds the initial blank template; its preparation-status text is historical and is not rewritten to imply assessment completion at preparation time.
+
+| Case | Source index | Horizon | FV | RV | RT | UV | AV | LV | HR | SD |
+|---|---|---:|---|---|---|---|---|---|---|---|
+| F01 | `records[0]` | 1 | M | M | U | U | M | M | M | M |
+| F02 | `records[1]` | 7 | M | M | U | U | M | M | M | M |
+| F03 | `records[2]` | 14 | M | M | U | U | M | M | M | M |
+| F04 | `records[3]` | 28 | M | U | U | U | M | M | M | M |
+| F05 | `records[4]` | 1 | M | M | U | U | M | M | M | M |
+| F06 | `records[5]` | 7 | M | M | U | U | M | M | M | M |
+| F07 | `records[6]` | 14 | M | M | U | U | M | M | M | M |
+| F08 | `records[7]` | 28 | M | U | U | U | M | M | M | M |
+| F09 | `records[8]` | 1 | M | M | U | U | M | M | M | M |
+| F10 | `records[9]` | 7 | M | M | U | U | M | M | M | M |
+| F11 | `records[10]` | 14 | M | M | U | U | M | M | M | M |
+| F12 | `records[11]` | 28 | M | U | U | U | M | M | M | M |
+| F13 | `records[12]` | 1 | M | M | U | U | M | M | M | M |
+| F14 | `records[13]` | 7 | M | M | U | U | M | M | M | M |
+| F15 | `records[14]` | 14 | M | M | U | U | M | M | M | M |
+| F16 | `records[15]` | 28 | M | U | U | U | M | M | M | M |
+| F17 | `records[16]` | 1 | M | M | U | U | M | M | M | M |
+| F18 | `records[17]` | 7 | M | M | U | U | M | M | M | M |
+| F19 | `records[18]` | 14 | M | M | U | U | M | M | M | M |
+| F20 | `records[19]` | 28 | M | U | U | U | M | M | M | M |
+
+### 3.2 Human-run summary and criterion findings
+
+Chathuranga manually executed the existing `assessment summarize` command against `research-materials/decision-support/issue-168-inventory-v1/` on 23 October 2026. It wrote [summary.json](../../reports/decision-support/issue-168-inventory-v1/summary.json) and [summary.md](../../reports/decision-support/issue-168-inventory-v1/summary.md), now copied unchanged into the shared report bundle. AI assistance did not rerun the summary command; it checked the saved outputs against the confirmed checklist and their source bindings.
+
+The human-generated summary reports **20 selected forecasts, 20 prepared records, 20 reviewed records and 160 reviewed checks**, with assessor `Chathuranga`. Each criterion has 20 applicable cases and zero non-applicable cases. All applicable cases, including `not assessable`, remain in the met-proportion denominator.
+
+| Criterion | Applicable denominator | Met | Not met | Not assessable | Met proportion |
+|---|---:|---:|---:|---:|---:|
+| Forecast visibility | 20 | 20 | 0 | 0 | 100% |
+| Risk visibility | 20 | 15 | 0 | 5 | 75% |
+| Recommendation traceability | 20 | 0 | 0 | 20 | 0% |
+| Uncertainty visibility | 20 | 0 | 0 | 20 | 0% |
+| Assumption visibility | 20 | 20 | 0 | 0 | 100% |
+| Limitation visibility | 20 | 20 | 0 | 0 | 100% |
+| Human-review transparency | 20 | 20 | 0 | 0 | 100% |
+| Source distinction | 20 | 20 | 0 | 0 | 100% |
+
+The five unassessable risk-visibility cases are F04/F08/F12/F16/F20, whose h=28 inventory fields remain gated. The zero met proportions for recommendation traceability and uncertainty reflect 20 unavailable upstream outputs in each criterion, not 20 observed `not met` failures. All records retain their unavailable reasons. The met risk-visibility findings concern disclosure of conditional reorder-threshold exposure and its provenance, not approved risk classifications or actual stockout accuracy. No overall cross-criterion score is introduced.
+
+The summary binds record SHA-256 `dc029ba66c07009202f17643a3565f550e7ac2aa7c23ac411ea15f964c91937a` and completed-checklist SHA-256 `91585207e718ada57aa29ffad782eb513638a62d0a98ae8a5a36b3fea1978fa7`. Summary JSON SHA-256 is `6c3ba9308455c6df1de10f68b1afd8227797231738f490865fca14b99a9b8f5d`; summary Markdown SHA-256 is `41d0534d619dd6194a496ef52c4ec9329c2a30e11511e63defce375c95a2d7f3`. Read-only checks matched both summary copies to their human-generated originals, all criterion counts/denominators to the checklist, and the original preparation timestamp/code-hash receipt to the manifest. These are local consistency checks at repository HEAD `dd5bc9abffb468d9aff306011a068111d34e923d`, not independent peer approval. The retained `prepared_at` value describes record preparation; it is not a new summary-execution timestamp.
+
+The record-level assessment and its summary are complete for this limited purposive roster. Rendered-prototype visibility/readability, final semantic/presentation acceptance and relevant component handoff reviews remain separate. Preserve the original records, preparation manifest and historical forecast-only checklist when reviewing or publishing these findings.
+
 ## 4. Current Findings and Reporting Limits
 
-- The retained preparation contains **20 selected forecasts, 20 populated records and 3 evaluated records (F01–F03)**. Twenty-four checklist entries contain human-confirmed outcomes; the other 136 remain blank. This document reports their partial matrix, with no full-roster completion rate, aggregate proportion of checks met, or prototype evaluation result.
+- The historical forecast-only bundle contains **20 selected forecasts, 20 populated records and 3 evaluated records (F01–F03)**. Its 24 confirmed outcomes and 136 blank entries remain unchanged. The inventory-linked bundle separately contains **20 assessed records and 160 human-confirmed outcomes**, with the completed human-run criterion summary in Section 3.2. No prototype evaluation result is claimed.
 - Issues [#72](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/72) and [#73](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/73) provide the approved criteria and record implementation. Their completion does not by itself establish evaluated management-facing outputs.
 - The [forecast contract](../forecast-api-contract.md) from [Issue #132](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/132) provides reviewed forecasting semantics. Actual assessment must cite the record and evidence used; it must not infer a record's completeness from contract acceptance alone.
 - Inventory-dependent findings require reviewed evidence and interpretation from [Issue #85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85). Its pending work does not prevent preparation of the presentation requirements below.
-- When results are available, report the number of reviewed records, the applicable population for each check, and counts for `met`, `not met` and `not assessable`. Identify the denominator of every reported proportion and retain unavailable cases visibly. Do not calculate a percentage from a zero denominator.
+- Section 3.2 reports reviewed records, applicable populations, outcomes and every proportion denominator for the inventory-linked assessment. Unavailable cases remain visible; no zero-denominator proportion or pooled overall score is used.
 - Synthetic/test records, if reviewed, must be labelled as such and kept distinguishable from assessments using accepted project evidence. Passing implementation tests does not establish presentation quality or operational effectiveness.
 
 ## 5. Semantic/Presentation Handoff for Tinosh
@@ -227,14 +294,14 @@ Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh im
 
 ## 6. Deferred Checks and Completion Requirements
 
-| Pending check | Evidence needed before completion | Owner / tracking issue |
+| Check | Current status / evidence needed before completion | Owner / tracking issue |
 |---|---|---|
 | Forecasting evidence access and acceptance | Make the chosen forecasting evidence accessible through an agreed handoff, retaining its source/version and provenance. If the retained export is used, supply the export and its reviewed hash reference; local existence alone does not establish consumer acceptance. Generated artifacts remain outside Git under the [storage policy](../artifact-storage-policy.md). | Chathuranga supplies forecasting evidence; Tinosh reviews technical consumption; Dewmi identifies the assessment source — [#132](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/132), [#168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168). |
-| Record-level transparency assessment | Identified, reviewable records with identity, timing, provenance and source/version references; an outcome and supporting evidence/reason for each applicable check. | Dewmi — [#168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168), using the criteria and implementation from #72/#73. |
+| Record-level transparency assessment | Completed for the 20 inventory-linked records: Chathuranga confirmed all 160 outcomes with case-specific evidence/reasons; identities, timing and provenance are retained in Section 3.1 and the completed checklist. This individual assessment is distinct from component/presentation acceptance. | Dewmi — [#168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168), using the criteria and implementation from #72/#73; recorded assessor: Chathuranga. |
 | Inventory-risk and recommendation interpretation | Didilani's reviewed evidence and downstream meaning handoff, with approval boundaries and unavailable reasons retained. | Didilani supplies and reviews upstream meaning; Dewmi preserves it in the assessment — [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), #168. |
 | Unavailable-state mapping | Reviewed mapping and encoding between upstream reason codes and decision-support states; retain the original reason while the mapping remains unresolved. | Dewmi with producing owners — [B9](../integration-contract-readiness.md#9-blockers), #72/#73; presentation implications tracked in #168. |
 | Visibility and readability in the prototype | Rendered screens/views from Tinosh showing labels, provenance, unavailable reasons, assumptions, limitations, advisory wording and human-review states/reasons. Record contents alone cannot establish that these are visible in the interface. | Tinosh implements the reviewed presentation; Dewmi evaluates it — [#86](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/86), #168, subject to the agreed integration scope. |
-| Report-ready measured findings | A traceable assessment matrix and explicit reviewed/applicable populations and denominators. | Dewmi — #168. |
+| Report-ready measured findings | Available for the limited record-level roster in Section 3.2 and the human-run summary: 20 reviewed records, 160 checks, criterion-level counts, applicable populations and explicit denominators. Interpretation/component review remains separate. | Dewmi — #168; recorded assessment and summary execution: Chathuranga. |
 | Final presentation acceptance | Dewmi's review of Tinosh's implementation, with relevant upstream owner review and unresolved checks recorded explicitly. | Dewmi, with Chathuranga and Didilani reviewing their upstream meaning — #168; Tinosh's integration under #86. |
 
 
