@@ -1,6 +1,6 @@
 # Inventory-Risk Evaluation Protocol
 
-> **Status: Implementation available for review: forecast input mapping, preparation, evaluation runner and prospective evidence handoff. Implementation availability, methodology approval and authorisation of a specific human-run evaluation are separate. No dataset-backed inventory results are claimed here.**
+> **Status: Implementation and human-run constructed-scenario evidence available for review. Chathuranga executed the 1/7/14-day evaluation on 23 October 2026; Section 12.3 links its retained outputs. Execution evidence, methodology approval and consumer acceptance remain separate.**
 >
 > This document prepares the input-contract and evaluation decisions requested by [Issue #162](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/162). It records current evidence and proposes a reproducible protocol for later review. It does not approve DR-012, a final interchange schema, or any dataset-backed analysis.
 
@@ -274,6 +274,18 @@ The exclusive output bundle contains:
 - `manifest.json`: published last, binding the output hashes, exact export, dataset provenance, snapshot policy, operator, timestamp and implementation hashes.
 
 Only `prospective.json` is interpreted by the optional inventory bridge in the [decision-support preparation](responsible-decision-support-evaluation.md#22-prepare-records-and-record-the-human-assessment). All three output-file hashes are checked; the retrospective JSON and Markdown report are hashed as opaque bytes, not decoded as prospective inputs. Consistency checks do not authenticate a mutable manifest or establish scientific correctness. Existing output directories are never overwritten. These files are conditional scenario evidence, not actual stockout ground truth, numerical replenishment instructions or proof of real-retailer effectiveness.
+
+### 12.3 Retained human-run evidence
+
+Chathuranga manually ran the command in Section 12.2 with `--snapshot-policy constructed-origin`. The manifest records `2026-10-23T06:08:29.741586+00:00` and operator `Chathuranga`. It used the implementation committed in `d977c4747f9d2914e393bacc8b8a9eb2f787f032`; all four recorded source-file hashes matched that local HEAD at publication. This attribution records the actual run and does not change DR-012's formal status or supply missing human review references.
+
+The original local bundle remains under `research-materials/inventory-risk/issue-164/evaluation-v1/`. Chathuranga authorised unchanged GitHub review copies: [report.md](../../reports/inventory-risk/issue-164/evaluation-v1/report.md), [prospective.json](../../reports/inventory-risk/issue-164/evaluation-v1/prospective.json), [evaluation.json](../../reports/inventory-risk/issue-164/evaluation-v1/evaluation.json) and [manifest.json](../../reports/inventory-risk/issue-164/evaluation-v1/manifest.json). The prospective SHA-256 is `5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4`; the original manifest SHA-256 is `5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9`.
+
+The run retained 750 retrospective candidate cases: each 1/7/14-day horizon has 239 paired comparisons, 11 scenario-at/below-threshold cases excluded from forecast-skill comparisons and zero unavailable cases. The prospective roster retains all 1,000 keys, including 250 gated h=28 rows. Counts, metric denominators, prior-validation/exploratory exposure and conditional-scenario limitations remain in the original report; no scores are recomputed or pooled by this documentation update.
+
+Read-only publication checks matched all three manifest-bound output hashes and all four source hashes against local HEAD, accepted all 1,000 prospective rows through the existing decision-support consumer, and matched all four copied files byte for byte. These are local consistency/identity checks; no independently reviewed reference commit was supplied for this run, and the manifest is not authenticated. Publication leaves the original bundle unchanged and does not establish scientific correctness, source timing or peer approval.
+
+The command `.venv/bin/python -m src.data.verify_checksums --profile dewmi` also matched the selected forecast export, 1/1 files with none missing or changed, against `docs/checksums/2026-10-06.json` (reference SHA-256 `381ed9607a9e3ec155ee3754d699d62873bfbff18f5e1f4edc31c407267ed7cc`). The reference revision and repository HEAD were both `d977c4747f9d2914e393bacc8b8a9eb2f787f032`. This was a provisional local check without `--tracked-ref`; the Dewmi profile does not cover the validated dataset, original model bundles or this new evaluation bundle.
 
 ## 13. Execution gate
 

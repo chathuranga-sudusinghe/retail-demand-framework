@@ -1,0 +1,39 @@
+{
+  "code_sha256": {
+    "src/inventory_risk/evaluation.py": "4944dedf306f7943f17dca813e42f78a65969d155798bd02d2d7f0d719fdb9f3",
+    "src/inventory_risk/forecast_handoff.py": "f80c58e4c6795dad5cb43452fa28e9b69785cbe4351ad2fc30b88392b50e58ea",
+    "src/inventory_risk/input_preparation.py": "68b449fa382988f6e55a80020e5eec3220b775f02a5eea63f315285cfaf3aa24",
+    "src/inventory_risk/runner.py": "168d1726c9bf35d1612266bcb69208c4ed02009454ee3d33efe87d8001a0ebc1"
+  },
+  "created_at": "2026-10-23T06:08:29.741586+00:00",
+  "dataset_provenance_sha256": "35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f",
+  "files": {
+    "evaluation.json": "4ac47ed2b51f581eb07caeaa58abff8a266a1b767dbeee34fb048ebe32e9cae8",
+    "prospective.json": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+    "report.md": "0c652f1e02e49e43b1b6955824cd0caa13499cfa5cda443200a8f94e0767461b"
+  },
+  "operator": "Chathuranga",
+  "schema": "inventory-risk-evaluation-v1",
+  "source": {
+    "forecast_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "forecast_source": {
+      "evaluation_stage": "final_evaluation",
+      "integrity_result": {
+        "baseline_evaluations": 8,
+        "evaluations": 28,
+        "learned_refits": 20,
+        "models_replayed": 20,
+        "predictions": 7000,
+        "status": "passed"
+      },
+      "prediction_receipt_sha256": "853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692",
+      "run_id": "final-20261003-02",
+      "run_manifest_path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+      "run_manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+      "source_schema": "issue-130-final-v1"
+    },
+    "mapping_version": "issue-164-168-v1",
+    "snapshot_basis": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.",
+    "snapshot_policy": "constructed-origin"
+  }
+}
