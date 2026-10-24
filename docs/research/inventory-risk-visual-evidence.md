@@ -67,7 +67,9 @@ The fields named below refer to the existing internal Issue #70 case/summary out
 ### A. Exposure-state and population coverage
 
 - **Analytical question:** For each forecast horizon, what portion of the relevant population is origin-known at/below the threshold, initially above it, paired for retrospective comparison, or unavailable?
+- **Evidence source:** The retained [prospective records](../../reports/inventory-risk/issue-164/evaluation-v1/prospective.json), [evaluation records and summaries](../../reports/inventory-risk/issue-164/evaluation-v1/evaluation.json), and [manifest](../../reports/inventory-risk/issue-164/evaluation-v1/manifest.json). The source dataset and validated handoff provide source context, not proof of origin-time availability.
 - **Required evidence fields:** Case identity; `origin_exposure_state`, `forecast_exposure_state`, `retrospective_exposure_state`, `comparison_case`, `methodology_status`; snapshot, forecast, and retrospective status/reason fields; summary counts including `origin_known_at_or_below_count`, `initially_above_threshold_count`, `evaluable_paired_case_count`, `unavailable_case_count`, and forecast/retrospective unavailable counts; source model/configuration and forecast provenance where available.
+- **Population and labels:** Report origin-known-at/below, initially-above, paired-evaluable, constructed-scenario-at/below, and unavailable counts as distinct populations. Label the states `origin status`, `forecast scenario exposure`, `retrospective proxy exposure` (evaluation view only), and `unavailable/not assessed`; name each displayed denominator.
 - **Case identity:** Preserve `SKU_ID`, `Warehouse_ID`, forecast origin, and horizon at record level. Counts must identify their population and denominator.
 - **Grouping dimensions:** Horizon and existing evaluator provenance groups; case-level rows remain traceable to the SKU-warehouse pair. Do not invent additional subgroup aggregation rules.
 - **Horizon handling:** Keep h=1 next-day, h=7 cumulative, and h=14 cumulative separate. The h=28 record may be shown as retained forecast identity with downstream use not approved; no h=28 exposure or evaluation result is shown.
@@ -80,7 +82,9 @@ The fields named below refer to the existing internal Issue #70 case/summary out
 ### B. Forecast versus retrospective proxy-crossing comparison
 
 - **Analytical question:** Among initially above-threshold cases with paired usable inputs, how do forecast threshold crossings compare with retrospective demand-proxy crossings?
+- **Evidence source:** The retained `evaluation.json` case rows and horizon summaries, with `report.md` as the published summary. Forecast values and producer provenance originate in the retained export; realised `Units_Sold` is retrospective evidence only.
 - **Required evidence fields:** Case identity; forecast and retrospective exposure states; `comparison_case`, `confusion_cell`; TP, TN, FP, FN and `N`; `event_prevalence`, `missed_crossing_rate`, `false_alert_rate`, `agreement`, `precision`, `recall`, and `balanced_accuracy` with their status fields; provenance, unavailable reasons, and the reporting population/denominators.
+- **Population and labels:** Include only the initially-above-threshold cases with paired usable forecast and complete target-window evidence in confusion counts (`N`). Label the outcome `retrospective threshold-crossing proxy based on Units_Sold—not observed stockout`; show the TP/TN/FP/FN meanings and each metric denominator.
 - **Case identity:** Keep each SKU, warehouse, origin, and horizon visible at case level; summaries retain the evaluator's existing source and configuration context.
 - **Grouping dimensions:** Existing evaluator-defined origin/horizon/provenance groups only. Do not pool across origins, horizons, configurations, or invent SKU/warehouse subgroup metrics.
 - **Horizon handling:** Separate h=1, h=7, and h=14; label h=7 and h=14 as cumulative. Do not calculate downstream h=28 crossing or rates.
@@ -93,7 +97,9 @@ The fields named below refer to the existing internal Issue #70 case/summary out
 ### C. Margin comparison around reorder reference
 
 - **Analytical question:** For valid cases, how do forecast and retrospective cumulative demand compare with the origin buffer, and how close are margins to the zero reference?
+- **Evidence source:** Case-level `inventory_buffer`, `predicted_margin`, and `retrospective_margin` in the retained `evaluation.json`; use `prospective.json` for prospective-only margins and source/assumption context.
 - **Required evidence fields:** `predicted_margin`, `retrospective_margin`; `inventory_buffer` if available; case identity; forecast/retrospective status and reasons; exposure state, source model/configuration, and methodology status.
+- **Population and labels:** Retain each valid case by SKU, warehouse, origin, and horizon. Label `predicted margin (buffer − forecast demand)` and `retrospective margin (buffer − realised Units_Sold; evaluation only)`, with zero identified as the reorder-reference boundary. Do not merge these into one margin or one population.
 - **Case identity:** Retain SKU, warehouse, origin, and horizon on each point/row.
 - **Grouping dimensions:** Separate panels or facets by the existing horizon/provenance grouping. No cross-origin pooling or new segment summaries.
 - **Horizon handling:** Show only eligible method horizons 1, 7, and 14, separately. h=28 downstream margin is not assessed. Preserve next-day versus cumulative meanings.
@@ -106,7 +112,9 @@ The fields named below refer to the existing internal Issue #70 case/summary out
 ### D. Availability and provenance matrix
 
 - **Analytical question:** Which evidence is present, accepted, unavailable, unknown, or gated for each forecast record, and why?
+- **Evidence source:** Retained prospective records and manifest, the forecast-export provenance, validated-dataset provenance, and the readiness register. Use each source only for the fields and status scope it actually records.
 - **Required evidence fields:** Case identity; export schema/source run; forecast origin, horizon, target dates, prediction status/value, model, configuration, producer status; dataset version and provenance; origin snapshot status/reason; forecast and retrospective input status/reasons; downstream-use status/reason; methodology status, assumptions, and limitations.
+- **Population and labels:** Keep one row/mark per existing forecast identity and distinguish `unknown`, `unavailable`, `not assessed`, `approval gated`, and `accepted` only where the source actually establishes that status. Do not collapse these states or infer acceptance from file presence or checksums.
 - **Case identity:** Preserve SKU, warehouse, origin, and horizon per record. Keep package/source identifiers alongside records without pretending absent row fields exist.
 - **Grouping dimensions:** Horizon, SKU-warehouse identity, and recorded producer/configuration. Do not combine records across horizons or invent missing provenance fields.
 - **Horizon handling:** Show h=1/7/14/28 distinctly. For h=28, show forecast evidence as present but downstream exposure/evaluation as gated/unavailable pending separate approval.
@@ -137,6 +145,48 @@ Issue #70 tests cover preparation, provenance/identity retention, status handlin
 
 The [retained evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) provides the completed dataset-backed constructed-origin comparison for 1/7/14 days. It retains confusion counts, metric denominators and scenario margins. Source timing remains unknown; the results are not observed stockout accuracy, a reconstructed inventory path or proof of managerial benefit. Historical metadata remains unchanged.
 
+#### Retained h1/h7/h14 results
+
+The following values are transcribed from the retained report; no results were recalculated for this document. Each horizon uses the same forecast origin (`2024-12-02`) and a constructed-origin, fixed-reorder-point, no-receipt scenario. The paired population contains initially-above-threshold cases with paired usable evidence. Scenario-at/below cases are reported separately and are not included in the paired comparison denominators.
+
+| Horizon and target window | Paired N | TP | TN | FP | FN | Source-known at/below | Scenario at/below | Unavailable |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| h1 next-day; 2024-12-03 | 239 | 5 | 230 | 0 | 4 | 0 | 11 | 0 |
+| h7 cumulative; 2024-12-03–2024-12-09 | 239 | 54 | 168 | 0 | 17 | 0 | 11 | 0 |
+| h14 cumulative; 2024-12-03–2024-12-16 | 239 | 121 | 78 | 0 | 40 | 0 | 11 | 0 |
+
+`Source-known at/below = 0` does not establish that the source snapshot was available or that no source records were at/below the threshold. The 11 at/below cases are from the constructed-origin scenario. The reported `unavailable = 0` is the retained evaluator count under that constructed-scenario run, not a resolution of source timing.
+
+| Horizon | Metric | Value | Metric denominator |
+|---|---|---:|---:|
+| h1 | Event prevalence | 0.0377 | 239 |
+| h1 | Missed-crossing rate | 0.4444 | 9 proxy-crossing cases |
+| h1 | False-alert rate | 0.0000 | 230 proxy-noncrossing cases |
+| h1 | Agreement | 0.9833 | 239 |
+| h1 | Precision | 1.0000 | 5 forecast-crossing cases |
+| h1 | Recall | 0.5556 | 9 proxy-crossing cases |
+| h1 | Balanced accuracy | 0.7778 | positive=9; negative=230 |
+| h7 | Event prevalence | 0.2971 | 239 |
+| h7 | Missed-crossing rate | 0.2394 | 71 proxy-crossing cases |
+| h7 | False-alert rate | 0.0000 | 168 proxy-noncrossing cases |
+| h7 | Agreement | 0.9289 | 239 |
+| h7 | Precision | 1.0000 | 54 forecast-crossing cases |
+| h7 | Recall | 0.7606 | 71 proxy-crossing cases |
+| h7 | Balanced accuracy | 0.8803 | positive=71; negative=168 |
+| h14 | Event prevalence | 0.6736 | 239 |
+| h14 | Missed-crossing rate | 0.2484 | 161 proxy-crossing cases |
+| h14 | False-alert rate | 0.0000 | 78 proxy-noncrossing cases |
+| h14 | Agreement | 0.8326 | 239 |
+| h14 | Precision | 1.0000 | 121 forecast-crossing cases |
+| h14 | Recall | 0.7516 | 161 proxy-crossing cases |
+| h14 | Balanced accuracy | 0.8758 | positive=161; negative=78 |
+
+These are horizon-specific descriptive comparisons against the retrospective sales proxy. The longer horizons are cumulative windows, so results must remain separate and must not be reduced to a single score. The rates do not establish actual stockout prediction accuracy, real-retailer performance, service/cost improvement, or a need to place an order.
+
+For an individual case, `inventory_buffer = Inventory_Level − Reorder_Point`; `predicted_margin = inventory_buffer − forecast demand`; and `retrospective_margin = inventory_buffer − realised Units_Sold` over the same target window. These margins describe the retained scenario relative to the reorder reference: zero is the reference boundary, and a negative arithmetic margin is not verified physical negative stock. The retrospective margin belongs only in the evaluation view. Preserve unavailable/null margins as null; do not substitute zero or place them on either side of the reference.
+
+The retained report states that December 3–16 had prior validation exposure and that full-year exploratory analysis inspected the final interval. These results must not be described as evaluation on a historically fully unseen period. The source dataset is publisher-simulated, the constructed starting inventory is hypothetical, source snapshot timing remains unknown, and no real-world inventory trajectory is established.
+
 ### Unsupported claims
 
 The current evidence does not support actual stockout accuracy, real-retailer effectiveness, cost reduction, service-level improvement, optimal replenishment, causal effect, or the claim that a forecast crossing requires an order or human review.
@@ -165,6 +215,16 @@ The later visualization implementation should preserve this specification's anal
 | Denominators | Show the stated eligible population and `N` with count/rate summaries; retain metric status for undefined denominators. Do not hide unavailable cases from coverage reporting. |
 | Unavailable/not assessed | Display the existing status and reason; do not use zero, false, blank, or silent row deletion as a substitute. Keep unknown, unavailable, and approval-gated distinct. |
 | Assumptions/limitations | Keep snapshot timing, no-receipt scenario, simulated-data limitation, proxy status, and unresolved approvals visible near the evidence. |
+
+### T1 — minimum joined-prospective-record handoff
+
+Use the existing prospective-record evidence as the source; this description does not define a new interchange schema. A joined prospective record must preserve `SKU_ID`, `Warehouse_ID`, `forecast_origin`, `horizon`, and the existing target start/end dates. It must carry the forecast prediction/unit and available producer/configuration/run/evaluation provenance, plus the applicable inventory buffer and exposure state only with the recorded inventory basis, method status, assumptions, limitations, and original unavailable reasons. Keep source snapshot status (`unknown` in this evaluation) distinct from scenario inventory availability. The approved DR-012 exposure scope is h1/h7/h14; h28 remains downstream-gated. Do not synthesize missing values or rewrite the retained rows' historical `proposed_for_group_approval` metadata.
+
+The T1 prospective view must not contain realised target values, retrospective exposure states, confusion cells, retrospective margins, or evaluation metrics. Those belong in a separately labelled evaluation view.
+
+### W1 — inventory display handoff
+
+The inventory display must label the retained basis as a **constructed-origin, fixed-reorder-point, no-receipt scenario** and show that source origin-snapshot availability and within-day timing remain **unknown**. Do not display the scenario as source-confirmed inventory availability, infer availability from date equality, or imply that the displayed state is an observed stockout or future physical inventory. Keep the source-availability status/reason, scenario state, and method approval status visible as distinct information. Display h1 next-day, h7 cumulative, and h14 cumulative separately; show h28 forecast identity only as downstream-gated, without inventory exposure. Preserve null margins and unavailable reasons. Retrospective realised targets, retrospective exposure states, confusion cells and proxy metrics must be restricted to a separately labelled evaluation view and must not appear as prospective inventory inputs.
 
 Visual implementation must not create a new exposure rule, subgroup aggregation rule, or final interchange schema. It must not introduce a risk score, replenishment rule, order execution, or human-review trigger.
 
@@ -197,7 +257,8 @@ Visual implementation must not create a new exposure rule, subgroup aggregation 
 1. Review/record exact-export producer and consumer acceptance without regenerating the forecasts or expected hashes.
 2. Review the completed constructed-origin evidence and its unknown source timing. Do not turn the hypothetical starting-balance assumption into verified source availability.
 3. Review the implemented mapping, exposure results and downstream record bridge, preserving identities, intervals, provenance and unavailable reasons.
-4. Didilani confirms the analytical labels and interpretation; Tinosh implements the reviewed visuals and Dewmi reviews responsible presentation. Keep h=28 inventory gated.
-5. Scope any additional robustness or evaluation separately before a human executes it. Do not repeat completed forecasting or scenario evaluation merely to align documentation.
+4. **Pending review:** Didilani's analytical labels and interpretation require review; Tinosh's technical visual representation and Dewmi's responsible presentation review remain pending. Do not record a reviewer, approval, or review date until it has occurred. Keep h=28 inventory gated.
+5. **Report insertion coordination pending:** This section is the report-ready interpretation and links to the existing retained [evaluation report](../../reports/inventory-risk/issue-164/evaluation-v1/report.md), which remains unchanged. Chathuranga should confirm the appropriate insertion point in the existing project report; do not create a second report path or alter the immutable evaluation bundle.
+6. Scope any additional robustness or evaluation separately before a human executes it. Do not repeat completed forecasting or scenario evaluation merely to align documentation.
 
 The existing report supports conditional scenario interpretation. Technical visuals, final owner/consumer acceptance and managerial effectiveness remain separate. The next member tasks are scoped from the [Issue #177 readiness handoff](../integration-contract-readiness.md#13-remaining-work-handoff-after-issue-177).
