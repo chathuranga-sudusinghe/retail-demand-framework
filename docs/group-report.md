@@ -2,7 +2,7 @@
 
 **Module:** COMP1884 Group Project, MSc Data Science, University of Greenwich.
 **Document status:** Shared report draft for human review, prepared 24 October 2026 (Asia/Colombo) under [Issue #187](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/187), C3 of [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
-**Source baseline:** `c279e272942a53cc02dcd5ea4581c7c275e3438a`.
+**Source baselines:** Original shared draft: `c279e272942a53cc02dcd5ea4581c7c275e3438a`; inventory integration: `766c102480afe6121e0e3d05a912ae6cfab23cba` (merged PR #188).
 
 This draft assembles existing research material. The [forecasting evaluation](forecasting-final-evaluation.md), frozen contracts and retained reports remain the authorities for methods and numerical evidence. No experiment, metric, assessment or artifact verification was rerun to write this report. The section structure is provisional until checked against the applicable brief and marking sheet; no university word limit or citation style is assumed.
 
@@ -84,13 +84,69 @@ Simpler alternatives must remain visible. Supportive Ridge has lower final WAPE 
 
 ## 6. Inventory-risk evidence
 
-**Assembly status:** Evidence summary for Didilani's interpretation review; this draft does not replace her component contribution or approve new analytical rules.
+**Assembly status:** Incorporates Didilani's [analytical interpretation and visual specification](research/inventory-risk-visual-evidence.md), merged through [PR #188](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/188). Chathuranga's [24 October review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/188#pullrequestreview-5636978481) approved forecasting-facing and evidence-consistency aspects and confirmed Section 6 as the shared-report insertion point. That scoped approval does not replace Didilani's review of the assembled report wording, Tinosh's technical review or Dewmi's responsible-presentation review.
+
+### 6.1 Method, origin and reporting populations
 
 [DR-012](decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records group approval of the 1/7/14-day fixed-origin, fixed-reorder-point, no-receipt method on 12 October 2026, reported by Chathuranga on 23 October. For origin inventory `I`, reorder point `R` and buffer `B = I - R`, cases at or below the threshold are distinguished from cases that begin above it. In initially-above-threshold cases, forecast demand reaching or exceeding `B` indicates forecast threshold exposure within the horizon.
 
 The [retained inventory report](../reports/inventory-risk/issue-164/evaluation-v1/report.md) uses the 2024-12-02 inventory and reorder point as hypothetical starting conditions before the target window. It compares the forecast exposure with a constructed retrospective proxy using realised demand. Each evaluated horizon has 239 paired initially-above-threshold cases and 11 separately reported scenario-at/below cases. Chathuranga is the recorded human executor; Didilani retains methodological and interpretation responsibility.
 
-These results are conditional on no receipts, transfers, returns, losses or other adjustments. They do not reconstruct actual future inventory or establish actual stockout accuracy. Source within-day inventory timing remains unknown. `Order_Quantity` is contextual activity, not receipts. Overstock, numerical replenishment and 28-day inventory evaluation remain outside the delivered evidence. Didilani's final discussion should explain the horizon-specific proxy metrics and denominators without turning agreement into an improvement claim without a defined comparator.
+### 6.2 Retained counts and target windows
+
+The following tables reproduce the values in the [reviewed interpretation](research/inventory-risk-visual-evidence.md#retained-h1h7h14-results) and retained report without recalculation. A positive event is a reorder-threshold crossing under the retrospective sales proxy, not an observed stockout. True positives (TP) are forecast and proxy crossings; true negatives (TN) are forecast and proxy noncrossings. False positives (FP) are forecast crossings without proxy crossings; false negatives (FN) are proxy crossings missed by the forecast.
+
+| Horizon and target window | Paired N | TP | TN | FP | FN | Source-known at/below | Scenario at/below | Unavailable |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| h1 next-day; 2024-12-03 | 239 | 5 | 230 | 0 | 4 | 0 | 11 | 0 |
+| h7 cumulative; 2024-12-03–2024-12-09 | 239 | 54 | 168 | 0 | 17 | 0 | 11 | 0 |
+| h14 cumulative; 2024-12-03–2024-12-16 | 239 | 121 | 78 | 0 | 40 | 0 | 11 | 0 |
+
+The 11 scenario-at/below cases are excluded from every paired comparison denominator. The source-known-at/below count of zero does not establish source snapshot availability or an absence of at/below-threshold source records. Likewise, the zero unavailable count describes this constructed-scenario run; it does not resolve unknown source inventory timing.
+
+### 6.3 Proxy metrics, denominators and interpretation
+
+Metric values are ratios as reported in the retained evidence. Denominators are specific to each metric; balanced accuracy retains both class populations.
+
+| Horizon | Metric | Value | Metric denominator |
+|---|---|---:|---:|
+| h1 | Event prevalence | 0.0377 | 239 |
+| h1 | Missed-crossing rate | 0.4444 | 9 proxy-crossing cases |
+| h1 | False-alert rate | 0.0000 | 230 proxy-noncrossing cases |
+| h1 | Agreement | 0.9833 | 239 |
+| h1 | Precision | 1.0000 | 5 forecast-crossing cases |
+| h1 | Recall | 0.5556 | 9 proxy-crossing cases |
+| h1 | Balanced accuracy | 0.7778 | positive=9; negative=230 |
+| h7 | Event prevalence | 0.2971 | 239 |
+| h7 | Missed-crossing rate | 0.2394 | 71 proxy-crossing cases |
+| h7 | False-alert rate | 0.0000 | 168 proxy-noncrossing cases |
+| h7 | Agreement | 0.9289 | 239 |
+| h7 | Precision | 1.0000 | 54 forecast-crossing cases |
+| h7 | Recall | 0.7606 | 71 proxy-crossing cases |
+| h7 | Balanced accuracy | 0.8803 | positive=71; negative=168 |
+| h14 | Event prevalence | 0.6736 | 239 |
+| h14 | Missed-crossing rate | 0.2484 | 161 proxy-crossing cases |
+| h14 | False-alert rate | 0.0000 | 78 proxy-noncrossing cases |
+| h14 | Agreement | 0.8326 | 239 |
+| h14 | Precision | 1.0000 | 121 forecast-crossing cases |
+| h14 | Recall | 0.7516 | 161 proxy-crossing cases |
+| h14 | Balanced accuracy | 0.8758 | positive=161; negative=78 |
+
+For h1, agreement of 0.9833 must be read alongside the low proxy-event prevalence of 0.0377 and the 230 true negatives. Four of the nine proxy crossings were missed, giving the reported recall of 0.5556 and missed-crossing rate of 0.4444. High agreement therefore does not mean that nearly all crossing cases were detected.
+
+For h7, 54 of 71 proxy crossings were detected and 17 were missed; the reported recall is 0.7606 and the missed-crossing rate is 0.2394. For h14, 121 of 161 proxy crossings were detected and 40 were missed, with recall 0.7516 and missed-crossing rate 0.2484. The zero false-alert counts apply to 230, 168 and 78 proxy-noncrossing cases at h1, h7 and h14 respectively. They do not remove the missed-crossing limitation or establish performance outside this retained scenario.
+
+The horizons represent different cumulative windows and event prevalences, so their rates remain separate. No pooled score or overall best inventory horizon is inferred. These descriptive results do not establish improvement over a defined operating-policy comparator, service/cost benefits or a requirement to place an order.
+
+### 6.4 Margins, unavailable information and limitations
+
+Where the retained case supplies margins, the inventory buffer is `Inventory_Level − Reorder_Point`, the predicted margin is `buffer − forecast demand`, and the retrospective margin is `buffer − realised Units_Sold` over the same target window. Zero is the reorder-reference boundary. A negative arithmetic margin is not verified physical negative stock. Preserve null margins rather than calculating replacements or treating them as zero; the retained at/below and unavailable states must not acquire invented margin evidence.
+
+Realised target demand, retrospective proxy exposure, confusion cells, retrospective margins and evaluation metrics belong only to a separately labelled evaluation context. Prospective records preserve identity, forecast quantities, origin/windows, source/scenario status and original unavailable reasons. A new live API forecast does not recalculate this retained inventory scenario.
+
+These results are conditional on no receipts, transfers, returns, losses or other adjustments. They do not reconstruct actual future inventory or establish actual stockout accuracy. Source within-day inventory timing remains unknown. `Order_Quantity` is contextual activity, not receipts. Overstock, numerical replenishment, uncertainty methods, automatic human-review triggers and 28-day inventory evaluation remain outside the delivered evidence.
+
+The publisher-simulated data, single forecast origin, prior December 3–16 validation exposure and full-year exploratory exposure constrain interpretation. The results must not be presented as a historically fully unseen evaluation or real-retailer effectiveness. Current DR-012 approval is shown separately from immutable historical proposed-status metadata. Shared-report integration introduces no new method or additional approval.
 
 ## 7. Responsible decision-support evidence
 
@@ -156,7 +212,7 @@ The entries below are drawn from the existing [reference register](references.md
 | Source/grain and descriptive findings | [Dataset contract](dataset.md), [temporal profile](../reports/temporal-demand-profile.md), [historical EDA](../reports/demand-eda.md) |
 | Frozen forecasting design | [Feature contract](forecasting-feature-engineering.md), [protocol](protocol.md), [DR-013](decisions/DR-013-matched-gradient-boosting-comparison.md), [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md) |
 | Numerical results and current interpretation | [Validation snapshot](../reports/forecasting/validation-20261002-01/comparison.md), [final snapshot](../reports/forecasting/final-20261003-02/comparison.md), [canonical forecasting report](forecasting-final-evaluation.md) |
-| Inventory and responsible-use findings | [Inventory report](../reports/inventory-risk/issue-164/evaluation-v1/report.md), [record assessment](research/responsible-decision-support-evaluation.md), [summary](../reports/decision-support/issue-168-inventory-v1/summary.md) |
+| Inventory and responsible-use findings | [Inventory interpretation](research/inventory-risk-visual-evidence.md), [inventory report](../reports/inventory-risk/issue-164/evaluation-v1/report.md), [record assessment](research/responsible-decision-support-evaluation.md), [summary](../reports/decision-support/issue-168-inventory-v1/summary.md) |
 | Integration and actual serving evidence | [Readiness](integration-contract-readiness.md), [API manual record](forecast-inference-api.md#61-manual-verification-evidence--24-october-2026) |
 | Claim and review boundaries | [Research-design evidence mapping](research-design.md#16-evidence-to-conclusion-mapping--draft-for-human-review), [assessment checklist](greenwich-criteria-checklist.md), [AI-use guidance](university-ai-guidance.md) |
 
@@ -168,7 +224,7 @@ This section is an internal drafting aid. Resolve its items and adapt/remove dra
 |---|---|---|
 | Confirm applicable brief/marking sheet, required structure, word limit, citation style, file format, official deadlines and AI acknowledgement rules | Team; Chathuranga coordinates | Not established by the repository's general guidance; no requirement is invented here. |
 | Review the complete forecasting contribution and reconcile every numerical excerpt with its canonical source | Chathuranga | The Section 11 forecasting paragraph is confirmed; the assembled chapter/report still needs review. |
-| Finalise inventory interpretation, horizon-specific proxy discussion and approved visual selections | Didilani | Existing evidence reused in Section 6; component review pending under #181. |
+| Finalise inventory interpretation, horizon-specific proxy discussion and approved visual selections | Didilani | PR #188 source integrated in Section 6; Chathuranga's forecasting-facing/evidence-consistency approval is recorded. Assembled report wording and remaining component/visual reviews stay pending under #181. |
 | Finalise responsible-use interpretation and governance discussion | Dewmi | Existing evidence reused in Section 7; component review pending under #182. |
 | Supply the actual accepted implementation, integration tests and rendered views for the technical contribution | Tinosh, with relevant component reviewers | Section 8 distinguishes existing API behaviour from joined-prototype acceptance under #183. |
 | Record group hypothesis disposition and approve the bounded group conclusion | Team, coordinated by Chathuranga | Pending under #185; unresolved mandatory work remains a blocker. |
