@@ -125,6 +125,7 @@ flowchart TB
 
 ## Documentation entry points
 
+- Shared writing: [group report draft](docs/group-report.md), assembled from existing evidence under #187; component/team review and final submission formatting remain pending.
 - Research: [design and hypotheses](docs/research-design.md), [dataset](docs/dataset.md), [literature](docs/literature/literature-review.md), [references](docs/references.md).
 - Forecasting contracts: [validated preparation](docs/data-cleaning-and-validation.md), [exact features/preprocessing](docs/forecasting-feature-engineering.md), [experimental protocol](docs/protocol.md), [DR-014 freeze/refit](docs/decisions/DR-014-forecasting-selection-and-final-refit.md).
 - Operations/evidence: [runner](docs/forecasting-runner.md), [storage/retention](docs/artifact-storage-policy.md), [report index](reports/README.md), [historical progress](docs/research-progress.md).
