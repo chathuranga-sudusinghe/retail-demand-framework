@@ -1,7 +1,7 @@
 # Retail Demand Forecasting and Inventory Risk Analysis
 
 **University:** University of Greenwich<br>
-**Programme:** MSc Data Science<br>
+**Programme:** MSc Data Science and Its Applications<br>
 **Module:** COMP1884 Group Project<br>
 **Research type:** Group research project
 
