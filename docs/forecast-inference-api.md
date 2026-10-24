@@ -3,7 +3,7 @@
 **Responsible member:** Chathuranga — forecasting meaning and shared API architecture.
 **Integration reviewer:** Tinosh — endpoint, schema and adapter acceptance.
 **Date:** 2026-10-05 (Asia/Colombo).
-**Status:** Implementation and four synthetic JSON examples are merged through [PR #151](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/151); #132 is closed. Chathuranga reported that the initial manual demonstration worked. Revised-example demonstration and Tinosh's consumer acceptance are not established by that closure. The API is a presentation prototype, not completed group-wide integration.
+**Status:** Implementation and four synthetic JSON examples are merged through [PR #151](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/151); #132 is closed. Chathuranga supplied revised-example manual outcomes on 24 October 2026 under [Issue #180](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180); see Section 6.1 for evidence and limits. Tinosh's consumer acceptance remains pending. The API is a presentation prototype, not completed group-wide integration.
 
 ## 1. Active serving behavior
 
@@ -133,8 +133,72 @@ Check the returned origin, target interval, producer and `inference_mode`. Modif
 
 This is a local presentation service. Start it on the loopback address above. Deployment, authentication and other components are separate integration tasks.
 
+### 6.1 Manual verification evidence — 24 October 2026
+
+**Task:** [#180](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180), related to [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
+**Human executor:** Chathuranga; commands and responses were pasted into the working conversation. Codex compared the supplied outputs with this contract. This records execution and inspection, not formal producer approval or Tinosh's technical consumer acceptance.
+**Environment:** local WSL/Bash, existing repository, branch `test/forecast-prototype-handoff`, HEAD `22e12b9b1da170feab50cf3028b59917646e5b30`; API started with `.venv/bin/python -m uvicorn src.api.main:app --host 127.0.0.1 --port 8000`. Installed Python/package versions were not captured in the supplied output.
+
+#### Source identity checks
+
+Chathuranga manually ran:
+
+```bash
+python3 -B -m src.data.verify_checksums --profile tinosh
+python3 -B -m src.data.verify_checksums --profile dewmi
+```
+
+| Check | Supplied result |
+|---|---|
+| `tinosh` profile | 20/20 registered inference files matched: run manifest, metadata, prediction receipt, candidates and four sets of model/descriptor/preprocessor/origin-feature files |
+| `dewmi` profile | 1/1 matched: retained `issue-132-forecast-export-v1.json` under `data/processed/forecasting/handoffs/final-20261003-02/` |
+| Missing or changed selected files | None reported |
+| Reference | `docs/checksums/2026-10-06.json`, matching local HEAD `22e12b9b1da170feab50cf3028b59917646e5b30` |
+| Reference SHA-256 | `381ed9607a9e3ec155ee3754d699d62873bfbff18f5e1f4edc31c407267ed7cc` |
+
+Both outputs explicitly reported **provisional local matches**: tracked content and independent reference review were not checked. These checks read selected bytes only; files outside the two profiles remain unverified. No full retained-bundle scan or scientific verification was run. Complete trusted handoff verification using an independently reviewed reference commit and the [checksum guide](checksums/README.md); do not infer review from a local HEAD match.
+
+#### Health and four existing examples
+
+Chathuranga ran `curl -i --fail-with-body http://127.0.0.1:8000/health`. At 07:27:23 Asia/Colombo, the supplied HTTP 200 response reported `ready`, horizons `[1,7,14,28]` and no unavailable reasons.
+
+For each POST, he used the corresponding Section 6 file command with `curl -i --fail-with-body`; `-i` additionally printed HTTP response headers. All requests used `SKU_1` / `WH_1`, origin `2025-01-28`, `input_kind: synthetic_demo` and the same invented 28-day history.
+
+| Example | HTTP status | Producer | Inclusive target interval | Raw forecast quantity (units) | Supplied result |
+|---|---|---|---|---:|---|
+| `forecast-1-day.json` | 200 | LightGBM `GBM018` | 2025-01-29 | 13.83799223799719 | `next_day`, `available` |
+| `forecast-7-day.json` | 200 | LightGBM `GBM011` | 2025-01-29 through 2025-02-04 | 90.0643865572258 | `cumulative_window`, `available` |
+| `forecast-14-day.json` | 200 | XGBoost `GBM022` | 2025-01-29 through 2025-02-11 | 181.0713348388672 | `cumulative_window`, `available` |
+| `forecast-28-day.json` | 200 | XGBoost `GBM003` | 2025-01-29 through 2025-02-25 | 349.0440673828125 | `cumulative_window`, `available`; pasted response ending truncated |
+
+All four supplied responses showed `forecast-inference-v1`, `inference_mode: request_time`, source run `final-20261003-02`, the designated producer, model/preprocessor references and an empty `unavailable_reasons` list. The 28-day producer, quantity, dates and availability were visible, but its complete final limitations text was not captured; do not claim full response capture for that case.
+
+#### Changed-history check
+
+Chathuranga manually submitted this request, changing the final historical `Units_Sold` from 15 to 20 in memory. The increment of five was an illustrative input change, not a research threshold. The original example file was not rewritten.
+
+```bash
+.venv/bin/python - <<'PY' | curl --fail-with-body http://127.0.0.1:8000/forecasts -H 'Content-Type: application/json' --data-binary @-
+import json
+from pathlib import Path
+
+payload = json.loads(Path("examples/forecast-api/forecast-1-day.json").read_text())
+payload["history"][-1]["Units_Sold"] += 5
+print(json.dumps(payload))
+PY
+```
+
+| Field | Original example | Modified request |
+|---|---|---|
+| `forecast_quantity` | `13.83799223799719` | `13.864131443279389` |
+| `provenance.input_sha256` | `0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58` | `c52bcbd52733897b46342ccbb3ef40bcb60891b6810f3dc23bb7d5df288cc93c` |
+
+The modified response retained LightGBM `GBM018`, origin `2025-01-28`, next-day target `2025-01-29`, saved model/preprocessor hashes, `request_time` and `available`. Changed input provenance and quantity are consistent with processing the modified request. This check complements existing synthetic call/matrix checks; different valid inputs do not always produce different tree-model predictions.
+
+These manual requests demonstrate serving only. They did not train, tune, refit, replay research evaluation, measure accuracy or accept downstream inventory/decision-support behaviour. The live January examples must not be joined to inventory/decision-support results from the retained origin `2024-12-02` as though those results had recomputed. Existing synthetic rejection/failure coverage in `tests/test_forecast_api.py`, `tests/test_forecasting_inference.py` and `tests/test_forecasting_export.py` was inspected for reuse; these manual requests do not exercise those failure cases, and that suite was not rerun for this record.
+
 ## 7. Engineering handoff
 
 The implementation consists of [saved-model inference](../src/forecasting/inference.py), [FastAPI schemas/routes](../src/api/main.py), four small input files, and focused synthetic API/inference checks. Native loads and predictions in automated checks use test doubles; request feature preparation uses the existing pipeline.
 
-Chathuranga runs the four revised manual examples against the retained local models and checks their identity and timing. Tinosh can subsequently review endpoints, schemas, unavailable behavior and integration suitability through the PR process. API code acceptance does not settle other component blockers in [integration readiness](integration-contract-readiness.md).
+Chathuranga's supplied manual outcomes are recorded in Section 6.1. Formal producer approval, independently reviewed reference verification and Tinosh's consumer acceptance remain unrecorded here. Tinosh's next step under [#183](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/183) is to use the [retained-export contract](forecast-api-contract.md) for the joined fixed-origin case and this separate request-time contract for the live demonstration, checking identity, units, inclusive windows, cumulative meaning and unavailable behaviour in his actual consumer. Record the consumed version, reviewer, date and outcome separately from Chathuranga's producer review; involve Didilani/Dewmi where their input meaning is affected. Preserve 28-day downstream unavailability. Issue #180 remains open until its outstanding evidence and acceptance requirements are satisfied. API code acceptance does not settle other component blockers in [integration readiness](integration-contract-readiness.md).
