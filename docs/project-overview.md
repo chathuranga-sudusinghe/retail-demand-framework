@@ -4,6 +4,8 @@
 
 **Academic title:** A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
+**Research subtitle:** A Comparative Study of Gradient-Boosted Decision Trees
+
 **Module:** COMP1884 Group Project  
 **Programme:** MSc Data Science, University of Greenwich
 

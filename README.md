@@ -1,4 +1,4 @@
-# Retail Demand Forecasting and Inventory Risk Analysis
+# A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis: A Comparative Study of Gradient-Boosted Decision Trees
 
 **University:** University of Greenwich<br>
 **Programme:** MSc Data Science and Its Applications<br>
@@ -7,7 +7,7 @@
 
 ## Research overview
 
-This group project builds a data-driven decision-support framework connecting demand forecasts, inventory-risk/replenishment analysis and responsible management-facing outputs. It uses the published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset) from Kaggle, selected for its linked daily sales and inventory variables supporting analysis at SKU-warehouse level. The publisher-simulated records support evaluation within this dataset; results do not establish effectiveness in a real retailer.
+This group project builds a data-driven decision-support framework connecting demand forecasts, inventory-risk/replenishment analysis and responsible management-facing outputs. Its forecasting component compares gradient-boosted decision-tree models—XGBoost, LightGBM and CatBoost—under matched inputs and chronological evaluation. It uses the published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset) from Kaggle, selected for its linked daily sales and inventory variables supporting analysis at SKU-warehouse level. The publisher-simulated records support evaluation within this dataset; results do not establish effectiveness in a real retailer.
 
 ## Dataset source
 
