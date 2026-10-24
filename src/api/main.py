@@ -5,11 +5,15 @@ from __future__ import annotations
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 import json
+import math
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.models import Example
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
 
 from src.forecasting.features import calendar_date
@@ -126,6 +130,20 @@ def create_app(
         version="1.0.0",
         lifespan=lifespan,
     )
+
+    @application.exception_handler(RequestValidationError)
+    async def invalid_request(
+        _request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        # Invalid numeric inputs must not break serialization of the 422 detail.
+        detail = jsonable_encoder(
+            exc.errors(),
+            custom_encoder={
+                float: lambda value: value if math.isfinite(value) else str(value)
+            },
+        )
+        return JSONResponse(status_code=422, content={"detail": detail})
+
     examples: dict[str, Example] = {
         f"h{horizon}": {
             "summary": f"{horizon}-day synthetic history request",

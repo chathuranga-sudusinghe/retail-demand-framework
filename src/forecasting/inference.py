@@ -322,7 +322,7 @@ class ForecastInference:
                 {"Date": day, "Units_Sold": units}
                 for day, units in zip(
                     frame.Date.dt.strftime("%Y-%m-%d").tolist(),
-                    frame.Units_Sold.astype(int).tolist(),
+                    [int(units) for units in frame.Units_Sold],
                     strict=True,
                 )
             ],
