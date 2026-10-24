@@ -1,4 +1,8 @@
-"""Local FastAPI forecast demonstration using request-time model inference."""
+"""Local FastAPI demonstration.
+
+``POST /forecasts`` uses request-time model inference. The separate read-only
+``/research-cases`` routes present retained fixed-origin research evidence.
+"""
 
 from __future__ import annotations
 
@@ -19,6 +23,12 @@ from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
 from src.forecasting.features import calendar_date
 from src.forecasting.inference import ForecastInference, InferenceError, load_inference
 from src.forecasting.paths import REPOSITORY
+from src.api.research_cases import router as research_cases_router
+from src.decision_support.retained_cases import (
+    CaseSourceUnavailable,
+    RetainedCaseCatalog,
+    load_default_catalog,
+)
 
 
 class DemandDay(BaseModel):
@@ -89,6 +99,7 @@ def create_app(
     *,
     repository: Path = REPOSITORY,
     loader: Callable[[Path], ForecastInference] = load_inference,
+    case_loader: Callable[[Path], RetainedCaseCatalog] = load_default_catalog,
 ) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
@@ -98,8 +109,16 @@ def create_app(
         except InferenceError:
             # Keep health and interactive docs usable when local artifacts are absent.
             pass
+        application.state.research_cases = None
+        application.state.research_cases_reason = "source_unverified"
+        try:
+            application.state.research_cases = case_loader(repository)
+        except CaseSourceUnavailable as exc:
+            # Research-case routes report 503 with this reason; forecasts are unaffected.
+            application.state.research_cases_reason = exc.reason_code
         yield
         application.state.predictor = None
+        application.state.research_cases = None
 
     application = FastAPI(
         title="Retail Demand Forecast API",
@@ -175,6 +194,8 @@ def create_app(
                 detail={"reason_code": exc.reason_code, "message": str(exc)},
             ) from exc
         return ForecastResponse(**result)
+
+    application.include_router(research_cases_router)
 
     return application
 
