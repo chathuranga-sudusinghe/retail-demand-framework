@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from fastapi.testclient import TestClient
@@ -78,6 +79,35 @@ def test_non_integer_or_missing_demand_is_rejected(value: Any) -> None:
         response = client.post("/forecasts", json=payload)
     assert response.status_code == 422
     assert not engine.producers[1].estimator.calls
+
+
+@pytest.mark.parametrize(
+    "token,reported_input",
+    [("NaN", "nan"), ("Infinity", "inf"), ("-Infinity", "-inf"), ("1e309", "inf")],
+)
+def test_nonfinite_request_input_returns_json_safe_validation_error(
+    token: str, reported_input: str
+) -> None:
+    engine = service()
+    payload = example()
+    payload["history"][0]["Units_Sold"] = "__NONFINITE__"
+    content = json.dumps(payload).replace('"__NONFINITE__"', token)
+    with TestClient(
+        create_app(loader=lambda root: engine), raise_server_exceptions=False
+    ) as client:
+        response = client.post(
+            "/forecasts", content=content, headers={"Content-Type": "application/json"}
+        )
+    assert response.status_code == 422
+    body = response.json()
+    error = body["detail"][0]
+    assert error["loc"] == ["body", "history", 0, "Units_Sold"]
+    assert error["type"] == "int_type"
+    assert error["msg"] == "Input should be a valid integer"
+    assert error["input"] == reported_input
+    json.dumps(body, allow_nan=False)
+    assert "forecast_quantity" not in body
+    assert all(not producer.estimator.calls for producer in engine.producers.values())
 
 
 def test_unknown_identity_has_meaningful_reason() -> None:

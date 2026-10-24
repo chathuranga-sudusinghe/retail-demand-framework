@@ -125,6 +125,27 @@ def test_new_history_changes_model_matrix_and_output_without_response_cache() ->
     assert second["provenance"]["input_sha256"] != first["provenance"]["input_sha256"]
 
 
+@pytest.mark.parametrize("quantity", [15, 2**63, 2**64 - 1])
+@pytest.mark.parametrize("reverse_history", [False, True])
+def test_input_hash_preserves_exact_integer_history(
+    quantity: int, reverse_history: bool
+) -> None:
+    payload = example()
+    for row in payload["history"]:
+        row["Units_Sold"] = quantity
+    canonical = copy.deepcopy(payload)
+    canonical["history"] = sorted(canonical["history"], key=lambda row: row["Date"])
+    expected = hashlib.sha256(
+        json.dumps(
+            canonical, sort_keys=True, separators=(",", ":"), allow_nan=False
+        ).encode()
+    ).hexdigest()
+    if reverse_history:
+        payload["history"].reverse()
+    result = invoke(service(), payload)
+    assert result["provenance"]["input_sha256"] == expected
+
+
 @pytest.mark.parametrize("raw", [-10.125, 0.0, 0.125])
 def test_raw_quantity_is_not_clipped_or_rounded(raw: float) -> None:
     engine = service()
