@@ -220,7 +220,7 @@ Additional forecasting-specific threats include prior final-period validation/ED
 
 ## 16. Evidence-to-conclusion mapping — draft for human review
 
-**Task:** [Issue #185](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/185), C1 under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
+**Original draft milestone:** [Issue #185](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/185), delivered through PR #186 and closed. Continuing C1 decisions/reviews are tracked under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179); the descriptive follow-up is [#199](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/199) in Section 16.5.
 **Prepared:** 24 October 2026, Asia/Colombo; source baseline `faedfa492a1d7e3da52de9c6a1c09f08aba347dd`.
 **Status:** Draft synthesis of existing evidence. No C1 team hypothesis disposition or approval of this conclusion text is recorded here. Sections 2.1, 2.2 and 11 retain their exact hypothesis wording; no methodology or assessed-scope decision is changed.
 
@@ -265,8 +265,72 @@ Interpretation must retain the one-year simulated-data limitation, prior Decembe
 | Confirm whether the applicable COMP1884 brief/marking criteria require formal hypothesis testing; obtain teaching clarification if needed | Team; Chathuranga coordinates the applicable evidence in the [criteria checklist](greenwich-criteria-checklist.md#open-points-and-maintenance) | Unconfirmed here; existing general guidance does not settle this requirement. |
 | Record primary and secondary hypothesis disposition and whether the bounded submission satisfies the assessed scope | Team, with Chathuranga coordinating forecasting and the group conclusion | Pending; this draft does not waive a required evaluation or rewrite hypotheses. |
 | Review the proposed forecasting, inventory and responsible-use interpretations above | Chathuranga: forecasting; Didilani: inventory; Dewmi: responsible decision support | C1-specific review outcomes not yet recorded. Existing DR-012 approval and completed assessments remain valid within their recorded scope. |
-| Approve the final group conclusion with the remaining limitations and required work visible | Team | Pending; keep #185 open until its acceptance criteria are satisfied. |
+| Approve the final group conclusion with the remaining limitations and required work visible | Team | Pending under #179; #185 remains closed as a delivered draft milestone. |
 
 For each actual review, record the reviewer, date, exact scope, decision and supporting evidence or issue/PR reference. Do not populate an approval from an AI assessment or from permission to draft this section. If formal testing is mandatory, prepare a separately reviewed protocol covering the estimand, comparator, outcomes, experimental unit, dependence, statistical procedure and reporting/decision rule before any specifically authorised human-run analysis. No additional test or run is selected or authorised here.
 
 This evidence mapping can progress independently of Tinosh's consumer implementation. It does not establish acceptance for [#180](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180) or [#183](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/183), and those tasks do not have to close before the component interpretations and assessed-scope discussion above can proceed.
+
+### 16.5 Descriptive comparison of dated validation periods — C1 follow-up
+
+**Task:** [Issue #199](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/199), directly under #179. **Prepared:** 25 October 2026, Asia/Colombo; source baseline `462956f42abcedce6e7c2db8ea0805920bc0a568`.
+**Approval scope:** Chathuranga explicitly approved the documentation-only protocol in the working conversation on 25 October: reuse existing reviewed fold metrics and frozen configurations, compare dated periods separately by horizon, keep final results separate and disclose dependence, selection and prior exposure. This approves preparation of this synthesis, not its final interpretation, a statistical method/run, hypothesis disposition or a team/lecturer decision. The text remains for human review.
+
+#### Evidence and comparison protocol
+
+Use the [retained validation report](../reports/forecasting/validation-20261002-01/comparison.md) for stored metrics, [protocol Section 3](protocol.md#3-temporal-boundaries) for dates and [DR-014](decisions/DR-014-forecasting-selection-and-final-refit.md#frozen-primary-research-configurations) for the twelve frozen primary configurations. No prediction errors or metrics are recalculated. The four-fold means below are copied from existing arithmetic-mean summaries, not pooled or newly averaged. Each model retains the same configuration across all four folds; there is no per-fold reselection. The primary comparison remains XGBoost/LightGBM/CatBoost; Ridge/Random Forest remain supportive and Naive/Seasonal Naive remain contextual baselines.
+
+The period labels identify calendar windows, not newly defined demand regimes. Each horizon's target starts the day after its origin and ends at origin plus horizon; the 28-day window does not make each fold a sequence of daily forecast origins.
+
+| Fold / period | Training start | Training end / origin | Training days | Target start | Target end for h1 / h7 / h14 / h28 |
+|---|---|---|---|---|---|
+| 1 / April | 2024-01-01 | 2024-03-31 | 91 | 2024-04-01 | 2024-04-01 / 2024-04-07 / 2024-04-14 / 2024-04-28 |
+| 2 / July | 2024-01-01 | 2024-06-30 | 182 | 2024-07-01 | 2024-07-01 / 2024-07-07 / 2024-07-14 / 2024-07-28 |
+| 3 / October | 2024-01-01 | 2024-09-30 | 274 | 2024-10-01 | 2024-10-01 / 2024-10-07 / 2024-10-14 / 2024-10-28 |
+| 4 / November–December | 2024-01-01 | 2024-11-04 | 309 | 2024-11-05 | 2024-11-05 / 2024-11-11 / 2024-11-18 / 2024-12-02 |
+
+The [read-only inspection milestone](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6388160846) records provisional identity matches for three selected local files. The performed structural checks found 304,000 prediction rows across 1,216 complete candidate groups, each covering the same 250 SKU-warehouse pairs, with 4,000 distinct fold/horizon/pair actual-target keys and no duplicate candidate keys, conflicting actuals or date-boundary mismatches. These counts describe repeated evidence coverage, not independent sample sizes. The reference was not independently established from a reviewed commit; the checks did not verify the remaining bundle, source/input fingerprints, model replay or scientific correctness. This documentation step reuses that inspection without another bundle scan.
+
+#### Stored primary fold results
+
+WAPE (Weighted Absolute Percentage Error) is shown as its stored ratio; lower is better. Columns F1–F4 refer to the dated periods above. Values and configuration IDs are copied exactly from the retained report. Its horizon-specific detail tables also retain all four fold-level MAE (Mean Absolute Error), RMSE (Root Mean Squared Error) and signed Bias values; use those supporting results alongside WAPE rather than substituting a new metric or stability threshold.
+
+| Horizon (days) | Primary model | Frozen configuration | F1 WAPE | F2 WAPE | F3 WAPE | F4 WAPE | Stored mean WAPE |
+|---|---|---|---|---|---|---|---|
+| 1 | XGBoost | GBM006 | 0.14711052345552264 | 0.23620623087573 | 0.41061834237534783 | 0.3793562586961594 | 0.29332283885069 |
+| 1 | LightGBM | GBM018 | 0.14773671612588626 | 0.2350846218051868 | 0.41081512200454356 | 0.3795263094113362 | 0.2932906923367382 |
+| 1 | CatBoost | GBM017 | 0.14751947750761818 | 0.23739381422282063 | 0.41045893629057556 | 0.37951776410590904 | 0.29372249803173084 |
+| 7 | XGBoost | GBM009 | 0.060853267030262226 | 0.15969356034306917 | 0.1683314623578518 | 0.17383164672794188 | 0.14067748411478126 |
+| 7 | LightGBM | GBM011 | 0.06195941643698593 | 0.15505036008997175 | 0.16861309939594557 | 0.17395286071839688 | 0.13989393416032503 |
+| 7 | CatBoost | GBM007 | 0.06021554944635345 | 0.15980842790826108 | 0.16671340065578588 | 0.17363962756423318 | 0.1400942513936584 |
+| 14 | XGBoost | GBM022 | 0.046342085148426776 | 0.26940026865635885 | 0.1131131369530121 | 0.18883126504273107 | 0.1544216889501322 |
+| 14 | LightGBM | GBM014 | 0.04394047548824847 | 0.2746890916099378 | 0.11381972291970893 | 0.18734021697918046 | 0.15494737674926892 |
+| 14 | CatBoost | GBM021 | 0.04419694741625291 | 0.28532101076036964 | 0.11352281271695441 | 0.18547132186670648 | 0.15712802319007085 |
+| 28 | XGBoost | GBM003 | 0.031108142060737864 | 0.5397882450513437 | 0.10555097710790447 | 0.20843147727889014 | 0.22121971037471905 |
+| 28 | LightGBM | GBM022 | 0.03407701798792307 | 0.5237250468389942 | 0.08370445514925137 | 0.24764692820651796 | 0.22228836204567165 |
+| 28 | CatBoost | GBM015 | 0.03084487618411814 | 0.5358692366829972 | 0.08220364598215188 | 0.24274136343003053 | 0.22291478056982444 |
+
+For these frozen primary configurations, the April fold has the lowest stored WAPE at every horizon. The largest stored WAPE occurs in October at h1, November–December at h7 and July at h14/h28 for all three primary models. At h1, October WAPE exceeds July WAPE while their stored MAE values move in the opposite direction; WAPE depends on the actual-demand denominator as well as absolute error. Thus the metrics describe different aspects of performance, and neither calendar labels nor WAPE differences establish a causal demand-condition effect.
+
+Primary model ordering also changes across folds: at h7, CatBoost has the lowest primary WAPE in F1/F3/F4 while LightGBM has the lower four-fold mean; at h28, the fold leaders are CatBoost, LightGBM, CatBoost and XGBoost respectively. These already documented observations do not identify a universal winner. [Validation interpretation](forecasting-final-evaluation.md#3-validation-results) retains the contextual findings: Random Forest has slightly lower mean h1 WAPE than the primary leaders, and Seasonal Naive outperforms all learned models at h14/h28. Those roles and the frozen producer decision remain unchanged.
+
+#### Final-origin evidence remains separate
+
+The [final comparison](forecasting-final-evaluation.md#6-validation-vs-final-holdout-comparison) evaluates one origin, 2024-12-02, after fresh refitting through that date. The following values are copied from its frozen-producer comparison; they are not extra validation folds or an estimate of an independently replicated generalisation gap.
+
+| Horizon (days) | Frozen producer | Configuration | Stored validation mean WAPE | Stored final WAPE |
+|---|---|---|---|---|
+| 1 | LightGBM | GBM018 | 0.2932906923367382 | 0.30382986353577623 |
+| 7 | LightGBM | GBM011 | 0.13989393416032503 | 0.21742439002586517 |
+| 14 | XGBoost | GBM022 | 0.1544216889501322 | 0.28637579706078414 |
+| 28 | XGBoost | GBM003 | 0.22121971037471905 | 0.37086299051211 |
+
+Final WAPE is higher than the validation mean for each frozen producer. Across the full final comparison, supportive Ridge has the lowest WAPE at h1/h7 and contextual Seasonal Naive at h14/h28. These final observations do not authorize reselection or establish inventory/decision-support improvement.
+
+#### Feasibility and hypothesis limits
+
+The four validation outcome windows are separate, but cumulative horizons within an origin share outcomes; historical training labels overlap, folds share expanding histories and the same pairs recur. Configuration selection used these validation outcomes. Each dated period supplies one origin, while training-history length and fitted estimators change with period. The retained design therefore does not isolate a temporal-demand-condition effect. The row count does not justify treating observations as independent, and a test treating the four folds as independent would not resolve those design limits. No new condition definition, significance procedure, confidence interval or p-value is introduced.
+
+Any additional analysis of these previously inspected outcomes would be retrospective/exploratory rather than an originally preregistered confirmatory test. Preserve prior December 3–16 validation exposure, full-year exploratory exposure and the failed first final execution after outcome access. One publisher-simulated year and one final origin limit generalisation to other periods or real retailers.
+
+The primary group hypothesis still lacks an operational improvement comparator, outcomes and approved testing protocol. Forecast-error differences do not establish inventory-risk improvement; the constructed threshold-exposure evaluation and purposive record-content checks do not provide a controlled decision-quality comparison. Both the primary and provisional temporal hypotheses remain unresolved/untested, without acceptance of H0 or a waiver of any assessed requirement. Chathuranga retains forecasting review; Didilani and Dewmi retain their component interpretations; the team retains final hypothesis/assessed-scope disposition under #179. Any new scientific method needs explicit human approval, and any approved research run must be separately authorized and manually started by its responsible human under [AGENTS Sections 17–19](../AGENTS.md#17-experiment-execution-responsibility).
