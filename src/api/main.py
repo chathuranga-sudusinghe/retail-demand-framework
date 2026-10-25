@@ -19,6 +19,10 @@ from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
 from src.forecasting.features import calendar_date
 from src.forecasting.inference import ForecastInference, InferenceError, load_inference
 from src.forecasting.paths import REPOSITORY
+from src.decision_support.retained_cases import (
+    RetainedCaseSourceError,
+    load_retained_case_bundle,
+)
 
 
 class DemandDay(BaseModel):
@@ -85,10 +89,29 @@ class ForecastResponse(BaseModel):
     limitations: list[str]
 
 
+class RetainedDecisionSupportCase(BaseModel):
+    """Unchanged management record plus a separate prospective projection."""
+
+    assessment_id: str
+    horizon: StrictInt
+    record: dict[str, Any]
+    prospective_record: dict[str, Any]
+
+
+class RetainedDecisionSupportRoster(BaseModel):
+    """The existing 20-case retained roster and its source context."""
+
+    mapping_version: str
+    source: dict[str, Any]
+    scope: str
+    records: list[RetainedDecisionSupportCase]
+
+
 def create_app(
     *,
     repository: Path = REPOSITORY,
     loader: Callable[[Path], ForecastInference] = load_inference,
+    retained_case_loader: Callable[[Path], dict[str, Any]] = load_retained_case_bundle,
 ) -> FastAPI:
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
@@ -175,6 +198,38 @@ def create_app(
                 detail={"reason_code": exc.reason_code, "message": str(exc)},
             ) from exc
         return ForecastResponse(**result)
+
+    def retained_cases() -> dict[str, Any]:
+        try:
+            return retained_case_loader(repository)
+        except RetainedCaseSourceError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail={"reason_code": "source_unverified", "message": str(exc)},
+            ) from exc
+
+    @application.get(
+        "/decision-support/cases", response_model=RetainedDecisionSupportRoster
+    )
+    def decision_support_cases() -> dict[str, Any]:
+        return retained_cases()
+
+    @application.get(
+        "/decision-support/cases/{assessment_id}",
+        response_model=RetainedDecisionSupportCase,
+    )
+    def decision_support_case(assessment_id: str) -> dict[str, Any]:
+        bundle = retained_cases()
+        for case in bundle["records"]:
+            if case["assessment_id"] == assessment_id:
+                return case
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "reason_code": "unknown_case",
+                "message": f"No retained decision-support case exists for {assessment_id}.",
+            },
+        )
 
     return application
 
