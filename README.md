@@ -37,10 +37,10 @@ The mapping was frozen before final evaluation and remains unchanged. Ridge and 
 | Area | Delivered | Remaining work / acceptance |
 |---|---|---|
 | Forecast serving | [Request-time API](docs/forecast-inference-api.md), four synthetic JSON examples and recorded manual outcomes; validation-error and input-provenance fixes merged through [PR #195](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/195) | Producer approval, independently reviewed source verification and Tinosh's technical consumer acceptance remain tracked in #179. |
-| Inventory scenario | Forecast-to-inventory mapping, runner and [retained 1/7/14-day constructed-origin evaluation](reports/inventory-risk/issue-164/evaluation-v1/report.md); [canonical interpretation review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/181#issuecomment-6380707367) and [shared-report Section 6 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/190#pullrequestreview-5637154678) recorded | Technical consumption, rendered visuals, Didilani's D2 review and responsible-presentation acceptance remain separate. Documentation alignment is tracked under [#192](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/192). |
+| Inventory scenario | Forecast-to-inventory mapping, runner and [retained 1/7/14-day constructed-origin evaluation](reports/inventory-risk/issue-164/evaluation-v1/report.md); [canonical interpretation review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/181#issuecomment-6380707367) and [shared-report Section 6 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/190#pullrequestreview-5637154678) recorded; documentation alignment delivered through closed [#192](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/192) / merged PR #194 | Technical consumption, rendered visuals, Didilani's D2 review and responsible-presentation acceptance continue under [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201) and #179. |
 | Responsible decision support | [20 prepared records and 160 completed human-entered checks](reports/decision-support/issue-168-inventory-v1/summary.md): 15 inventory-linked cases and five h28 cases with downstream inventory gated | Dewmi's final interpretation/display mappings under [#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182), actual rendered readability and consumer acceptance remain pending. |
-| Integrated prototype | Existing forecast API, retained-export mapping, prospective record bridge and [AS-01–AS-10 requirements](docs/integration-contract-readiness.md#12-integration-acceptance-scenarios-issue-101) | Tinosh's [#183 retained-case slice](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/183), approved visual implementation and cross-component acceptance remain in progress. |
-| Research synthesis and shared report | [Evidence-to-conclusion draft](docs/research-design.md#16-evidence-to-conclusion-mapping--draft-for-human-review) and [shared report draft](docs/group-report.md), including reviewed inventory material | Group hypothesis/scope decisions, remaining member contributions, verified assessment requirements and final team/report review remain unresolved under #179. |
+| Integrated prototype | Read-only retained-case roster/case routes and synthetic integration checks delivered through merged [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197), closing #183; existing forecast API, retained-export mapping, prospective record bridge and [AS-01–AS-10 requirements](docs/integration-contract-readiness.md#12-integration-acceptance-scenarios-issue-101) | Didilani's [#201 continuation](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201) covers the human-observed runtime handoff, approved inventory views and component acceptance. Tinosh retains his documented technical role; the assignment does not establish completed visuals or final acceptance. |
+| Research synthesis and shared report | [Evidence-to-conclusion draft](docs/research-design.md#16-evidence-to-conclusion-mapping--draft-for-human-review), [dated validation-period synthesis](docs/research-design.md#165-descriptive-comparison-of-dated-validation-periods--c1-follow-up) delivered through closed #199 / merged PR #200, and [shared report draft](docs/group-report.md), including reviewed inventory material | Group hypothesis/scope decisions, remaining member contributions, verified assessment requirements and final team/report review remain unresolved under #179. |
 
 [DR-012 group approval](docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) covers the documented 1/7/14-day fixed-origin, fixed-reorder-point, no-receipt scenario. It was reported by Chathuranga on 23 October for the 12 October WhatsApp discussion. Source inventory timing remains unknown. Uncertainty estimates, numerical replenishment, overstock rules, automatic managerial-review triggers and 28-day inventory use are outside the delivered approved methods.
 
@@ -98,9 +98,11 @@ flowchart TB
     subgraph TI["Tinosh — Integration and Prototype Engineering"]
         API["Request-time forecast API implemented<br/>Supplied history and frozen saved models"]
         ACCEPT["AS-01 to AS-10 specified<br/>Integrated acceptance remains under Issue 179"]
-        PROTOTYPE["Joined retained-case flow and approved visuals<br/>Implementation/acceptance under Issue 183"]
+        RETAINED["Retained roster/case API implemented<br/>PR 197 merged; Issue 183 closed"]
+        PROTOTYPE["Remaining runtime handoff and approved views<br/>Issue 201: Didilani; component reviews pending"]
 
         ACCEPT -.-> PROTOTYPE
+        RETAINED -.-> PROTOTYPE
     end
 
     HISTORY --> API
@@ -116,7 +118,7 @@ flowchart TB
     classDef planned fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
 
     class DATA,PREP,FEATURES,RESEARCH,MODELS,EVIDENCE complete;
-    class HISTORY,FORECAST,SNAPSHOT,INVENTORY,INTERPRET,RECORD,ASSESS,API,ACCEPT pending;
+    class HISTORY,FORECAST,SNAPSHOT,INVENTORY,INTERPRET,RECORD,ASSESS,API,ACCEPT,RETAINED pending;
     class PROTOTYPE,HUMAN planned;
 ~~~
 
