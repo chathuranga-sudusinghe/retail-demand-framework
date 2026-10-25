@@ -15,6 +15,7 @@ from src.api.main import create_app
 from src.decision_support import assessment
 from src.decision_support.records import DecisionSupportRecord
 from src.decision_support import retained_cases
+from src.forecasting.inference import ForecastInference, InferenceError
 from src.inventory_risk import runner
 from src.inventory_risk.forecast_handoff import (
     MAPPING_VERSION,
@@ -309,13 +310,17 @@ def _synthetic_loader(root: Path) -> dict[str, Any]:
     )
 
 
+def _unavailable_forecast_loader(_repository: Path) -> ForecastInference:
+    raise InferenceError("source_unverified", "Synthetic unavailable forecast source.")
+
+
 def test_existing_validators_join_synthetic_twenty_case_roster_and_gate_h28(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _write_synthetic_sources(tmp_path, monkeypatch)
     app = create_app(
         repository=tmp_path,
-        loader=lambda _: None,
+        loader=_unavailable_forecast_loader,
         retained_case_loader=_synthetic_loader,
     )
     with TestClient(app) as client:
@@ -476,7 +481,7 @@ def test_unknown_case_is_not_substituted_and_missing_sources_are_503(
     _write_synthetic_sources(tmp_path, monkeypatch)
     app = create_app(
         repository=tmp_path,
-        loader=lambda _: None,
+        loader=_unavailable_forecast_loader,
         retained_case_loader=_synthetic_loader,
     )
     with TestClient(app) as client:
@@ -506,3 +511,77 @@ def test_openapi_exposes_separate_read_only_retained_routes() -> None:
     assert set(paths["/decision-support/cases"]) == {"get"}
     assert set(paths["/decision-support/cases/{assessment_id}"]) == {"get"}
     assert set(paths["/forecasts"]) == {"post"}
+
+
+def test_lifespan_and_requests_never_prepare_or_assess_records(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _, _, original = _write_synthetic_sources(tmp_path, monkeypatch)
+    before = {
+        path.relative_to(tmp_path): path.read_bytes()
+        for path in tmp_path.rglob("*")
+        if path.is_file()
+    }
+
+    def forbidden_generator(*_args: Any, **_kwargs: Any) -> Any:
+        pytest.fail("Retained-case serving must not prepare or assess records.")
+
+    for name in (
+        "build_review_records",
+        "review_template",
+        "prepare_files",
+        "summarize_reviews",
+        "summarize_files",
+    ):
+        monkeypatch.setattr(assessment, name, forbidden_generator)
+    for name in ("retrospective_targets", "evaluate_handoff", "write_result"):
+        monkeypatch.setattr(runner, name, forbidden_generator)
+
+    app = create_app(
+        repository=tmp_path,
+        loader=_unavailable_forecast_loader,
+        retained_case_loader=_synthetic_loader,
+    )
+    with TestClient(app) as client:
+        roster = client.get("/decision-support/cases")
+        case = client.get("/decision-support/cases/F01")
+        assert client.get("/health").json()["status"] == "unavailable"
+
+    assert roster.status_code == case.status_code == 200
+    assert [row["record"] for row in roster.json()["records"]] == [
+        row["record"] for row in original["records"]
+    ]
+    assert case.json()["record"] == original["records"][0]["record"]
+    after = {
+        path.relative_to(tmp_path): path.read_bytes()
+        for path in tmp_path.rglob("*")
+        if path.is_file()
+    }
+    assert after == before
+
+
+@pytest.mark.parametrize("filename", ["manifest.json", "records.json"])
+@pytest.mark.parametrize("operation", ["missing", "tampered"])
+def test_missing_or_tampered_retained_files_make_routes_unavailable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    filename: str,
+    operation: str,
+) -> None:
+    _write_synthetic_sources(tmp_path, monkeypatch)
+    path = tmp_path / retained_cases.DECISION_SUPPORT_DIRECTORY / filename
+    if operation == "missing":
+        path.unlink()
+    else:
+        path.write_bytes(path.read_bytes() + b" ")
+
+    app = create_app(
+        repository=tmp_path,
+        loader=_unavailable_forecast_loader,
+        retained_case_loader=_synthetic_loader,
+    )
+    with TestClient(app) as client:
+        for route in ("/decision-support/cases", "/decision-support/cases/F01"):
+            response = client.get(route)
+            assert response.status_code == 503
+            assert response.json()["detail"]["reason_code"] == "source_unverified"

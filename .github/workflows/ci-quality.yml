@@ -57,6 +57,10 @@ jobs:
         if: steps.scope.outputs.run_python != 'false'
         run: ruff check src/forecasting tests/test_forecasting_*.py
 
+      - name: Lint retained-case API and tests
+        if: steps.scope.outputs.run_python != 'false'
+        run: ruff check src/api/main.py src/decision_support/retained_cases.py tests/test_decision_support_retained_cases.py
+
       - name: Verify imports
         if: steps.scope.outputs.run_python != 'false'
         run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
@@ -64,3 +68,9 @@ jobs:
       - name: Type-check forecasting source
         if: steps.scope.outputs.run_python != 'false'
         run: python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
+
+      - name: Type-check retained-case API and tests
+        if: steps.scope.outputs.run_python != 'false'
+        env:
+          MYPYPATH: tests
+        run: python -m mypy src/api/main.py src/decision_support/retained_cases.py tests/test_decision_support_retained_cases.py --explicit-package-bases --disable-error-code import-untyped

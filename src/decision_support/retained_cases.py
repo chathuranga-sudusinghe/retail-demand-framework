@@ -235,7 +235,7 @@ def _expected_roster() -> list[tuple[str, str, int, str]]:
 
 
 def _projection(row: dict[str, Any], horizon: int) -> dict[str, Any]:
-    names = _COMMON_PROSPECTIVE_FIELDS
+    names: tuple[str, ...] = _COMMON_PROSPECTIVE_FIELDS
     if horizon in (1, 7, 14):
         names = (*names, *_INVENTORY_PROSPECTIVE_FIELDS)
     return {name: row[name] for name in names}
