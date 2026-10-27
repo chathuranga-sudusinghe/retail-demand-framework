@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator, Callable
-from contextlib import asynccontextmanager
 import json
 import math
+from collections.abc import AsyncIterator, Callable
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -16,13 +16,13 @@ from fastapi.openapi.models import Example
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator
 
-from src.forecasting.features import calendar_date
-from src.forecasting.inference import ForecastInference, InferenceError, load_inference
-from src.forecasting.paths import REPOSITORY
 from src.decision_support.retained_cases import (
     RetainedCaseSourceError,
     load_retained_case_bundle,
 )
+from src.forecasting.features import calendar_date
+from src.forecasting.inference import ForecastInference, InferenceError, load_inference
+from src.forecasting.paths import REPOSITORY
 
 
 class DemandDay(BaseModel):

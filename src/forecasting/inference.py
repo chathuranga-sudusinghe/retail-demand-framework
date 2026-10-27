@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import timedelta
 import hashlib
 import json
+from dataclasses import dataclass
+from datetime import timedelta
 from pathlib import Path
 from threading import Lock
 from typing import Any
@@ -15,6 +15,7 @@ import pandas as pd
 from threadpoolctl import threadpool_limits
 
 from src.forecasting.export import (
+    _VERIFIED_SOURCE,
     ORIGIN,
     PRODUCERS,
     RUN_ID,
@@ -23,7 +24,6 @@ from src.forecasting.export import (
     _producer_reference,
     _read_bound,
     _receipts,
-    _VERIFIED_SOURCE,
 )
 from src.forecasting.features import (
     build_origin_features,
@@ -75,7 +75,7 @@ def _load_native(model: str, data: bytes) -> Any:
     return estimator
 
 
-def load_inference(repository: Path = REPOSITORY) -> "ForecastInference":
+def load_inference(repository: Path = REPOSITORY) -> ForecastInference:
     """Bind four saved models once. No saved forecasts or outcome files are read."""
     try:
         return _load_inference(RepositoryLayout(repository))
@@ -94,7 +94,7 @@ def load_inference(repository: Path = REPOSITORY) -> "ForecastInference":
         ) from exc
 
 
-def _load_inference(layout: RepositoryLayout) -> "ForecastInference":
+def _load_inference(layout: RepositoryLayout) -> ForecastInference:
     prefix = f"artifacts/forecasting/{RUN_ID}"
     manifest_bytes = layout._owned_path(
         layout.run_directory(RUN_ID) / "run_manifest.json"
