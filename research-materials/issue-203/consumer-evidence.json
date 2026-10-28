@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "title": "Issue #203 Technical Consumer Verification Evidence",
+    "capture_date": "2026-10-27T18:06:44.383554+00:00",
+    "api_revision": "4362462f4fcbe3b5398726eff7b67f348cfccf37",
+    "startup_command": "fastapi dev src/api/main.py / TestClient(app)",
+    "capture_command": "python capture_consumer_evidence.py",
+    "source_verification_reference": "Issue #179 / PR #195 Baseline",
+    "reviewer": "Tinosh",
+    "status": "Accepted (Request-time technical consumer review completed; producer approval pending under #179)"
+  },
+  "payload": {
+    "SKU_ID": "SKU_1",
+    "Warehouse_ID": "WH_1",
+    "forecast_origin": "2025-01-28",
+    "horizon": 7,
+    "input_kind": "synthetic_demo",
+    "history": [
+      {
+        "Date": "2025-01-01",
+        "Units_Sold": 11
+      },
+      {
+        "Date": "2025-01-02",
+        "Units_Sold": 12
+      },
+      {
+        "Date": "2025-01-03",
+        "Units_Sold": 14
+      },
+      {
+        "Date": "2025-01-04",
+        "Units_Sold": 15
+      },
+      {
+        "Date": "2025-01-05",
+        "Units_Sold": 17
+      },
+      {
+        "Date": "2025-01-06",
+        "Units_Sold": 16
+      },
+      {
+        "Date": "2025-01-07",
+        "Units_Sold": 13
+      },
+      {
+        "Date": "2025-01-08",
+        "Units_Sold": 12
+      },
+      {
+        "Date": "2025-01-09",
+        "Units_Sold": 13
+      },
+      {
+        "Date": "2025-01-10",
+        "Units_Sold": 15
+      },
+      {
+        "Date": "2025-01-11",
+        "Units_Sold": 16
+      },
+      {
+        "Date": "2025-01-12",
+        "Units_Sold": 18
+      },
+      {
+        "Date": "2025-01-13",
+        "Units_Sold": 17
+      },
+      {
+        "Date": "2025-01-14",
+        "Units_Sold": 14
+      },
+      {
+        "Date": "2025-01-15",
+        "Units_Sold": 13
+      },
+      {
+        "Date": "2025-01-16",
+        "Units_Sold": 14
+      },
+      {
+        "Date": "2025-01-17",
+        "Units_Sold": 16
+      },
+      {
+        "Date": "2025-01-18",
+        "Units_Sold": 17
+      },
+      {
+        "Date": "2025-01-19",
+        "Units_Sold": 19
+      },
+      {
+        "Date": "2025-01-20",
+        "Units_Sold": 18
+      },
+      {
+        "Date": "2025-01-21",
+        "Units_Sold": 15
+      },
+      {
+        "Date": "2025-01-22",
+        "Units_Sold": 13
+      },
+      {
+        "Date": "2025-01-23",
+        "Units_Sold": 14
+      },
+      {
+        "Date": "2025-01-24",
+        "Units_Sold": 16
+      },
+      {
+        "Date": "2025-01-25",
+        "Units_Sold": 17
+      },
+      {
+        "Date": "2025-01-26",
+        "Units_Sold": 20
+      },
+      {
+        "Date": "2025-01-27",
+        "Units_Sold": 18
+      },
+      {
+        "Date": "2025-01-28",
+        "Units_Sold": 15
+      }
+    ]
+  },
+  "response": {
+    "inference_schema": "forecast-inference-v1",
+    "inference_mode": "request_time",
+    "input_kind": "synthetic_demo",
+    "model_source_run_id": "final-20261003-02",
+    "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+    "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+    "SKU_ID": "SKU_1",
+    "Warehouse_ID": "WH_1",
+    "forecast_origin": "2025-01-28",
+    "horizon": 7,
+    "target_start_date": "2025-01-29",
+    "target_end_date": "2025-02-04",
+    "forecast_type": "cumulative_window",
+    "forecast_quantity": 90.0643865572258,
+    "model": "lightgbm",
+    "configuration_id": "GBM011",
+    "producer_designation": "frozen_designated_producer",
+    "provenance": {
+      "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/model.txt",
+      "model_hash": "052b459d3a6e6df7beee2168d19803b2581a7c6d7d0b697dd6c84032ea94602f",
+      "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/state.json",
+      "preprocessor_hash": "186d32706554f47a0e0b3eacb0f86d6a5e2ca963810dc9599179f2a117d2f71a",
+      "input_sha256": "a95b84f3a61b31b24a33e8835f034850b82d13782099b10ed7f258ed0ca83b35"
+    },
+    "status": "available",
+    "unavailable_reasons": [],
+    "assumptions": [
+      "Forecast uses only the supplied history through forecast_origin."
+    ],
+    "limitations": [
+      "Synthetic demo input is illustrative supplied history.",
+      "Multi-day quantities are cumulative totals, not daily paths.",
+      "28-day forecast availability does not approve downstream inventory use."
+    ]
+  },
+  "assertions": {
+    "AS-01": "PASSED",
+    "AS-02": "PASSED",
+    "AS-03": "PASSED",
+    "AS-04": "PASSED",
+    "AS-05": "PASSED",
+    "AS-06": "PASSED"
+  }
+}

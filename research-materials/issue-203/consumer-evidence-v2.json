@@ -1,0 +1,3888 @@
+{
+  "evidence_schema": "issue-203-consumer-evidence-v2",
+  "metadata": {
+    "title": "Issue #203 request-time forecast consumer verification evidence",
+    "related_issue": "#203",
+    "pending_under": "#179 (formal producer approval; independently reviewed source verification)",
+    "capture_timestamp_utc": "2026-10-28T15:35:48+00:00",
+    "capture_date_asia_colombo": "2026-10-28",
+    "api_revision": "20265aa0ecb7f5e6436e8aa29694a076fc643286",
+    "working_tree_clean": true,
+    "python_version": "3.13.4",
+    "platform": "Windows-11-10.0.22631-SP0",
+    "execution": "In-process fastapi.testclient.TestClient(src.api.main.app) with the application lifespan; saved producers loaded from local artifacts at startup.",
+    "capture_command": "python capture_consumer_evidence.py --output research-materials/issue-203/consumer-evidence-v2.json",
+    "reviewer": "Tinosh",
+    "previous_capture": {
+      "path": "research-materials/issue-203/consumer-evidence.json",
+      "sha256_local_bytes": "170578af2a5303658436e493437ccec75123ecabd3c9618cd1a5671b7f1e7933",
+      "status": "Preserved unchanged and superseded: h7-only capture whose AS-01 to AS-06 values were written as constants rather than derived from checks."
+    },
+    "scope": [
+      "Technical request-time consumer verification under #203 only.",
+      "Not formal forecast-producer approval; that remains pending under #179.",
+      "Not independently reviewed source verification; that remains pending under #179.",
+      "Synthetic demonstration inputs; no accuracy, research or inventory-use claim."
+    ]
+  },
+  "requirement_outcomes": {
+    "AS-01": {
+      "title": "Identity echoed unchanged; unknown SKU/warehouse rejected explicitly",
+      "outcome": "PASSED",
+      "checks_total": 8,
+      "checks_failed": []
+    },
+    "AS-02": {
+      "title": "Origin kept; target_start_date = origin + 1",
+      "outcome": "PASSED",
+      "checks_total": 8,
+      "checks_failed": []
+    },
+    "AS-03": {
+      "title": "Inclusive window: target_end_date = origin + h, exactly h days",
+      "outcome": "PASSED",
+      "checks_total": 8,
+      "checks_failed": []
+    },
+    "AS-04": {
+      "title": "Horizon and forecast_type preserved; cumulative and 28-day limitation wording; unsupported horizon rejected",
+      "outcome": "PASSED",
+      "checks_total": 15,
+      "checks_failed": []
+    },
+    "AS-05": {
+      "title": "Designated producer, saved model/preprocessor and input provenance",
+      "outcome": "PASSED",
+      "checks_total": 35,
+      "checks_failed": []
+    },
+    "AS-06": {
+      "title": "Exact response allowlist; no retrospective or inventory fields; such request fields rejected",
+      "outcome": "PASSED",
+      "checks_total": 18,
+      "checks_failed": []
+    },
+    "RT-CONTRACT": {
+      "title": "Health ready; HTTP 200, available, finite quantity; files intact",
+      "outcome": "PASSED",
+      "checks_total": 29,
+      "checks_failed": []
+    },
+    "RT-CHANGED-HISTORY": {
+      "title": "Final-day Units_Sold +5 yields a new input_sha256 with the same producer",
+      "outcome": "PASSED",
+      "checks_total": 9,
+      "checks_failed": []
+    },
+    "RT-REJECTIONS": {
+      "title": "HTTP 422 rejection boundaries without a substitute quantity",
+      "outcome": "PASSED",
+      "checks_total": 20,
+      "checks_failed": []
+    }
+  },
+  "overall_outcome": "PASSED",
+  "observations": {
+    "changed_history_forecast_quantity": {
+      "original": 13.83799223799719,
+      "changed": 13.864131443279389
+    },
+    "changed_history_forecast_quantity_changed": true,
+    "note": "Informational only. Tree models can return the same quantity for different inputs, so an unchanged quantity is not a failure; the pass/fail signal is the changed input_sha256 against the identical-request control."
+  },
+  "checks": [
+    {
+      "id": "health.ready",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "GET /health is HTTP 200 and ready for horizons [1, 7, 14, 28] with no unavailable reasons",
+      "passed": true,
+      "observed": {
+        "http_status": 200,
+        "body": {
+          "status": "ready",
+          "available_horizons": [
+            1,
+            7,
+            14,
+            28
+          ],
+          "unavailable_reasons": []
+        }
+      }
+    },
+    {
+      "id": "h1.example_file_unchanged",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example file bytes identical before and after capture",
+      "passed": true,
+      "observed": {
+        "before": "a20e6a9602abdfe4e193b5367d3d30c39d573ee8ef8e6f2f0ae485480fe6d0b5",
+        "after": "a20e6a9602abdfe4e193b5367d3d30c39d573ee8ef8e6f2f0ae485480fe6d0b5"
+      }
+    },
+    {
+      "id": "h1.request_horizon",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example request asks for horizon 1",
+      "passed": true,
+      "observed": 1
+    },
+    {
+      "id": "h1.http_200",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "HTTP 200 with a JSON object body",
+      "passed": true,
+      "observed": 200
+    },
+    {
+      "id": "h1.available",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "status 'available' and empty unavailable_reasons",
+      "passed": true,
+      "observed": {
+        "status": "available",
+        "unavailable_reasons": []
+      }
+    },
+    {
+      "id": "h1.inference_schema",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "inference_schema is forecast-inference-v1",
+      "passed": true,
+      "observed": "forecast-inference-v1"
+    },
+    {
+      "id": "h1.input_kind_echo",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "input_kind echoed from the request",
+      "passed": true,
+      "observed": "synthetic_demo"
+    },
+    {
+      "id": "h1.quantity_finite",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "forecast_quantity is a finite JSON number",
+      "passed": true,
+      "observed": 13.83799223799719
+    },
+    {
+      "id": "h1.identity_echo",
+      "requirements": [
+        "AS-01"
+      ],
+      "description": "SKU_ID and Warehouse_ID echoed unchanged",
+      "passed": true,
+      "observed": {
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1"
+      }
+    },
+    {
+      "id": "h1.origin_echo",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "forecast_origin echoed unchanged",
+      "passed": true,
+      "observed": "2025-01-28"
+    },
+    {
+      "id": "h1.target_start",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "target_start_date = forecast_origin + 1 day",
+      "passed": true,
+      "observed": "2025-01-29"
+    },
+    {
+      "id": "h1.target_end",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "target_end_date = forecast_origin + 1 days",
+      "passed": true,
+      "observed": "2025-01-29"
+    },
+    {
+      "id": "h1.window_length",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "Inclusive window covers exactly 1 day(s)",
+      "passed": true,
+      "observed": 1
+    },
+    {
+      "id": "h1.horizon_echo",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "horizon echoed as the same JSON integer",
+      "passed": true,
+      "observed": 1
+    },
+    {
+      "id": "h1.forecast_type",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "forecast_type is next_day",
+      "passed": true,
+      "observed": "next_day"
+    },
+    {
+      "id": "h1.producer_designation",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "producer_designation is frozen_designated_producer",
+      "passed": true,
+      "observed": "frozen_designated_producer"
+    },
+    {
+      "id": "h1.producer_mapping",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Designated producer lightgbm GBM018",
+      "passed": true,
+      "observed": {
+        "model": "lightgbm",
+        "configuration_id": "GBM018"
+      }
+    },
+    {
+      "id": "h1.source_run",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Source run final-20261003-02 and its run manifest reference",
+      "passed": true,
+      "observed": {
+        "model_source_run_id": "final-20261003-02",
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json"
+      }
+    },
+    {
+      "id": "h1.manifest_sha256",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "manifest_sha256 is a SHA-256 hex digest",
+      "passed": true,
+      "observed": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+    },
+    {
+      "id": "h1.provenance_keys",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "provenance keys are exactly input_sha256, model_hash, model_path, preprocessor_hash, preprocessor_path",
+      "passed": true,
+      "observed": [
+        "input_sha256",
+        "model_hash",
+        "model_path",
+        "preprocessor_hash",
+        "preprocessor_path"
+      ]
+    },
+    {
+      "id": "h1.provenance_hashes",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "model_hash, preprocessor_hash and input_sha256 are SHA-256 hex digests",
+      "passed": true,
+      "observed": {
+        "model_hash": "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99",
+        "preprocessor_hash": "d88fea483a50beac15dd32437287db5c23c03efd5ed40188209bbbd59a0566cf",
+        "input_sha256": "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58"
+      }
+    },
+    {
+      "id": "h1.provenance_paths",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Model and preprocessor paths are under models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/",
+      "passed": true,
+      "observed": {
+        "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/model.txt",
+        "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/state.json"
+      }
+    },
+    {
+      "id": "h1.response_allowlist",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "Response keys exactly match the ForecastResponse allowlist",
+      "passed": true,
+      "observed": {
+        "unexpected": [],
+        "missing": []
+      }
+    },
+    {
+      "id": "h1.no_retrospective_or_inventory_keys",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "No retrospective, inventory or metric keys at any depth",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "h1.inference_mode",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "inference_mode is request_time",
+      "passed": true,
+      "observed": "request_time"
+    },
+    {
+      "id": "h7.example_file_unchanged",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example file bytes identical before and after capture",
+      "passed": true,
+      "observed": {
+        "before": "4d71a73812572ace3878c528afabc6dc77bc9b480cf4fe6504f385150c520360",
+        "after": "4d71a73812572ace3878c528afabc6dc77bc9b480cf4fe6504f385150c520360"
+      }
+    },
+    {
+      "id": "h7.request_horizon",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example request asks for horizon 7",
+      "passed": true,
+      "observed": 7
+    },
+    {
+      "id": "h7.http_200",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "HTTP 200 with a JSON object body",
+      "passed": true,
+      "observed": 200
+    },
+    {
+      "id": "h7.available",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "status 'available' and empty unavailable_reasons",
+      "passed": true,
+      "observed": {
+        "status": "available",
+        "unavailable_reasons": []
+      }
+    },
+    {
+      "id": "h7.inference_schema",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "inference_schema is forecast-inference-v1",
+      "passed": true,
+      "observed": "forecast-inference-v1"
+    },
+    {
+      "id": "h7.input_kind_echo",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "input_kind echoed from the request",
+      "passed": true,
+      "observed": "synthetic_demo"
+    },
+    {
+      "id": "h7.quantity_finite",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "forecast_quantity is a finite JSON number",
+      "passed": true,
+      "observed": 90.0643865572258
+    },
+    {
+      "id": "h7.identity_echo",
+      "requirements": [
+        "AS-01"
+      ],
+      "description": "SKU_ID and Warehouse_ID echoed unchanged",
+      "passed": true,
+      "observed": {
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1"
+      }
+    },
+    {
+      "id": "h7.origin_echo",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "forecast_origin echoed unchanged",
+      "passed": true,
+      "observed": "2025-01-28"
+    },
+    {
+      "id": "h7.target_start",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "target_start_date = forecast_origin + 1 day",
+      "passed": true,
+      "observed": "2025-01-29"
+    },
+    {
+      "id": "h7.target_end",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "target_end_date = forecast_origin + 7 days",
+      "passed": true,
+      "observed": "2025-02-04"
+    },
+    {
+      "id": "h7.window_length",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "Inclusive window covers exactly 7 day(s)",
+      "passed": true,
+      "observed": 7
+    },
+    {
+      "id": "h7.horizon_echo",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "horizon echoed as the same JSON integer",
+      "passed": true,
+      "observed": 7
+    },
+    {
+      "id": "h7.forecast_type",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "forecast_type is cumulative_window",
+      "passed": true,
+      "observed": "cumulative_window"
+    },
+    {
+      "id": "h7.cumulative_limitation",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "Limitations state multi-day quantities are cumulative, not daily paths",
+      "passed": true,
+      "observed": [
+        "Synthetic demo input is illustrative supplied history.",
+        "Multi-day quantities are cumulative totals, not daily paths.",
+        "28-day forecast availability does not approve downstream inventory use."
+      ]
+    },
+    {
+      "id": "h7.producer_designation",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "producer_designation is frozen_designated_producer",
+      "passed": true,
+      "observed": "frozen_designated_producer"
+    },
+    {
+      "id": "h7.producer_mapping",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Designated producer lightgbm GBM011",
+      "passed": true,
+      "observed": {
+        "model": "lightgbm",
+        "configuration_id": "GBM011"
+      }
+    },
+    {
+      "id": "h7.source_run",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Source run final-20261003-02 and its run manifest reference",
+      "passed": true,
+      "observed": {
+        "model_source_run_id": "final-20261003-02",
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json"
+      }
+    },
+    {
+      "id": "h7.manifest_sha256",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "manifest_sha256 is a SHA-256 hex digest",
+      "passed": true,
+      "observed": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+    },
+    {
+      "id": "h7.provenance_keys",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "provenance keys are exactly input_sha256, model_hash, model_path, preprocessor_hash, preprocessor_path",
+      "passed": true,
+      "observed": [
+        "input_sha256",
+        "model_hash",
+        "model_path",
+        "preprocessor_hash",
+        "preprocessor_path"
+      ]
+    },
+    {
+      "id": "h7.provenance_hashes",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "model_hash, preprocessor_hash and input_sha256 are SHA-256 hex digests",
+      "passed": true,
+      "observed": {
+        "model_hash": "052b459d3a6e6df7beee2168d19803b2581a7c6d7d0b697dd6c84032ea94602f",
+        "preprocessor_hash": "186d32706554f47a0e0b3eacb0f86d6a5e2ca963810dc9599179f2a117d2f71a",
+        "input_sha256": "a95b84f3a61b31b24a33e8835f034850b82d13782099b10ed7f258ed0ca83b35"
+      }
+    },
+    {
+      "id": "h7.provenance_paths",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Model and preprocessor paths are under models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/",
+      "passed": true,
+      "observed": {
+        "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/model.txt",
+        "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/state.json"
+      }
+    },
+    {
+      "id": "h7.response_allowlist",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "Response keys exactly match the ForecastResponse allowlist",
+      "passed": true,
+      "observed": {
+        "unexpected": [],
+        "missing": []
+      }
+    },
+    {
+      "id": "h7.no_retrospective_or_inventory_keys",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "No retrospective, inventory or metric keys at any depth",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "h7.inference_mode",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "inference_mode is request_time",
+      "passed": true,
+      "observed": "request_time"
+    },
+    {
+      "id": "h14.example_file_unchanged",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example file bytes identical before and after capture",
+      "passed": true,
+      "observed": {
+        "before": "023c04c615aa45e5870aec6b6c406b98e6a6b10a1326a52fc8a6f5789d779fb0",
+        "after": "023c04c615aa45e5870aec6b6c406b98e6a6b10a1326a52fc8a6f5789d779fb0"
+      }
+    },
+    {
+      "id": "h14.request_horizon",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example request asks for horizon 14",
+      "passed": true,
+      "observed": 14
+    },
+    {
+      "id": "h14.http_200",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "HTTP 200 with a JSON object body",
+      "passed": true,
+      "observed": 200
+    },
+    {
+      "id": "h14.available",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "status 'available' and empty unavailable_reasons",
+      "passed": true,
+      "observed": {
+        "status": "available",
+        "unavailable_reasons": []
+      }
+    },
+    {
+      "id": "h14.inference_schema",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "inference_schema is forecast-inference-v1",
+      "passed": true,
+      "observed": "forecast-inference-v1"
+    },
+    {
+      "id": "h14.input_kind_echo",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "input_kind echoed from the request",
+      "passed": true,
+      "observed": "synthetic_demo"
+    },
+    {
+      "id": "h14.quantity_finite",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "forecast_quantity is a finite JSON number",
+      "passed": true,
+      "observed": 181.0713348388672
+    },
+    {
+      "id": "h14.identity_echo",
+      "requirements": [
+        "AS-01"
+      ],
+      "description": "SKU_ID and Warehouse_ID echoed unchanged",
+      "passed": true,
+      "observed": {
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1"
+      }
+    },
+    {
+      "id": "h14.origin_echo",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "forecast_origin echoed unchanged",
+      "passed": true,
+      "observed": "2025-01-28"
+    },
+    {
+      "id": "h14.target_start",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "target_start_date = forecast_origin + 1 day",
+      "passed": true,
+      "observed": "2025-01-29"
+    },
+    {
+      "id": "h14.target_end",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "target_end_date = forecast_origin + 14 days",
+      "passed": true,
+      "observed": "2025-02-11"
+    },
+    {
+      "id": "h14.window_length",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "Inclusive window covers exactly 14 day(s)",
+      "passed": true,
+      "observed": 14
+    },
+    {
+      "id": "h14.horizon_echo",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "horizon echoed as the same JSON integer",
+      "passed": true,
+      "observed": 14
+    },
+    {
+      "id": "h14.forecast_type",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "forecast_type is cumulative_window",
+      "passed": true,
+      "observed": "cumulative_window"
+    },
+    {
+      "id": "h14.cumulative_limitation",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "Limitations state multi-day quantities are cumulative, not daily paths",
+      "passed": true,
+      "observed": [
+        "Synthetic demo input is illustrative supplied history.",
+        "Multi-day quantities are cumulative totals, not daily paths.",
+        "28-day forecast availability does not approve downstream inventory use."
+      ]
+    },
+    {
+      "id": "h14.producer_designation",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "producer_designation is frozen_designated_producer",
+      "passed": true,
+      "observed": "frozen_designated_producer"
+    },
+    {
+      "id": "h14.producer_mapping",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Designated producer xgboost GBM022",
+      "passed": true,
+      "observed": {
+        "model": "xgboost",
+        "configuration_id": "GBM022"
+      }
+    },
+    {
+      "id": "h14.source_run",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Source run final-20261003-02 and its run manifest reference",
+      "passed": true,
+      "observed": {
+        "model_source_run_id": "final-20261003-02",
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json"
+      }
+    },
+    {
+      "id": "h14.manifest_sha256",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "manifest_sha256 is a SHA-256 hex digest",
+      "passed": true,
+      "observed": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+    },
+    {
+      "id": "h14.provenance_keys",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "provenance keys are exactly input_sha256, model_hash, model_path, preprocessor_hash, preprocessor_path",
+      "passed": true,
+      "observed": [
+        "input_sha256",
+        "model_hash",
+        "model_path",
+        "preprocessor_hash",
+        "preprocessor_path"
+      ]
+    },
+    {
+      "id": "h14.provenance_hashes",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "model_hash, preprocessor_hash and input_sha256 are SHA-256 hex digests",
+      "passed": true,
+      "observed": {
+        "model_hash": "6a0787fac515a34a1a0f5a6b768fbffbd8fbd4da4aac43263d947dd279db4a0c",
+        "preprocessor_hash": "f6ca8afb1c397b29ae60f78715c4d67a14df38fcc58bd8045c811663539df20d",
+        "input_sha256": "2a468ba0ac34283b568546aca51a1f88ed14222f4e2ef4291e0c6b9722066804"
+      }
+    },
+    {
+      "id": "h14.provenance_paths",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Model and preprocessor paths are under models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/",
+      "passed": true,
+      "observed": {
+        "model_path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/model.ubj",
+        "preprocessor_path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/state.json"
+      }
+    },
+    {
+      "id": "h14.response_allowlist",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "Response keys exactly match the ForecastResponse allowlist",
+      "passed": true,
+      "observed": {
+        "unexpected": [],
+        "missing": []
+      }
+    },
+    {
+      "id": "h14.no_retrospective_or_inventory_keys",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "No retrospective, inventory or metric keys at any depth",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "h14.inference_mode",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "inference_mode is request_time",
+      "passed": true,
+      "observed": "request_time"
+    },
+    {
+      "id": "h28.example_file_unchanged",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example file bytes identical before and after capture",
+      "passed": true,
+      "observed": {
+        "before": "063ec75938774d32f57900084a359a4a3121365bd20798aa2a61ecff647209ff",
+        "after": "063ec75938774d32f57900084a359a4a3121365bd20798aa2a61ecff647209ff"
+      }
+    },
+    {
+      "id": "h28.request_horizon",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "Example request asks for horizon 28",
+      "passed": true,
+      "observed": 28
+    },
+    {
+      "id": "h28.http_200",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "HTTP 200 with a JSON object body",
+      "passed": true,
+      "observed": 200
+    },
+    {
+      "id": "h28.available",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "status 'available' and empty unavailable_reasons",
+      "passed": true,
+      "observed": {
+        "status": "available",
+        "unavailable_reasons": []
+      }
+    },
+    {
+      "id": "h28.inference_schema",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "inference_schema is forecast-inference-v1",
+      "passed": true,
+      "observed": "forecast-inference-v1"
+    },
+    {
+      "id": "h28.input_kind_echo",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "input_kind echoed from the request",
+      "passed": true,
+      "observed": "synthetic_demo"
+    },
+    {
+      "id": "h28.quantity_finite",
+      "requirements": [
+        "RT-CONTRACT"
+      ],
+      "description": "forecast_quantity is a finite JSON number",
+      "passed": true,
+      "observed": 349.0440673828125
+    },
+    {
+      "id": "h28.identity_echo",
+      "requirements": [
+        "AS-01"
+      ],
+      "description": "SKU_ID and Warehouse_ID echoed unchanged",
+      "passed": true,
+      "observed": {
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1"
+      }
+    },
+    {
+      "id": "h28.origin_echo",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "forecast_origin echoed unchanged",
+      "passed": true,
+      "observed": "2025-01-28"
+    },
+    {
+      "id": "h28.target_start",
+      "requirements": [
+        "AS-02"
+      ],
+      "description": "target_start_date = forecast_origin + 1 day",
+      "passed": true,
+      "observed": "2025-01-29"
+    },
+    {
+      "id": "h28.target_end",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "target_end_date = forecast_origin + 28 days",
+      "passed": true,
+      "observed": "2025-02-25"
+    },
+    {
+      "id": "h28.window_length",
+      "requirements": [
+        "AS-03"
+      ],
+      "description": "Inclusive window covers exactly 28 day(s)",
+      "passed": true,
+      "observed": 28
+    },
+    {
+      "id": "h28.horizon_echo",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "horizon echoed as the same JSON integer",
+      "passed": true,
+      "observed": 28
+    },
+    {
+      "id": "h28.forecast_type",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "forecast_type is cumulative_window",
+      "passed": true,
+      "observed": "cumulative_window"
+    },
+    {
+      "id": "h28.cumulative_limitation",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "Limitations state multi-day quantities are cumulative, not daily paths",
+      "passed": true,
+      "observed": [
+        "Synthetic demo input is illustrative supplied history.",
+        "Multi-day quantities are cumulative totals, not daily paths.",
+        "28-day forecast availability does not approve downstream inventory use."
+      ]
+    },
+    {
+      "id": "h28.h28_limitation",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "Limitations state 28-day availability does not approve downstream inventory use",
+      "passed": true,
+      "observed": [
+        "Synthetic demo input is illustrative supplied history.",
+        "Multi-day quantities are cumulative totals, not daily paths.",
+        "28-day forecast availability does not approve downstream inventory use."
+      ]
+    },
+    {
+      "id": "h28.producer_designation",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "producer_designation is frozen_designated_producer",
+      "passed": true,
+      "observed": "frozen_designated_producer"
+    },
+    {
+      "id": "h28.producer_mapping",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Designated producer xgboost GBM003",
+      "passed": true,
+      "observed": {
+        "model": "xgboost",
+        "configuration_id": "GBM003"
+      }
+    },
+    {
+      "id": "h28.source_run",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Source run final-20261003-02 and its run manifest reference",
+      "passed": true,
+      "observed": {
+        "model_source_run_id": "final-20261003-02",
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json"
+      }
+    },
+    {
+      "id": "h28.manifest_sha256",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "manifest_sha256 is a SHA-256 hex digest",
+      "passed": true,
+      "observed": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+    },
+    {
+      "id": "h28.provenance_keys",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "provenance keys are exactly input_sha256, model_hash, model_path, preprocessor_hash, preprocessor_path",
+      "passed": true,
+      "observed": [
+        "input_sha256",
+        "model_hash",
+        "model_path",
+        "preprocessor_hash",
+        "preprocessor_path"
+      ]
+    },
+    {
+      "id": "h28.provenance_hashes",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "model_hash, preprocessor_hash and input_sha256 are SHA-256 hex digests",
+      "passed": true,
+      "observed": {
+        "model_hash": "be15125e6b60f29b843521d2a10bdbdb16679d62ccf71b22d61d994bbed64207",
+        "preprocessor_hash": "c26c7f925ffdc22f103bb5be0d14e13ee8746492030dd27c5f0336f002aa90ba",
+        "input_sha256": "e05fd15948aadbfd258b3b64778bf4f7e99000ce30eba5678f61aea2a237324a"
+      }
+    },
+    {
+      "id": "h28.provenance_paths",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Model and preprocessor paths are under models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/",
+      "passed": true,
+      "observed": {
+        "model_path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/model.ubj",
+        "preprocessor_path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/state.json"
+      }
+    },
+    {
+      "id": "h28.response_allowlist",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "Response keys exactly match the ForecastResponse allowlist",
+      "passed": true,
+      "observed": {
+        "unexpected": [],
+        "missing": []
+      }
+    },
+    {
+      "id": "h28.no_retrospective_or_inventory_keys",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "No retrospective, inventory or metric keys at any depth",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "h28.inference_mode",
+      "requirements": [
+        "AS-06"
+      ],
+      "description": "inference_mode is request_time",
+      "passed": true,
+      "observed": "request_time"
+    },
+    {
+      "id": "cross.four_horizon_records",
+      "requirements": [
+        "AS-04"
+      ],
+      "description": "Four separate responses, one per horizon 1/7/14/28",
+      "passed": true,
+      "observed": [
+        1,
+        7,
+        14,
+        28
+      ]
+    },
+    {
+      "id": "cross.distinct_input_sha256",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "input_sha256 differs across the four requests (horizon is part of the input)",
+      "passed": true,
+      "observed": [
+        "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58",
+        "a95b84f3a61b31b24a33e8835f034850b82d13782099b10ed7f258ed0ca83b35",
+        "2a468ba0ac34283b568546aca51a1f88ed14222f4e2ef4291e0c6b9722066804",
+        "e05fd15948aadbfd258b3b64778bf4f7e99000ce30eba5678f61aea2a237324a"
+      ]
+    },
+    {
+      "id": "cross.distinct_model_hash",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "Each horizon is served by a distinct saved model file",
+      "passed": true,
+      "observed": [
+        "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99",
+        "052b459d3a6e6df7beee2168d19803b2581a7c6d7d0b697dd6c84032ea94602f",
+        "6a0787fac515a34a1a0f5a6b768fbffbd8fbd4da4aac43263d947dd279db4a0c",
+        "be15125e6b60f29b843521d2a10bdbdb16679d62ccf71b22d61d994bbed64207"
+      ]
+    },
+    {
+      "id": "cross.single_manifest",
+      "requirements": [
+        "AS-05"
+      ],
+      "description": "All four responses cite the same run manifest hash",
+      "passed": true,
+      "observed": [
+        "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43"
+      ]
+    },
+    {
+      "id": "repeat.request_identical",
+      "requirements": [
+        "AS-05",
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Repeat request is byte-for-byte the 1-day example request",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "repeat.http_200",
+      "requirements": [
+        "AS-05",
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Repeat request returns HTTP 200",
+      "passed": true,
+      "observed": 200
+    },
+    {
+      "id": "repeat.same_input_sha256",
+      "requirements": [
+        "AS-05",
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Identical input yields an identical input_sha256 (control for the changed-history check)",
+      "passed": true,
+      "observed": {
+        "base": "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58",
+        "repeat": "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58"
+      }
+    },
+    {
+      "id": "changed_history.request_mutation",
+      "requirements": [
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Request equals the 1-day example with final-day Units_Sold +5 only",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "changed_history.http_200",
+      "requirements": [
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Changed-history request returns HTTP 200",
+      "passed": true,
+      "observed": 200
+    },
+    {
+      "id": "changed_history.input_sha256_changed",
+      "requirements": [
+        "AS-05",
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "input_sha256 is a new SHA-256 digest that differs from the original request",
+      "passed": true,
+      "observed": {
+        "original": "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58",
+        "changed": "c52bcbd52733897b46342ccbb3ef40bcb60891b6810f3dc23bb7d5df288cc93c"
+      }
+    },
+    {
+      "id": "changed_history.same_producer_and_window",
+      "requirements": [
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Identity, origin, window, producer and saved model/preprocessor provenance unchanged",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "changed_history.quantity_finite",
+      "requirements": [
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Changed-history forecast_quantity is a finite number",
+      "passed": true,
+      "observed": 13.864131443279389
+    },
+    {
+      "id": "changed_history.response_allowlist",
+      "requirements": [
+        "RT-CHANGED-HISTORY"
+      ],
+      "description": "Changed-history response keys match the allowlist",
+      "passed": true,
+      "observed": []
+    },
+    {
+      "id": "reject.unknown_sku.request",
+      "requirements": [
+        "AS-01",
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: SKU_ID unknown to the saved models",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.unknown_sku.outcome",
+      "requirements": [
+        "AS-01",
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code unknown_sku with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "unknown_sku"
+      }
+    },
+    {
+      "id": "reject.unknown_warehouse.request",
+      "requirements": [
+        "AS-01",
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: Warehouse_ID unknown to the saved models",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.unknown_warehouse.outcome",
+      "requirements": [
+        "AS-01",
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code unknown_warehouse with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "unknown_warehouse"
+      }
+    },
+    {
+      "id": "reject.unsupported_horizon.request",
+      "requirements": [
+        "AS-04",
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: Integer horizon 3 is not one of 1/7/14/28",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.unsupported_horizon.outcome",
+      "requirements": [
+        "AS-04",
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code unsupported_horizon with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "unsupported_horizon"
+      }
+    },
+    {
+      "id": "reject.invalid_origin.request",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: Origin 2024-12-01 precedes the saved-model boundary",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.invalid_origin.outcome",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code invalid_origin with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "invalid_origin"
+      }
+    },
+    {
+      "id": "reject.future_history.request",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: History contains a day after the forecast origin",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.future_history.outcome",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code future_history with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "future_history"
+      }
+    },
+    {
+      "id": "reject.incomplete_history.request",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: History ends one day before the forecast origin",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.incomplete_history.outcome",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code incomplete_history with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "incomplete_history"
+      }
+    },
+    {
+      "id": "reject.invalid_history.request",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: History ends at the origin but has one missing day",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.invalid_history.outcome",
+      "requirements": [
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 reason_code invalid_history with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "reason_code": "invalid_history"
+      }
+    },
+    {
+      "id": "reject.extra_observed_target.request",
+      "requirements": [
+        "AS-06",
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: Retrospective observed_target supplied as a request field",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.extra_observed_target.outcome",
+      "requirements": [
+        "AS-06",
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 extra_forbidden for observed_target with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "detail": [
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "body",
+              "observed_target"
+            ],
+            "msg": "Extra inputs are not permitted",
+            "input": 100
+          }
+        ]
+      }
+    },
+    {
+      "id": "reject.extra_Demand_Forecast.request",
+      "requirements": [
+        "AS-06",
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: Source Demand_Forecast supplied as a request field",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.extra_Demand_Forecast.outcome",
+      "requirements": [
+        "AS-06",
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 extra_forbidden for Demand_Forecast with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "detail": [
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "body",
+              "Demand_Forecast"
+            ],
+            "msg": "Extra inputs are not permitted",
+            "input": 100
+          }
+        ]
+      }
+    },
+    {
+      "id": "reject.extra_Inventory_Level.request",
+      "requirements": [
+        "AS-06",
+        "RT-REJECTIONS"
+      ],
+      "description": "Recorded request matches specification: Inventory variable supplied as a request field",
+      "passed": true,
+      "observed": null
+    },
+    {
+      "id": "reject.extra_Inventory_Level.outcome",
+      "requirements": [
+        "AS-06",
+        "RT-REJECTIONS"
+      ],
+      "description": "HTTP 422 extra_forbidden for Inventory_Level with no substitute forecast_quantity",
+      "passed": true,
+      "observed": {
+        "http_status": 422,
+        "detail": [
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "body",
+              "Inventory_Level"
+            ],
+            "msg": "Extra inputs are not permitted",
+            "input": 100
+          }
+        ]
+      }
+    }
+  ],
+  "exchanges": {
+    "health": {
+      "http_status": 200,
+      "body": {
+        "status": "ready",
+        "available_horizons": [
+          1,
+          7,
+          14,
+          28
+        ],
+        "unavailable_reasons": []
+      }
+    },
+    "examples": [
+      {
+        "horizon": 1,
+        "file": "examples/forecast-api/forecast-1-day.json",
+        "file_sha256_before": "a20e6a9602abdfe4e193b5367d3d30c39d573ee8ef8e6f2f0ae485480fe6d0b5",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 200,
+        "body": {
+          "inference_schema": "forecast-inference-v1",
+          "inference_mode": "request_time",
+          "input_kind": "synthetic_demo",
+          "model_source_run_id": "final-20261003-02",
+          "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+          "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "target_start_date": "2025-01-29",
+          "target_end_date": "2025-01-29",
+          "forecast_type": "next_day",
+          "forecast_quantity": 13.83799223799719,
+          "model": "lightgbm",
+          "configuration_id": "GBM018",
+          "producer_designation": "frozen_designated_producer",
+          "provenance": {
+            "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/model.txt",
+            "model_hash": "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99",
+            "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/state.json",
+            "preprocessor_hash": "d88fea483a50beac15dd32437287db5c23c03efd5ed40188209bbbd59a0566cf",
+            "input_sha256": "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58"
+          },
+          "status": "available",
+          "unavailable_reasons": [],
+          "assumptions": [
+            "Forecast uses only the supplied history through forecast_origin."
+          ],
+          "limitations": [
+            "Synthetic demo input is illustrative supplied history.",
+            "Multi-day quantities are cumulative totals, not daily paths.",
+            "28-day forecast availability does not approve downstream inventory use."
+          ]
+        },
+        "file_sha256_after": "a20e6a9602abdfe4e193b5367d3d30c39d573ee8ef8e6f2f0ae485480fe6d0b5"
+      },
+      {
+        "horizon": 7,
+        "file": "examples/forecast-api/forecast-7-day.json",
+        "file_sha256_before": "4d71a73812572ace3878c528afabc6dc77bc9b480cf4fe6504f385150c520360",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 7,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 200,
+        "body": {
+          "inference_schema": "forecast-inference-v1",
+          "inference_mode": "request_time",
+          "input_kind": "synthetic_demo",
+          "model_source_run_id": "final-20261003-02",
+          "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+          "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 7,
+          "target_start_date": "2025-01-29",
+          "target_end_date": "2025-02-04",
+          "forecast_type": "cumulative_window",
+          "forecast_quantity": 90.0643865572258,
+          "model": "lightgbm",
+          "configuration_id": "GBM011",
+          "producer_designation": "frozen_designated_producer",
+          "provenance": {
+            "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/model.txt",
+            "model_hash": "052b459d3a6e6df7beee2168d19803b2581a7c6d7d0b697dd6c84032ea94602f",
+            "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/state.json",
+            "preprocessor_hash": "186d32706554f47a0e0b3eacb0f86d6a5e2ca963810dc9599179f2a117d2f71a",
+            "input_sha256": "a95b84f3a61b31b24a33e8835f034850b82d13782099b10ed7f258ed0ca83b35"
+          },
+          "status": "available",
+          "unavailable_reasons": [],
+          "assumptions": [
+            "Forecast uses only the supplied history through forecast_origin."
+          ],
+          "limitations": [
+            "Synthetic demo input is illustrative supplied history.",
+            "Multi-day quantities are cumulative totals, not daily paths.",
+            "28-day forecast availability does not approve downstream inventory use."
+          ]
+        },
+        "file_sha256_after": "4d71a73812572ace3878c528afabc6dc77bc9b480cf4fe6504f385150c520360"
+      },
+      {
+        "horizon": 14,
+        "file": "examples/forecast-api/forecast-14-day.json",
+        "file_sha256_before": "023c04c615aa45e5870aec6b6c406b98e6a6b10a1326a52fc8a6f5789d779fb0",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 14,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 200,
+        "body": {
+          "inference_schema": "forecast-inference-v1",
+          "inference_mode": "request_time",
+          "input_kind": "synthetic_demo",
+          "model_source_run_id": "final-20261003-02",
+          "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+          "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 14,
+          "target_start_date": "2025-01-29",
+          "target_end_date": "2025-02-11",
+          "forecast_type": "cumulative_window",
+          "forecast_quantity": 181.0713348388672,
+          "model": "xgboost",
+          "configuration_id": "GBM022",
+          "producer_designation": "frozen_designated_producer",
+          "provenance": {
+            "model_path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/model.ubj",
+            "model_hash": "6a0787fac515a34a1a0f5a6b768fbffbd8fbd4da4aac43263d947dd279db4a0c",
+            "preprocessor_path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/state.json",
+            "preprocessor_hash": "f6ca8afb1c397b29ae60f78715c4d67a14df38fcc58bd8045c811663539df20d",
+            "input_sha256": "2a468ba0ac34283b568546aca51a1f88ed14222f4e2ef4291e0c6b9722066804"
+          },
+          "status": "available",
+          "unavailable_reasons": [],
+          "assumptions": [
+            "Forecast uses only the supplied history through forecast_origin."
+          ],
+          "limitations": [
+            "Synthetic demo input is illustrative supplied history.",
+            "Multi-day quantities are cumulative totals, not daily paths.",
+            "28-day forecast availability does not approve downstream inventory use."
+          ]
+        },
+        "file_sha256_after": "023c04c615aa45e5870aec6b6c406b98e6a6b10a1326a52fc8a6f5789d779fb0"
+      },
+      {
+        "horizon": 28,
+        "file": "examples/forecast-api/forecast-28-day.json",
+        "file_sha256_before": "063ec75938774d32f57900084a359a4a3121365bd20798aa2a61ecff647209ff",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 28,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 200,
+        "body": {
+          "inference_schema": "forecast-inference-v1",
+          "inference_mode": "request_time",
+          "input_kind": "synthetic_demo",
+          "model_source_run_id": "final-20261003-02",
+          "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+          "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 28,
+          "target_start_date": "2025-01-29",
+          "target_end_date": "2025-02-25",
+          "forecast_type": "cumulative_window",
+          "forecast_quantity": 349.0440673828125,
+          "model": "xgboost",
+          "configuration_id": "GBM003",
+          "producer_designation": "frozen_designated_producer",
+          "provenance": {
+            "model_path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/model.ubj",
+            "model_hash": "be15125e6b60f29b843521d2a10bdbdb16679d62ccf71b22d61d994bbed64207",
+            "preprocessor_path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/state.json",
+            "preprocessor_hash": "c26c7f925ffdc22f103bb5be0d14e13ee8746492030dd27c5f0336f002aa90ba",
+            "input_sha256": "e05fd15948aadbfd258b3b64778bf4f7e99000ce30eba5678f61aea2a237324a"
+          },
+          "status": "available",
+          "unavailable_reasons": [],
+          "assumptions": [
+            "Forecast uses only the supplied history through forecast_origin."
+          ],
+          "limitations": [
+            "Synthetic demo input is illustrative supplied history.",
+            "Multi-day quantities are cumulative totals, not daily paths.",
+            "28-day forecast availability does not approve downstream inventory use."
+          ]
+        },
+        "file_sha256_after": "063ec75938774d32f57900084a359a4a3121365bd20798aa2a61ecff647209ff"
+      }
+    ],
+    "repeat_request": {
+      "base_horizon": 1,
+      "request": {
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1",
+        "forecast_origin": "2025-01-28",
+        "horizon": 1,
+        "input_kind": "synthetic_demo",
+        "history": [
+          {
+            "Date": "2025-01-01",
+            "Units_Sold": 11
+          },
+          {
+            "Date": "2025-01-02",
+            "Units_Sold": 12
+          },
+          {
+            "Date": "2025-01-03",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-04",
+            "Units_Sold": 15
+          },
+          {
+            "Date": "2025-01-05",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-06",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-07",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-08",
+            "Units_Sold": 12
+          },
+          {
+            "Date": "2025-01-09",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-10",
+            "Units_Sold": 15
+          },
+          {
+            "Date": "2025-01-11",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-12",
+            "Units_Sold": 18
+          },
+          {
+            "Date": "2025-01-13",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-14",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-15",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-16",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-17",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-18",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-19",
+            "Units_Sold": 19
+          },
+          {
+            "Date": "2025-01-20",
+            "Units_Sold": 18
+          },
+          {
+            "Date": "2025-01-21",
+            "Units_Sold": 15
+          },
+          {
+            "Date": "2025-01-22",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-23",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-24",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-25",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-26",
+            "Units_Sold": 20
+          },
+          {
+            "Date": "2025-01-27",
+            "Units_Sold": 18
+          },
+          {
+            "Date": "2025-01-28",
+            "Units_Sold": 15
+          }
+        ]
+      },
+      "http_status": 200,
+      "body": {
+        "inference_schema": "forecast-inference-v1",
+        "inference_mode": "request_time",
+        "input_kind": "synthetic_demo",
+        "model_source_run_id": "final-20261003-02",
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1",
+        "forecast_origin": "2025-01-28",
+        "horizon": 1,
+        "target_start_date": "2025-01-29",
+        "target_end_date": "2025-01-29",
+        "forecast_type": "next_day",
+        "forecast_quantity": 13.83799223799719,
+        "model": "lightgbm",
+        "configuration_id": "GBM018",
+        "producer_designation": "frozen_designated_producer",
+        "provenance": {
+          "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/model.txt",
+          "model_hash": "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99",
+          "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/state.json",
+          "preprocessor_hash": "d88fea483a50beac15dd32437287db5c23c03efd5ed40188209bbbd59a0566cf",
+          "input_sha256": "0685fa833140b464a3390e226aaf187d744c706a2b8cb290268522931c16ec58"
+        },
+        "status": "available",
+        "unavailable_reasons": [],
+        "assumptions": [
+          "Forecast uses only the supplied history through forecast_origin."
+        ],
+        "limitations": [
+          "Synthetic demo input is illustrative supplied history.",
+          "Multi-day quantities are cumulative totals, not daily paths.",
+          "28-day forecast availability does not approve downstream inventory use."
+        ]
+      }
+    },
+    "changed_history": {
+      "base_horizon": 1,
+      "units_sold_increment": 5,
+      "request": {
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1",
+        "forecast_origin": "2025-01-28",
+        "horizon": 1,
+        "input_kind": "synthetic_demo",
+        "history": [
+          {
+            "Date": "2025-01-01",
+            "Units_Sold": 11
+          },
+          {
+            "Date": "2025-01-02",
+            "Units_Sold": 12
+          },
+          {
+            "Date": "2025-01-03",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-04",
+            "Units_Sold": 15
+          },
+          {
+            "Date": "2025-01-05",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-06",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-07",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-08",
+            "Units_Sold": 12
+          },
+          {
+            "Date": "2025-01-09",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-10",
+            "Units_Sold": 15
+          },
+          {
+            "Date": "2025-01-11",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-12",
+            "Units_Sold": 18
+          },
+          {
+            "Date": "2025-01-13",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-14",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-15",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-16",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-17",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-18",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-19",
+            "Units_Sold": 19
+          },
+          {
+            "Date": "2025-01-20",
+            "Units_Sold": 18
+          },
+          {
+            "Date": "2025-01-21",
+            "Units_Sold": 15
+          },
+          {
+            "Date": "2025-01-22",
+            "Units_Sold": 13
+          },
+          {
+            "Date": "2025-01-23",
+            "Units_Sold": 14
+          },
+          {
+            "Date": "2025-01-24",
+            "Units_Sold": 16
+          },
+          {
+            "Date": "2025-01-25",
+            "Units_Sold": 17
+          },
+          {
+            "Date": "2025-01-26",
+            "Units_Sold": 20
+          },
+          {
+            "Date": "2025-01-27",
+            "Units_Sold": 18
+          },
+          {
+            "Date": "2025-01-28",
+            "Units_Sold": 20
+          }
+        ]
+      },
+      "http_status": 200,
+      "body": {
+        "inference_schema": "forecast-inference-v1",
+        "inference_mode": "request_time",
+        "input_kind": "synthetic_demo",
+        "model_source_run_id": "final-20261003-02",
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "SKU_ID": "SKU_1",
+        "Warehouse_ID": "WH_1",
+        "forecast_origin": "2025-01-28",
+        "horizon": 1,
+        "target_start_date": "2025-01-29",
+        "target_end_date": "2025-01-29",
+        "forecast_type": "next_day",
+        "forecast_quantity": 13.864131443279389,
+        "model": "lightgbm",
+        "configuration_id": "GBM018",
+        "producer_designation": "frozen_designated_producer",
+        "provenance": {
+          "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/model.txt",
+          "model_hash": "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99",
+          "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/state.json",
+          "preprocessor_hash": "d88fea483a50beac15dd32437287db5c23c03efd5ed40188209bbbd59a0566cf",
+          "input_sha256": "c52bcbd52733897b46342ccbb3ef40bcb60891b6810f3dc23bb7d5df288cc93c"
+        },
+        "status": "available",
+        "unavailable_reasons": [],
+        "assumptions": [
+          "Forecast uses only the supplied history through forecast_origin."
+        ],
+        "limitations": [
+          "Synthetic demo input is illustrative supplied history.",
+          "Multi-day quantities are cumulative totals, not daily paths.",
+          "28-day forecast availability does not approve downstream inventory use."
+        ]
+      }
+    },
+    "rejections": [
+      {
+        "case": "unknown_sku",
+        "request": {
+          "SKU_ID": "SKU_SYN_UNKNOWN",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "unknown_sku",
+            "message": "SKU_ID is outside the saved model vocabulary."
+          }
+        }
+      },
+      {
+        "case": "unknown_warehouse",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_SYN_UNKNOWN",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "unknown_warehouse",
+            "message": "Warehouse_ID is outside the saved model vocabulary."
+          }
+        }
+      },
+      {
+        "case": "unsupported_horizon",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 3,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "unsupported_horizon",
+            "message": "Choose 1, 7, 14 or 28 days."
+          }
+        }
+      },
+      {
+        "case": "invalid_origin",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2024-12-01",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2024-11-04",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2024-11-05",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2024-11-06",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2024-11-07",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2024-11-08",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2024-11-09",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2024-11-10",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2024-11-11",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2024-11-12",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2024-11-13",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2024-11-14",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2024-11-15",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2024-11-16",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2024-11-17",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2024-11-18",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2024-11-19",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2024-11-20",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2024-11-21",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2024-11-22",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2024-11-23",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2024-11-24",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2024-11-25",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2024-11-26",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2024-11-27",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2024-11-28",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2024-11-29",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2024-11-30",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2024-12-01",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "invalid_origin",
+            "message": "Forecast origin predates the saved model boundary."
+          }
+        }
+      },
+      {
+        "case": "future_history",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-29",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "future_history",
+            "message": "History must not extend past forecast_origin."
+          }
+        }
+      },
+      {
+        "case": "incomplete_history",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-29",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "incomplete_history",
+            "message": "Daily history must end at forecast_origin."
+          }
+        }
+      },
+      {
+        "case": "invalid_history",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2024-12-31",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ]
+        },
+        "http_status": 422,
+        "body": {
+          "detail": {
+            "reason_code": "invalid_history",
+            "message": "History must contain valid daily dates and whole demand units."
+          }
+        }
+      },
+      {
+        "case": "extra_observed_target",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ],
+          "observed_target": 100
+        },
+        "http_status": 422,
+        "body": {
+          "detail": [
+            {
+              "type": "extra_forbidden",
+              "loc": [
+                "body",
+                "observed_target"
+              ],
+              "msg": "Extra inputs are not permitted",
+              "input": 100
+            }
+          ]
+        }
+      },
+      {
+        "case": "extra_Demand_Forecast",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ],
+          "Demand_Forecast": 100
+        },
+        "http_status": 422,
+        "body": {
+          "detail": [
+            {
+              "type": "extra_forbidden",
+              "loc": [
+                "body",
+                "Demand_Forecast"
+              ],
+              "msg": "Extra inputs are not permitted",
+              "input": 100
+            }
+          ]
+        }
+      },
+      {
+        "case": "extra_Inventory_Level",
+        "request": {
+          "SKU_ID": "SKU_1",
+          "Warehouse_ID": "WH_1",
+          "forecast_origin": "2025-01-28",
+          "horizon": 1,
+          "input_kind": "synthetic_demo",
+          "history": [
+            {
+              "Date": "2025-01-01",
+              "Units_Sold": 11
+            },
+            {
+              "Date": "2025-01-02",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-03",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-04",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-05",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-06",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-07",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-08",
+              "Units_Sold": 12
+            },
+            {
+              "Date": "2025-01-09",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-10",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-11",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-12",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-13",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-14",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-15",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-16",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-17",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-18",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-19",
+              "Units_Sold": 19
+            },
+            {
+              "Date": "2025-01-20",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-21",
+              "Units_Sold": 15
+            },
+            {
+              "Date": "2025-01-22",
+              "Units_Sold": 13
+            },
+            {
+              "Date": "2025-01-23",
+              "Units_Sold": 14
+            },
+            {
+              "Date": "2025-01-24",
+              "Units_Sold": 16
+            },
+            {
+              "Date": "2025-01-25",
+              "Units_Sold": 17
+            },
+            {
+              "Date": "2025-01-26",
+              "Units_Sold": 20
+            },
+            {
+              "Date": "2025-01-27",
+              "Units_Sold": 18
+            },
+            {
+              "Date": "2025-01-28",
+              "Units_Sold": 15
+            }
+          ],
+          "Inventory_Level": 100
+        },
+        "http_status": 422,
+        "body": {
+          "detail": [
+            {
+              "type": "extra_forbidden",
+              "loc": [
+                "body",
+                "Inventory_Level"
+              ],
+              "msg": "Extra inputs are not permitted",
+              "input": 100
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
