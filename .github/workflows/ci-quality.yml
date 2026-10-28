@@ -1,0 +1,76 @@
+name: CI Quality
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    name: Fast quality checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Detect Python-relevant changes
+        id: scope
+        run: python3 .github/scripts/ci_scope.py >> "$GITHUB_OUTPUT"
+
+      - name: Skip Python checks for documentation/report-only changes
+        if: steps.scope.outputs.run_python == 'false'
+        run: echo "No Python inputs changed; quality checks skipped."
+
+      - name: Set up Python 3.12
+        if: steps.scope.outputs.run_python != 'false'
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12.3"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        if: steps.scope.outputs.run_python != 'false'
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Check dependency consistency
+        if: steps.scope.outputs.run_python != 'false'
+        run: python -m pip check
+
+      - name: Lint forecasting source and tests
+        if: steps.scope.outputs.run_python != 'false'
+        run: ruff check src/forecasting tests/test_forecasting_*.py
+
+      - name: Lint retained-case API and tests
+        if: steps.scope.outputs.run_python != 'false'
+        run: ruff check src/api/main.py src/decision_support/retained_cases.py tests/test_decision_support_retained_cases.py
+
+      - name: Verify imports
+        if: steps.scope.outputs.run_python != 'false'
+        run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
+
+      - name: Type-check forecasting source
+        if: steps.scope.outputs.run_python != 'false'
+        run: python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
+
+      - name: Type-check retained-case API and tests
+        if: steps.scope.outputs.run_python != 'false'
+        env:
+          MYPYPATH: tests
+        run: python -m mypy src/api/main.py src/decision_support/retained_cases.py tests/test_decision_support_retained_cases.py --explicit-package-bases --disable-error-code import-untyped
