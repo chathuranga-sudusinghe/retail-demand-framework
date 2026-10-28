@@ -3,7 +3,7 @@
 **Responsible member:** Chathuranga — forecasting meaning and shared API architecture.
 **Integration reviewer:** Tinosh — endpoint, schema and adapter acceptance.
 **Date:** 2026-10-05 (Asia/Colombo).
-**Status — updated 25 October 2026:** Request-time inference and four synthetic JSON examples are merged through [PR #151](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/151); #132 is closed. Chathuranga supplied revised-example manual outcomes on 24 October under [Issue #180](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180); see Section 6.1 for evidence and limits. Producer implementation corrections are delivered through #193 / PR #195. The separate retained-case routes are merged through [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197), closing #183. Remaining retained runtime/source/component acceptance and approved inventory views continue under [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani. Tinosh's request-time technical consumer review is recorded in Section 6.2 under [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203) (outcome: Accepted). Formal forecast-producer approval, independently reviewed source verification and completed group-wide integration remain separate under #179.
+**Status — updated {{CAPTURE_DATE}}:** Request-time inference and four synthetic JSON examples are merged through [PR #151](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/151); #132 is closed. Chathuranga supplied revised-example manual outcomes on 24 October under [Issue #180](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180); see Section 6.1 for evidence and limits. Producer implementation corrections are delivered through #193 / PR #195. The separate retained-case routes are merged through [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197), closing #183. Remaining retained runtime/source/component acceptance and approved inventory views continue under [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani. Tinosh's request-time technical consumer verification is recorded in Section 6.2, related to [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203): evidence `{{EVIDENCE_PATH}}`, SHA-256 `{{EVIDENCE_SHA256}}`, captured `{{CAPTURE_TIMESTAMP_UTC}}`. #203 remains open: formal forecast-producer approval and independently reviewed source verification are not complete and remain pending under #179, as does completed group-wide integration.
 
 ## 1. Active serving behavior
 
@@ -286,29 +286,47 @@ PY
 The modified response retained LightGBM `GBM018`, origin `2025-01-28`, next-day target `2025-01-29`, saved model/preprocessor hashes, `request_time` and `available`. Changed input provenance and quantity are consistent with processing the modified request. This check complements existing synthetic call/matrix checks; different valid inputs do not always produce different tree-model predictions.
 
 These manual requests demonstrate serving only. They did not train, tune, refit, replay research evaluation, measure accuracy or accept downstream inventory/decision-support behaviour. The live January examples must not be joined to inventory/decision-support results from the retained origin `2024-12-02` as though those results had recomputed. Existing synthetic rejection/failure coverage in `tests/test_forecast_api.py`, `tests/test_forecasting_inference.py` and `tests/test_forecasting_export.py` was inspected for reuse; these manual requests do not exercise those failure cases, and that suite was not rerun for this record.
-### 6.2 Manual consumer verification evidence — 25 October 2026
+### 6.2 Technical consumer verification evidence — {{CAPTURE_DATE}}
 
-**Task:** [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203) (request-time forecast consumer acceptance handoff).
-**Human executor / reviewer:** Tinosh.
-**Outcome:** Accepted.
-**Evidence payload:** `research-materials/issue-203/consumer-evidence.json` (SHA-256 `503a3d03294c61cc81cce23f64e986376765b52796b01a4758fa7a1d7db3a929`).
-**Environment:** local Windows / PowerShell, `.venv` Python 3.13.4, local API running on `http://127.0.0.1:8000`.
+**Task:** related to [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203) (request-time forecast consumer acceptance handoff); #203 remains open.
+**Executor / technical consumer reviewer:** Tinosh.
+**Outcome:** every requirement outcome derived from the recorded exchanges is `PASSED` (AS-01 to AS-06, `RT-CONTRACT`, `RT-CHANGED-HISTORY`, `RT-REJECTIONS`). This is Tinosh's technical request-time consumer verification only. It is **not** formal forecast-producer approval and **not** independently reviewed source verification; both remain pending under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
+**Evidence:** `{{EVIDENCE_PATH}}`, SHA-256 `{{EVIDENCE_SHA256}}` (committed LF bytes), capture timestamp `{{CAPTURE_TIMESTAMP_UTC}}`.
+**Tested source:** revision `{{API_REVISION}}` with a clean tracked working tree; Python {{PYTHON_VERSION}}; {{PLATFORM}}.
+**Execution:** in-process `fastapi.testclient.TestClient(src.api.main.app)` with the application lifespan, so the four saved producers were loaded from the local artifacts and verified at startup exactly as in the served application. This is not a separately started uvicorn server or a hosted demo.
 
-#### Summary of findings
+From the repository root:
 
-1. **Endpoint contract adherence:** All four synthetic demo requests (`forecast-1-day.json`, `forecast-7-day.json`, `forecast-14-day.json`, `forecast-28-day.json`) returned HTTP 200 with schema `forecast-inference-v1`, `inference_mode: request_time`, status `available`, and empty `unavailable_reasons`.
-2. **Target windows and identities:** Each response correctly echoed `SKU_1`, `WH_1`, and `forecast_origin: 2025-01-28`. Target start was correctly shifted to `2025-01-29`, with inclusive target end matching `origin + horizon`.
-3. **Model output validity:** Raw quantities returned were finite positive numbers (`13.838` for 1-day, `90.064` for 7-day, `181.071` for 14-day, `349.044` for 28-day).
-4. **Input sensitivity:** Modifying historical `Units_Sold` (increasing final day by 5) produced a distinct canonical `input_sha256` (`c52bcbd5...`) and updated model output (`13.864`), confirming live feature evaluation.
-5. **Rejection boundary enforcement:** Invalid requests correctly triggered HTTP 422 errors (`unknown_sku`, `unknown_warehouse`, `unsupported_horizon`, `invalid_origin`, `future_history`, and extra field rejection).
-6. **Provenance & Limitations:** Provenance blocks correctly reported producer designations (`frozen_designated_producer`), preprocessor hashes, and model hashes. Required 28-day downstream limitations were present.
+```bash
+.venv/bin/python capture_consumer_evidence.py --output research-materials/issue-203/consumer-evidence-v2.json
+.venv/bin/python capture_consumer_evidence.py --verify research-materials/issue-203/consumer-evidence-v2.json
+```
 
-This consumer review confirms that the request-time inference implementation meets technical integration contract requirements. Formal producer signoff and independent reference verification remain tracked under #179.
+The helper records every request and response first, then derives each outcome from assertions on those recorded exchanges; no outcome is written as a constant. It creates the evidence file exclusively and never overwrites an existing file. `--verify` recomputes all checks from the stored exchanges and fails if any stored check or outcome differs, any outcome is not `PASSED`, or the file has CRLF line endings.
+
+| Requirement | Derived from |
+|---|---|
+| AS-01 | `SKU_ID` / `Warehouse_ID` echoed for all four horizons; unknown SKU and unknown warehouse return HTTP 422 `unknown_sku` / `unknown_warehouse` |
+| AS-02 | `forecast_origin` echoed; `target_start_date` = origin + 1 for all four horizons |
+| AS-03 | `target_end_date` = origin + h and the inclusive window is exactly h days, for h = 1, 7, 14, 28 |
+| AS-04 | `horizon` echoed as the same JSON integer; `forecast_type` `next_day` / `cumulative_window`; cumulative (not daily-path) limitation for h7/h14/h28; h28 limitation that 28-day availability does not approve downstream inventory use; four separate records; horizon 3 returns HTTP 422 `unsupported_horizon` |
+| AS-05 | `producer_designation: frozen_designated_producer`; Section 2 model/configuration per horizon; source run and run-manifest reference; one manifest hash across horizons; `provenance` keys exactly `model_path`, `model_hash`, `preprocessor_path`, `preprocessor_hash`, `input_sha256`, each hash a SHA-256 digest and each path under that horizon's producer directory; distinct model and input hashes per horizon; an identical repeat request reproduces `input_sha256`; changed history produces a new `input_sha256` |
+| AS-06 | response keys exactly match the 22-field `ForecastResponse` allowlist; no retrospective, inventory or metric key at any depth (for example `observed_target`, `Demand_Forecast`, `Inventory_Level`, `Reorder_Point`, `retrospective_margin`, WAPE/MAE/RMSE); `inference_mode: request_time`; `observed_target`, `Demand_Forecast` and `Inventory_Level` request fields are rejected with HTTP 422 `extra_forbidden` |
+| `RT-CONTRACT` | `GET /health` ready for `[1, 7, 14, 28]`; HTTP 200, `available`, empty `unavailable_reasons`, `forecast-inference-v1`, echoed `input_kind` and a finite `forecast_quantity`; the four example files are byte-identical before and after capture |
+| `RT-CHANGED-HISTORY` | the 1-day example with final-day `Units_Sold` increased by 5 in memory returns a new `input_sha256` (against the identical-request control) with unchanged identity, window, producer and saved model/preprocessor provenance |
+| `RT-REJECTIONS` | all ten negative requests return HTTP 422 without a substitute `forecast_quantity`: the five above plus `invalid_origin` (origin 2024-12-01), `future_history`, `incomplete_history` and `invalid_history` (one missing day) |
+
+Forecast quantities and hashes are kept in the evidence file rather than restated here. As in Section 6, the changed-history quantity difference is recorded as an informational observation: tree models can return the same quantity for different inputs, so the pass/fail signal is the changed `input_sha256`.
+
+**Superseded capture:** `research-materials/issue-203/consumer-evidence.json` (capture timestamp `2026-10-27T18:06:44.383554+00:00`) is preserved unchanged but superseded. It captured h7 only, and its AS-01 to AS-06 values were written as constants rather than derived from checks. The SHA-256 `503a3d03…` and 25 October date previously cited in this section identified neither that file nor the current evidence and are withdrawn. Chathuranga's 24 October outcomes in Section 6.1 remain his separate record.
+
+These requests used the synthetic examples only. They did not train, tune, refit, replay research evaluation, measure accuracy or accept inventory/decision-support behaviour; the retained-case routes remain under #201.
+
 ## 7. Engineering handoff
 
 The implementation consists of [saved-model inference](../src/forecasting/inference.py), [FastAPI schemas/routes](../src/api/main.py), four small input files, and focused synthetic API/inference checks. Native loads and predictions in automated checks use test doubles; request feature preparation uses the existing pipeline.
 
-Chathuranga's supplied manual outcomes are recorded in Section 6.1. [Issue #180 closed for that delivered evidence milestone](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180#issuecomment-6380844130). The producer implementation review/corrections under [#193](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/193) are delivered through merged PR #195. Tinosh's request-time technical consumer review is recorded in Section 6.2 under #203 (outcome: Accepted). Formal forecast-producer approval and independently reviewed source verification remain separate obligations under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
+Chathuranga's supplied manual outcomes are recorded in Section 6.1. [Issue #180 closed for that delivered evidence milestone](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180#issuecomment-6380844130). The producer implementation review/corrections under [#193](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/193) are delivered through merged PR #195. Tinosh's request-time technical consumer verification is recorded in Section 6.2, related to #203 (evidence SHA-256 `{{EVIDENCE_SHA256}}`). #203 remains open: formal forecast-producer approval and independently reviewed source verification are not complete and remain obligations under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
 
 [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197) merged as `b6f196ad73d3a31017582f81dbc7f5183ef573df`, closing #183. Chathuranga's [approval at corrected source commit `c540f03`](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197#pullrequestreview-5642602452) covers the retained-case API scope. Both [CI Tests](https://github.com/chathuranga-sudusinghe/retail-demand-framework/actions/runs/40180999250) and [CI Quality](https://github.com/chathuranga-sudusinghe/retail-demand-framework/actions/runs/40180999258) passed for that corrected commit. These are existing implementation checks and scoped code approval; they do not establish a human-observed demo, final producer/source/consumer acceptance or rendered-visual acceptance.
 
