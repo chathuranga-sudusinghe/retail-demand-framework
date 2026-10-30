@@ -4,7 +4,7 @@
 **Responsible member:** Chathuranga Sudusinghe — forecasting-facing contract and output meaning
 **Implementer after handoff:** Tinosh Gamage — FastAPI endpoints, schemas, adapters and API tests
 **Date:** 2026-10-05 (Asia/Colombo)
-**Status:** Retained-export contract; exporter and synthetic checks are implemented, and a local export exists. Acceptance of its exact hash and Tinosh's consumer acceptance remain pending. The earlier stored-forecast runtime design is superseded by Chathuranga's explicit request for request-time saved-model inference on 2026-10-05. The active API contract is [Request-time forecast API](forecast-inference-api.md); the fixed-origin export remains a separate artifact.
+**Status:** Retained-export contract; exporter and synthetic checks are implemented, and a local export exists. Acceptance of the exact retained-export hash and its retained consumer contract remains separate under #201/B14; this is not the [accepted request-time handoff under #203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406). The earlier stored-forecast runtime design is superseded by Chathuranga's explicit request for request-time saved-model inference on 2026-10-05. The active API contract is [Request-time forecast API](forecast-inference-api.md); the fixed-origin export remains a separate artifact.
 
 ---
 
@@ -67,7 +67,7 @@ Chathuranga explicitly requested that each presentation request supply new daily
 | Behavior | Current purpose |
 |---|---|
 | Serve stored fixed-origin producer records | Retained export only; not the presentation API |
-| Invoke saved producers on supplied request history | Active presentation API, requested by Chathuranga on 2026-10-05; implementation merged; consumer acceptance remains separate |
+| Invoke saved producers on supplied request history | Active request-time API; scoped producer/source/consumer handoff accepted under #203 on 29 October 2026. This does not accept the separate retained export |
 
 The retained export still represents forecasts issued at origin 2024-12-02. The active API uses the supplied request origin and history; it does not read the export as its output source.
 
@@ -282,7 +282,7 @@ Approval by Chathuranga: 2026-10-05, by explicit instruction in the working sess
 | D4 | Contract identifier | `issue-132-forecast-export-v1`. |
 | D5 | Decision record | Record these choices here and reference this contract in [integration readiness](integration-contract-readiness.md). No new Decision Record. |
 
-The logical request behaviour and reason-code precedence in Sections 8–9 are part of this approved contract. Chathuranga retains forecasting ownership; Tinosh reviews and implements the consumer. Exporter implementation and synthetic checks are complete, and Chathuranga generated a local derivative export. Its accepted-export hash entry and consumer acceptance remain pending; existence alone does not establish acceptance. The active inference handoff has separate review and manual demonstration steps in [its contract](forecast-inference-api.md).
+The logical request behaviour and reason-code precedence in Sections 8–9 are part of this approved contract. Chathuranga retains forecasting ownership; Tinosh reviews and implements the consumer. Exporter implementation and synthetic checks are complete, and Chathuranga generated a local derivative export. Its accepted-export hash entry and consumer acceptance remain pending; existence alone does not establish acceptance. The active inference handoff is accepted under #203; [its contract](forecast-inference-api.md) preserves the separate serving evidence and producer/source decision. That acceptance does not settle the retained-export hash/consumer review.
 
 Posting a decision comment on Issue #132 requires Chathuranga's instruction; this documentation approval does not authorize posting one.
 

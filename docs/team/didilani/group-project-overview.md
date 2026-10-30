@@ -63,7 +63,7 @@ SKU_ID
 Warehouse_ID
 forecast origin
 forecast input horizon (1-day / 7-day cumulative / 14-day cumulative / 28-day cumulative)
-28-day inventory interpretation: component-owner/human approval pending
+28-day inventory interpretation: not approved; deferred as a disclosed limitation
 forecast_demand
 origin inventory level
 origin reorder point
@@ -108,7 +108,9 @@ This is not a dashboard-only contribution. The visual layer communicates a subst
 
 Didilani retains inventory-risk visual analysis, documentation, interpretation and conclusions. Tinosh implements approved reusable charts, rendering and prototype visuals after the relevant analytical requirements are defined and reviewed. Closed Issues #71/#85 are historical context, not current assignments. Follow-up work is scoped from the refined readiness baseline under #177.
 
-## 28-day compatibility review — downstream approval pending
+## 28-day compatibility review — downstream use deferred
+
+**Team scope reconciled 30 October 2026:** Chathuranga reported team acceptance on 29 October of h28 inventory use, numerical replenishment and overstock as disclosed limitations/deferred extensions. [The C1 closeout record](../../research-design.md#164-human-decisions-and-c1-closeout-record) preserves that decision; it does not approve these methods. Didilani executes #201's bounded retained-view continuation with Tinosh's technical review/support, retaining her inventory interpretation responsibility.
 
 The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts

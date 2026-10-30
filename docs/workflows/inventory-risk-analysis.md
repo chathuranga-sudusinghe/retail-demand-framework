@@ -82,7 +82,9 @@ The retrospective margin is `B_t - realised_demand`. Near-zero predicted or retr
 
 The [retained human-run evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) reports the constructed-origin scenario separately for 1/7/14 days. The A/C/D cross-component protocol, further robustness work, uncertainty and human-review rules remain separate. The group approval does not settle those decisions. DR-006 forecasting selection remains WAPE-based.
 
-## 28-day compatibility review — downstream approval pending
+## 28-day compatibility review — downstream use deferred
+
+**Scope reconciled 30 October 2026:** The [C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) retains h28 inventory use, numerical replenishment and overstock as team-accepted disclosed limitations/deferred extensions, reported by Chathuranga on 29 October. They are not current requirements to add methods. Retained input/runtime acceptance and approved h1/h7/h14 views remain under #201, with Didilani as the bounded implementation executor and Tinosh providing technical review/support.
 
 The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts

@@ -1,5 +1,7 @@
 # Responsible Decision-Support Evaluation
 
+**Presentation status reconciled — 30 October 2026:** [The C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) records W1 interpretation/display acceptance and automatic-review-rule deferral as reported by Chathuranga on 29 October. Existing dated preparation/assessment evidence below remains unchanged. W2 actual-view semantic/readability review remains under #182 once #201 supplies a reviewable revision; the 160 record checks are not repeated or treated as managerial clearance.
+
 **Status — 23 October 2026:** PR #175 merged and closed #164/#168 as delivered implementation/evidence milestones. Chathuranga confirmed all 160 record-level checks on the 20 inventory-linked records and manually generated the summaries. Prototype/presentation checks and final component acceptance remain separate. DR-012 group approval is recorded under [#177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177); historical record/manifest labels and forecast-only F01–F03 outcomes remain unchanged.
 
 ## 1. Purpose

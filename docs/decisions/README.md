@@ -38,16 +38,14 @@ Issue #65 has a human-approved/frozen scientific protocol. PR #90 merged Issue #
 
 RQ2 subordinate hypotheses and interpretation are approved as comparative and descriptive under DR-013: use horizon-specific arithmetic mean WAPE, all four fold-level results and supporting metrics; discuss magnitude, direction and fold consistency. No significance procedure or universal numerical decision threshold is approved, and no cross-horizon composite/overall winner is introduced.
 
-## Decisions still to be formalised as evidence becomes sufficient
+## Remaining decisions and deferred extensions
 
-Examples include:
+**Reconciled 30 October 2026:** [The C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) records team acceptance, reported by Chathuranga on 29 October, of prospective uncertainty estimation, numerical replenishment, overstock, automatic human-review rules and h28 inventory use as disclosed limitations/deferred extensions. [#191 closed](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/191#issuecomment-6515040267) on the bounded descriptive scope; primary and provisional temporal significance claims remain untested. These are not pending requirements to invent methods or run tests for current delivery.
 
-- exact retained-model set/audit exceptions and archive responsibilities under the storage policy;
-- separate downstream 28-day approval (forecasting baseline formulas are already approved);
-- demand-regime definitions;
-- uncertainty representation;
-- remaining inventory input-contract details, overstock/excess-stock evaluation and numerical replenishment quantities beyond DR-012's approved origin reorder-threshold exposure method;
-- cross-component forecast-to-decision evaluation and human-review rules;
-- final operationalisation of the primary group-level and secondary forecasting hypotheses.
+Remaining or future decisions include:
 
-Use one Markdown file per material decision.
+- retained-model audit/retention exceptions, archival responsibilities and backup policy;
+- remaining retained input-contract/source-timing and component-acceptance details under #201;
+- any future demand-regime definition, controlled forecast-to-decision evaluation or extension of a deferred method, if explicitly proposed and approved.
+
+A future material methodology change needs the relevant human/component review and a decision recorded in the appropriate existing or new Decision Record. Preserve historical DR text, approval attribution and immutable evidence; the current scope record does not approve the deferred methods.
