@@ -128,6 +128,8 @@ This direction is consistent with the project's stated need for transparent fore
 
 ## 28-day compatibility review — downstream approval pending
 
+**Scope update — 30 October 2026:** [The C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) records h28 inventory use as a team-accepted disclosed limitation/deferred extension, reported by Chathuranga on 29 October. The earlier compatibility discussion below is retained as historical context; it does not make h28 evaluation a current implementation task or approve its use.
+
 The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does
