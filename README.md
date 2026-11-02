@@ -92,7 +92,7 @@ Research preparation, training and evaluation remain specifically authorised hum
 
 ## Documentation map
 
-- **Research:** [design and decisions](docs/research-design.md), [literature review](docs/literature/literature-review.md), [references](docs/references.md), [shared report](docs/group-report.md).
+- **Research:** [results and interpretation](docs/results.md), [design and decisions](docs/research-design.md), [literature review](docs/literature/literature-review.md), [references](docs/references.md), [shared report](docs/group-report.md).
 - **Data and forecasting:** [dataset](docs/dataset.md), [validated preparation](docs/data-cleaning-and-validation.md), [features](docs/forecasting-feature-engineering.md), [protocol](docs/protocol.md), [DR-014 producer freeze](docs/decisions/DR-014-forecasting-selection-and-final-refit.md), [results](docs/forecasting-final-evaluation.md).
 - **Inventory and responsible use:** [inventory interpretation and visual specification](docs/research/inventory-risk-visual-evidence.md), [responsible decision-support evaluation](docs/research/responsible-decision-support-evaluation.md).
 - **Contracts and integration:** [request-time API](docs/forecast-inference-api.md), [retained-export contract](docs/forecast-api-contract.md), [integration readiness](docs/integration-contract-readiness.md), [integration workflow](docs/workflows/system-integration-and-prototype.md).
