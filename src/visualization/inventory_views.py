@@ -14,7 +14,7 @@ import json
 import math
 from pathlib import Path
 import re
-from typing import Any
+from typing import Any, TypeGuard
 
 from src.forecasting.export import DESTINATION as FORECAST_EXPORT_PATH
 from src.forecasting.paths import REPOSITORY
@@ -37,6 +37,32 @@ PROSPECTIVE_HORIZONS = (1, 7, 14)
 RETROSPECTIVE_PROXY_LABEL = (
     "Retrospective threshold-crossing proxy based on Units_Sold; not observed stockout."
 )
+CURRENT_DR012_APPROVAL = {
+    "source_record": (
+        "docs/decisions/DR-012-inventory-risk-replenishment-methodology.md"
+        "#group-approval-record"
+    ),
+    "status": "Group-approved on 12 October 2026",
+    "reported_by": "Chathuranga on 23 October 2026 under Issue #177",
+    "approved_scope": (
+        "Fixed origin, fixed reorder point, and no receipts for horizons h1, h7, "
+        "and h14 only."
+    ),
+    "not_approved": [
+        "Source-confirmed inventory timing; source snapshot timing "
+        "and availability remain unknown.",
+        "h28 inventory use.",
+        "Numerical replenishment.",
+        "Overstock evaluation.",
+        "Forecast uncertainty estimation.",
+        "Automatic human-review rules.",
+        "A new research run.",
+    ],
+    "consumer_acceptance": (
+        "Not established by DR-012; consumer acceptance remains a separate, "
+        "unconfirmed item."
+    ),
+}
 
 IDENTITY_FIELDS = ("SKU_ID", "Warehouse_ID", "forecast_origin", "horizon")
 TARGET_FIELDS = ("target_start_date", "target_end_date")
@@ -180,6 +206,10 @@ def _is_digest(value: Any) -> bool:
     return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
 
 
+def _is_object_list(value: Any) -> TypeGuard[list[dict[str, Any]]]:
+    return isinstance(value, list) and all(isinstance(item, dict) for item in value)
+
+
 def _same_json(left: Any, right: Any) -> bool:
     try:
         return json.dumps(left, sort_keys=True, allow_nan=False) == json.dumps(
@@ -224,10 +254,13 @@ def load_inventory_view_evidence(
             "Unsupported inventory evidence manifest schema.",
         )
         file_hashes = manifest.get("files")
-        _require(
-            isinstance(file_hashes, dict) and set(file_hashes) == EVALUATION_FILE_NAMES,
-            "Inventory evidence manifest file list differs.",
-        )
+        if (
+            not isinstance(file_hashes, dict)
+            or set(file_hashes) != EVALUATION_FILE_NAMES
+        ):
+            raise InventoryViewSourceError(
+                "Inventory evidence manifest file list differs."
+            )
         payloads: dict[str, bytes] = {}
         for name, expected_hash in file_hashes.items():
             _require(_is_digest(expected_hash), f"Invalid manifest digest for {name}.")
@@ -241,7 +274,8 @@ def load_inventory_view_evidence(
         handoff = forecast_loader(repository / FORECAST_EXPORT_PATH)
         forecast_document = handoff.document
         source = manifest.get("source")
-        _require(isinstance(source, dict), "Inventory evidence source is missing.")
+        if not isinstance(source, dict):
+            raise InventoryViewSourceError("Inventory evidence source is missing.")
         _require(
             manifest.get("dataset_provenance_sha256") == PROVENANCE_SHA256,
             "Inventory dataset provenance differs from the retained contract.",
@@ -266,53 +300,59 @@ def load_inventory_view_evidence(
             and evaluation.get("source") == source,
             "Retrospective evaluation envelope differs from its manifest.",
         )
-        _require(
-            isinstance(source.get("mapping_version"), str)
-            and source.get("mapping_version")
-            and source.get("snapshot_policy")
-            in {"unknown", "source-confirmed", "constructed-origin"}
-            and isinstance(source.get("snapshot_basis"), str)
-            and bool(source["snapshot_basis"].strip()),
-            "Inventory evidence policy or basis is invalid.",
-        )
+        mapping_version = source.get("mapping_version")
+        snapshot_policy = source.get("snapshot_policy")
+        snapshot_basis = source.get("snapshot_basis")
+        if (
+            not isinstance(mapping_version, str)
+            or not mapping_version
+            or not isinstance(snapshot_policy, str)
+            or snapshot_policy
+            not in {"unknown", "source-confirmed", "constructed-origin"}
+            or not isinstance(snapshot_basis, str)
+            or not snapshot_basis.strip()
+        ):
+            raise InventoryViewSourceError(
+                "Inventory evidence policy or basis is invalid."
+            )
 
         prospective_records = prospective.get("records")
         export_rows = forecast_document.get("forecasts")
-        _require(
-            isinstance(prospective_records, list)
-            and len(prospective_records) == 1000
-            and isinstance(export_rows, list)
-            and len(export_rows) == 1000,
-            "The retained prospective population must contain 1000 forecast keys.",
-        )
+        if (
+            not isinstance(prospective_records, list)
+            or len(prospective_records) != 1000
+            or not _is_object_list(export_rows)
+            or len(export_rows) != 1000
+        ):
+            raise InventoryViewSourceError(
+                "The retained prospective population must contain 1000 forecast keys."
+            )
         export_by_key = {_case_key(row): row for row in export_rows}
-        _require(
-            len(export_by_key) == len(export_rows),
-            "Forecast export identity is not unique.",
-        )
+        if len(export_by_key) != len(export_rows):
+            raise InventoryViewSourceError("Forecast export identity is not unique.")
         prospective_by_key: dict[tuple[Any, ...], dict[str, Any]] = {}
         for row in prospective_records:
-            _require(
-                isinstance(row, dict) and set(row) == set(PROSPECTIVE_FIELDS),
-                "Prospective record fields differ from the retained contract.",
-            )
+            if not isinstance(row, dict) or set(row) != set(PROSPECTIVE_FIELDS):
+                raise InventoryViewSourceError(
+                    "Prospective record fields differ from the retained contract."
+                )
             key = _case_key(row)
-            _require(
-                key not in prospective_by_key and key in export_by_key,
-                "Prospective inventory identity is unknown or duplicated.",
-            )
+            if key in prospective_by_key or key not in export_by_key:
+                raise InventoryViewSourceError(
+                    "Prospective inventory identity is unknown or duplicated."
+                )
             forecast = export_by_key[key]
             for name in _FORECAST_COPY_FIELDS:
-                _require(
-                    _same_json(row[name], forecast[name]),
-                    f"Prospective forecast field differs: {name}.",
+                if not _same_json(row[name], forecast[name]):
+                    raise InventoryViewSourceError(
+                        f"Prospective forecast field differs: {name}."
+                    )
+            if row["source_export_sha256"] != handoff.sha256 or row[
+                "source_provenance"
+            ] != json.dumps(forecast_document["source"], sort_keys=True):
+                raise InventoryViewSourceError(
+                    "Prospective forecast provenance differs from the validated export."
                 )
-            _require(
-                row["source_export_sha256"] == handoff.sha256
-                and row["source_provenance"]
-                == json.dumps(forecast_document["source"], sort_keys=True),
-                "Prospective forecast provenance differs from the validated export.",
-            )
             try:
                 validate_prospective_state(row, source)
             except (TypeError, ValueError, KeyError) as exc:
@@ -330,26 +370,30 @@ def load_inventory_view_evidence(
         expected_evaluation_keys = {
             key for key in export_by_key if key[3] in EVALUABLE_HORIZONS
         }
-        _require(
-            isinstance(evaluation_cases, list)
-            and len(evaluation_cases) == len(expected_evaluation_keys)
-            and isinstance(evaluation_summary, list)
-            and len(evaluation_summary) == len(EVALUABLE_HORIZONS),
-            "Retrospective evaluation population or summaries differ.",
-        )
+        if (
+            not isinstance(evaluation_cases, list)
+            or len(evaluation_cases) != len(expected_evaluation_keys)
+            or not isinstance(evaluation_summary, list)
+            or len(evaluation_summary) != len(EVALUABLE_HORIZONS)
+        ):
+            raise InventoryViewSourceError(
+                "Retrospective evaluation population or summaries differ."
+            )
         evaluation_keys: set[tuple[Any, ...]] = set()
         for row in evaluation_cases:
-            _require(
-                isinstance(row, dict) and _EVALUATION_REQUIRED_FIELDS <= set(row),
-                "Retrospective evaluation case is missing required fields.",
-            )
+            if not isinstance(row, dict) or not _EVALUATION_REQUIRED_FIELDS <= set(row):
+                raise InventoryViewSourceError(
+                    "Retrospective evaluation case is missing required fields."
+                )
             key = _case_key(row)
-            _require(
-                key[3] in EVALUABLE_HORIZONS
-                and key not in evaluation_keys
-                and key in prospective_by_key,
-                "Retrospective evaluation contains an unknown, duplicate, or gated key.",
-            )
+            if (
+                key[3] not in EVALUABLE_HORIZONS
+                or key in evaluation_keys
+                or key not in prospective_by_key
+            ):
+                raise InventoryViewSourceError(
+                    "Retrospective evaluation contains an unknown, duplicate, or gated key."
+                )
             prospective_row = prospective_by_key[key]
             for name in (
                 *TARGET_FIELDS,
@@ -358,21 +402,23 @@ def load_inventory_view_evidence(
                 "model",
                 "configuration_id",
             ):
-                _require(
-                    _same_json(row[name], prospective_row[name]),
-                    f"Retrospective case identity/value differs: {name}.",
+                if not _same_json(row[name], prospective_row[name]):
+                    raise InventoryViewSourceError(
+                        f"Retrospective case identity/value differs: {name}."
+                    )
+            if row["source_export_sha256"] != handoff.sha256:
+                raise InventoryViewSourceError(
+                    "Retrospective case is bound to a different forecast export."
                 )
-            _require(
-                row["source_export_sha256"] == handoff.sha256,
-                "Retrospective case is bound to a different forecast export.",
-            )
-            _require(
+            if (
                 row["source_provenance"]
-                == json.dumps(forecast_document["source"], sort_keys=True)
-                and row["forecast_status"] == export_by_key[key]["forecast_status"]
-                and row["producer_status"] == export_by_key[key]["producer_status"],
-                "Retrospective forecast provenance differs from the validated export.",
-            )
+                != json.dumps(forecast_document["source"], sort_keys=True)
+                or row["forecast_status"] != export_by_key[key]["forecast_status"]
+                or row["producer_status"] != export_by_key[key]["producer_status"]
+            ):
+                raise InventoryViewSourceError(
+                    "Retrospective forecast provenance differs from the validated export."
+                )
             evaluation_keys.add(key)
         _require(
             evaluation_keys == expected_evaluation_keys,
@@ -381,34 +427,40 @@ def load_inventory_view_evidence(
 
         summary_horizons: set[int] = set()
         for row in evaluation_summary:
-            _require(
-                isinstance(row, dict)
-                and set(_CONFUSION_COUNT_FIELDS + _COVERAGE_COUNT_FIELDS) <= set(row)
-                and set(_METRIC_FIELDS) <= set(row),
-                "Retrospective summary is missing existing counts or metrics.",
-            )
+            if (
+                not isinstance(row, dict)
+                or not set(_CONFUSION_COUNT_FIELDS + _COVERAGE_COUNT_FIELDS) <= set(row)
+                or not set(_METRIC_FIELDS) <= set(row)
+            ):
+                raise InventoryViewSourceError(
+                    "Retrospective summary is missing existing counts or metrics."
+                )
             horizon = row.get("horizon")
-            _require(
-                type(horizon) is int
-                and horizon in EVALUABLE_HORIZONS
-                and horizon not in summary_horizons,
-                "Retrospective summary has an unexpected or duplicate horizon.",
-            )
-            _require(
-                all(
-                    type(row[name]) is int
-                    for name in _CONFUSION_COUNT_FIELDS + _COVERAGE_COUNT_FIELDS
-                ),
-                "Retrospective summary counts must remain integers.",
-            )
+            if (
+                type(horizon) is not int
+                or horizon not in EVALUABLE_HORIZONS
+                or horizon in summary_horizons
+            ):
+                raise InventoryViewSourceError(
+                    "Retrospective summary has an unexpected or duplicate horizon."
+                )
+            if not all(
+                type(row[name]) is int
+                for name in _CONFUSION_COUNT_FIELDS + _COVERAGE_COUNT_FIELDS
+            ):
+                raise InventoryViewSourceError(
+                    "Retrospective summary counts must remain integers."
+                )
             for name in _METRIC_FIELDS:
                 value, status = row[name], row.get(f"{name}_status")
-                _require(
+                if not (
                     (value is None or _finite_json_number(value))
                     and isinstance(status, str)
                     and bool(status),
-                    f"Retrospective metric status/value is invalid: {name}.",
-                )
+                ):
+                    raise InventoryViewSourceError(
+                        f"Retrospective metric status/value is invalid: {name}."
+                    )
             summary_horizons.add(horizon)
         _require(
             summary_horizons == set(EVALUABLE_HORIZONS),
@@ -765,10 +817,18 @@ def build_availability_provenance(evidence: InventoryViewEvidence) -> dict[str, 
         "method_assumptions",
         "method_limitations",
     )
+    optional_evaluation_fields = (
+        "downstream_use_status",
+        "downstream_use_reason",
+    )
     forecast_by_key = {_case_key(row): row for row in evidence.forecasts}
     return {
         "source": evidence.prospective["source"],
         "dataset_provenance_sha256": evidence.manifest["dataset_provenance_sha256"],
+        "current_method_approval": {
+            **CURRENT_DR012_APPROVAL,
+            "not_approved": list(CURRENT_DR012_APPROVAL["not_approved"]),
+        },
         "prospective": {
             "records": [
                 _availability_record(row, forecast_by_key[_case_key(row)])
@@ -777,7 +837,14 @@ def build_availability_provenance(evidence: InventoryViewEvidence) -> dict[str, 
         },
         "evaluation_only": {
             "records": [
-                _projection(row, evaluation_fields)
+                {
+                    **_projection(row, evaluation_fields),
+                    **{
+                        name: row[name]
+                        for name in optional_evaluation_fields
+                        if name in row
+                    },
+                }
                 for row in evidence.evaluation["cases"]
             ]
         },

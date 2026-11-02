@@ -467,17 +467,45 @@ def test_retrospective_results_are_separate_and_not_in_prospective_views(tmp_pat
 def test_evaluation_projections_preserve_source_caveats(tmp_path):
     repository, export = _write_fixture(tmp_path)
     evidence = _load(repository, export)
+    prospective_source = evidence.prospective["records"][0]
     source_case = evidence.evaluation["cases"][0]
+    for source_row in (prospective_source, source_case):
+        source_row["methodology_status"] = "proposed_for_group_approval"
+        source_row["downstream_use_status"] = "proposed_method_not_group_approved"
+        source_row["downstream_use_reason"] = (
+            "DR-012_remains_proposed_for_group_approval"
+        )
 
     proxy_case = build_proxy_crossing_comparison(evidence)["cases"][0]
     margin_case = build_margin_comparison(evidence)["evaluation_only"]["records"][0]
-    availability_case = build_availability_provenance(evidence)["evaluation_only"][
+    availability = build_availability_provenance(evidence)
+    availability_case = availability["evaluation_only"]["records"][0]
+    availability_case_without_historical_status = availability["evaluation_only"][
         "records"
-    ][0]
+    ][1]
+    availability_prospective = availability["prospective"]["records"][0]
 
     for projected in (proxy_case, margin_case, availability_case):
         assert projected["method_assumptions"] == source_case["method_assumptions"]
         assert projected["method_limitations"] == source_case["method_limitations"]
+
+    for projected in (availability_case, availability_prospective):
+        assert projected["methodology_status"] == "proposed_for_group_approval"
+        assert projected["downstream_use_status"] == (
+            "proposed_method_not_group_approved"
+        )
+        assert projected["downstream_use_reason"] == (
+            "DR-012_remains_proposed_for_group_approval"
+        )
+    assert "downstream_use_status" not in availability_case_without_historical_status
+    assert "downstream_use_reason" not in availability_case_without_historical_status
+    assert availability["current_method_approval"]["status"] == (
+        "Group-approved on 12 October 2026"
+    )
+    assert availability["current_method_approval"]["approved_scope"] == (
+        "Fixed origin, fixed reorder point, and no receipts for horizons h1, h7, "
+        "and h14 only."
+    )
 
 
 def test_proxy_label_and_existing_metric_status_and_denominators_are_preserved(

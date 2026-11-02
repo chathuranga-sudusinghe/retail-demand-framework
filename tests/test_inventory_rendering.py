@@ -12,6 +12,7 @@ from src.visualization.inventory_rendering import (
     render_margin_comparison,
     render_proxy_crossing_comparison,
 )
+from src.visualization.inventory_views import CURRENT_DR012_APPROVAL
 from src.visualization.render_issue_201_views import render_issue_201
 
 _H28_IDENTITY_FIELDS = (
@@ -347,6 +348,11 @@ def _availability_view():
                     "evaluation_unavailable_reasons": [],
                     "method_assumptions": ["same target window"],
                     "method_limitations": ["retrospective only"],
+                    "methodology_status": "proposed_for_group_approval",
+                    "downstream_use_status": "proposed_method_not_group_approved",
+                    "downstream_use_reason": (
+                        "DR-012_remains_proposed_for_group_approval"
+                    ),
                 }
                 for horizon in (1, 7, 14)
             ]
@@ -606,6 +612,41 @@ def test_availability_rendering_preserves_states_provenance_and_gate_only_h28():
     assert "retrospective_margin" not in panel_a_text + panel_b_text
     assert "confusion_cell" not in panel_a_text + panel_b_text
     assert _h28_identity_rows(panel_a) == _h28_identity_rows(panel_b)
+
+
+def test_availability_separates_dr012_approval_from_historical_labels():
+    view = _availability_view()
+    view["current_method_approval"] = CURRENT_DR012_APPROVAL
+    figures = render_availability_provenance(view)
+    rendered = _texts(figures)
+
+    for historical_value in (
+        "proposed_for_group_approval",
+        "proposed_method_not_group_approved",
+        "DR-012_remains_proposed_for_group_approval",
+    ):
+        assert historical_value in rendered
+    for current_context in (
+        "Group-approved on 12 October 2026",
+        "Chathuranga on 23 October 2026 under Issue #177",
+        "Fixed origin, fixed reorder point, and no receipts for horizons h1, h7, "
+        "and h14 only.",
+        "Source-confirmed inventory timing; source snapshot timing "
+        "and availability remain unknown.",
+        "h28 inventory use.",
+        "Numerical replenishment.",
+        "Overstock evaluation.",
+        "Forecast uncertainty estimation.",
+        "Automatic human-review rules.",
+        "A new research run.",
+        "consumer acceptance remains a separate, unconfirmed item.",
+    ):
+        assert current_context in rendered
+
+    panel_a, panel_b = _h28_panels(figures)
+    assert "not_approved_for_downstream_use" not in _texts(panel_a)
+    assert "not_approved_for_downstream_use" in _texts(panel_b)
+    assert "28_day_downstream_use_requires_separate_approval" in _texts(panel_b)
 
 
 def test_renderers_do_not_mutate_builder_outputs():

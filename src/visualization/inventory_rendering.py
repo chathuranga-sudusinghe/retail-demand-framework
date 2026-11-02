@@ -555,7 +555,6 @@ def _figure(
             column if has_h28_layout else _hard_wrap(column, wrap_width)
             for column, wrap_width in zip(columns, wrap_widths, strict=True)
         ]
-        column_widths = None
         if tuple(columns) == _H28_FIELDS:
             total_width = sum(_H28_COLUMN_WIDTHS)
             column_widths = [width / total_width for width in _H28_COLUMN_WIDTHS]
@@ -565,7 +564,7 @@ def _figure(
             cellLoc="left",
             colLoc="left",
             loc="upper left",
-            colWidths=column_widths or _column_widths(columns, rows, width)[0],
+            colWidths=column_widths,
         )
         if not has_h28_layout:
             row_lines = line_counts_by_section[index]
@@ -974,6 +973,7 @@ def render_availability_provenance(view: Mapping[str, Any]) -> tuple[Figure, ...
                     "prospective scenario assumptions by horizon": scenario_assumptions,
                     "evaluation-only records": evaluation_context,
                 },
+                current_method_approval=view.get("current_method_approval", {}),
                 dataset_provenance_sha256=view["dataset_provenance_sha256"],
             ),
         )

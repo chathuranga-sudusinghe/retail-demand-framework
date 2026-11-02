@@ -61,6 +61,17 @@ jobs:
         if: steps.scope.outputs.run_python != 'false'
         run: ruff check src/api/main.py src/decision_support/retained_cases.py tests/test_decision_support_retained_cases.py
 
+      - name: Lint inventory visualization source and tests
+        if: steps.scope.outputs.run_python != 'false'
+        run: >-
+          ruff check
+          src/visualization/inventory_views.py
+          src/visualization/inventory_rendering.py
+          src/visualization/render_issue_201_views.py
+          tests/test_inventory_views.py
+          tests/test_inventory_rendering.py
+          tests/test_render_issue_201_views.py
+
       - name: Verify imports
         if: steps.scope.outputs.run_python != 'false'
         run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
@@ -74,3 +85,13 @@ jobs:
         env:
           MYPYPATH: tests
         run: python -m mypy src/api/main.py src/decision_support/retained_cases.py tests/test_decision_support_retained_cases.py --explicit-package-bases --disable-error-code import-untyped
+
+      - name: Type-check inventory visualization source
+        if: steps.scope.outputs.run_python != 'false'
+        run: >-
+          python -m mypy
+          src/visualization/inventory_views.py
+          src/visualization/inventory_rendering.py
+          src/visualization/render_issue_201_views.py
+          --explicit-package-bases
+          --disable-error-code import-untyped

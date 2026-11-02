@@ -70,10 +70,10 @@ def _release_figure(figure: Figure) -> None:
         figure.clear()
     finally:
         try:
-            if canvas is not None and getattr(canvas, "renderer", None) is not None:
-                canvas.renderer = None
+            if getattr(canvas, "renderer", None) is not None:
+                setattr(canvas, "renderer", None)
         finally:
-            figure.set_canvas(None)
+            setattr(figure, "canvas", None)
 
 
 def _save_figure_and_release(figure: Figure, destination: Path) -> None:
