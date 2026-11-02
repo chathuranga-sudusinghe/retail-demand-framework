@@ -1,0 +1,748 @@
+{
+  "created_at_utc": "2026-11-02T16:47:37.799301+00:00",
+  "current_method_approval": {
+    "decision_date": "2026-10-12",
+    "reference": "docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record",
+    "reported_date": "2026-10-23",
+    "scope": "h1/h7/h14 fixed-origin, fixed-reorder-point, no-receipt scenario",
+    "status": "group_approved"
+  },
+  "environment": {
+    "fastapi": "0.142.2",
+    "lightgbm": "4.7.0",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12.3",
+    "xgboost": "3.4.1"
+  },
+  "execution": "in_process_TestClient",
+  "forecast_results": [
+    {
+      "api_response": {
+        "SKU_ID": "SKU_10",
+        "Warehouse_ID": "WH_3",
+        "assumptions": [
+          "Forecast uses only the supplied history through forecast_origin."
+        ],
+        "configuration_id": "GBM018",
+        "forecast_origin": "2024-12-02",
+        "forecast_quantity": 13.911101904309598,
+        "forecast_type": "next_day",
+        "horizon": 1,
+        "inference_mode": "request_time",
+        "inference_schema": "forecast-inference-v1",
+        "input_kind": "supplied_history",
+        "limitations": [
+          "The caller is responsible for the supplied history's provenance.",
+          "Multi-day quantities are cumulative totals, not daily paths.",
+          "28-day forecast availability does not approve downstream inventory use."
+        ],
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "model": "lightgbm",
+        "model_source_run_id": "final-20261003-02",
+        "producer_designation": "frozen_designated_producer",
+        "provenance": {
+          "input_sha256": "6b1151922034267857c46b2839807fc3b91eae32e8ecd4ac49bdd297a5b45beb",
+          "model_hash": "8e550851ba74af83ba86f8d343369742dea51e022650ea3c8cec2381abbf4d99",
+          "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/model.txt",
+          "preprocessor_hash": "d88fea483a50beac15dd32437287db5c23c03efd5ed40188209bbbd59a0566cf",
+          "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h1/GBM018/state.json"
+        },
+        "status": "available",
+        "target_end_date": "2024-12-03",
+        "target_start_date": "2024-12-03",
+        "unavailable_reasons": []
+      },
+      "horizon": 1,
+      "retained_case": {
+        "assessment_id": "F09",
+        "horizon": 1,
+        "prospective_record": {
+          "Date": "2024-12-02T00:00:00",
+          "Inventory_Level": 412,
+          "Reorder_Point": 218,
+          "SKU_ID": "SKU_10",
+          "Warehouse_ID": "WH_3",
+          "analysis_inventory_state_available": true,
+          "configuration_id": "GBM018",
+          "downstream_use_reason": "DR-012_remains_proposed_for_group_approval",
+          "downstream_use_status": "proposed_method_not_group_approved",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_exposure_state": "no_forecast_crossing",
+          "forecast_input_reason": "",
+          "forecast_input_status": "available",
+          "forecast_origin": "2024-12-02",
+          "horizon": 1,
+          "inventory_basis": "constructed_origin_scenario",
+          "inventory_buffer": 194.0,
+          "inventory_state_available": false,
+          "method_assumptions": [
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "method_limitations": [
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "methodology_status": "proposed_for_group_approval",
+          "model": "lightgbm",
+          "origin_exposure_state": "scenario_initially_above_threshold",
+          "origin_snapshot_available": null,
+          "origin_snapshot_reason": "origin_snapshot_availability_not_established",
+          "origin_snapshot_status": "unknown",
+          "predicted_margin": 180.0888980956904,
+          "prediction": 13.911101904309598,
+          "run_id": "final-20261003-02",
+          "scenario_inventory_state_available": true,
+          "snapshot_assumption": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.",
+          "source_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+          "source_provenance": "{\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}",
+          "target_end_date": "2024-12-03",
+          "target_start_date": "2024-12-03",
+          "unit": "units"
+        },
+        "record": {
+          "assumptions": [
+            "Target interval 2024-12-03 through 2024-12-03 is inclusive.",
+            "One day means next-day demand; 7/14/28 days mean cumulative-window demand, not a daily path.",
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "component_provenance": {
+            "decision_support": "responsible_decision_support",
+            "forecast": "forecasting",
+            "inventory_risk": "inventory_risk"
+          },
+          "evidence": [
+            "Assessment ID: F09",
+            "Mapping version: issue-164-168-v1",
+            "{\"forecast_type\": \"next_day\", \"horizon\": 1, \"target_end_date\": \"2024-12-03\", \"target_start_date\": \"2024-12-03\", \"uncertainty\": {\"reason\": \"no_agreed_method\", \"status\": \"unavailable\"}, \"unit\": \"units\"}",
+            "Retained export SHA-256: c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+            "Inventory prospective SHA-256: 5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4"
+          ],
+          "forecast_demand": 13.911101904309598,
+          "forecast_horizon": "1-day",
+          "forecast_origin": "2024-12-02",
+          "forecast_provenance": "{\"SKU_ID\": \"SKU_10\", \"Warehouse_ID\": \"WH_3\", \"configuration_id\": \"GBM018\", \"export_schema\": \"issue-132-forecast-export-v1\", \"export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_origin\": \"2024-12-02\", \"forecast_status\": \"available\", \"horizon\": 1, \"model\": \"lightgbm\", \"producer_status\": \"designated_producer\", \"source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}}",
+          "human_review_reasons": [
+            "Human review has not yet been assessed."
+          ],
+          "human_review_status": "not_assessed",
+          "inventory_risk_evidence": {
+            "forecast_exposure_state": "no_forecast_crossing",
+            "forecast_input_reason": "",
+            "forecast_input_status": "available",
+            "inventory_basis": "constructed_origin_scenario",
+            "inventory_buffer": 194.0,
+            "methodology_status": "proposed_for_group_approval",
+            "origin_exposure_state": "scenario_initially_above_threshold",
+            "origin_snapshot_status": "unknown",
+            "predicted_margin": 180.0888980956904,
+            "snapshot_assumption": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          },
+          "inventory_risk_provenance": "{\"dataset_provenance_sha256\": \"35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f\", \"manifest_sha256\": \"5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9\", \"operator\": \"Chathuranga\", \"prospective_sha256\": \"5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4\", \"source\": {\"forecast_export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}, \"mapping_version\": \"issue-164-168-v1\", \"snapshot_basis\": \"Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.\", \"snapshot_policy\": \"constructed-origin\"}}",
+          "limitations": [
+            "Publisher-simulated Kaggle data; no demonstrated real-retailer effectiveness.",
+            "Stockout_Flag is zero-variance and cannot validate stockout predictions.",
+            "Limited purposive selection of 20 forecasts; not statistically representative.",
+            "Replenishment evidence is not supplied; inventory exposure is linked from the hash-bound prospective handoff.",
+            "The final interval had December 3\u201316 prior validation exposure and full-year exploratory exposure.",
+            "Record contents alone do not establish visibility/readability in a rendered prototype.",
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "management_consideration": "Advisory information for human consideration; unavailable evidence is not an instruction to purchase or a no-risk finding.",
+          "replenishment_recommendation": null,
+          "sku_id": "SKU_10",
+          "unavailable_fields": {
+            "replenishment_recommendation": "not produced; no approved numerical replenishment output supplied for this case.",
+            "uncertainty_or_error": "no_agreed_method; source forecast uncertainty is unavailable. Retrospective errors are excluded."
+          },
+          "uncertainty_or_error": null,
+          "warehouse_id": "WH_3"
+        }
+      }
+    },
+    {
+      "api_response": {
+        "SKU_ID": "SKU_10",
+        "Warehouse_ID": "WH_3",
+        "assumptions": [
+          "Forecast uses only the supplied history through forecast_origin."
+        ],
+        "configuration_id": "GBM011",
+        "forecast_origin": "2024-12-02",
+        "forecast_quantity": 91.93821340571549,
+        "forecast_type": "cumulative_window",
+        "horizon": 7,
+        "inference_mode": "request_time",
+        "inference_schema": "forecast-inference-v1",
+        "input_kind": "supplied_history",
+        "limitations": [
+          "The caller is responsible for the supplied history's provenance.",
+          "Multi-day quantities are cumulative totals, not daily paths.",
+          "28-day forecast availability does not approve downstream inventory use."
+        ],
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "model": "lightgbm",
+        "model_source_run_id": "final-20261003-02",
+        "producer_designation": "frozen_designated_producer",
+        "provenance": {
+          "input_sha256": "52adc6255882a96920abae81614bfc8e8d6155aa62de67c6c28a615b7ac37828",
+          "model_hash": "052b459d3a6e6df7beee2168d19803b2581a7c6d7d0b697dd6c84032ea94602f",
+          "model_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/model.txt",
+          "preprocessor_hash": "186d32706554f47a0e0b3eacb0f86d6a5e2ca963810dc9599179f2a117d2f71a",
+          "preprocessor_path": "models/forecasting/final-20261003-02/final/lightgbm/h7/GBM011/state.json"
+        },
+        "status": "available",
+        "target_end_date": "2024-12-09",
+        "target_start_date": "2024-12-03",
+        "unavailable_reasons": []
+      },
+      "horizon": 7,
+      "retained_case": {
+        "assessment_id": "F10",
+        "horizon": 7,
+        "prospective_record": {
+          "Date": "2024-12-02T00:00:00",
+          "Inventory_Level": 412,
+          "Reorder_Point": 218,
+          "SKU_ID": "SKU_10",
+          "Warehouse_ID": "WH_3",
+          "analysis_inventory_state_available": true,
+          "configuration_id": "GBM011",
+          "downstream_use_reason": "DR-012_remains_proposed_for_group_approval",
+          "downstream_use_status": "proposed_method_not_group_approved",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_exposure_state": "no_forecast_crossing",
+          "forecast_input_reason": "",
+          "forecast_input_status": "available",
+          "forecast_origin": "2024-12-02",
+          "horizon": 7,
+          "inventory_basis": "constructed_origin_scenario",
+          "inventory_buffer": 194.0,
+          "inventory_state_available": false,
+          "method_assumptions": [
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "method_limitations": [
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "methodology_status": "proposed_for_group_approval",
+          "model": "lightgbm",
+          "origin_exposure_state": "scenario_initially_above_threshold",
+          "origin_snapshot_available": null,
+          "origin_snapshot_reason": "origin_snapshot_availability_not_established",
+          "origin_snapshot_status": "unknown",
+          "predicted_margin": 102.06178659428451,
+          "prediction": 91.93821340571549,
+          "run_id": "final-20261003-02",
+          "scenario_inventory_state_available": true,
+          "snapshot_assumption": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.",
+          "source_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+          "source_provenance": "{\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}",
+          "target_end_date": "2024-12-09",
+          "target_start_date": "2024-12-03",
+          "unit": "units"
+        },
+        "record": {
+          "assumptions": [
+            "Target interval 2024-12-03 through 2024-12-09 is inclusive.",
+            "One day means next-day demand; 7/14/28 days mean cumulative-window demand, not a daily path.",
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "component_provenance": {
+            "decision_support": "responsible_decision_support",
+            "forecast": "forecasting",
+            "inventory_risk": "inventory_risk"
+          },
+          "evidence": [
+            "Assessment ID: F10",
+            "Mapping version: issue-164-168-v1",
+            "{\"forecast_type\": \"cumulative_window\", \"horizon\": 7, \"target_end_date\": \"2024-12-09\", \"target_start_date\": \"2024-12-03\", \"uncertainty\": {\"reason\": \"no_agreed_method\", \"status\": \"unavailable\"}, \"unit\": \"units\"}",
+            "Retained export SHA-256: c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+            "Inventory prospective SHA-256: 5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4"
+          ],
+          "forecast_demand": 91.93821340571549,
+          "forecast_horizon": "7-day",
+          "forecast_origin": "2024-12-02",
+          "forecast_provenance": "{\"SKU_ID\": \"SKU_10\", \"Warehouse_ID\": \"WH_3\", \"configuration_id\": \"GBM011\", \"export_schema\": \"issue-132-forecast-export-v1\", \"export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_origin\": \"2024-12-02\", \"forecast_status\": \"available\", \"horizon\": 7, \"model\": \"lightgbm\", \"producer_status\": \"designated_producer\", \"source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}}",
+          "human_review_reasons": [
+            "Human review has not yet been assessed."
+          ],
+          "human_review_status": "not_assessed",
+          "inventory_risk_evidence": {
+            "forecast_exposure_state": "no_forecast_crossing",
+            "forecast_input_reason": "",
+            "forecast_input_status": "available",
+            "inventory_basis": "constructed_origin_scenario",
+            "inventory_buffer": 194.0,
+            "methodology_status": "proposed_for_group_approval",
+            "origin_exposure_state": "scenario_initially_above_threshold",
+            "origin_snapshot_status": "unknown",
+            "predicted_margin": 102.06178659428451,
+            "snapshot_assumption": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          },
+          "inventory_risk_provenance": "{\"dataset_provenance_sha256\": \"35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f\", \"manifest_sha256\": \"5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9\", \"operator\": \"Chathuranga\", \"prospective_sha256\": \"5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4\", \"source\": {\"forecast_export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}, \"mapping_version\": \"issue-164-168-v1\", \"snapshot_basis\": \"Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.\", \"snapshot_policy\": \"constructed-origin\"}}",
+          "limitations": [
+            "Publisher-simulated Kaggle data; no demonstrated real-retailer effectiveness.",
+            "Stockout_Flag is zero-variance and cannot validate stockout predictions.",
+            "Limited purposive selection of 20 forecasts; not statistically representative.",
+            "Replenishment evidence is not supplied; inventory exposure is linked from the hash-bound prospective handoff.",
+            "The final interval had December 3\u201316 prior validation exposure and full-year exploratory exposure.",
+            "Record contents alone do not establish visibility/readability in a rendered prototype.",
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "management_consideration": "Advisory information for human consideration; unavailable evidence is not an instruction to purchase or a no-risk finding.",
+          "replenishment_recommendation": null,
+          "sku_id": "SKU_10",
+          "unavailable_fields": {
+            "replenishment_recommendation": "not produced; no approved numerical replenishment output supplied for this case.",
+            "uncertainty_or_error": "no_agreed_method; source forecast uncertainty is unavailable. Retrospective errors are excluded."
+          },
+          "uncertainty_or_error": null,
+          "warehouse_id": "WH_3"
+        }
+      }
+    },
+    {
+      "api_response": {
+        "SKU_ID": "SKU_10",
+        "Warehouse_ID": "WH_3",
+        "assumptions": [
+          "Forecast uses only the supplied history through forecast_origin."
+        ],
+        "configuration_id": "GBM022",
+        "forecast_origin": "2024-12-02",
+        "forecast_quantity": 167.450439453125,
+        "forecast_type": "cumulative_window",
+        "horizon": 14,
+        "inference_mode": "request_time",
+        "inference_schema": "forecast-inference-v1",
+        "input_kind": "supplied_history",
+        "limitations": [
+          "The caller is responsible for the supplied history's provenance.",
+          "Multi-day quantities are cumulative totals, not daily paths.",
+          "28-day forecast availability does not approve downstream inventory use."
+        ],
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "model": "xgboost",
+        "model_source_run_id": "final-20261003-02",
+        "producer_designation": "frozen_designated_producer",
+        "provenance": {
+          "input_sha256": "274a38aafb04b3790188e121e484407e3e5a6983bf7d9d3c3425d0bb913db6a3",
+          "model_hash": "6a0787fac515a34a1a0f5a6b768fbffbd8fbd4da4aac43263d947dd279db4a0c",
+          "model_path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/model.ubj",
+          "preprocessor_hash": "f6ca8afb1c397b29ae60f78715c4d67a14df38fcc58bd8045c811663539df20d",
+          "preprocessor_path": "models/forecasting/final-20261003-02/final/xgboost/h14/GBM022/state.json"
+        },
+        "status": "available",
+        "target_end_date": "2024-12-16",
+        "target_start_date": "2024-12-03",
+        "unavailable_reasons": []
+      },
+      "horizon": 14,
+      "retained_case": {
+        "assessment_id": "F11",
+        "horizon": 14,
+        "prospective_record": {
+          "Date": "2024-12-02T00:00:00",
+          "Inventory_Level": 412,
+          "Reorder_Point": 218,
+          "SKU_ID": "SKU_10",
+          "Warehouse_ID": "WH_3",
+          "analysis_inventory_state_available": true,
+          "configuration_id": "GBM022",
+          "downstream_use_reason": "DR-012_remains_proposed_for_group_approval",
+          "downstream_use_status": "proposed_method_not_group_approved",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_exposure_state": "no_forecast_crossing",
+          "forecast_input_reason": "",
+          "forecast_input_status": "available",
+          "forecast_origin": "2024-12-02",
+          "horizon": 14,
+          "inventory_basis": "constructed_origin_scenario",
+          "inventory_buffer": 194.0,
+          "inventory_state_available": false,
+          "method_assumptions": [
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "method_limitations": [
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "methodology_status": "proposed_for_group_approval",
+          "model": "xgboost",
+          "origin_exposure_state": "scenario_initially_above_threshold",
+          "origin_snapshot_available": null,
+          "origin_snapshot_reason": "origin_snapshot_availability_not_established",
+          "origin_snapshot_status": "unknown",
+          "predicted_margin": 26.549560546875,
+          "prediction": 167.450439453125,
+          "run_id": "final-20261003-02",
+          "scenario_inventory_state_available": true,
+          "snapshot_assumption": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.",
+          "source_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+          "source_provenance": "{\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}",
+          "target_end_date": "2024-12-16",
+          "target_start_date": "2024-12-03",
+          "unit": "units"
+        },
+        "record": {
+          "assumptions": [
+            "Target interval 2024-12-03 through 2024-12-16 is inclusive.",
+            "One day means next-day demand; 7/14/28 days mean cumulative-window demand, not a daily path.",
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "component_provenance": {
+            "decision_support": "responsible_decision_support",
+            "forecast": "forecasting",
+            "inventory_risk": "inventory_risk"
+          },
+          "evidence": [
+            "Assessment ID: F11",
+            "Mapping version: issue-164-168-v1",
+            "{\"forecast_type\": \"cumulative_window\", \"horizon\": 14, \"target_end_date\": \"2024-12-16\", \"target_start_date\": \"2024-12-03\", \"uncertainty\": {\"reason\": \"no_agreed_method\", \"status\": \"unavailable\"}, \"unit\": \"units\"}",
+            "Retained export SHA-256: c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+            "Inventory prospective SHA-256: 5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4"
+          ],
+          "forecast_demand": 167.450439453125,
+          "forecast_horizon": "14-day",
+          "forecast_origin": "2024-12-02",
+          "forecast_provenance": "{\"SKU_ID\": \"SKU_10\", \"Warehouse_ID\": \"WH_3\", \"configuration_id\": \"GBM022\", \"export_schema\": \"issue-132-forecast-export-v1\", \"export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_origin\": \"2024-12-02\", \"forecast_status\": \"available\", \"horizon\": 14, \"model\": \"xgboost\", \"producer_status\": \"designated_producer\", \"source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}}",
+          "human_review_reasons": [
+            "Human review has not yet been assessed."
+          ],
+          "human_review_status": "not_assessed",
+          "inventory_risk_evidence": {
+            "forecast_exposure_state": "no_forecast_crossing",
+            "forecast_input_reason": "",
+            "forecast_input_status": "available",
+            "inventory_basis": "constructed_origin_scenario",
+            "inventory_buffer": 194.0,
+            "methodology_status": "proposed_for_group_approval",
+            "origin_exposure_state": "scenario_initially_above_threshold",
+            "origin_snapshot_status": "unknown",
+            "predicted_margin": 26.549560546875,
+            "snapshot_assumption": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          },
+          "inventory_risk_provenance": "{\"dataset_provenance_sha256\": \"35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f\", \"manifest_sha256\": \"5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9\", \"operator\": \"Chathuranga\", \"prospective_sha256\": \"5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4\", \"source\": {\"forecast_export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}, \"mapping_version\": \"issue-164-168-v1\", \"snapshot_basis\": \"Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.\", \"snapshot_policy\": \"constructed-origin\"}}",
+          "limitations": [
+            "Publisher-simulated Kaggle data; no demonstrated real-retailer effectiveness.",
+            "Stockout_Flag is zero-variance and cannot validate stockout predictions.",
+            "Limited purposive selection of 20 forecasts; not statistically representative.",
+            "Replenishment evidence is not supplied; inventory exposure is linked from the hash-bound prospective handoff.",
+            "The final interval had December 3\u201316 prior validation exposure and full-year exploratory exposure.",
+            "Record contents alone do not establish visibility/readability in a rendered prototype.",
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "management_consideration": "Advisory information for human consideration; unavailable evidence is not an instruction to purchase or a no-risk finding.",
+          "replenishment_recommendation": null,
+          "sku_id": "SKU_10",
+          "unavailable_fields": {
+            "replenishment_recommendation": "not produced; no approved numerical replenishment output supplied for this case.",
+            "uncertainty_or_error": "no_agreed_method; source forecast uncertainty is unavailable. Retrospective errors are excluded."
+          },
+          "uncertainty_or_error": null,
+          "warehouse_id": "WH_3"
+        }
+      }
+    },
+    {
+      "api_response": {
+        "SKU_ID": "SKU_10",
+        "Warehouse_ID": "WH_3",
+        "assumptions": [
+          "Forecast uses only the supplied history through forecast_origin."
+        ],
+        "configuration_id": "GBM003",
+        "forecast_origin": "2024-12-02",
+        "forecast_quantity": 317.7198791503906,
+        "forecast_type": "cumulative_window",
+        "horizon": 28,
+        "inference_mode": "request_time",
+        "inference_schema": "forecast-inference-v1",
+        "input_kind": "supplied_history",
+        "limitations": [
+          "The caller is responsible for the supplied history's provenance.",
+          "Multi-day quantities are cumulative totals, not daily paths.",
+          "28-day forecast availability does not approve downstream inventory use."
+        ],
+        "manifest_reference": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "model": "xgboost",
+        "model_source_run_id": "final-20261003-02",
+        "producer_designation": "frozen_designated_producer",
+        "provenance": {
+          "input_sha256": "9430deba5c5a6a5780a07903e2e71a7d29a536cc97bf1fb8a2d6ba02f1a3228e",
+          "model_hash": "be15125e6b60f29b843521d2a10bdbdb16679d62ccf71b22d61d994bbed64207",
+          "model_path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/model.ubj",
+          "preprocessor_hash": "c26c7f925ffdc22f103bb5be0d14e13ee8746492030dd27c5f0336f002aa90ba",
+          "preprocessor_path": "models/forecasting/final-20261003-02/final/xgboost/h28/GBM003/state.json"
+        },
+        "status": "available",
+        "target_end_date": "2024-12-30",
+        "target_start_date": "2024-12-03",
+        "unavailable_reasons": []
+      },
+      "horizon": 28,
+      "retained_case": {
+        "assessment_id": "F12",
+        "horizon": 28,
+        "prospective_record": {
+          "SKU_ID": "SKU_10",
+          "Warehouse_ID": "WH_3",
+          "configuration_id": "GBM003",
+          "downstream_use_reason": "28_day_downstream_use_requires_separate_approval",
+          "downstream_use_status": "not_approved_for_downstream_use",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_input_reason": "",
+          "forecast_input_status": "available",
+          "forecast_origin": "2024-12-02",
+          "horizon": 28,
+          "method_assumptions": [
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "method_limitations": [
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "methodology_status": "proposed_for_group_approval",
+          "model": "xgboost",
+          "prediction": 317.7198791503906,
+          "run_id": "final-20261003-02",
+          "source_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+          "source_provenance": "{\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}",
+          "target_end_date": "2024-12-30",
+          "target_start_date": "2024-12-03",
+          "unit": "units"
+        },
+        "record": {
+          "assumptions": [
+            "Target interval 2024-12-03 through 2024-12-30 is inclusive.",
+            "One day means next-day demand; 7/14/28 days mean cumulative-window demand, not a daily path.",
+            "Reorder_Point is held fixed for the proposed scenario.",
+            "No receipts, transfers, returns, losses, or other inventory adjustments are modelled.",
+            "Realised Units_Sold is a demand proxy used retrospectively, not at forecast time.",
+            "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory."
+          ],
+          "component_provenance": {
+            "decision_support": "responsible_decision_support",
+            "forecast": "forecasting",
+            "inventory_risk": "inventory_risk"
+          },
+          "evidence": [
+            "Assessment ID: F12",
+            "Mapping version: issue-164-168-v1",
+            "{\"forecast_type\": \"cumulative_window\", \"horizon\": 28, \"target_end_date\": \"2024-12-30\", \"target_start_date\": \"2024-12-03\", \"uncertainty\": {\"reason\": \"no_agreed_method\", \"status\": \"unavailable\"}, \"unit\": \"units\"}",
+            "Retained export SHA-256: c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+            "Inventory prospective SHA-256: 5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4"
+          ],
+          "forecast_demand": 317.7198791503906,
+          "forecast_horizon": "28-day",
+          "forecast_origin": "2024-12-02",
+          "forecast_provenance": "{\"SKU_ID\": \"SKU_10\", \"Warehouse_ID\": \"WH_3\", \"configuration_id\": \"GBM003\", \"export_schema\": \"issue-132-forecast-export-v1\", \"export_sha256\": \"c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863\", \"forecast_origin\": \"2024-12-02\", \"forecast_status\": \"available\", \"horizon\": 28, \"model\": \"xgboost\", \"producer_status\": \"designated_producer\", \"source\": {\"evaluation_stage\": \"final_evaluation\", \"integrity_result\": {\"baseline_evaluations\": 8, \"evaluations\": 28, \"learned_refits\": 20, \"models_replayed\": 20, \"predictions\": 7000, \"status\": \"passed\"}, \"prediction_receipt_sha256\": \"853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692\", \"run_id\": \"final-20261003-02\", \"run_manifest_path\": \"artifacts/forecasting/final-20261003-02/run_manifest.json\", \"run_manifest_sha256\": \"adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43\", \"source_schema\": \"issue-130-final-v1\"}}",
+          "human_review_reasons": [
+            "Human review has not yet been assessed."
+          ],
+          "human_review_status": "not_assessed",
+          "inventory_risk_evidence": null,
+          "inventory_risk_provenance": null,
+          "limitations": [
+            "Publisher-simulated Kaggle data; no demonstrated real-retailer effectiveness.",
+            "Stockout_Flag is zero-variance and cannot validate stockout predictions.",
+            "Limited purposive selection of 20 forecasts; not statistically representative.",
+            "Replenishment evidence is not supplied; inventory exposure is linked from the hash-bound prospective handoff.",
+            "The final interval had December 3\u201316 prior validation exposure and full-year exploratory exposure.",
+            "Record contents alone do not establish visibility/readability in a rendered prototype.",
+            "28-day case is in forecast-transparency scope only; inventory interpretation and review triggers remain gated.",
+            "DR-012 is proposed for group approval; the exposure evidence is not an approved risk classification.",
+            "The dataset is simulated and Stockout_Flag is not stockout ground truth.",
+            "Source Demand_Forecast is a reference field, not the project forecast input.",
+            "Order_Quantity is contextual recorded activity, not confirmed receipts or an optimal order.",
+            "Negative scenario balances are not verified physical negative inventory.",
+            "Snapshot within-day semantics remain unresolved and are not inferred here.",
+            "Numerical replenishment quantity, overstock evaluation, uncertainty, and human-review rules are not provided.",
+            "Twenty-eight-day downstream exposure requires separate component-owner/human approval.",
+            "Constructed starting balances are hypothetical; source origin availability is not established by this scenario."
+          ],
+          "management_consideration": "Advisory information for human consideration; unavailable evidence is not an instruction to purchase or a no-risk finding.",
+          "replenishment_recommendation": null,
+          "sku_id": "SKU_10",
+          "unavailable_fields": {
+            "inventory_risk_evidence": "28_day_downstream_use_requires_separate_approval",
+            "inventory_risk_provenance": "28_day_downstream_use_requires_separate_approval",
+            "replenishment_recommendation": "not produced; no approved numerical replenishment output supplied for this case.",
+            "uncertainty_or_error": "no_agreed_method; source forecast uncertainty is unavailable. Retrospective errors are excluded."
+          },
+          "uncertainty_or_error": null,
+          "warehouse_id": "WH_3"
+        }
+      }
+    }
+  ],
+  "history": {
+    "count": 337,
+    "end": "2024-12-02",
+    "input_sha256_by_horizon": {
+      "1": "6b1151922034267857c46b2839807fc3b91eae32e8ecd4ac49bdd297a5b45beb",
+      "14": "274a38aafb04b3790188e121e484407e3e5a6983bf7d9d3c3425d0bb913db6a3",
+      "28": "9430deba5c5a6a5780a07903e2e71a7d29a536cc97bf1fb8a2d6ba02f1a3228e",
+      "7": "52adc6255882a96920abae81614bfc8e8d6155aa62de67c6c28a615b7ac37828"
+    },
+    "start": "2024-01-01",
+    "validated_provenance_sha256": "35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f"
+  },
+  "interpretation_boundary": "Historical method labels are unchanged; h1/h7/h14 scenario approval excludes h28 inventory and does not establish source timing, optimal orders, managerial clearance or business benefit.",
+  "retrospective_comparison": {
+    "observations_path": "artifacts/forecasting/final-20261003-02/observations.json",
+    "observations_sha256": "2ea81441dadc7e1e3d69e96bbe1f54ffd8794ff28c8bcb304c1f39608f03ba3d",
+    "role": "post-forecast explanatory comparison; never a prospective input or uncertainty estimate",
+    "rows": [
+      {
+        "absolute_error": 6.088898095690402,
+        "absolute_percentage_error": 30.444490478452007,
+        "actual_units_sold": 20.0,
+        "forecast_quantity": 13.911101904309598,
+        "horizon": 1,
+        "percentage_error_unavailable_reason": null,
+        "signed_error_prediction_minus_actual": -6.088898095690402,
+        "target_end_date": "2024-12-03",
+        "target_start_date": "2024-12-03"
+      },
+      {
+        "absolute_error": 50.06178659428451,
+        "absolute_percentage_error": 35.25477929174966,
+        "actual_units_sold": 142.0,
+        "forecast_quantity": 91.93821340571549,
+        "horizon": 7,
+        "percentage_error_unavailable_reason": null,
+        "signed_error_prediction_minus_actual": -50.06178659428451,
+        "target_end_date": "2024-12-09",
+        "target_start_date": "2024-12-03"
+      },
+      {
+        "absolute_error": 123.549560546875,
+        "absolute_percentage_error": 42.45689365871993,
+        "actual_units_sold": 291.0,
+        "forecast_quantity": 167.450439453125,
+        "horizon": 14,
+        "percentage_error_unavailable_reason": null,
+        "signed_error_prediction_minus_actual": -123.549560546875,
+        "target_end_date": "2024-12-16",
+        "target_start_date": "2024-12-03"
+      },
+      {
+        "absolute_error": 245.28012084960938,
+        "absolute_percentage_error": 43.566628925330264,
+        "actual_units_sold": 563.0,
+        "forecast_quantity": 317.7198791503906,
+        "horizon": 28,
+        "percentage_error_unavailable_reason": null,
+        "signed_error_prediction_minus_actual": -245.28012084960938,
+        "target_end_date": "2024-12-30",
+        "target_start_date": "2024-12-03"
+      }
+    ]
+  },
+  "schema": "issue-214-worked-scenario-v1",
+  "scope": "four-horizon historical replay consistency with a separate retrospective actual-sales/error comparison; retained inventory/advisory evidence is not recomputed",
+  "selection": {
+    "algorithm": "random.Random(seed).choice(sorted assessment IDs)",
+    "assessment_id": "F10",
+    "pool": [
+      "F02",
+      "F06",
+      "F10",
+      "F14",
+      "F18"
+    ],
+    "population": "purposive pair-selection roster with available inventory evidence; not representative",
+    "seed": "demo-01"
+  },
+  "sources": {
+    "decision_support_manifest_sha256": "92fe7ee2308344b5efd5f3593564ed2c86260f7bf89f8a611e2d2f87d94e638a",
+    "decision_support_records_sha256": "dc029ba66c07009202f17643a3565f550e7ac2aa7c23ac411ea15f964c91937a",
+    "forecast_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "helper_sha256": "ada8738fdda2c0d3375ab361f5ea2639259e105534acb4cae4ada113200ea23f"
+  },
+  "unit_basis": "units, from retained export and documented Units_Sold forecast contract; the API has no unit field"
+}

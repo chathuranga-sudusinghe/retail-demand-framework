@@ -326,6 +326,8 @@ These requests used the synthetic examples only. They did not train, tune, refit
 
 ## 7. Engineering handoff
 
+For a dataset-backed 1/7/14/28-day historical replay, see the [multi-horizon worked scenario](worked-example-scenario.md). It calls the existing API with the same pre-origin history and requires exact identity/provenance/quantity reconciliation for each horizon before linking retained cases. Actual sales and errors are read only afterwards and labelled retrospective. It does not recompute inventory/advisory outputs, approve h28 inventory use or establish a new aggregate accuracy result; real-source execution is a separately recorded human action.
+
 The implementation consists of [saved-model inference](../src/forecasting/inference.py), [FastAPI schemas/routes](../src/api/main.py), four small input files, and focused synthetic API/inference checks. Native loads and predictions in automated checks use test doubles; request feature preparation uses the existing pipeline.
 
 Chathuranga's supplied 24 October outcomes remain in Section 6.1, with #180 closed for that evidence milestone. Producer corrections were delivered through #193 / PR #195. Section 6.2 records Tinosh's v2 serving evidence and the separate [29 October producer/source acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406), which closed #203. Continue with #201's retained handoff/views, #182's W2 rendered review and #179's final integrated acceptance; do not repeat completed live checks for unchanged behaviour.

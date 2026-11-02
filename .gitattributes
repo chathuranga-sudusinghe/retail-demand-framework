@@ -8,4 +8,7 @@
 
 research-materials/issue-203/*.json -text
 
+# Preserve the human-run worked-scenario trace and its recorded SHA-256.
+/research-materials/issue-214/worked-scenario-v1.json -text
+
 research-materials/issue-203/*.json -text
