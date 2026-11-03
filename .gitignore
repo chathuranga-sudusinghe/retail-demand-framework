@@ -56,4 +56,7 @@ models/
 reports/forecasting/drafts/
 
 # Local university and research reference materials
-research-materials/
+research-materials/*
+!research-materials/issue-214/
+research-materials/issue-214/*
+!research-materials/issue-214/worked-scenario-v1.json

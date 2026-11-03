@@ -25,7 +25,7 @@ The final schemas remain open. A 28-day forecast can be represented without impl
 
 ## Current starting point
 
-The forecast API, retained-export inventory mapping and prospective record bridge are merged. [Issue #101](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/101) delivered acceptance scenarios, not completed cross-component acceptance. Tinosh's next work is reviewed consumer handoff, an agreed prototype slice, executable integration checks and approved visual rendering. The live inference request format and fixed-origin research export are distinct contracts; do not imply that stored scenario results update when request history changes. See [integration readiness](../../integration-contract-readiness.md).
+The forecast API, retained mapping and prospective record bridge are merged. **Current handoff — 30 October 2026:** [#203's scoped request-time handoff is accepted](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406). [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201) assigns the bounded retained-view implementation to Didilani; Tinosh provides technical review/support for integration, affected checks, setup and the shared report account. This does not transfer his permanent technical responsibility or establish rendered acceptance. #101 supplied AS-01–AS-10 requirements, not a completed whole-suite pass. Keep the live request contract and fixed-origin retained evidence distinct; see [integration readiness](../../integration-contract-readiness.md).
 
 ## Responsibilities
 

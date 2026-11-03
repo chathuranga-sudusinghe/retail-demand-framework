@@ -5,23 +5,22 @@
 **Module:** COMP1884 Group Project<br>
 **Research type:** Group research project
 
-## Research overview
+## Research problem and aim
 
-This group project builds a data-driven decision-support framework connecting demand forecasts, inventory-risk/replenishment analysis and responsible management-facing outputs. Its forecasting component compares gradient-boosted decision-tree models—XGBoost, LightGBM and CatBoost—under matched inputs and chronological evaluation. It uses the published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset) from Kaggle, selected for its linked daily sales and inventory variables supporting analysis at SKU-warehouse level. The publisher-simulated records support evaluation within this dataset; results do not establish effectiveness in a real retailer.
+This project investigates how demand forecasts can be connected to inventory-state information and transparent advisory outputs. It asks:
 
-## Dataset source
+> How can data-driven demand forecasting be used to identify inventory risks and support supply-chain decision-making in retail operations?
 
-**Original dataset:** [High-Dimensional Supply Chain Inventory Dataset — Kaggle](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset)
+The framework combines forecasting, conditional inventory exposure and responsible decision support at SKU-warehouse level. The [project overview](docs/project-overview.md#7-supporting-research-questions) defines the supporting questions; [research design](docs/research-design.md) defines the hypotheses and claim boundaries.
 
-**Publisher:** Ziya on Kaggle.
+## Contribution and key findings
 
-The research uses the dataset downloaded from this published source. The project team did not generate a replacement research dataset. The [dataset contract](docs/dataset.md#11-suitability-for-the-project-research-purpose) documents the selection rationale, verified profiling evidence, source context and limitations.
+- **Forecasting:** a matched, chronologically evaluated comparison of XGBoost, LightGBM and CatBoost for next-day and cumulative 7-, 14- and 28-day demand. In the final evaluation, supportive Ridge achieved the lowest WAPE at 1/7 days and contextual Seasonal Naive at 14/28 days; no universal boosting superiority is claimed.
+- **Inventory exposure:** the group-approved [DR-012 method](docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) links forecasts to a fixed-origin, fixed-reorder-point, no-receipt scenario for 1/7/14 days. Its retrospective comparison uses a realised-demand proxy, rather than actual stockout labels.
+- **Responsible decision support:** 20 traceable advisory records with 160 human-entered transparency checks preserve assumptions, limitations, unavailable information and the distinction between transparency assessment and managerial review.
+- **Technical delivery:** a local FastAPI service provides request-time forecasts from supplied history and read-only access to retained decision-support cases. Rendered-view delivery is tracked separately near the end of this README.
 
-## Current project state
-
-**Status checked:** 24 October 2026. The [overall delivery tracker, Issue #179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179), records current tasks, review outcomes and outstanding approvals for all members. Closed task issues identify delivered milestones; remaining acceptance is tracked there.
-
-Chathuranga's forecasting research is complete: preparation, development, validation, configuration/model freeze, final holdout evaluation and integrity verification, as confirmed by Chathuranga. [Final results and limitations](docs/forecasting-final-evaluation.md) consolidate the evidence and interpretation for human review.
+The designated producers were frozen before final evaluation and remain unchanged:
 
 | Horizon | Frozen producer | Configuration |
 |---|---|---|
@@ -30,181 +29,118 @@ Chathuranga's forecasting research is complete: preparation, development, valida
 | 14 days | XGBoost | GBM022 |
 | 28 days | XGBoost | GBM003 |
 
-The mapping was frozen before final evaluation and remains unchanged. Ridge and Seasonal Naive outperform frozen producers on some final horizons; see the complete report. Numerical evidence: [validation-20261002-01](reports/forecasting/validation-20261002-01/comparison.md) and [final-20261003-02](reports/forecasting/final-20261003-02/comparison.md). These generated snapshots remain immutable.
+[Final results and limitations](docs/forecasting-final-evaluation.md) explain the comparison, evidence roles and prior outcome exposure. The retained [validation](reports/forecasting/validation-20261002-01/comparison.md) and [final comparison](reports/forecasting/final-20261003-02/comparison.md) snapshots remain immutable.
 
-**The full group project remains in progress.** Delivered component evidence and remaining integration work are distinct:
+## Dataset
 
-| Area | Delivered | Remaining work / acceptance |
-|---|---|---|
-| Forecast serving | [Request-time API](docs/forecast-inference-api.md), four synthetic JSON examples and recorded manual outcomes; validation-error and input-provenance fixes merged through [PR #195](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/195) | Producer approval, independently reviewed source verification and Tinosh's technical consumer acceptance remain tracked in #179. |
-| Inventory scenario | Forecast-to-inventory mapping, runner and [retained 1/7/14-day constructed-origin evaluation](reports/inventory-risk/issue-164/evaluation-v1/report.md); [canonical interpretation review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/181#issuecomment-6380707367) and [shared-report Section 6 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/190#pullrequestreview-5637154678) recorded | Technical consumption, rendered visuals, Didilani's D2 review and responsible-presentation acceptance remain separate. Documentation alignment is tracked under [#192](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/192). |
-| Responsible decision support | [20 prepared records and 160 completed human-entered checks](reports/decision-support/issue-168-inventory-v1/summary.md): 15 inventory-linked cases and five h28 cases with downstream inventory gated | Dewmi's final interpretation/display mappings under [#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182), actual rendered readability and consumer acceptance remain pending. |
-| Integrated prototype | Existing forecast API, retained-export mapping, prospective record bridge and [AS-01–AS-10 requirements](docs/integration-contract-readiness.md#12-integration-acceptance-scenarios-issue-101) | Tinosh's [#183 retained-case slice](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/183), approved visual implementation and cross-component acceptance remain in progress. |
-| Research synthesis and shared report | [Evidence-to-conclusion draft](docs/research-design.md#16-evidence-to-conclusion-mapping--draft-for-human-review) and [shared report draft](docs/group-report.md), including reviewed inventory material | Group hypothesis/scope decisions, remaining member contributions, verified assessment requirements and final team/report review remain unresolved under #179. |
+The project uses Ziya's published [High-Dimensional Supply Chain Inventory Dataset](https://www.kaggle.com/datasets/ziya07/high-dimensional-supply-chain-inventory-dataset), downloaded from Kaggle. Its 91,250 records cover 50 SKUs across five warehouses over 365 dates in 2024. **The records are simulated by the publisher; the team did not generate a replacement dataset.**
 
-[DR-012 group approval](docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) covers the documented 1/7/14-day fixed-origin, fixed-reorder-point, no-receipt scenario. It was reported by Chathuranga on 23 October for the 12 October WhatsApp discussion. Source inventory timing remains unknown. Uncertainty estimates, numerical replenishment, overstock rules, automatic managerial-review triggers and 28-day inventory use are outside the delivered approved methods.
+Forecasts are built from historical `Units_Sold` at `SKU_ID + Warehouse_ID + Date` grain. The [dataset contract](docs/dataset.md) documents the fields, selection rationale and limitations. Data and model bundles remain local and are not distributed with this repository.
 
-Chathuranga is the recorded executor of the retained inventory evaluation and assessor of the 160 record-level checks. Didilani retains inventory methodology/interpretation responsibility; Dewmi retains responsible decision-support semantics and review responsibility. Completed records and checklists do not establish actual stockout accuracy, managerial benefit or final prototype acceptance.
+## Methods and system architecture
 
-## System architecture
-
-Green indicates completed data preparation/forecasting research; amber indicates implemented component functionality or reviewed evidence with remaining handoff/acceptance work; blue indicates the remaining integrated prototype and human-facing delivery. Dashed arrows indicate conditional or not-yet-accepted handoffs.
+The architecture separates the retained research case from request-time forecast serving:
 
 ~~~mermaid
 flowchart TB
-    DATA[("Kaggle dataset<br/>SKU_ID + Warehouse_ID + Date")]
-    PREP["Shared data preparation<br/>Cleaning, validation and provenance"]
-    HISTORY["Supplied daily history<br/>Four synthetic request examples included"]
+    DATA[("Published Kaggle dataset")]
+    PREP["Shared validation and preparation"]
+    RESEARCH["Frozen features and chronological model comparison"]
+    MODELS["Saved designated forecasting models"]
+    EXPORT["Retained prospective forecasts<br/>Origin: 2024-12-02"]
+    CONTEXT["Constructed origin inventory context<br/>Source timing unknown"]
+    INVENTORY["DR-012 threshold-exposure evidence<br/>1/7/14-day scope"]
+    RECORDS["Responsible decision-support records"]
+    RETAINED["Read-only retained-case GET routes"]
+    VIEWS["Retained-case presentation and approved views"]
+    HISTORY["Supplied daily history"]
+    LIVE["Request-time POST /forecasts"]
+    HUMAN["Human review and judgement"]
 
-    DATA --> PREP
-
-    subgraph CH["Chathuranga — Research Lead and Forecasting"]
-        FEATURES["Frozen feature pipeline<br/>Identity, weekday, lags, rolling statistics and trend"]
-        RESEARCH["Model comparison and temporal validation<br/>Human-approved freeze and final evaluation"]
-        MODELS["Saved designated producers<br/>1 day: LightGBM GBM018<br/>7 days: LightGBM GBM011<br/>14 days: XGBoost GBM022<br/>28 days: XGBoost GBM003"]
-        EVIDENCE["Retained research evidence<br/>Validation/final predictions and reports"]
-        FORECAST["Retained forecast export implemented<br/>Fixed origin 2024-12-02; acceptance separate"]
-
-        FEATURES --> RESEARCH
-        RESEARCH --> MODELS
-        RESEARCH --> EVIDENCE
-        EVIDENCE --> FORECAST
-    end
-
-    PREP --> FEATURES
-
-    subgraph DI["Didilani — Inventory Risk and Replenishment"]
-        SNAPSHOT["Constructed origin inventory snapshot<br/>Source timing unknown; assumption disclosed"]
-        INVENTORY["Mapping and scenario evaluation implemented<br/>Method approved; source timing unknown"]
-        INTERPRET["Inventory interpretation/report wording reviewed<br/>Technical rendering and D2 review remain"]
-
-        SNAPSHOT -.-> INVENTORY
-        INVENTORY --> INTERPRET
-    end
-
-    PREP -.-> SNAPSHOT
-    FORECAST -.->|"Retained-export mapping implemented; acceptance pending"| INVENTORY
-
-    subgraph DE["Dewmi — Responsible Decision Support"]
-        RECORD["20 decision-support records<br/>15 inventory-linked; five h28 inventory-gated"]
-        ASSESS["20 records; 160 record-level checks completed<br/>Rendered presentation acceptance pending"]
-
-        RECORD --> ASSESS
-    end
-
-    FORECAST -.-> RECORD
-    INVENTORY -->|"Implemented prospective evidence bridge"| RECORD
-
-    subgraph TI["Tinosh — Integration and Prototype Engineering"]
-        API["Request-time forecast API implemented<br/>Supplied history and frozen saved models"]
-        ACCEPT["AS-01 to AS-10 specified<br/>Integrated acceptance remains under Issue 179"]
-        PROTOTYPE["Joined retained-case flow and approved visuals<br/>Implementation/acceptance under Issue 183"]
-
-        ACCEPT -.-> PROTOTYPE
-    end
-
-    HISTORY --> API
-    MODELS --> API
-    API -.->|"Separate live-inference view"| PROTOTYPE
-    ASSESS -.-> PROTOTYPE
-    INTERPRET -.->|"Approved analytical visual requirements"| PROTOTYPE
-
-    PROTOTYPE -.-> HUMAN["Human review and managerial judgement<br/>Advisory decision support"]
-
-    classDef complete fill:#dcfce7,stroke:#15803d,color:#14532d;
-    classDef pending fill:#fef3c7,stroke:#b45309,color:#78350f;
-    classDef planned fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
-
-    class DATA,PREP,FEATURES,RESEARCH,MODELS,EVIDENCE complete;
-    class HISTORY,FORECAST,SNAPSHOT,INVENTORY,INTERPRET,RECORD,ASSESS,API,ACCEPT pending;
-    class PROTOTYPE,HUMAN planned;
+    DATA --> PREP --> RESEARCH
+    RESEARCH --> MODELS
+    RESEARCH --> EXPORT
+    PREP --> CONTEXT
+    EXPORT --> INVENTORY
+    CONTEXT --> INVENTORY
+    EXPORT --> RECORDS
+    INVENTORY --> RECORDS --> RETAINED --> VIEWS --> HUMAN
+    MODELS --> LIVE
+    HISTORY --> LIVE --> HUMAN
 ~~~
 
-[Project overview](docs/project-overview.md) explains the architecture; [boundaries](docs/project-boundaries.md) define ownership. The live API computes a new forecast from supplied history; it does not recompute the retained inventory/decision-support case. Multi-day quantities remain cumulative totals, and a 28-day forecast does not approve 28-day inventory use. A recommendation remains human decision support, not an automatically executable purchase order.
+Both serving paths use the shared FastAPI application. Changing supplied history creates a new forecast; it does not recompute retained inventory or decision-support evidence. Multi-day forecasts are cumulative totals, not daily paths. Retrospective outcomes and metrics belong in separately labelled evaluation views and are excluded from prospective inputs.
+
+The diagram describes component flow, not completion or acceptance status. Current delivery is summarised in [Project status](#project-status).
+
+## Scope and limitations
+
+- Conclusions describe a publisher-simulated dataset covering approximately one year; real-retailer effectiveness is not established.
+- Temporal evaluation preserves chronology. Prior final-period validation/EDA exposure, the failed first final execution and dependent histories remain disclosed in the research documentation.
+- Inventory findings depend on the constructed no-receipt scenario. Source inventory timing is unknown, and zero-variance `Stockout_Flag` cannot validate actual stockouts.
+- Primary and provisional temporal significance claims are **untested** under the team-accepted descriptive scope. Forecast-error comparisons and transparency checks do not establish improved managerial decisions.
+- Prospective uncertainty estimation, numerical replenishment, overstock, automatic managerial-review rules and 28-day inventory use are disclosed limitations/deferred extensions. A 28-day forecast does not approve downstream 28-day inventory use.
+- Outputs are advisory and do not create executable purchase orders. Missing or unapproved information remains explicitly unavailable.
+
+## Getting started
+
+1. Follow [CONTRIBUTING: one-time setup](CONTRIBUTING.md#1-one-time-setup) for the project environment and dependencies.
+2. Read [AGENTS.md](AGENTS.md), the relevant component workflow and [local file verification](docs/checksums/README.md) before using shared artifacts.
+3. Use the [forecast API instructions](docs/forecast-inference-api.md#6-manual-presentation) for local startup and request examples, and [Section 5.1](docs/forecast-inference-api.md#51-retained-decision-support-cases) for the separate retained routes. Required data/models stay local; missing sources produce explicit unavailable responses.
+
+Research preparation, training and evaluation remain specifically authorised human-run activities. Setup instructions are not standing experiment or Git permission.
+
+## Documentation map
+
+- **Research:** [results and interpretation](docs/results.md), [design and decisions](docs/research-design.md), [literature review](docs/literature/literature-review.md), [references](docs/references.md), [shared report](docs/group-report.md).
+- **Data and forecasting:** [dataset](docs/dataset.md), [validated preparation](docs/data-cleaning-and-validation.md), [features](docs/forecasting-feature-engineering.md), [protocol](docs/protocol.md), [DR-014 producer freeze](docs/decisions/DR-014-forecasting-selection-and-final-refit.md), [results](docs/forecasting-final-evaluation.md).
+- **Inventory and responsible use:** [inventory interpretation and visual specification](docs/research/inventory-risk-visual-evidence.md), [responsible decision-support evaluation](docs/research/responsible-decision-support-evaluation.md).
+- **Contracts and integration:** [request-time API](docs/forecast-inference-api.md), [retained-export contract](docs/forecast-api-contract.md), [integration readiness](docs/integration-contract-readiness.md), [integration workflow](docs/workflows/system-integration-and-prototype.md).
+- **Evidence and operations:** [report index](reports/README.md), [runner](docs/forecasting-runner.md), [storage policy](docs/artifact-storage-policy.md), [progress history](docs/research-progress.md).
+- **Assessment and collaboration:** [COMP1884 criteria checklist](docs/greenwich-criteria-checklist.md), [AI-use guidance](docs/university-ai-guidance.md), [project boundaries](docs/project-boundaries.md), [contribution workflow](CONTRIBUTING.md).
 
 ## Team contributions
 
-### [Chathuranga Sudusinghe](docs/team/chathuranga/group-project-overview.md) — Research Team Lead, Forecasting & System Architecture
-- Leads overall research coordination and shared system architecture.
-- Owns the demand-forecasting research component, including forecasting methodology, feature design, temporal validation, model comparison, model/configuration selection, final holdout evaluation, reproducibility and forecasting evidence.
-- Owns forecasting-output meaning and reviews the shared forecast/API contract.
-- Coordinates cross-component integration with Tinosh.
+- **[Chathuranga Sudusinghe](docs/team/chathuranga/group-project-overview.md):** research-team coordination, forecasting methodology, model comparison/evaluation, output meaning and shared API architecture/review.
+- **[Didilani Pathinayaka](docs/team/didilani/group-project-overview.md):** inventory-risk/replenishment methodology, analytical visual requirements and business interpretation. The bounded retained-view implementation continuation is assigned to her under #201.
+- **[Dewmi Haputhanthrige](docs/team/dewmi/group-project-overview.md):** responsible decision-support semantics, transparency, governance, human oversight and presentation review.
+- **[Tinosh Gamage](docs/team/tinosh/group-project-overview.md):** technical integration, adapters, API/integration checks and prototype engineering; provides technical review/support for the #201 continuation.
 
-### [Didilani Pathinayaka](docs/team/didilani/group-project-overview.md) — Inventory Risk & Replenishment Analysis
-- Owns inventory-risk and replenishment methodology.
-- Owns the approved reorder-threshold exposure interpretation, its assumptions, limitations and analytical visual requirements.
-- Owns analytical visuals and business interpretation for the inventory-risk component.
-- Delivered the inventory interpretation and reviewed its shared-report insertion; reviews inventory meaning in actual rendered outputs when available. Overstock rules and numerical replenishment remain separate methodological work.
-
-### [Dewmi Haputhanthrige](docs/team/dewmi/group-project-overview.md) — Responsible Decision Support
-- Owns responsible decision-support methodology and governance.
-- Defines transparency, limitations, human oversight and management-facing interpretation.
-- Develops and reviews responsible presentation of forecasting and inventory-risk evidence.
-- Owns decision-support records and responsible-use semantics.
-
-### [Tinosh Gamage](docs/team/tinosh/group-project-overview.md) — System Integration & Prototype Engineering
-- Owns cross-component technical integration and final prototype engineering.
-- Implements approved adapters, schemas, API/integration tests, technical visual outputs and prototype components.
-- Works with Chathuranga on the shared forecast/API integration while preserving the research meaning defined by each component owner.
-
-## Documentation entry points
-
-- Current delivery and approvals: [Issue #179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179), the single umbrella for all members' milestones, pending reviews and subsequent decisions.
-- Shared writing: [group report draft](docs/group-report.md), assembled through the closed #187 milestone; remaining assembly and component/team acceptance are tracked in #179.
-- Research: [design and hypotheses](docs/research-design.md), [dataset](docs/dataset.md), [literature](docs/literature/literature-review.md), [references](docs/references.md).
-- Forecasting contracts: [validated preparation](docs/data-cleaning-and-validation.md), [exact features/preprocessing](docs/forecasting-feature-engineering.md), [experimental protocol](docs/protocol.md), [DR-014 freeze/refit](docs/decisions/DR-014-forecasting-selection-and-final-refit.md).
-- Serving and handoffs: [request-time API](docs/forecast-inference-api.md), [retained-export contract](docs/forecast-api-contract.md), [integration readiness](docs/integration-contract-readiness.md), [inventory visual/interpretation source](docs/research/inventory-risk-visual-evidence.md), [responsible decision-support assessment](docs/research/responsible-decision-support-evaluation.md).
-- Operations/evidence: [runner](docs/forecasting-runner.md), [storage/retention](docs/artifact-storage-policy.md), [report index](reports/README.md), [historical progress](docs/research-progress.md).
-- Contribution: [CONTRIBUTING](CONTRIBUTING.md), [AGENTS](AGENTS.md), [decision records](docs/decisions/README.md), [member/workflow boundaries](docs/project-boundaries.md).
-- Assessment requirements: [COMP1884 criteria checklist](docs/greenwich-criteria-checklist.md), including programme evidence, submission requirements, team/lecturer roles and remaining verification gaps.
-- Academic AI assistance: [university guidance and source evidence](docs/university-ai-guidance.md), including dated references and assessment permissions still requiring confirmation.
+Chathuranga is the recorded executor of the retained inventory evaluation and assessor of the 160 record-level checks. That attribution does not transfer Didilani's inventory or Dewmi's responsible-use responsibilities. [Project boundaries](docs/project-boundaries.md) define the permanent roles.
 
 ## Repository layout
 
 ~~~text
 retail-demand-framework/
-├── src/                              # Reusable implementation by system component
-│   ├── data/                         # Shared preparation and validated data handoff
-│   │   ├── data_cleaning.py          # Source cleaning and validation
-│   │   └── validated_handoff.py      # Controlled validated-data interface
-│   ├── api/
-│   │   └── main.py                   # Existing health and request-time forecast routes
-│   ├── forecasting/                  # Demand-forecasting implementation
-│   │   ├── features.py               # Forecast predictor construction
-│   │   ├── inference.py              # Saved-model inference from supplied history
-│   │   ├── export.py                 # Deterministic retained prospective export
-│   │   ├── models.py                 # Forecasting model definitions
-│   │   ├── validation.py             # Temporal-validation support
-│   │   └── final_evaluation.py       # Final holdout evaluation
-│   ├── analysis/                     # Reusable research/EDA analysis logic
-│   ├── inventory_risk/               # Inventory-risk and replenishment component
-│   ├── decision_support/             # Records, prospective evidence bridge and assessment
-│   └── visualization/                # Approved visual rendering (pending)
-├── docs/                             # Research, methodology, decisions and ownership
-│   ├── decisions/                    # Research/design decision records
-│   ├── research/                     # Component research methodology
-│   ├── literature/                   # Literature review
-│   ├── team/                         # Member responsibilities and contributions
-│   ├── meetings/                     # Historical meeting records
-│   └── workflows/                    # Component and integration workflows
-├── reports/                          # Tracked research evidence and figures
-│   ├── forecasting/                  # Validation and final forecasting evidence
-│   │   ├── validation-20261002-01/   # Retained validation comparison
-│   │   └── final-20261003-02/        # Retained final/test comparison
-│   └── figures/                      # Research figures
-├── notebooks/                        # Exploratory notebooks
-│   └── eda/                          # Demand exploratory analysis
-├── tests/                            # Implementation and regression tests
-├── data/                             # Local ignored raw/processed data
-│   ├── raw/                          # Source data downloaded from Kaggle
-│   └── processed/                    # Local processed data
-├── artifacts/                        # Local ignored run/evidence artifacts
-│   └── forecasting/                  # Forecasting run artifacts
-└── models/                           # Local ignored fitted model bundles
-    └── forecasting/                  # Forecasting models/preprocessing state
+├── src/
+│   ├── data/                  # Shared validation and data handoff
+│   ├── analysis/              # Reusable descriptive analysis
+│   ├── forecasting/           # Features, experiments, artifacts and inference
+│   ├── inventory_risk/        # Scenario preparation, mapping and evaluation
+│   ├── decision_support/      # Advisory records, assessment and retained cases
+│   ├── api/                   # Shared FastAPI delivery
+│   └── visualization/         # Placeholder; rendered views tracked under #201
+├── examples/forecast-api/     # Synthetic request-time input examples
+├── capture_consumer_evidence.py # Existing request-time evidence helper
+├── tests/                    # Implementation and regression checks
+├── notebooks/                # Historical exploration
+├── docs/                     # Research, contracts, decisions and workflows
+├── reports/
+│   ├── forecasting/           # Retained comparison snapshots
+│   ├── inventory-risk/        # Constructed-scenario evidence
+│   ├── decision-support/      # Record and assessment evidence
+│   └── figures/               # Reviewed research figures
+├── research-materials/       # Local materials; named #203 evidence exception
+├── data/                     # Local ignored raw and processed data
+├── artifacts/                # Local ignored run evidence
+└── models/                   # Local ignored fitted model bundles
 ~~~
 
-Code is organized by system component, not student name. Dataset formats, generated tables, artifacts and model binaries stay local; retain .gitignore protections. Setup and safe checks are in CONTRIBUTING. Real preparation and experiments require explicit authorization.
+Code is organised by component. The [storage policy](docs/artifact-storage-policy.md) identifies the exact trackable exceptions, including two synthetic request-time evidence files under `research-materials/issue-203/`; other local materials and dataset/model protections remain in force.
+
+## Project status
+
+**Updated: 30 October 2026.** Forecasting research and C1 descriptive conclusions are complete ([#191](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/191)); the request-time forecasting handoff is accepted ([#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203)). Retained-case views/runtime acceptance ([#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201)) and rendered responsible-use review ([#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182)) remain open. [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179) tracks repository completion; [#204](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/204) starts afterwards for final submission files.
 
 ## Usage and permissions
 

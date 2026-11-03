@@ -93,6 +93,8 @@ Her component consumes the outputs of Chathuranga and Didilani and implements th
 
 ## Current delivery and remaining review
 
+**Reconciled 30 October 2026:** [The C1 record](../../research-design.md#164-human-decisions-and-c1-closeout-record) attributes W1 responsible-use interpretation/display acceptance and automatic-review-rule deferral to the team as reported by Chathuranga on 29 October. This is not an invented independent review record or managerial clearance. Actual rendered W2 review remains under #182 when #201 supplies reviewable views; neither whole issue must close before that review can begin.
+
 Twenty inventory-linked records and all 160 record-level assessment outcomes are available in the [evidence index](../../../reports/README.md#inventory-linked-records). Chathuranga is the recorded executor/assessor; this does not transfer Dewmi's component responsibility. Dewmi reviews downstream meaning and the rendered presentation with Tinosh. Do not repeat unchanged record checks as a substitute for prototype acceptance.
 
 ## Decision-support output alignment
@@ -108,7 +110,7 @@ The approved upstream forecast-interface horizons are:
 
 The 7-day, 14-day and 28-day forecasts represent cumulative demand over those periods; 28 days is four-week / approximately monthly planning, not an exact calendar month. This information should remain clear when forecasts are combined with inventory-risk and replenishment information.
 
-DR-011 defines the overall structure for this management-facing output. Details that depend on forecasting uncertainty, numerical replenishment or human-review thresholds remain provisional. Approval of the DR-012 exposure method does not settle those separate methods or final presentation acceptance.
+DR-011 defines the overall structure for this management-facing output. Prospective uncertainty, numerical replenishment and automatic human-review methods remain unavailable under the team-accepted deferrals. DR-011 still supplies structure only; DR-012 approves the 1/7/14-day scenario exposure, not those methods or final rendered acceptance.
 
 ## Revised forecasting interface and component review
 

@@ -76,6 +76,10 @@ jobs:
         if: steps.scope.outputs.run_python != 'false'
         run: python -c "from src.forecasting import experiment, integrity, model_artifacts"
 
+      - name: Lint worked-scenario helper and tests
+        if: steps.scope.outputs.run_python != 'false'
+        run: ruff check src/decision_support/worked_scenario.py tests/test_decision_support_worked_scenario.py
+
       - name: Type-check forecasting source
         if: steps.scope.outputs.run_python != 'false'
         run: python -m mypy src/forecasting --explicit-package-bases --disable-error-code import-untyped
@@ -95,3 +99,9 @@ jobs:
           src/visualization/render_issue_201_views.py
           --explicit-package-bases
           --disable-error-code import-untyped
+
+      - name: Type-check worked-scenario helper and tests
+        if: steps.scope.outputs.run_python != 'false'
+        env:
+          MYPYPATH: tests
+        run: python -m mypy src/decision_support/worked_scenario.py tests/test_decision_support_worked_scenario.py --explicit-package-bases --disable-error-code import-untyped

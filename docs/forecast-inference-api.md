@@ -3,7 +3,7 @@
 **Responsible member:** Chathuranga — forecasting meaning and shared API architecture.
 **Integration reviewer:** Tinosh — endpoint, schema and adapter acceptance.
 **Date:** 2026-10-05 (Asia/Colombo).
-**Status:** Implementation and four synthetic JSON examples are merged through [PR #151](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/151); #132 is closed. Chathuranga supplied revised-example manual outcomes on 24 October 2026 under [Issue #180](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180); see Section 6.1 for evidence and limits. Tinosh's consumer acceptance remains pending. The API is a presentation prototype, not completed group-wide integration.
+**Status — updated 30 October 2026:** Request-time inference and four synthetic examples are merged through PR #151; producer corrections were delivered through #193 / PR #195. [#203 closed on 29 October](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) after Tinosh's technical consumer verification and Chathuranga's separate producer/source acceptance. Section 6 preserves the distinct 24/28 October observations and the later acceptance. PR #197 delivered the separate retained-case routes, closing #183. Retained runtime/source/component acceptance and approved views continue under [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani; W2 rendered review remains under #182 and final repository acceptance under #179.
 
 ## 1. Active serving behavior
 
@@ -11,9 +11,9 @@ The presentation flow is:
 
 `example JSON daily history → POST /forecasts → frozen input pipeline → saved model.predict() → forecast response`
 
-Models and their saved preprocessing are loaded once at application startup. Every accepted request builds its own feature vector and invokes the designated model. Responses are not cached. The existing [retained forecast export](forecast-api-contract.md) is a separate fixed-origin artifact: the runtime neither opens it nor reads stored predictions, observations or metric files.
+Models and their saved preprocessing are loaded once at application startup. Every accepted request builds its own feature vector and invokes the designated model. Responses are not cached. The request-time forecast path neither opens the separate fixed-origin [retained forecast export](forecast-api-contract.md) nor reads stored predictions, observations or metric files. The retained-case GET routes in Section 5.1 separately consume that export and its linked prospective evidence.
 
-This behavior requested by Chathuranga supersedes the earlier stored-forecast serving proposal. It preserves the existing feature definitions, saved preprocessing, model files and producer mapping. Chathuranga and Tinosh retain their documented ownership; this initial implementation is subject to their review.
+This behavior requested by Chathuranga supersedes the earlier stored-forecast serving proposal. It preserves the existing feature definitions, saved preprocessing, model files and producer mapping. Chathuranga and Tinosh retain their documented ownership; the scoped request-time handoff was accepted under #203 on 29 October 2026.
 
 ### 1.1 Research and demonstration scope
 
@@ -23,7 +23,7 @@ The FastAPI service demonstrates request-time inference using the saved forecast
 
 The demonstration preserves the research questions, hypotheses, targets, feature definitions, producer mapping, saved models and retained numerical evidence. Synthetic requests and their responses are illustrative presentation material and must be labelled accordingly in slides and recordings. Changing an example input does not create an additional research result. The API neither establishes replenishment quantities nor approves downstream 28-day use.
 
-**Historical preparation instruction — 5 October 2026:** Chathuranga authorised preparing the demo on its then-existing feature branch; prior Tinosh review was not required for preparation. That instruction is not standing Git authorisation. The implementation is now merged; component ownership and remaining consumer acceptance are unchanged.
+**Historical preparation instruction — 5 October 2026:** Chathuranga authorised preparing the demo on its then-existing feature branch; prior Tinosh review was not required for preparation. That instruction is not standing Git authorisation. The implementation is now merged; the later scoped request-time acceptance is recorded in Section 6.2. Component ownership and separate retained acceptance remain unchanged.
 
 ## 2. Models and source bindings
 
@@ -246,7 +246,7 @@ python3 -B -m src.data.verify_checksums --profile dewmi
 | Reference | `docs/checksums/2026-10-06.json`, matching local HEAD `22e12b9b1da170feab50cf3028b59917646e5b30` |
 | Reference SHA-256 | `381ed9607a9e3ec155ee3754d699d62873bfbff18f5e1f4edc31c407267ed7cc` |
 
-Both outputs explicitly reported **provisional local matches**: tracked content and independent reference review were not checked. These checks read selected bytes only; files outside the two profiles remain unverified. No full retained-bundle scan or scientific verification was run. Complete trusted handoff verification using an independently reviewed reference commit and the [checksum guide](checksums/README.md); do not infer review from a local HEAD match.
+Both outputs explicitly reported **provisional local matches**: tracked content and independent reference review were not checked. These checks read selected bytes only; files outside the two profiles remain unverified. No full retained-bundle scan or scientific verification was run. The later request-time handoff verification and acceptance are recorded in Section 6.2. These earlier outputs remain provisional at their original scope; they are not retroactively upgraded by the later review. Retained-export acceptance remains separate under #201.
 
 #### Health and four existing examples
 
@@ -286,9 +286,52 @@ PY
 The modified response retained LightGBM `GBM018`, origin `2025-01-28`, next-day target `2025-01-29`, saved model/preprocessor hashes, `request_time` and `available`. Changed input provenance and quantity are consistent with processing the modified request. This check complements existing synthetic call/matrix checks; different valid inputs do not always produce different tree-model predictions.
 
 These manual requests demonstrate serving only. They did not train, tune, refit, replay research evaluation, measure accuracy or accept downstream inventory/decision-support behaviour. The live January examples must not be joined to inventory/decision-support results from the retained origin `2024-12-02` as though those results had recomputed. Existing synthetic rejection/failure coverage in `tests/test_forecast_api.py`, `tests/test_forecasting_inference.py` and `tests/test_forecasting_export.py` was inspected for reuse; these manual requests do not exercise those failure cases, and that suite was not rerun for this record.
+### 6.2 Technical consumer verification evidence — 28 October 2026
+
+**Task:** [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203), closed on 29 October 2026 for the scoped request-time forecast handoff; the 28 October evidence below retains its capture-time context.
+**Executor / technical consumer reviewer:** Tinosh.
+**Capture outcome — 28 October:** every requirement outcome derived from the exchanges is `PASSED` (AS-01 to AS-06, `RT-CONTRACT`, `RT-CHANGED-HISTORY`, `RT-REJECTIONS`). This is Tinosh's technical consumer verification. Chathuranga's subsequent producer/source decision is a separate human acceptance, recorded below.
+**Evidence:** `research-materials/issue-203/consumer-evidence-v2.json`, SHA-256 `ee048a7412f5727cb5bebfe606ecf3784fecba2352e06c25d43a415817af9abf` (committed LF bytes), capture timestamp `2026-10-28T15:35:48+00:00`.
+**Tested source:** revision `20265aa0ecb7f5e6436e8aa29694a076fc643286` with a clean tracked working tree; Python 3.13.4; Windows-11-10.0.22631-SP0.
+**Subsequent acceptance — 29 October 2026:** [Chathuranga accepted the scoped producer/source handoff](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) after reviewing the v2 exchanges and Tinosh's reported `tinosh` profile verification at `7034d296f181564ecf575152f4ce5336ee00f6e4`: 20/20 files matched, no missing/changed files or reported warnings/failures, exit status 0. The independently reviewed reference revision and tested verification HEAD were that full commit; reference SHA-256 was `381ed9607a9e3ec155ee3754d699d62873bfbff18f5e1f4edc31c407267ed7cc`. The reported command was `.\.venv\Scripts\python.exe -B -m src.data.verify_checksums --profile tinosh --tracked-ref 7034d296f181564ecf575152f4ce5336ee00f6e4`. The serving capture remains bound to `20265aa0ecb7f5e6436e8aa29694a076fc643286`; the acceptance explicitly reviewed that evidence together with installed-file/source verification at `7034d29`. These are distinct revisions and scopes, not a claim of a new capture at the later commit. Existing CI was reused; no new research evaluation was performed. Historical `pending_under` labels in the immutable capture retain their original meaning. Retained inputs/routes, rendered views and group acceptance remain under #201/#182/#179.
+
+**Execution:** in-process `fastapi.testclient.TestClient(src.api.main.app)` with the application lifespan, so the four saved producers were loaded from the local artifacts and verified at startup exactly as in the served application. This is not a separately started uvicorn server or a hosted demo.
+
+From the repository root:
+
+```bash
+.venv/bin/python capture_consumer_evidence.py --output research-materials/issue-203/consumer-evidence-v2.json
+.venv/bin/python capture_consumer_evidence.py --verify research-materials/issue-203/consumer-evidence-v2.json
+```
+
+The helper records every request and response first, then derives each outcome from assertions on those recorded exchanges; no outcome is written as a constant. It creates the evidence file exclusively and never overwrites an existing file. `--verify` recomputes all checks from the stored exchanges and fails if any stored check or outcome differs, any outcome is not `PASSED`, or the file has CRLF line endings.
+
+| Requirement | Derived from |
+|---|---|
+| AS-01 | `SKU_ID` / `Warehouse_ID` echoed for all four horizons; unknown SKU and unknown warehouse return HTTP 422 `unknown_sku` / `unknown_warehouse` |
+| AS-02 | `forecast_origin` echoed; `target_start_date` = origin + 1 for all four horizons |
+| AS-03 | `target_end_date` = origin + h and the inclusive window is exactly h days, for h = 1, 7, 14, 28 |
+| AS-04 | `horizon` echoed as the same JSON integer; `forecast_type` `next_day` / `cumulative_window`; cumulative (not daily-path) limitation for h7/h14/h28; h28 limitation that 28-day availability does not approve downstream inventory use; four separate records; horizon 3 returns HTTP 422 `unsupported_horizon` |
+| AS-05 | `producer_designation: frozen_designated_producer`; Section 2 model/configuration per horizon; source run and run-manifest reference; one manifest hash across horizons; `provenance` keys exactly `model_path`, `model_hash`, `preprocessor_path`, `preprocessor_hash`, `input_sha256`, each hash a SHA-256 digest and each path under that horizon's producer directory; distinct model and input hashes per horizon; an identical repeat request reproduces `input_sha256`; changed history produces a new `input_sha256` |
+| AS-06 | response keys exactly match the 22-field `ForecastResponse` allowlist; no retrospective, inventory or metric key at any depth (for example `observed_target`, `Demand_Forecast`, `Inventory_Level`, `Reorder_Point`, `retrospective_margin`, WAPE/MAE/RMSE); `inference_mode: request_time`; `observed_target`, `Demand_Forecast` and `Inventory_Level` request fields are rejected with HTTP 422 `extra_forbidden` |
+| `RT-CONTRACT` | `GET /health` ready for `[1, 7, 14, 28]`; HTTP 200, `available`, empty `unavailable_reasons`, `forecast-inference-v1`, echoed `input_kind` and a finite `forecast_quantity`; the four example files are byte-identical before and after capture |
+| `RT-CHANGED-HISTORY` | the 1-day example with final-day `Units_Sold` increased by 5 in memory returns a new `input_sha256` (against the identical-request control) with unchanged identity, window, producer and saved model/preprocessor provenance |
+| `RT-REJECTIONS` | all ten negative requests return HTTP 422 without a substitute `forecast_quantity`: the five above plus `invalid_origin` (origin 2024-12-01), `future_history`, `incomplete_history` and `invalid_history` (one missing day) |
+
+Forecast quantities and hashes are kept in the evidence file rather than restated here. As in Section 6, the changed-history quantity difference is recorded as an informational observation: tree models can return the same quantity for different inputs, so the pass/fail signal is the changed `input_sha256`.
+
+**Superseded capture:** `research-materials/issue-203/consumer-evidence.json` (capture timestamp `2026-10-27T18:06:44.383554+00:00`) is preserved unchanged but superseded. It captured h7 only, and its AS-01 to AS-06 values were written as constants rather than derived from checks. The SHA-256 `503a3d03…` and 25 October date previously cited in this section identified neither that file nor the current evidence and are withdrawn. Chathuranga's 24 October outcomes in Section 6.1 remain his separate record.
+
+These requests used the synthetic examples only. They did not train, tune, refit, replay research evaluation, measure accuracy or accept inventory/decision-support behaviour; the retained-case routes remain under #201.
 
 ## 7. Engineering handoff
 
+For a dataset-backed 1/7/14/28-day historical replay, see the [multi-horizon worked scenario](worked-example-scenario.md). It calls the existing API with the same pre-origin history and requires exact identity/provenance/quantity reconciliation for each horizon before linking retained cases. Actual sales and errors are read only afterwards and labelled retrospective. It does not recompute inventory/advisory outputs, approve h28 inventory use or establish a new aggregate accuracy result; real-source execution is a separately recorded human action.
+
 The implementation consists of [saved-model inference](../src/forecasting/inference.py), [FastAPI schemas/routes](../src/api/main.py), four small input files, and focused synthetic API/inference checks. Native loads and predictions in automated checks use test doubles; request feature preparation uses the existing pipeline.
 
-Chathuranga's supplied manual outcomes are recorded in Section 6.1. [Issue #180 closed for that delivered evidence milestone](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/180#issuecomment-6380844130); formal producer approval, independently reviewed reference verification and Tinosh's consumer acceptance remain separate pending obligations in the [#179 continuing review record](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6380828701). The producer implementation review and correction task is [#193](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/193); permission to apply its fixes does not establish producer approval. Tinosh's next step under [#183](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/183) is to use the [retained-export contract](forecast-api-contract.md) for the joined fixed-origin case and this separate request-time contract for the live demonstration, checking identity, units, inclusive windows, cumulative meaning and unavailable behaviour in his actual consumer. Record the consumed version, reviewer, date and outcome separately from Chathuranga's producer review; involve Didilani/Dewmi where their input meaning is affected. Preserve 28-day downstream unavailability. Record subsequent reviews in #179; closure of the evidence milestone and API code acceptance do not settle other component blockers in [integration readiness](integration-contract-readiness.md).
+Chathuranga's supplied 24 October outcomes remain in Section 6.1, with #180 closed for that evidence milestone. Producer corrections were delivered through #193 / PR #195. Section 6.2 records Tinosh's v2 serving evidence and the separate [29 October producer/source acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406), which closed #203. Continue with #201's retained handoff/views, #182's W2 rendered review and #179's final integrated acceptance; do not repeat completed live checks for unchanged behaviour.
+
+[PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197) merged as `b6f196ad73d3a31017582f81dbc7f5183ef573df`, closing #183. Chathuranga's [approval at corrected source commit `c540f03`](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197#pullrequestreview-5642602452) covers the retained-case API scope. Both [CI Tests](https://github.com/chathuranga-sudusinghe/retail-demand-framework/actions/runs/40180999250) and [CI Quality](https://github.com/chathuranga-sudusinghe/retail-demand-framework/actions/runs/40180999258) passed for that corrected commit. These are existing implementation checks and scoped code approval; they do not establish a human-observed demo, final producer/source/consumer acceptance or rendered-visual acceptance.
+
+[Issue #201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani, continues the retained runtime handoff and approved inventory views from that merged implementation. Preserve Tinosh's original PR authorship and Didilani's recorded contributions. Chathuranga reviews forecast/API meaning, Didilani reviews inventory interpretation and Dewmi reviews responsible presentation. Tinosh retains his documented technical integration role and the separate request-time consumer review. Use the [retained-export contract](forecast-api-contract.md) for the fixed-origin case and this request-time contract for the live demonstration; record the consumed version, reviewer, date, outcome and remaining dependency for each. Preserve 28-day downstream unavailability and track subsequent acceptance in #179.

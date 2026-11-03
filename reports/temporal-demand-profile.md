@@ -142,6 +142,8 @@ These remain separate evidence-based decisions.
 - `Stockout_Flag` cannot validate actual stockout prediction;
 - sparse `Order_Quantity` limits direct replenishment-target modelling.
 
+**Interpretation note — 2 November 2026:** Monday-start aggregation includes a final partial week containing only 30 December 2024. The reported 53 weekly observations therefore include a one-day final period; temporal completeness measures coverage of weekly bins, not seven-day coverage within every bin. This qualifies the weekly summaries without changing the recorded results or approved daily analytical unit.
+
 ## 10. Conclusion
 
 The profiling stage provides sufficient evidence to formalise the primary forecasting analytical unit as:
