@@ -324,6 +324,59 @@ def test_loader_rejects_missing_or_mismatched_retained_sources(tmp_path, failure
         _load(repository, export)
 
 
+@pytest.mark.parametrize(
+    ("metric_value", "metric_status"),
+    [
+        ("0.25", "available"),
+        (0.25, ""),
+        (0.25, False),
+    ],
+    ids=("string-value", "empty-status", "non-string-status"),
+)
+def test_loader_rejects_invalid_retrospective_metrics(
+    tmp_path, metric_value, metric_status
+):
+    repository, export = _write_fixture(tmp_path)
+    directory = repository / INVENTORY_EVIDENCE_DIRECTORY
+    evaluation_path = directory / "evaluation.json"
+    evaluation = json.loads(evaluation_path.read_bytes())
+    summary = evaluation["summary"][0]
+    summary["event_prevalence"] = metric_value
+    summary["event_prevalence_status"] = metric_status
+    evaluation_path.write_bytes(_json_bytes(evaluation))
+    _refresh_manifest_file_hash(directory, "evaluation.json")
+
+    with pytest.raises(
+        InventoryViewSourceError,
+        match="Retrospective metric status/value is invalid: event_prevalence",
+    ):
+        _load(repository, export)
+
+
+@pytest.mark.parametrize(
+    ("metric_value", "metric_status"),
+    [(0.25, "available"), (None, "not_applicable")],
+    ids=("finite-number", "null-value"),
+)
+def test_loader_accepts_finite_and_null_retrospective_metrics(
+    tmp_path, metric_value, metric_status
+):
+    repository, export = _write_fixture(tmp_path)
+    directory = repository / INVENTORY_EVIDENCE_DIRECTORY
+    evaluation_path = directory / "evaluation.json"
+    evaluation = json.loads(evaluation_path.read_bytes())
+    summary = evaluation["summary"][0]
+    summary["agreement"] = metric_value
+    summary["agreement_status"] = metric_status
+    evaluation_path.write_bytes(_json_bytes(evaluation))
+    _refresh_manifest_file_hash(directory, "evaluation.json")
+
+    evidence = _load(repository, export)
+
+    assert evidence.evaluation["summary"][0]["agreement"] == metric_value
+    assert evidence.evaluation["summary"][0]["agreement_status"] == metric_status
+
+
 def test_loader_rejects_identity_mismatch_with_valid_manifest_hash(tmp_path):
     repository, export = _write_fixture(tmp_path)
     directory = repository / INVENTORY_EVIDENCE_DIRECTORY

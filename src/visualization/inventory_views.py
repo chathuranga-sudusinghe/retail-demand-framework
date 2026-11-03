@@ -456,7 +456,7 @@ def load_inventory_view_evidence(
                 if not (
                     (value is None or _finite_json_number(value))
                     and isinstance(status, str)
-                    and bool(status),
+                    and bool(status)
                 ):
                     raise InventoryViewSourceError(
                         f"Retrospective metric status/value is invalid: {name}."
