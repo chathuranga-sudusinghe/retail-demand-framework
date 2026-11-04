@@ -98,3 +98,11 @@ The 8:30 PM group meeting organised the project into a practical team workflow, 
 ## Outcome
 
 The group translated its project planning into an initial working plan, agreed to use a shared GitHub repository, identified the first responsibility areas for the three active members, and completed the initial repository setup required to begin the COMP1884 project.
+
+## Evidence supplement — recorded 5 November 2026
+
+The WhatsApp export supports the 8:30 PM Zoom arrangement, GitHub onboarding and technical follow-up. The previously recorded 9:30 PM end remains historical metadata: chat support continued afterwards, and the exact live meeting end is not established by the export.
+
+Using the [discussion log's message references](2026-09-13-to-2026-11-05-whatsapp-discussions.md#source-and-reading-conventions), M0013–M0033 arrange accounts and the meeting; M0034–M0055 cover repository cloning, Git installation and troubleshooting. Chathuranga proposed Teams for the following evening, and Dewmi acknowledged (M0056–M0061). These references corroborate coordination, not every historical action's completion or every attendee's participation duration.
+
+Chathuranga also clarified on 5 November that the lecturer verbally permitted a dataset change during the earlier lecture. See the [specific clarification](2026-09-20-supervisor-meeting.md#dataset-change-clarification--recorded-5-november-2026). This updates the specific dataset-permission position without turning the original broader approval quotations into verified blanket approval.
