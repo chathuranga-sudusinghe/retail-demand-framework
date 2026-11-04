@@ -55,3 +55,17 @@ Meeting discussion
 ```
 
 The notes should record what was actually discussed at the meeting. Record lecturer teaching guidance separately from specific project feedback or approval; identify the person, date and scope. A later correction must be dated, preserve the original claim where needed for traceability and flag unresolved facts. Later project decisions should not be backdated into an earlier meeting record.
+
+## Dated record index
+
+| Date | Record | Format |
+|---|---|---|
+| 20 September 2026 | [Lecturer guidance](2026-09-20-supervisor-meeting.md) | Lecture discussion and later clarification |
+| 20 September 2026 | [Project commencement](2026-09-20-project-commencement-meeting.md) | Zoom and WhatsApp follow-up |
+| 21 September 2026 | [Setup and dataset handoff](2026-09-21-project-setup-and-dataset-handoff.md) | Teams and WhatsApp follow-up |
+| 6 October 2026 | [Progress meeting](2026-10-06-project-progress-meeting.md) | Teams, connectivity disruption and telephone follow-up |
+| 13 September–5 November 2026 | [WhatsApp discussion log](2026-09-13-to-2026-11-05-whatsapp-discussions.md) | Selected substantive asynchronous discussions |
+
+Chathuranga explained on 5 November that members' employment and weekend lectures made common meeting times difficult, so much coordination took place asynchronously. The discussion log records this work without treating every message as a formal meeting.
+
+The new summaries were prepared retrospectively on 5 November 2026. Distinguish discussion dates, later clarification dates and sources. Historical actions/statuses describe the discussion at that time, not current issue readiness. Do not infer approval from silence or a general acknowledgment. These Markdown records support submission preparation; they are not a completed meeting-minutes submission PDF. Original chat exports remain local; public summaries omit contact identifiers and meeting access details.

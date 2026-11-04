@@ -3,8 +3,8 @@
 > **Clarification — 14 October 2026, Issue #165:** Chathuranga identifies the teaching role as the COMP1884 lecturer. The original note called this a supervisor meeting and asserted project-initiation approval. The exact session format, permission and scope remain pending confirmation by the recorded participants. This record does not establish a supervisor appointment or methodological approval. The legacy filename is retained for traceability.
 
 **Date:** 20 September 2026  
-**Time:** 1:00 PM – 3:00 PM  
-**Meeting Type:** Lecturer guidance; exact session format pending participant confirmation\
+**Time:** 1:00 PM – 3:00 PM in the earlier record; exact times not reconfirmed on 5 November
+**Meeting Type:** Guidance during the COMP1884 lecture, as clarified by Chathuranga on 5 November\
 **Purpose:** Initial COMP1884 project initiation discussion
 
 ## Attendees
@@ -52,4 +52,12 @@ See the [COMP1884 criteria checklist](../greenwich-criteria-checklist.md#team-an
 
 ## Outcome
 
-This historical note describes initial COMP1884 guidance; its approval claim remains unverified. The group then held a separate project commencement meeting later the same day, from 8:30 PM to 9:30 PM, to organise responsibilities, collaboration, and repository setup.
+The original broader project-initiation approval claim remains unconfirmed. Specific dataset-change permission is recorded below from Chathuranga’s later account. The group then held a separate project commencement meeting later the same day, from 8:30 PM to 9:30 PM, to organise responsibilities, collaboration, and repository setup.
+
+## Dataset-change clarification — recorded 5 November 2026
+
+Chathuranga reports that the group asked the COMP1884 lecturer during the 20 September lecture whether the original dataset could be changed because it could not adequately support all parts of the framework. The lecturer verbally permitted the dataset change. The lecturer's name is omitted at Chathuranga's request.
+
+This later clarification resolves the session format and the specific permission to change the dataset; the earlier pending-confirmation wording above records the position before this clarification. It is an attributed human account, not a contemporaneous written lecturer statement. It does not confirm every broader project-initiation claim or establish lecturer approval of later models, metrics, inventory rules, evaluation protocols or research runs.
+
+The replacement source was selected in [DR-001, dated 21 September](../decisions/DR-001-dataset-selection.md). Permission to change the source on 20 September and selection of that source on 21 September are separate events. No independently verified attendance durations or exact lecture times are added by this clarification.

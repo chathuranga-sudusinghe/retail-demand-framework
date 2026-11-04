@@ -1,7 +1,7 @@
 # DR-001 — Dataset Selection
 
 **Date:** 2026-09-21  
-**Status:** Accepted for project planning; lecturer/module-leader awareness or confirmation recommended where required by module guidance because the source dataset differs from the COMP1889 proposal.\
+**Status:** Accepted for project planning; lecturer’s oral permission to change the dataset on 20 September reported by Chathuranga on 5 November 2026 (see guidance note).\
 **Owners:** COMP1884 group
 
 ## Decision
@@ -132,4 +132,6 @@ The following remain:
 
 ## University guidance note
 
-Because the primary dataset differs from the earlier COMP1889 proposal, the group should keep this record and raise the change with the lecturer or module leader where required by module guidance.
+**Clarification recorded on 5 November 2026:** Chathuranga reports that the group asked the COMP1884 lecturer during the 20 September lecture whether the original dataset could be changed because it did not adequately support all framework components. The lecturer verbally permitted the change. The lecturer's name is omitted at Chathuranga's request; see the [dated guidance record](../meetings/2026-09-20-supervisor-meeting.md#dataset-change-clarification--recorded-5-november-2026).
+
+This account records permission to change the source on 20 September; this Decision Record selects the replacement source on 21 September. It is not a contemporaneous written lecturer statement or blanket approval of subsequent methodology, models, metrics or experiments. The original decision date and source-data limitations remain unchanged.
