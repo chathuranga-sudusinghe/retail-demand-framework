@@ -1,5 +1,18 @@
 # Research Evidence Index
 
+## Thesis and presentation figures
+
+The approved eight-figure exporter targets `reports/figures/final-thesis-figures/`, a
+trackable directory. See the [figure delivery guide](../docs/research/thesis-figure-delivery.md)
+for the human-run command, purposes, evidence bindings and required reviews.
+Chathuranga generated all eight figures on 5 November 2026; output/source/code
+identity checks and technical visual inspection are recorded in the guide.
+He subsequently regenerated the approved Claude-review readability corrections
+in the same folder. Identity, affected-figure inspection and grayscale screen
+checks are recorded in the guide; rendered component acceptance remains separate.
+PNGs, SVGs and lightweight source-index sidecars are intended
+for review/commit; datasets and models remain ignored.
+
 This directory holds lightweight inspectable numerical snapshots, descriptive reports and approved figures. [Final evaluation](../docs/forecasting-final-evaluation.md) is the canonical current forecasting interpretation and conclusion; generated reports retain the wording/status captured when they were rendered.
 
 ## Dataset provenance

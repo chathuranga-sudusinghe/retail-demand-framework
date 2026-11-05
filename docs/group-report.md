@@ -150,6 +150,12 @@ These results are conditional on no receipts, transfers, returns, losses or othe
 
 The publisher-simulated data, single forecast origin, prior December 3–16 validation exposure and full-year exploratory exposure constrain interpretation. The results must not be presented as a historically fully unseen evaluation or real-retailer effectiveness. Current DR-012 approval is shown separately from immutable historical proposed-status metadata. Shared-report integration introduces no new method or additional approval.
 
+The approved coverage, proxy-crossing, margin and availability questions are
+implemented in the [compact figure delivery](research/thesis-figure-delivery.md).
+Its source-index sidecars preserve case traceability; Didilani's D2 review must
+assess the actual figures and the overview-plus-index presentation, separately
+from the earlier analytical-documentation review.
+
 ## 7. Responsible decision-support evidence
 
 **Assembly status — updated 29 October 2026:** Chathuranga reports team acceptance of Dewmi's W1 responsible-use interpretation/display handoff and the automatic-review-rule limitation, as recorded in [research design Section 16.4](research-design.md#164-human-decisions-and-c1-closeout-record). Her W2 review of actual rendered views remains under #182; this report does not establish that review or close her issue.
@@ -169,6 +175,18 @@ The analytical architecture connects shared data preparation, forecasting output
 The [request-time API](forecast-inference-api.md) serves `GET /health` and `POST /forecasts` using supplied history, frozen features and saved producers; it does not train models. [Section 6.1](forecast-inference-api.md#61-manual-verification-evidence--24-october-2026) preserves Chathuranga's 24 October observations, including the truncated h28 pasted response and provisional source checks at that time. [Section 6.2](forecast-inference-api.md#62-technical-consumer-verification-evidence--28-october-2026) records Tinosh's later v2 exchanges at `20265aa0ecb7f5e6436e8aa29694a076fc643286`; the 29 October producer/source acceptance separately reviewed installed-file verification at `7034d296f181564ecf575152f4ce5336ee00f6e4`. That scoped acceptance supplies the current handoff outcome without rewriting the earlier observations or establishing new forecast accuracy.
 
 This live demonstration uses supplied January 2025 histories. The separate [retained export](forecast-api-contract.md) has 1,000 records at origin 2024-12-02. Its inventory and decision-support results do not recompute when a live forecast request changes. The merged retained interface exposes `GET /decision-support/cases` and `GET /decision-support/cases/{assessment_id}`, loading the exact 20 assessed records and validating their prospective source joins. The [API document](forecast-inference-api.md#51-retained-decision-support-cases) records existing synthetic checks and automated retained-serving outcomes, separately from human acceptance. Final technical writing must retain the implementation history in [#183 / PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197) and the unfinished delivery/acceptance under #201; it must not describe planned rendered views as completed.
+
+The static [figure exporter](../src/visualization/render_issue_201_views.py)
+provides eight purpose-driven figures in `reports/figures/final-thesis-figures/`:
+population coverage, proxy-crossing comparison, population margins, worked-case
+demand and margins, evidence status, transparency checks and frozen-model
+comparison. It consumes retained results without training, inference or research
+recalculation. Prospective and retrospective meanings remain explicitly
+separated. Chathuranga manually generated the initial and corrected candidates;
+the [delivery record](research/thesis-figure-delivery.md) distinguishes those
+observations from subsequent readability fixes and pending rendered acceptance.
+This is an implementation account, not a claim of completed D2/W2, independent
+human code approval or final prototype acceptance.
 
 ## 9. Research-question synthesis and hypothesis status
 
@@ -236,7 +254,7 @@ This section is an internal drafting aid. Resolve its items and adapt/remove dra
 | Review the complete forecasting contribution and reconcile every numerical excerpt with its canonical source | Chathuranga | The Section 11 forecasting paragraph is confirmed; the assembled chapter/report still needs review. |
 | Finalise inventory interpretation, horizon-specific proxy discussion and approved visual selections | Didilani | PR #188 evidence integrated into Section 6 through PR #190. Didilani's Issue #181 analytical review passed with no analytical documentation change required; her PR #190 review was `COMMENTED` (`PASS WITH NON-BLOCKING NOTES`), not formal `APPROVED`. Chathuranga's approval is limited to forecasting-facing/evidence-consistency aspects. Didilani's later D2 rendered-output review, Tinosh's technical visual acceptance, Dewmi's responsible-presentation review, and final team/report acceptance remain pending under #179. |
 | Finalise responsible-use interpretation and governance discussion | Dewmi | W1 interpretation/display handoff and automatic-review-rule limitation accepted as reported by Chathuranga on 29 October; existing evidence reused in Section 7. [Dewmi's direct confirmation on 1 November](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) additionally records her W1 acceptance and support for automatic triggers only as a deferred extension, without approving thresholds. Actual rendered W2 review remains under #182. |
-| Supply the actual accepted implementation, integration tests and rendered views for the technical contribution | Tinosh for technical integration/report review; Didilani for the bounded #201 continuation; relevant component reviewers | PR #197 delivered the retained-case API and synthetic checks, closing #183. Human-observed runtime handoff, approved inventory views and component acceptance remain under #201/#179; request-time consumer acceptance is recorded separately in closed [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203). |
+| Supply the actual accepted implementation, integration tests and rendered views for the technical contribution | Tinosh for technical integration/report review; Didilani for the bounded #201 continuation; relevant component reviewers | PR #197 delivered the retained-case API and synthetic checks, closing #183. Human-observed retained startup/route checks and eight generated figures are now recorded in the API/figure guides; source/component and rendered acceptance remain under #201/#179; request-time consumer acceptance is recorded separately in closed [#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203). |
 | Record group hypothesis disposition and approve the bounded group conclusion | Team, coordinated by Chathuranga | Team acceptance reported by Chathuranga on 29 October is recorded in research design Section 16.4 and Sections 9/11 here. PR #209 is merged and [#191 closed on 30 October](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/191#issuecomment-6515040267) on the accepted descriptive scope. Later-evidenced requirements need a recorded human decision; #179 retains final repository acceptance. |
 | Integrate reviewed sections, verify references/figures/attribution and review the final shared document | All members; Chathuranga coordinates assembly | Working draft only; [#187](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/187) is closed as the delivered shared-report draft milestone. Continuing final report assembly and acceptance are tracked under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179). |
 

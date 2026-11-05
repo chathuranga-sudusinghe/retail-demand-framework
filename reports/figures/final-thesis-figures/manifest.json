@@ -1,0 +1,158 @@
+{
+  "figure_count": 8,
+  "figures": [
+    {
+      "caption": "Coverage at the retained origin. Scenario-at/below cases are outside the paired comparison; h28 forecasts have no inventory evaluation.",
+      "files": {
+        "fig01_coverage_eligibility.json": "2ca96cf1f3f0be9eab447262730838475af0790be432d202dd2dbd967c6ecffe",
+        "fig01_coverage_eligibility.png": "b109e2d4de594a3cf0fdf29d2f4af5d1ab964cab8729182181a55363bf2148f3",
+        "fig01_coverage_eligibility.svg": "efb1eb5db130ba1f0271a3d9b9d6c867549694352d947d53271fccef1a022d06"
+      },
+      "name": "fig01_coverage_eligibility",
+      "png_dpi": 300,
+      "purpose": "Identify the forecast and paired evaluation populations separately.",
+      "size_inches": [
+        6.3,
+        5.3
+      ],
+      "title": "Analysis coverage and eligibility"
+    },
+    {
+      "caption": "Retained confusion counts and rates, separately by horizon. High agreement can coexist with missed proxy events; these are not observed stockouts.",
+      "files": {
+        "fig02_proxy_crossings.json": "2763c45597d73f8b7e65c0f4229b6b1e69a5c3e5b564eed5f13787b546b2c4ea",
+        "fig02_proxy_crossings.png": "d2a65daab66e69e8c68c86950fe84a58548bfaab0453fb5e66a0a02fd59229d4",
+        "fig02_proxy_crossings.svg": "131f94cc118ec048f9db22100c60092a9c5efe643f1df665fb45232c7006cea7"
+      },
+      "name": "fig02_proxy_crossings",
+      "png_dpi": 300,
+      "purpose": "Explain crossing detections, missed events and denominator-defined rates.",
+      "size_inches": [
+        6.3,
+        6.7
+      ],
+      "title": "Forecast versus retrospective proxy crossings"
+    },
+    {
+      "caption": "Each mark is one eligible SKU-warehouse case, with identity in the accompanying case index. Zero is the reorder reference, not a physical-stock boundary.",
+      "files": {
+        "fig03_population_margins.json": "3494144efcaa3ad38e2bc40d403054ddfaa9bb6137131b28d556906abc940d8c",
+        "fig03_population_margins.png": "d4391dc833546c765a143202e80af833db7152c5890e84ac315626834371ab23",
+        "fig03_population_margins.svg": "b9e20259fdc4aa2d9a0fb4a38e44d34c127ab19ae4f8191b16df65fc6a3e442c"
+      },
+      "name": "fig03_population_margins",
+      "png_dpi": 300,
+      "purpose": "Locate retained paired margins relative to the zero reorder reference.",
+      "size_inches": [
+        6.3,
+        7.6
+      ],
+      "title": "Predicted and retrospective scenario margins"
+    },
+    {
+      "caption": "One illustrative, purposively sourced pair; not representative. Actual sales are retrospective. Overlapping cumulative windows are not additive.",
+      "files": {
+        "fig04_worked_forecast.json": "ddfc116f1ee7c7db8a7bd3f5efb74be5a7e78d29a38ad79c1fd8cc0c1294720f",
+        "fig04_worked_forecast.png": "8b358ea24200de6b46c0b1a7038b7902dd10c148d37faa00378b5bafa4b470d8",
+        "fig04_worked_forecast.svg": "fefd189f95fcf9e0c951d9d1f83a01c713bddbb4dd87b11cf3836fc5c3b72b0a"
+      },
+      "name": "fig04_worked_forecast",
+      "png_dpi": 300,
+      "purpose": "Explain retained demand outputs and underprediction for the existing illustrative case.",
+      "size_inches": [
+        6.3,
+        5.9
+      ],
+      "title": "Worked case: forecast and actual sales"
+    },
+    {
+      "caption": "Predicted and retrospective margins for the same illustrative case. Negative margin is arithmetic scenario exposure, not observed stockout or physical negative inventory.",
+      "files": {
+        "fig05_worked_margins.json": "063f7a9f528646798f18eb1095abee07aa69f615af0fdbb286833d4c835c2863",
+        "fig05_worked_margins.png": "3f91f82aa6140500a321bb567adedc88331b970477e599587f35ff917bfe2db6",
+        "fig05_worked_margins.svg": "13bd4afcfdb62c607318dfe84ddb5f0b4e43b89bfe572528b1ec235a63361cfa"
+      },
+      "name": "fig05_worked_margins",
+      "png_dpi": 300,
+      "purpose": "Explain how the h14 forecast misses a retained scenario proxy crossing.",
+      "size_inches": [
+        6.3,
+        5.9
+      ],
+      "title": "Worked case: inventory interpretation"
+    },
+    {
+      "caption": "Method approval does not establish source timing, consumer acceptance or operating benefit. Historical proposed labels are preserved as source metadata.",
+      "files": {
+        "fig06_evidence_status.json": "1baf1eb5f34346413df7578bb6c35c64f90bfc82f28365e71b5e9d628bf02677",
+        "fig06_evidence_status.png": "6df6d9b16056c403c655badbaf935aef2b1e4909e799d7e6270cf20b38e27cad",
+        "fig06_evidence_status.svg": "418274a7ef896d401830ff65f9455adae6a62f098648ec3e4712ed57e6f117ec"
+      },
+      "name": "fig06_evidence_status",
+      "png_dpi": 300,
+      "purpose": "Distinguish evidence presence, method approval, unknown timing and deferred methods.",
+      "size_inches": [
+        6.3,
+        6.8
+      ],
+      "title": "Evidence availability and approval context"
+    },
+    {
+      "caption": "Twenty purposively selected records, eight checks each. Not assessable is distinct from not met; record transparency is not usability or decision quality.",
+      "files": {
+        "fig07_transparency_checks.json": "2066c06ee60a9dcf566b9400553d44c1ac58901310520f9a51e3e8b777e990f7",
+        "fig07_transparency_checks.png": "f45e5bbc0ca2dab992492b77e4466ae76b3b016fcc02110794703e575672a26c",
+        "fig07_transparency_checks.svg": "6b83393efb3b9d748737f130fb2457644b5e9c52bfb88e171cb8310a6e21d8ce"
+      },
+      "name": "fig07_transparency_checks",
+      "png_dpi": 300,
+      "purpose": "Show existing human-entered criterion outcomes and unassessable methods.",
+      "size_inches": [
+        6.3,
+        5.7
+      ],
+      "title": "Responsible decision-support transparency checks"
+    },
+    {
+      "caption": "Retained final-origin WAPE; lower is better. All seven models are included. Designation was frozen before final results and is not a final-performance ranking.",
+      "files": {
+        "fig08_forecasting_comparison.json": "03f8062180ed497dbf74c6310b458965c29c7ca4293ba44ca3f4a3ae26a7337c",
+        "fig08_forecasting_comparison.png": "90a9aaad1a22ef934974434d09585b647f29bd4b5a46e1f3df74e8f0ff6aba48",
+        "fig08_forecasting_comparison.svg": "3717dabb3ae6206d483b7de48eb0323735ee4a67070a0117aa88c292f678c2c5"
+      },
+      "name": "fig08_forecasting_comparison",
+      "png_dpi": 300,
+      "purpose": "Compare every frozen primary, supportive and baseline candidate by horizon.",
+      "size_inches": [
+        6.3,
+        7.6
+      ],
+      "title": "Final-origin forecasting comparison"
+    }
+  ],
+  "readme_sha256": "f5d827f3d5f97488ba2eb8b368a6e95af0fc8e2cce5dbd3587f30eb96c4ff0ff",
+  "renderer": {
+    "code_sha256": {
+      "inventory_views.py": "217cd576235b0cb7feeb72e7b7ebddd2b2de07d055ec6a39e347c4a2b42bff27",
+      "render_issue_201_views.py": "ba6404919ceb225385958c029859f674e72d4a6300c85a9e2c687d72d917a39a",
+      "thesis_evidence.py": "ec65b9d7e1d7bf643a9cd3cc2847a7a00f389a8b96317deca1217c3bebc58dbb",
+      "thesis_figures.py": "b04c3e8d49506f8497021938352eaef9a8af5c946dfdac76304d5baf1d572c3b"
+    },
+    "git_head": "15d114a5ad73f42f7caf65b4ca49e8dc1efd9355",
+    "git_working_tree_clean": false,
+    "matplotlib": "3.11.2",
+    "python": "3.12.3"
+  },
+  "schema": "retail-thesis-figure-bundle-v1",
+  "source_file_sha256": {
+    "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "reports/decision-support/issue-168-inventory-v1/summary.json": "6c3ba9308455c6df1de10f68b1afd8227797231738f490865fca14b99a9b8f5d",
+    "reports/forecasting/final-20261003-02/comparison.md": "884edba6572bee6460750b86465ffd6e3d5276ac6ac9c395069eee1e45f44e4b",
+    "reports/inventory-risk/issue-164/evaluation-v1/evaluation.json": "4ac47ed2b51f581eb07caeaa58abff8a266a1b767dbeee34fb048ebe32e9cae8",
+    "reports/inventory-risk/issue-164/evaluation-v1/manifest.json": "5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9",
+    "reports/inventory-risk/issue-164/evaluation-v1/prospective.json": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+    "reports/inventory-risk/issue-164/evaluation-v1/report.md": "0c652f1e02e49e43b1b6955824cd0caa13499cfa5cda443200a8f94e0767461b",
+    "research-materials/issue-214/worked-scenario-v1.json": "c79c8a51debe0012048a341e71c76841c21f1065c0f2fdf62b81926c2dc584fb"
+  },
+  "status": "rendered; human visual/component review pending"
+}

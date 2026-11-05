@@ -1,0 +1,125 @@
+{
+  "caption": "Coverage at the retained origin. Scenario-at/below cases are outside the paired comparison; h28 forecasts have no inventory evaluation.",
+  "data": {
+    "evaluation_only": {
+      "summary": [
+        {
+          "FN": 17,
+          "FP": 0,
+          "N": 239,
+          "TN": 168,
+          "TP": 54,
+          "canonical_config_id": "GBM011",
+          "configuration_id": "GBM011",
+          "evaluable_paired_case_count": 239,
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_origin": "2024-12-02",
+          "forecast_unavailable_or_gated_count": 0,
+          "horizon": 7,
+          "initially_above_threshold_count": 239,
+          "inventory_basis": "constructed_origin_scenario",
+          "methodology_status": "proposed_for_group_approval",
+          "model": "lightgbm",
+          "origin_known_at_or_below_count": 0,
+          "retrospective_unavailable_or_gated_count": 0,
+          "run_id": "final-20261003-02",
+          "scenario_at_or_below_count": 11,
+          "target_end_date": "2024-12-09",
+          "target_start_date": "2024-12-03",
+          "unavailable_case_count": 0
+        },
+        {
+          "FN": 4,
+          "FP": 0,
+          "N": 239,
+          "TN": 230,
+          "TP": 5,
+          "canonical_config_id": "GBM018",
+          "configuration_id": "GBM018",
+          "evaluable_paired_case_count": 239,
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_origin": "2024-12-02",
+          "forecast_unavailable_or_gated_count": 0,
+          "horizon": 1,
+          "initially_above_threshold_count": 239,
+          "inventory_basis": "constructed_origin_scenario",
+          "methodology_status": "proposed_for_group_approval",
+          "model": "lightgbm",
+          "origin_known_at_or_below_count": 0,
+          "retrospective_unavailable_or_gated_count": 0,
+          "run_id": "final-20261003-02",
+          "scenario_at_or_below_count": 11,
+          "target_end_date": "2024-12-03",
+          "target_start_date": "2024-12-03",
+          "unavailable_case_count": 0
+        },
+        {
+          "FN": 40,
+          "FP": 0,
+          "N": 239,
+          "TN": 78,
+          "TP": 121,
+          "canonical_config_id": "GBM022",
+          "configuration_id": "GBM022",
+          "evaluable_paired_case_count": 239,
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_origin": "2024-12-02",
+          "forecast_unavailable_or_gated_count": 0,
+          "horizon": 14,
+          "initially_above_threshold_count": 239,
+          "inventory_basis": "constructed_origin_scenario",
+          "methodology_status": "proposed_for_group_approval",
+          "model": "xgboost",
+          "origin_known_at_or_below_count": 0,
+          "retrospective_unavailable_or_gated_count": 0,
+          "run_id": "final-20261003-02",
+          "scenario_at_or_below_count": 11,
+          "target_end_date": "2024-12-16",
+          "target_start_date": "2024-12-03",
+          "unavailable_case_count": 0
+        }
+      ]
+    },
+    "forecast_origin": "2024-12-02",
+    "historical_source_labels_unchanged": true,
+    "horizon_population": [
+      {
+        "forecast_origin": "2024-12-02",
+        "horizon": 1,
+        "horizon_forecast_population_count": 250
+      },
+      {
+        "forecast_origin": "2024-12-02",
+        "horizon": 7,
+        "horizon_forecast_population_count": 250
+      },
+      {
+        "forecast_origin": "2024-12-02",
+        "horizon": 14,
+        "horizon_forecast_population_count": 250
+      },
+      {
+        "forecast_origin": "2024-12-02",
+        "horizon": 28,
+        "horizon_forecast_population_count": 250
+      }
+    ]
+  },
+  "figure": "fig01_coverage_eligibility",
+  "identity_status": "Pinned/local byte identity; not independent review or acceptance.",
+  "purpose": "Identify the forecast and paired evaluation populations separately.",
+  "schema": "retail-thesis-figure-evidence-v1",
+  "source_file_sha256": {
+    "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "reports/decision-support/issue-168-inventory-v1/summary.json": "6c3ba9308455c6df1de10f68b1afd8227797231738f490865fca14b99a9b8f5d",
+    "reports/forecasting/final-20261003-02/comparison.md": "884edba6572bee6460750b86465ffd6e3d5276ac6ac9c395069eee1e45f44e4b",
+    "reports/inventory-risk/issue-164/evaluation-v1/evaluation.json": "4ac47ed2b51f581eb07caeaa58abff8a266a1b767dbeee34fb048ebe32e9cae8",
+    "reports/inventory-risk/issue-164/evaluation-v1/manifest.json": "5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9",
+    "reports/inventory-risk/issue-164/evaluation-v1/prospective.json": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+    "reports/inventory-risk/issue-164/evaluation-v1/report.md": "0c652f1e02e49e43b1b6955824cd0caa13499cfa5cda443200a8f94e0767461b",
+    "research-materials/issue-214/worked-scenario-v1.json": "c79c8a51debe0012048a341e71c76841c21f1065c0f2fdf62b81926c2dc584fb"
+  }
+}

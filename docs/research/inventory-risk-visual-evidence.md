@@ -1,5 +1,12 @@
 # Inventory-Risk Visual Evidence Specification and Interpretation
 
+**Figure-delivery continuation — 5 November 2026:** Chathuranga approved a compact
+eight-figure thesis/presentation selection, including two explicitly authorised
+forecasting/transparency additions. See the [figure delivery guide](thesis-figure-delivery.md)
+for purposes, source identities, the human-run export command and remaining
+component/readability reviews. This does not alter the analytical requirements
+below or claim final rendered acceptance.
+
 **Historical specification issue:** [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), closed. Current alignment: [#177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177); rendered visual work is scoped separately after refinement.
 
 **Responsible member:** Didilani Pathinayaka — inventory-risk analysis and interpretation

@@ -1,0 +1,63 @@
+{
+  "caption": "Method approval does not establish source timing, consumer acceptance or operating benefit. Historical proposed labels are preserved as source metadata.",
+  "data": {
+    "current_method_approval": {
+      "approved_scope": "Fixed origin, fixed reorder point, and no receipts for horizons h1, h7, and h14 only.",
+      "consumer_acceptance": "Not established by DR-012; consumer acceptance remains a separate, unconfirmed item.",
+      "not_approved": [
+        "Source-confirmed inventory timing; source snapshot timing and availability remain unknown.",
+        "h28 inventory use.",
+        "Numerical replenishment.",
+        "Overstock evaluation.",
+        "Forecast uncertainty estimation.",
+        "Automatic human-review rules.",
+        "A new research run."
+      ],
+      "reported_by": "Chathuranga on 23 October 2026 under Issue #177",
+      "source_record": "docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record",
+      "status": "Group-approved on 12 October 2026"
+    },
+    "dataset_provenance_sha256": "35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f",
+    "forecast_origin": "2024-12-02",
+    "historical_methodology_labels": [
+      "proposed_for_group_approval"
+    ],
+    "historical_source_labels_unchanged": true,
+    "source": {
+      "forecast_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+      "forecast_source": {
+        "evaluation_stage": "final_evaluation",
+        "integrity_result": {
+          "baseline_evaluations": 8,
+          "evaluations": 28,
+          "learned_refits": 20,
+          "models_replayed": 20,
+          "predictions": 7000,
+          "status": "passed"
+        },
+        "prediction_receipt_sha256": "853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692",
+        "run_id": "final-20261003-02",
+        "run_manifest_path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "run_manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "source_schema": "issue-130-final-v1"
+      },
+      "mapping_version": "issue-164-168-v1",
+      "snapshot_basis": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.",
+      "snapshot_policy": "constructed-origin"
+    }
+  },
+  "figure": "fig06_evidence_status",
+  "identity_status": "Pinned/local byte identity; not independent review or acceptance.",
+  "purpose": "Distinguish evidence presence, method approval, unknown timing and deferred methods.",
+  "schema": "retail-thesis-figure-evidence-v1",
+  "source_file_sha256": {
+    "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "reports/decision-support/issue-168-inventory-v1/summary.json": "6c3ba9308455c6df1de10f68b1afd8227797231738f490865fca14b99a9b8f5d",
+    "reports/forecasting/final-20261003-02/comparison.md": "884edba6572bee6460750b86465ffd6e3d5276ac6ac9c395069eee1e45f44e4b",
+    "reports/inventory-risk/issue-164/evaluation-v1/evaluation.json": "4ac47ed2b51f581eb07caeaa58abff8a266a1b767dbeee34fb048ebe32e9cae8",
+    "reports/inventory-risk/issue-164/evaluation-v1/manifest.json": "5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9",
+    "reports/inventory-risk/issue-164/evaluation-v1/prospective.json": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+    "reports/inventory-risk/issue-164/evaluation-v1/report.md": "0c652f1e02e49e43b1b6955824cd0caa13499cfa5cda443200a8f94e0767461b",
+    "research-materials/issue-214/worked-scenario-v1.json": "c79c8a51debe0012048a341e71c76841c21f1065c0f2fdf62b81926c2dc584fb"
+  }
+}

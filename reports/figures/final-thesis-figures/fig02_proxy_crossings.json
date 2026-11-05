@@ -1,0 +1,225 @@
+{
+  "caption": "Retained confusion counts and rates, separately by horizon. High agreement can coexist with missed proxy events; these are not observed stockouts.",
+  "data": {
+    "forecast_origin": "2024-12-02",
+    "historical_source_labels_unchanged": true,
+    "label": "Retrospective threshold-crossing proxy based on Units_Sold; not observed stockout.",
+    "summaries": [
+      {
+        "counts": {
+          "FN": 17,
+          "FP": 0,
+          "N": 239,
+          "TN": 168,
+          "TP": 54,
+          "evaluable_paired_case_count": 239,
+          "forecast_unavailable_or_gated_count": 0,
+          "initially_above_threshold_count": 239,
+          "origin_known_at_or_below_count": 0,
+          "retrospective_unavailable_or_gated_count": 0,
+          "scenario_at_or_below_count": 11,
+          "unavailable_case_count": 0
+        },
+        "group": {
+          "canonical_config_id": "GBM011",
+          "configuration_id": "GBM011",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_origin": "2024-12-02",
+          "horizon": 7,
+          "inventory_basis": "constructed_origin_scenario",
+          "methodology_status": "proposed_for_group_approval",
+          "model": "lightgbm",
+          "run_id": "final-20261003-02",
+          "target_end_date": "2024-12-09",
+          "target_start_date": "2024-12-03"
+        },
+        "metrics": {
+          "agreement": {
+            "denominator": 239,
+            "status": "available",
+            "value": 0.9288702928870293
+          },
+          "balanced_accuracy": {
+            "denominator": "positive=71; negative=168",
+            "status": "available",
+            "value": 0.880281690140845
+          },
+          "event_prevalence": {
+            "denominator": 239,
+            "status": "available",
+            "value": 0.29707112970711297
+          },
+          "false_alert_rate": {
+            "denominator": 168,
+            "status": "available",
+            "value": 0.0
+          },
+          "missed_crossing_rate": {
+            "denominator": 71,
+            "status": "available",
+            "value": 0.23943661971830985
+          },
+          "precision": {
+            "denominator": 54,
+            "status": "available",
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 71,
+            "status": "available",
+            "value": 0.7605633802816901
+          }
+        }
+      },
+      {
+        "counts": {
+          "FN": 4,
+          "FP": 0,
+          "N": 239,
+          "TN": 230,
+          "TP": 5,
+          "evaluable_paired_case_count": 239,
+          "forecast_unavailable_or_gated_count": 0,
+          "initially_above_threshold_count": 239,
+          "origin_known_at_or_below_count": 0,
+          "retrospective_unavailable_or_gated_count": 0,
+          "scenario_at_or_below_count": 11,
+          "unavailable_case_count": 0
+        },
+        "group": {
+          "canonical_config_id": "GBM018",
+          "configuration_id": "GBM018",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_origin": "2024-12-02",
+          "horizon": 1,
+          "inventory_basis": "constructed_origin_scenario",
+          "methodology_status": "proposed_for_group_approval",
+          "model": "lightgbm",
+          "run_id": "final-20261003-02",
+          "target_end_date": "2024-12-03",
+          "target_start_date": "2024-12-03"
+        },
+        "metrics": {
+          "agreement": {
+            "denominator": 239,
+            "status": "available",
+            "value": 0.9832635983263598
+          },
+          "balanced_accuracy": {
+            "denominator": "positive=9; negative=230",
+            "status": "available",
+            "value": 0.7777777777777778
+          },
+          "event_prevalence": {
+            "denominator": 239,
+            "status": "available",
+            "value": 0.03765690376569038
+          },
+          "false_alert_rate": {
+            "denominator": 230,
+            "status": "available",
+            "value": 0.0
+          },
+          "missed_crossing_rate": {
+            "denominator": 9,
+            "status": "available",
+            "value": 0.4444444444444444
+          },
+          "precision": {
+            "denominator": 5,
+            "status": "available",
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 9,
+            "status": "available",
+            "value": 0.5555555555555556
+          }
+        }
+      },
+      {
+        "counts": {
+          "FN": 40,
+          "FP": 0,
+          "N": 239,
+          "TN": 78,
+          "TP": 121,
+          "evaluable_paired_case_count": 239,
+          "forecast_unavailable_or_gated_count": 0,
+          "initially_above_threshold_count": 239,
+          "origin_known_at_or_below_count": 0,
+          "retrospective_unavailable_or_gated_count": 0,
+          "scenario_at_or_below_count": 11,
+          "unavailable_case_count": 0
+        },
+        "group": {
+          "canonical_config_id": "GBM022",
+          "configuration_id": "GBM022",
+          "evaluation_stage": "final_evaluation",
+          "evidence_role": "primary",
+          "forecast_origin": "2024-12-02",
+          "horizon": 14,
+          "inventory_basis": "constructed_origin_scenario",
+          "methodology_status": "proposed_for_group_approval",
+          "model": "xgboost",
+          "run_id": "final-20261003-02",
+          "target_end_date": "2024-12-16",
+          "target_start_date": "2024-12-03"
+        },
+        "metrics": {
+          "agreement": {
+            "denominator": 239,
+            "status": "available",
+            "value": 0.8326359832635983
+          },
+          "balanced_accuracy": {
+            "denominator": "positive=161; negative=78",
+            "status": "available",
+            "value": 0.8757763975155279
+          },
+          "event_prevalence": {
+            "denominator": 239,
+            "status": "available",
+            "value": 0.6736401673640168
+          },
+          "false_alert_rate": {
+            "denominator": 78,
+            "status": "available",
+            "value": 0.0
+          },
+          "missed_crossing_rate": {
+            "denominator": 161,
+            "status": "available",
+            "value": 0.2484472049689441
+          },
+          "precision": {
+            "denominator": 121,
+            "status": "available",
+            "value": 1.0
+          },
+          "recall": {
+            "denominator": 161,
+            "status": "available",
+            "value": 0.7515527950310559
+          }
+        }
+      }
+    ]
+  },
+  "figure": "fig02_proxy_crossings",
+  "identity_status": "Pinned/local byte identity; not independent review or acceptance.",
+  "purpose": "Explain crossing detections, missed events and denominator-defined rates.",
+  "schema": "retail-thesis-figure-evidence-v1",
+  "source_file_sha256": {
+    "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "reports/decision-support/issue-168-inventory-v1/summary.json": "6c3ba9308455c6df1de10f68b1afd8227797231738f490865fca14b99a9b8f5d",
+    "reports/forecasting/final-20261003-02/comparison.md": "884edba6572bee6460750b86465ffd6e3d5276ac6ac9c395069eee1e45f44e4b",
+    "reports/inventory-risk/issue-164/evaluation-v1/evaluation.json": "4ac47ed2b51f581eb07caeaa58abff8a266a1b767dbeee34fb048ebe32e9cae8",
+    "reports/inventory-risk/issue-164/evaluation-v1/manifest.json": "5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9",
+    "reports/inventory-risk/issue-164/evaluation-v1/prospective.json": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+    "reports/inventory-risk/issue-164/evaluation-v1/report.md": "0c652f1e02e49e43b1b6955824cd0caa13499cfa5cda443200a8f94e0767461b",
+    "research-materials/issue-214/worked-scenario-v1.json": "c79c8a51debe0012048a341e71c76841c21f1065c0f2fdf62b81926c2dc584fb"
+  }
+}

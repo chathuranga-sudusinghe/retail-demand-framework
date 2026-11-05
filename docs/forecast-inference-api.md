@@ -161,6 +161,57 @@ curl.exe -i http://127.0.0.1:8000/decision-support/cases/F99
 
 The WSL and Windows virtual environments are platform-specific. A missing/broken interpreter must be repaired in the applicable environment before recording a manual demo result. The serving commands above are a human-run walkthrough, not evidence that a hosted demo or Windows execution has occurred.
 
+#### Human-observed retained-route walkthrough — 5 November 2026
+
+**Executor:** Chathuranga, using the existing WSL repository environment and the
+uvicorn command above. His supplied terminal screenshot shows application
+startup completing and the following access-log outcomes. The separately pasted
+F99 response has HTTP date `2026-11-05 05:39:21 UTC` (11:09:21 Asia/Colombo), with
+`detail.reason_code: unknown_case`; this is a response timestamp, not an asserted
+timestamp for every other request.
+
+| Request | Human-supplied observation |
+|---|---|
+| `GET /decision-support/cases` | HTTP 200 |
+| `GET /decision-support/cases/F01` | HTTP 200 |
+| `GET /decision-support/cases/F04` | HTTP 200 |
+| `GET /decision-support/cases/F99` | HTTP 404; `unknown_case` confirmed in pasted response |
+
+Screenshot SHA-256:
+`cdd13457e51e7bc016b72b99ce6388f9c73172fec07468141c911513e155ad64`.
+The user-supplied screenshot is not copied into the repository. This table
+records startup/reachability/error handling, not human semantic acceptance of
+every response field.
+
+**Separate automated read-only follow-up:** Codex queried the already-running
+server using only these four GET routes. The roster's 20/20 original record
+objects matched the tracked `records.json`; F01 and F04 also matched their
+original records and horizons 1/28. F04's prospective projection omitted
+inventory level, reorder point, buffer, predicted margin and exposure state.
+F99 returned the expected reason. No POST request, inference, replay, preparation,
+assessment, evaluator or model fit was invoked by this follow-up.
+
+The checkout inspected after the run was
+`15d114a5ad73f42f7caf65b4ca49e8dc1efd9355`, with uncommitted figure/documentation
+changes. `src/api/main.py` and `src/decision_support/retained_cases.py` were
+unchanged from that HEAD. The installed inventory inputs matched all four
+tracked review-copy files, and the records hash matched its preparation manifest.
+These local identity checks remain distinct from independently reviewed
+reference provenance and B14 producer/consumer acceptance. Didilani's D2,
+Dewmi's W2, technical representation and human code peer reviews remain separate.
+
+#### Static figure delivery for the retained evidence
+
+The retained-case routes above remain prospective-only. The separate
+[eight-figure exporter](research/thesis-figure-delivery.md) reads the retained
+forecast, inventory evaluation, worked trace and transparency summary to produce
+static PNG/SVG figures and source-index JSON in
+`reports/figures/final-thesis-figures/`. It does not add an API endpoint, invoke
+inference or recalculate research results. Retrospective observations, confusion
+counts and margins appear only in labelled evaluation figures, never in the
+prospective API responses. The guide records actual generation, identity checks,
+reviewer corrections, the human rerun command and remaining component reviews.
+
 #### Scoped checks and observed automated outcomes — 25 October 2026
 
 The retained-case tests use disposable synthetic inputs. Reproduce the focused checks from the repository root in WSL:

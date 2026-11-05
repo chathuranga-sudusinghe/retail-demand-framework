@@ -64,3 +64,26 @@ def test_failed_save_releases_figure_and_propagates_original_exception(
     assert figure.axes == []
     assert figure.canvas is None
     assert canvas.renderer is None
+
+
+def test_vector_failure_releases_figure_without_hiding_save_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    figure = _figure()
+    canvas = figure.canvas
+    original_save = figure.savefig
+    error = OSError("synthetic SVG failure")
+
+    def fail_vector(path: Path, **kwargs: object) -> None:
+        if path.suffix == ".svg":
+            raise error
+        original_save(path, **kwargs)
+
+    monkeypatch.setattr(figure, "savefig", fail_vector)
+    with pytest.raises(OSError) as raised:
+        _save_figure_and_release(
+            figure, tmp_path / "partial.png", vector_path=tmp_path / "failed.svg"
+        )
+    assert raised.value is error
+    assert figure.canvas is None and figure.axes == []
+    assert canvas.renderer is None
