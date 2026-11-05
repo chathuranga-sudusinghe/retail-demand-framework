@@ -5,7 +5,7 @@
 **Responsible member:** Tinosh Gamage — System Integration and Prototype Engineering
 **Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
 **Updated:** 30 October 2026, documentation reconciliation at `a3f6368bbbec6cc7a2bfc67bd46e29202bef8b63`. Retained-API implementation baseline: `b6f196ad73d3a31017582f81dbc7f5183ef573df`; original #177 inspection baseline: `33b44928c12ccd0e0bf8154dec899be51fa39b5f`.
-**Status:** The retained exporter, request-time API, inventory mapping/runner, prospective record bridge and read-only retained roster/case API are merged. Constructed-origin inventory results and 160 checks on 20 records are published. The scoped request-time producer/source/consumer handoff is accepted under #203. DR-012 approval and the team-accepted deferrals are recorded separately from immutable historical labels. Source timing remains unknown; retained-export/component acceptance, human-observed retained demonstrations, rendered views and final integrated acceptance remain under #201/#182/#179.
+**Status:** The retained exporter, request-time API, inventory mapping/runner, prospective record bridge and read-only retained roster/case API are merged. Constructed-origin inventory results and 160 checks on 20 records are published. The scoped request-time producer/source/consumer handoff is accepted under #203. DR-012 approval and the team-accepted deferrals are recorded separately from immutable historical labels. Source timing remains unknown; retained-export/component acceptance, rendered-view review and final integrated acceptance remain under #201/#182/#179. Human-observed retained startup/route checks and static-figure generation are recorded in the API and figure-delivery guides.
 
 ---
 
@@ -238,13 +238,25 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 
 ## 8. Readiness summary by handoff
 
+**Static figure implementation — 5 November 2026:** The four approved inventory
+questions now have a compact eight-figure delivery, including Chathuranga's
+explicitly approved forecasting/transparency additions. The
+[delivery guide](research/thesis-figure-delivery.md) records sources, synthetic
+checks, actual human generation, current readability corrections and recovery.
+The stable output is `reports/figures/final-thesis-figures/`; static figures are
+separate from the prospective retained routes and live inference. Didilani's D2,
+Dewmi's W2, forecasting/technical interpretation and human code peer approval
+remain separate. B14 exact-export acceptance is not inferred from PNGs or checksums. The separate
+[human retained-route record](forecast-inference-api.md#human-observed-retained-route-walkthrough--5-november-2026)
+now supplies startup/HTTP observations and separately attributed read-only parity checks.
+
 | Handoff | Available / frozen | Remaining acceptance or decision |
 |---|---|---|
 | Retrospective forecasting research | Completed validation/final evidence; approved configurations, fresh-refit policy and producer mapping | Preserve the reviewed final interpretation and retained evidence |
 | Prospective forecasting input/API | Retained exporter, request-time API, frozen DR-014 producers and synthetic examples are merged; v2 serving evidence and the separate 29 October producer/source decision complete the scoped #203 live handoff | Retained-export/source/component acceptance remains under #201/B14; live acceptance does not establish rendered or integrated acceptance |
 | Forecasting → inventory-risk | Group-approved DR-012 method, implemented retained mapping and human-run scenario evidence | Source timing stays unknown; exact retained-export/consumer and representation acceptance continue under #201/B14. Additional h28 inventory use is deferred, not an automatically required extension |
 | Inventory-risk → responsible decision support | Prospective bridge, populated records, completed record assessments and W1 interpretation/display acceptance as reported by Chathuranga | Retained component/representation acceptance and W2 rendered review remain under #201/#182. Numerical uncertainty, replenishment and automatic review rules remain deferred/unavailable |
-| Components → prototype/API | PR #197 delivered retained roster/case response schemas, source-bound adapters and synthetic API/integration checks; #183 is closed | #201 continues human-observed retained runtime handoff, source/component acceptance and approved inventory views, assigned to Didilani with relevant component/technical reviewers; final prototype acceptance remains under #179 |
+| Components → prototype/API | PR #197 delivered retained roster/case response schemas, source-bound adapters and synthetic API/integration checks; #183 is closed | #201 now has recorded human-observed retained startup/route checks and an eight-figure delivery; source/component and rendered acceptance remain with the relevant reviewers, and final prototype acceptance remains under #179 |
 
 Completed retrospective evidence resolves the former absence-of-validation-evidence blocker. It does not resolve prospective contract acceptance or other members' methodologies. Closed issue references below identify historical requirements or delivered milestones; #179 is the current umbrella, with #201/#182 tracking the relevant continuations.
 
@@ -382,6 +394,18 @@ Current delivery waits on retained/component and rendered acceptance. Deferred m
 | #203 evidence helper | `tests/test_capture_consumer_evidence.py` checks, with an in-memory synthetic API, that `capture_consumer_evidence.py` derives AS-01 to AS-06 and the request-time contract, changed-history and rejection outcomes from recorded exchanges (passing and failing cases), refuses to overwrite existing evidence and re-verifies stored outcomes | Saved-model behaviour, producer approval or independently reviewed source verification |
 
 The [recorded checks](forecast-inference-api.md#scoped-checks-and-observed-automated-outcomes--25-october-2026) report 128 targeted synthetic tests plus scoped Ruff/MyPy passing for the PR #197 correction. [CI Tests](https://github.com/chathuranga-sudusinghe/retail-demand-framework/actions/runs/40180999250) and [CI Quality](https://github.com/chathuranga-sudusinghe/retail-demand-framework/actions/runs/40180999258) passed at `c540f0384b3a3fe04f56124a90d5e7ac32951f5c`. These are reused results, not new executions for this documentation update. Advisory wording, actual rendered views, retrospective metric presentation and final component acceptance still require their applicable reviews; no complete AS-01–AS-10 pass is asserted.
+
+**Additional #201 implementation checks — 5 November 2026:** The approved
+readability/recovery follow-up passed 75 synthetic tests across the four
+visualization test files and `tests/test_decision_support_retained_cases.py`.
+This adds marker/value retention, explicit evaluation-only/negative-margin
+caveats, hatch-label backgrounds, tick-label spacing and interrupted-publication
+recovery checks to the existing retained-route coverage. Scoped Ruff/MyPy and
+format checks passed; 186 local link targets in the changed delivery/API/report
+documents existed. The installed API inventory bundle matched the four tracked
+review-copy files byte for byte, and the records hash matched its preparation
+manifest. These local checks do not upgrade reference provenance or replace
+human runtime observations, B14 producer/consumer acceptance, D2 or W2.
 
 ### Consumer Verification Results — related to #203
 

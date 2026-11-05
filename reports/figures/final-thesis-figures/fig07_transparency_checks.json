@@ -1,0 +1,154 @@
+{
+  "caption": "Twenty purposively selected records, eight checks each. Not assessable is distinct from not met; record transparency is not usability or decision quality.",
+  "data": {
+    "assessment": {
+      "assessors": [
+        "Chathuranga"
+      ],
+      "criteria": {
+        "Assumption visibility": {
+          "applicable": 20,
+          "met": 20,
+          "met_proportion": 1.0,
+          "not assessable": 0,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Forecast visibility": {
+          "applicable": 20,
+          "met": 20,
+          "met_proportion": 1.0,
+          "not assessable": 0,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Human-review transparency": {
+          "applicable": 20,
+          "met": 20,
+          "met_proportion": 1.0,
+          "not assessable": 0,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Limitation visibility": {
+          "applicable": 20,
+          "met": 20,
+          "met_proportion": 1.0,
+          "not assessable": 0,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Recommendation traceability": {
+          "applicable": 20,
+          "met": 0,
+          "met_proportion": 0.0,
+          "not assessable": 20,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Risk visibility": {
+          "applicable": 20,
+          "met": 15,
+          "met_proportion": 0.75,
+          "not assessable": 5,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Source distinction": {
+          "applicable": 20,
+          "met": 20,
+          "met_proportion": 1.0,
+          "not assessable": 0,
+          "not met": 0,
+          "not_applicable": 0
+        },
+        "Uncertainty visibility": {
+          "applicable": 20,
+          "met": 0,
+          "met_proportion": 0.0,
+          "not assessable": 20,
+          "not met": 0,
+          "not_applicable": 0
+        }
+      },
+      "interpretation": "Counts of human-entered record-level assessments, not automated assessment, prototype acceptance or proven business effectiveness.",
+      "mapping_version": "issue-164-168-v1",
+      "preparation_code_sha256": {
+        "src/decision_support/assessment.py": "e6bdfe824667252405345e2258bfef5e3d56763d28ca14469674893dfb4d2842",
+        "src/decision_support/records.py": "92c9cceeac7dddfce50687bde60f3fc40513cf4bc507ad79529c445538d5027d",
+        "src/inventory_risk/forecast_handoff.py": "f80c58e4c6795dad5cb43452fa28e9b69785cbe4351ad2fc30b88392b50e58ea"
+      },
+      "prepared_at": "2026-10-23T06:09:37.526263+00:00",
+      "prepared_records": 20,
+      "proportion_denominator": "All applicable checks, including not assessable; non-applicable checks excluded.",
+      "records_sha256": "dc029ba66c07009202f17643a3565f550e7ac2aa7c23ac411ea15f964c91937a",
+      "review_schema": "issue-168-review-v2",
+      "review_sha256": "91585207e718ada57aa29ffad782eb513638a62d0a98ae8a5a36b3fea1978fa7",
+      "reviewed_check_rows": 160,
+      "reviewed_records": 20,
+      "selected_forecasts": 20,
+      "source": {
+        "evaluation_stage": "final_evaluation",
+        "export_schema": "issue-132-forecast-export-v1",
+        "export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+        "integrity_result": {
+          "baseline_evaluations": 8,
+          "evaluations": 28,
+          "learned_refits": 20,
+          "models_replayed": 20,
+          "predictions": 7000,
+          "status": "passed"
+        },
+        "inventory_evidence": {
+          "dataset_provenance_sha256": "35e9fb4218bfaf301703d6885decebaee6a3af2aa85aef55247c3a77d0ea964f",
+          "manifest_sha256": "5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9",
+          "operator": "Chathuranga",
+          "prospective_sha256": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+          "source": {
+            "forecast_export_sha256": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+            "forecast_source": {
+              "evaluation_stage": "final_evaluation",
+              "integrity_result": {
+                "baseline_evaluations": 8,
+                "evaluations": 28,
+                "learned_refits": 20,
+                "models_replayed": 20,
+                "predictions": 7000,
+                "status": "passed"
+              },
+              "prediction_receipt_sha256": "853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692",
+              "run_id": "final-20261003-02",
+              "run_manifest_path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+              "run_manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+              "source_schema": "issue-130-final-v1"
+            },
+            "mapping_version": "issue-164-168-v1",
+            "snapshot_basis": "Constructed no-receipt scenario: take the recorded Inventory_Level and Reorder_Point on 2024-12-02 as hypothetical starting balances immediately before the 2024-12-03 target window. Hold Reorder_Point fixed; model no receipts, transfers, returns, losses or other adjustments. This is not verified source timing or a reconstruction of realised inventory.",
+            "snapshot_policy": "constructed-origin"
+          }
+        },
+        "prediction_receipt_sha256": "853692cbf89076ac1c63791a36440a4abb433d57c8c759f0e364ce7d544ed692",
+        "run_id": "final-20261003-02",
+        "run_manifest_path": "artifacts/forecasting/final-20261003-02/run_manifest.json",
+        "run_manifest_sha256": "adec21bf384ca898d966dd06234682d0fac0b3c014067d8ebb563bbd218feb43",
+        "source_schema": "issue-130-final-v1"
+      }
+    },
+    "forecast_origin": "2024-12-02",
+    "historical_source_labels_unchanged": true
+  },
+  "figure": "fig07_transparency_checks",
+  "identity_status": "Pinned/local byte identity; not independent review or acceptance.",
+  "purpose": "Show existing human-entered criterion outcomes and unassessable methods.",
+  "schema": "retail-thesis-figure-evidence-v1",
+  "source_file_sha256": {
+    "data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json": "c823f1bc7e44ee41f75a56545e2ccc26e2a6662366f593a669f990f3b856b863",
+    "reports/decision-support/issue-168-inventory-v1/summary.json": "6c3ba9308455c6df1de10f68b1afd8227797231738f490865fca14b99a9b8f5d",
+    "reports/forecasting/final-20261003-02/comparison.md": "884edba6572bee6460750b86465ffd6e3d5276ac6ac9c395069eee1e45f44e4b",
+    "reports/inventory-risk/issue-164/evaluation-v1/evaluation.json": "4ac47ed2b51f581eb07caeaa58abff8a266a1b767dbeee34fb048ebe32e9cae8",
+    "reports/inventory-risk/issue-164/evaluation-v1/manifest.json": "5d9ea6206c277f4853dc39fc5fdffdcd93f1df629c67fc5a8f2b524038c0fda9",
+    "reports/inventory-risk/issue-164/evaluation-v1/prospective.json": "5c731c9e535078caa85a9cad1df49596eda4022dfbcdf5a54c43959dcbcfd8d4",
+    "reports/inventory-risk/issue-164/evaluation-v1/report.md": "0c652f1e02e49e43b1b6955824cd0caa13499cfa5cda443200a8f94e0767461b",
+    "research-materials/issue-214/worked-scenario-v1.json": "c79c8a51debe0012048a341e71c76841c21f1065c0f2fdf62b81926c2dc584fb"
+  }
+}
