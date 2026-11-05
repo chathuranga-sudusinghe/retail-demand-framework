@@ -527,7 +527,7 @@ does not show: observed demand, errors, metrics
 
 ### 12.5 Conceptual scenarios — unavailable information, advisory-only, not assessed
 
-These describe **behaviour only**. They do not set final interchange field names, codes or encodings (B9 remains open). DR-011 writes the review state as "not assessed"; Issue #101 writes it `not_assessed`. The final interchange spelling is not decided here.
+These describe **behaviour only**. The implemented records/API retain `human_review_status=not_assessed` and source-specific unavailable reasons. Dewmi’s [accepted W1 interpretation/display baseline](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) supplies the semantic handoff; a new universal vocabulary or another W1 decision is not required. B9’s remaining work concerns actual component/presentation acceptance under #182/#201. Human-readable labels may explain existing codes without changing retained values. This reconciliation records the current state on 5 November 2026.
 
 #### Unavailable information (AS-07)
 
@@ -536,8 +536,8 @@ DR-011 separates three reasons: **no agreed method**, **does not apply**, and **
 | Synthetic situation | Acceptable behaviour | Must never happen |
 |---|---|---|
 | Uncertainty for any forecast (no method, B11) | Shown as unavailable; reason: no agreed method | Shown as 0, ±0 or an invented range |
-| 28-day inventory exposure (not approved, B8) | Shown as unavailable; reason: waiting for a decision | Calculated by extending DR-012 on its own |
-| Replenishment quantity (provisional, B12) | Shown as unavailable; reason: no agreed method | Shown as 0 units or as a suggested order |
+| 28-day inventory exposure (approved deferral, B8) | Shown as unavailable with its original source reason and current deferred-scope context | Calculated by extending DR-012 on its own, or described as an unresolved current-delivery decision |
+| Replenishment quantity (approved deferral, B12) | Shown as unavailable; preserve the source reason and disclosed limitation | Shown as 0 units or as a suggested order |
 | Origin inventory snapshot missing for `SKU_SYN_A` / `WH_SYN_1` | Record retained, exposure unavailable with a reason and not scored; the forecast itself can still be shown (DR-012 §2) | Record silently dropped, scored, or filled from a later snapshot |
 | Upstream evidence missing for a decision-support record | Explicit reason recorded | Field left blank or shown as complete |
 | Observed demand of 0 on a real day | Shown as 0 — a real zero | Treated as unavailable |

@@ -125,13 +125,13 @@ The historical EDA shows level autocorrelation but does not prove independent we
 
 Excluded alternatives include ordinal day_of_week, month/quarter/year calendars, lag_28, rolling medians, growth ratios/change features, interactions, cumulative/calendar-end encodings and future promotion scenarios. The 28-day mean/std already retain the long local window; extra correlated summaries and denominator-sensitive ratios are outside the accepted feature set. Excluded definitions are not an alternative executable contract.
 
-## 7. Minimum history and training-row completeness
+## 6. Minimum history and training-row completeness
 
 Require **28 complete consecutive daily observations per pair**, ending at each row's own origin, for every model/horizon. This is driven by rolling_mean_28 and rolling_std_28, not lag_28. A labelled row additionally requires all h target days observed by its fitting cutoff, without crossing that cutoff.
 
 For N consecutive historical dates, eligibility before other exclusions is N - 28 - h + 1 rows per series. The initial 91-day history yields 63, 57, 50 and 36 complete rows for horizons 1, 7, 14 and 28. These are feasibility counts, not independent samples or adequacy claims. Overlapping labels create dependence. No partial labels or zero filling are accepted.
 
-## 8. Approval and implementation boundaries
+## 7. Approval and implementation boundaries
 
 The feature/preprocessing contract is frozen; completed performance and exposure limitations are in [final results](forecasting-final-evaluation.md). Changing this contract requires new human review and cannot be justified using the final interval. Documentation does not authorize preparation, fitting or evaluation.
 

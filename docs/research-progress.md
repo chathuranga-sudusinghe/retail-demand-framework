@@ -118,3 +118,36 @@ The following is a template, not an event:
 - CI: [PR #176](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/176) merged documentation/report change-scope optimisation. The two main-branch CI runs at baseline `33b4492` completed successfully; these checks cover that baseline. Validation of the #177 changes must be assessed separately through their own checks and human review.
 - Current changes: align stale current documentation and approval labels; retain historical proposed-status bundle consumption without changing calculations or evidence bytes. No research execution or Git finalisation occurs in this refinement.
 - Next action: review the refinement and its checks, then a human opens/merges the PR. Inspect the resulting baseline before publishing the [next member-owned issue scopes](integration-contract-readiness.md#13-remaining-work-handoff-after-issue-177).
+
+
+### 2026-10-29 — C1 scope decisions recorded; request-time handoff accepted
+
+- Recorded retrospectively: 2026-11-05; reporting/forecasting member: Chathuranga.
+- The [C1 scope record](research-design.md#164-human-decisions-and-c1-closeout-record) records team acceptance reported on 29 October of the bounded descriptive conclusion and five disclosed limitations/deferred extensions. B8/B10/B11/B12 are resolved for current scope through approved deferral; unavailable methods are not silently implemented.
+- [#203 producer/source acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) accepts the scoped request-time handoff; retained-export and component acceptance remain separate.
+
+### 2026-10-30 — C1 research closure
+
+- Recorded retrospectively: 2026-11-05; coordinated by Chathuranga.
+- [#191 closed](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/191#issuecomment-6515040267) on the accepted descriptive scope. Significance remains untested; this closes neither final prototype acceptance nor #179.
+
+### 2026-11-01 — Dewmi’s direct W1 acceptance
+
+- Recorded retrospectively: 2026-11-05; responsible-use reviewer: Dewmi.
+- [Dewmi accepted the interpretation/display baseline](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) and supported automatic managerial-review triggers only as a possible deferred extension. Reuse that W1 decision and the completed 160 checks; W2 remains a distinct actual-interface review under #182.
+
+### 2026-11-02 — Multi-horizon worked scenario delivered
+
+- Recorded retrospectively: 2026-11-05; executor/forecasting member: Chathuranga.
+- [PR #215](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/215) merged the #214 scenario implementation and documented human execution at `ae6905cd971f4e7a3a21d04d1b37744dc08bd83b`. The [worked example](worked-example-scenario.md#9-recorded-human-execution--2-november-2026) retains the exact trace and interpretation; no replay or metric recalculation is performed here.
+- [#179’s delivery update](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6584118919) preserves outstanding human review and component-acceptance boundaries. Delivery is not a new approval of inventory methods or evidence of managerial effectiveness.
+
+### 2026-11-05 — Meeting evidence delivered; current-state reconciliation prepared
+
+- [PR #216](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/216) merged the dated discussion/meeting records at `e17f6961db64ba70f80a30a65447c8b03c5b077b`. [Meeting records](meetings/README.md) distinguish original messages from Chathuranga’s later lecturer/attendance clarifications.
+- Chathuranga explicitly approved documentation reconciliation of accepted deferrals, W1, current review tracking and supplied assessment requirements in the working conversation on 5 November 2026. This entry records that instruction and the resulting documentation; it does not supply a new component approval or peer-review decision.
+- PNG regeneration, renderer changes and PNG-delivery status updates are explicitly excluded from this pass. Original evidence, numerical results and frozen producers are unchanged. #179 and outstanding retained/component acceptance remain separate from later submission preparation under #204.
+
+- Assessment-source reconciliation on 5 November also incorporates all seven supplied 2026/27 COMP1884 specifications, templates and process documents. The [criteria checklist](greenwich-criteria-checklist.md), [AI-use note](university-ai-guidance.md) and [references](references.md#university--project-guidance) replace older provisional/website-only assessment mappings with the supplied sources. Report/presentation rubrics and acknowledged AI support are documented. Chathuranga subsequently confirmed continued Tier 2 application on 5 November and instructed use of the supplied student AI/AIR and GenAI referencing PDFs; the AI-use note and checklist record those sources and required AIR placement. Official deadlines remain TBA. The new research-design source check finds no explicit formal hypothesis-testing requirement and preserves the existing accepted descriptive scope. No submission files are assembled in this reconciliation.
+
+- Following an AI-assisted repository inspection reported on 5 November 2026, Chathuranga authorised the suitable remaining corrections on this branch while explicitly ruling out model training. The CI description now matches the shared scope detector; Dewmi’s overview links her direct scoped W1 acceptance, and conceptual field labels point to the implemented record. A missing runtime package now raises a named `ExecutionBlocked` error, with synthetic regression tests. This records implementation scope, not a model/research rerun or completed peer approval. PNG/renderer work remains postponed.

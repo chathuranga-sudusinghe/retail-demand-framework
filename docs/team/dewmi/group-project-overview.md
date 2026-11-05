@@ -56,6 +56,8 @@ Dewmi owns responsible decision-support record semantics, management-facing mean
 
 ## Candidate decision-support output
 
+The list below describes the earlier conceptual output. The implemented [DecisionSupportRecord](../../../src/decision_support/records.py) and [accepted semantic handoff](../../research/responsible-decision-support-evaluation.md#5-semanticpresentation-handoff-for-tinosh) define the current fields and meanings, including `inventory_risk_evidence` and `human_review_status`. Candidate labels do not introduce replacement fields or new rules.
+
 ```text
 SKU_ID
 Warehouse_ID
@@ -96,6 +98,8 @@ Her component consumes the outputs of Chathuranga and Didilani and implements th
 **Reconciled 30 October 2026:** [The C1 record](../../research-design.md#164-human-decisions-and-c1-closeout-record) attributes W1 responsible-use interpretation/display acceptance and automatic-review-rule deferral to the team as reported by Chathuranga on 29 October. This is not an invented independent review record or managerial clearance. Actual rendered W2 review remains under #182 when #201 supplies reviewable views; neither whole issue must close before that review can begin.
 
 Twenty inventory-linked records and all 160 record-level assessment outcomes are available in the [evidence index](../../../reports/README.md#inventory-linked-records). Chathuranga is the recorded executor/assessor; this does not transfer Dewmi's component responsibility. Dewmi reviews downstream meaning and the rendered presentation with Tinosh. Do not repeat unchanged record checks as a substitute for prototype acceptance.
+
+**Direct confirmation — 1 November 2026, recorded here on 5 November:** [Dewmi accepted the W1 interpretation/display baseline](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) and supported automatic managerial-review triggers only as a possible deferred extension. This is her scoped responsible-use confirmation, not individual approval of every group hypothesis, a repeat of the 160 checks or completion of W2.
 
 ## Decision-support output alignment
 

@@ -270,6 +270,8 @@ The same verified source always gives byte-identical output. The export stays lo
 
 Generating the real derivative export requires explicit authorization from Chathuranga covering the named run, pinned manifest and approved destination. An existing authorization covering that same operation remains sufficient; do not request it again. Synthetic tests use temporary synthetic evidence only and do not require real-bundle execution authorization. Neither contract review nor exporter execution authorizes training, refitting, prediction generation or metric recalculation.
 
+**Current uncertainty disposition — 5 November 2026 reconciliation:** The October contract choice below preserved unavailable uncertainty without resolving a method at that time. Subsequently, the team accepted prospective uncertainty as a disclosed limitation/deferred extension under the [C1 scope/closeout record](research-design.md#164-human-decisions-and-c1-closeout-record). B11 is resolved for current scope through that deferral; `unavailable` / `no_agreed_method` remains correct. No uncertainty estimator or new research run is approved.
+
 ## 12. Contract choices approved by Chathuranga
 
 Approval by Chathuranga: 2026-10-05, by explicit instruction in the working session to adopt D1–D5, add the narrow storage-policy allowance and update the readiness reference. This approval covers the contract choices and documentation changes; it does not authorize a real export run or approve an implementation that has not yet been reviewed.
@@ -278,7 +280,7 @@ Approval by Chathuranga: 2026-10-05, by explicit instruction in the working sess
 |---|---|---|
 | D1 | Forecast value field | Keep `prediction`, copied unchanged from the evidence; `forecast_type` and `unit` define its meaning. |
 | D2 | Export location | `data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json`, covered by the narrow [storage-policy row](artifact-storage-policy.md#storage-responsibilities). Generated output stays local/ignored and outside retained evidence. |
-| D3 | Uncertainty in records | Explicit `unavailable` with `no_agreed_method`; no uncertainty method is introduced or B11 resolved. |
+| D3 | Uncertainty in records | Original 5 October choice: explicit `unavailable` with `no_agreed_method`; no uncertainty method introduced. B11 was subsequently resolved for current scope through the approved C1 deferral described above. |
 | D4 | Contract identifier | `issue-132-forecast-export-v1`. |
 | D5 | Decision record | Record these choices here and reference this contract in [integration readiness](integration-contract-readiness.md). No new Decision Record. |
 

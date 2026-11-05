@@ -122,7 +122,7 @@ The following remain group responsibilities:
 - meeting and decision records;
 - final integration, led technically by Tinosh with component-owner review;
 - group report preparation;
-- presentation preparation.
+- coordinated presentation preparation, while each student retains the individual presentation, recording and reflective-essay submission required by the supplied COMP1884 specification.
 
 ## 6. Scope control
 
@@ -153,3 +153,10 @@ Name the person who gave an instruction, reviewed work or authorised execution, 
 Use “COMP1884 lecturer” for the teaching role clarified by Chathuranga, and “module leader” only where that distinct role is evidenced. Teaching guidance does not establish a supervisor appointment or lecturer approval of project methodology. Record any specific confirmation required by the applicable module instructions separately.
 
 The [criteria checklist](greenwich-criteria-checklist.md) maps assessment evidence and unresolved requirements. It does not certify university compliance or grant experiment/Git permission.
+
+
+## 9. Supplied COMP1884 assessment documents
+
+The supplied 2026/27 coursework specifications and templates now provide the assessment-specific requirements; the [criteria checklist](greenwich-criteria-checklist.md#assessment-requirements-and-current-evidence) and [source register](references.md#university--project-guidance) own their mapping and provenance. The general COMP1884/COMP1885 guidance expects each group member to contribute code to one cohesive product. Preserve actual contribution attribution; this does not transfer existing component responsibilities or assert that any member’s assessment requirements have been met.
+
+Use the COMP1884-specific report/presentation specifications for exact deliverables. Generic references to supervisors in the supplied guidance describe the university’s teaching/advisory process; they do not by themselves identify this group’s appointed contact or change the recorded lecturer terminology. COMP1885 rules and example timelines are not imported as this project’s requirements or deadlines. Final submission-file preparation remains separate from repository completion under #179 → #204.
