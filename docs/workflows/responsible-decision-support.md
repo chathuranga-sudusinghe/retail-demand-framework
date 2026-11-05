@@ -39,6 +39,8 @@ Human review / managerial judgement
 
 ## Input boundary
 
+The flow above uses conceptual labels. Current implemented output fields are defined by [DecisionSupportRecord](../../src/decision_support/records.py), including `inventory_risk_evidence` and `human_review_status`, and the [accepted semantic handoff](../research/responsible-decision-support-evaluation.md#5-semanticpresentation-handoff-for-tinosh). The conceptual flow does not require unavailable replenishment/uncertainty methods or automatic review triggers to be implemented.
+
 The main analytical inputs are produced upstream:
 
 - Chathuranga produces the demand forecast and forecast-evaluation information.

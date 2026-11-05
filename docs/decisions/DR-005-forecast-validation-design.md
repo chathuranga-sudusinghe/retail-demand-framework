@@ -8,7 +8,7 @@
 **Revision status:** Current forecasting design human-approved; experiment execution NOT authorised
 **Documentation alignment:** 2026-09-29, on Chathuranga's explicit instruction
 **Revision owner:** Chathuranga
-**Group-level acceptance:** Pending; separate from Chathuranga's current forecasting approval
+**Historical group-level acceptance at the September 2026 revision:** Recorded as pending, separately from Chathuranga's forecasting approval. The current-authority note above governs the completed study; this line does not assert a new group decision or a current execution requirement.
 **Related issue:** [#31 — Define expanding-window forecast validation design](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/31)
 **Approval provenance:** The original design was approved through Issue #31. Chathuranga supplied the horizon/fold amendment on 2026-09-28 and explicitly confirmed the current forecasting position for this September 29 alignment. Implementation/protocol acceptance and separate group-level matters remain gated. Separate lecturer approval is not asserted.
 

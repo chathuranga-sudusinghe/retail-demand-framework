@@ -2,6 +2,7 @@
 
 import json
 import shutil
+from importlib.metadata import PackageNotFoundError
 from unittest.mock import Mock
 
 import pandas as pd
@@ -131,6 +132,18 @@ def test_exact_scope_and_producer_mapping_are_read_from_reviewed_decision(
     fixture["validation_check"].assert_called_once_with(
         fixture["layout"].run_directory(context.authorization.validation_run_id)
     )
+
+
+def test_missing_runtime_package_blocks_final_resolution_without_run_storage(
+    final_context, monkeypatch
+):
+    monkeypatch.setattr(
+        "src.forecasting.metadata.importlib.metadata.version",
+        Mock(side_effect=PackageNotFoundError("numpy")),
+    )
+    with pytest.raises(ExecutionBlocked, match="not installed: numpy"):
+        authority.resolve_final_execution(final_context["layout"])
+    assert not final_context["layout"].run_directory("synthetic-final").exists()
 
 
 @pytest.mark.parametrize(

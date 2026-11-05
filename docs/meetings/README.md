@@ -69,3 +69,10 @@ The notes should record what was actually discussed at the meeting. Record lectu
 Chathuranga explained on 5 November that members' employment and weekend lectures made common meeting times difficult, so much coordination took place asynchronously. The discussion log records this work without treating every message as a formal meeting.
 
 The new summaries were prepared retrospectively on 5 November 2026. Distinguish discussion dates, later clarification dates and sources. Historical actions/statuses describe the discussion at that time, not current issue readiness. Do not infer approval from silence or a general acknowledgment. These Markdown records support submission preparation; they are not a completed meeting-minutes submission PDF. Original chat exports remain local; public summaries omit contact identifiers and meeting access details.
+
+
+## Supplied 2026/27 meeting template
+
+The official meeting template is registered as G7 in the [criteria checklist](../greenwich-criteria-checklist.md#sources). It permits remote and asynchronous meetings with mutually agreed update/action/feedback timing. Use it when preparing the required collated PDF: include members/apologies, minute taker, previous-action status, attributed member updates/questions/suggestions, new actions with owners/due dates and the next meeting date where known. The report specification requires at least four meetings spanning at least six weeks.
+
+Existing Markdown notes and chat summaries are evidence inputs, not proof that the count/span or final PDF format has been satisfied. Retain unknown fields honestly; do not invent minute takers, agreement, attendance or deadlines. Final PDF assembly remains #204 work after #179 closes. The [escalation source G11](../greenwich-criteria-checklist.md#source-precedence-and-template-details) describes conditional teaching-led resolution; meeting/chat records do not themselves establish that a formal escalation stage or exceptional allowance was authorised.

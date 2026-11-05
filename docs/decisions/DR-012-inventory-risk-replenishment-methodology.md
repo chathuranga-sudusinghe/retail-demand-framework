@@ -201,6 +201,8 @@ Results may describe agreement with the constructed retrospective proxy, missed 
 
 ## 28-day compatibility review — downstream approval pending
 
+**Current disposition — reconciled 5 November 2026:** The heading and compatibility discussion below preserve the earlier extension proposal. The team subsequently accepted h28 inventory use as a disclosed limitation/deferred extension in the [C1 scope/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record), reported on 29 October. B8 is resolved for current delivery through that approved deferral; it is not awaiting another decision to complete the current project scope. Upstream h28 forecasting remains available; downstream exposure/evaluation remains gated. Any future extension needs separate methodological approval.
+
 The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts
 h=28 when the same origin and complete outcome interval are retained. This does

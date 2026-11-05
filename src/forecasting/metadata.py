@@ -80,7 +80,15 @@ def git_state(repository: Path) -> dict[str, Any]:
 
 
 def runtime_versions(repository: Path) -> dict[str, str]:
-    versions = {name: importlib.metadata.version(name) for name in LIBRARIES}
+    def required_version(name: str) -> str:
+        try:
+            return importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError as exc:
+            raise ExecutionBlocked(
+                f"Required runtime package is not installed: {name}."
+            ) from exc
+
+    versions = {name: required_version(name) for name in LIBRARIES}
     for line in (
         RepositoryLayout(repository)
         .repository_path("requirements.txt")
@@ -89,7 +97,7 @@ def runtime_versions(repository: Path) -> dict[str, str]:
     ):
         if "==" in line and not line.startswith("#"):
             name, expected = line.split("==", 1)
-            actual = importlib.metadata.version(name)
+            actual = required_version(name)
             if actual != expected.strip():
                 raise ExecutionBlocked(
                     f"Pinned version mismatch for {name}: {actual} != {expected}."
