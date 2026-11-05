@@ -66,12 +66,10 @@ jobs:
         run: >-
           ruff check
           src/visualization/inventory_views.py
-          src/visualization/inventory_rendering.py
           src/visualization/render_issue_201_views.py
           src/visualization/thesis_evidence.py
           src/visualization/thesis_figures.py
           tests/test_inventory_views.py
-          tests/test_inventory_rendering.py
           tests/test_render_issue_201_views.py
           tests/test_thesis_figures.py
 
@@ -98,7 +96,6 @@ jobs:
         run: >-
           python -m mypy
           src/visualization/inventory_views.py
-          src/visualization/inventory_rendering.py
           src/visualization/render_issue_201_views.py
           src/visualization/thesis_evidence.py
           src/visualization/thesis_figures.py

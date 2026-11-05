@@ -8,7 +8,10 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import pytest
 
-from src.visualization.render_issue_201_views import _save_figure_and_release
+from src.visualization.render_issue_201_views import (
+    _save_figure_and_release,
+    render_issue_201,
+)
 
 
 def _figure() -> Figure:
@@ -16,6 +19,18 @@ def _figure() -> Figure:
     FigureCanvasAgg(figure)
     figure.subplots().plot((0, 1), (0, 1))
     return figure
+
+
+def test_existing_unrelated_directory_is_not_replaced(tmp_path: Path) -> None:
+    output = tmp_path / "reports/figures/final-thesis-figures"
+    output.mkdir(parents=True)
+    sentinel = output / "keep.txt"
+    sentinel.write_text("preserve", encoding="utf-8")
+
+    with pytest.raises(FileExistsError, match="Refusing to overwrite"):
+        render_issue_201(tmp_path, output)
+
+    assert sentinel.read_text(encoding="utf-8") == "preserve"
 
 
 def test_successful_save_releases_figure_and_later_figure_still_renders(

@@ -12,8 +12,9 @@ Chathuranga separately instructed removal of the entire original V11 delivery
 directory, including its PNGs and archives. That ignored directory was removed;
 the retained forecasts, inventory evaluation, assessments and worked trace were
 not changed. The default delivery now contains exactly eight PNGs, rather than
-hundreds of case-table pages. Legacy table rendering functions remain available
-for compatibility but are not called by the delivery command.
+hundreds of case-table pages. The unused table-rendering module and its dedicated
+tests were subsequently removed at Chathuranga's request. The active exporter,
+source validation and current figure tests remain in use.
 
 ## Purpose and selection
 
@@ -234,8 +235,9 @@ backgrounds. Forecasting ticks use fewer regular shared intervals (0/20/40/60%
 for the retained comparison). Both margin figures state the physical-stock
 limitation; the worked-case retrospective legend explicitly says evaluation only.
 The recovery procedure above is documented and exercised before commit, rather
-than deferred to a later task. Optional colour/CLI/legacy-renderer refactoring
-was not included.
+than deferred to a later task. Optional colour/CLI refactoring was not included.
+Chathuranga subsequently requested removal of the unused legacy renderer; that
+cleanup is recorded below separately from the approved readability fixes.
 
 After these changes, 75 targeted synthetic tests passed across the visualization
 and retained-case suites, with scoped Ruff, formatting, MyPy and diff checks
@@ -255,6 +257,23 @@ final slide/document placement, D2 or W2. No fitting, inference, scenario replay
 or research evaluation ran.
 
 ### Completed runtime checks and remaining human reviews
+
+**Legacy cleanup — 5 November 2026:** At Chathuranga's request, the unused
+`src/visualization/inventory_rendering.py` and its dedicated
+`tests/test_inventory_rendering.py` were removed after checking repository
+references. The active CLI already used `thesis_figures.py`; no production
+consumer of the old renderer remained. Its unrelated-directory protection check
+was preserved in `tests/test_render_issue_201_views.py`, and obsolete CI paths
+were removed. The source loader/builders and their tests remain active.
+
+The current four-file synthetic selection (inventory views, thesis figures,
+exporter lifecycle and retained cases) passed 59 tests. The earlier 75-test
+record above is historical and included the retired rendering tests. Scoped
+Ruff/format, MyPy for the four remaining visualization modules and diff checks
+passed. All 24 delivered output hashes and four active renderer-code hashes
+still matched the reviewed manifest; no PNG regeneration or research run was
+needed. This cleanup is a separate uncommitted follow-up to `77e7771` until the
+human commits it; it does not alter source evidence or component-review status.
 
 The API setup guide, integration readiness register and group report now link
 the implemented figure delivery and distinguish it from pending acceptance.
