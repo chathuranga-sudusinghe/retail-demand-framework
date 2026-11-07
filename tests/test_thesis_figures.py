@@ -340,6 +340,43 @@ def test_margin_figures_explain_physical_stock_limit_and_evaluation_only(
         cli._release_figure(figure)
 
 
+@pytest.mark.parametrize(
+    ("code", "name", "meaning"),
+    (
+        ("TN", "True negative (TN)", "Neither forecast nor proxy crosses"),
+        ("FN", "False negative (FN)", "Proxy crosses; forecast misses"),
+    ),
+)
+def test_worked_margins_define_negative_outcomes_without_clipping(
+    specs: tuple[FigureEvidence, ...], code: str, name: str, meaning: str
+) -> None:
+    spec = deepcopy(specs[4])
+    for row in spec.data["worked"]:
+        if row["prospective"]["horizon"] in (1, 7, 14):
+            row["evaluation_only"]["confusion_cell"] = code
+    figure = render_figure(spec, 4)
+    try:
+        figure.canvas.draw()
+        renderer = figure.canvas.get_renderer()
+        cells = [
+            cell
+            for axis in figure.axes
+            for table in axis.tables
+            for cell in table.get_celld().values()
+        ]
+        labels = [cell.get_text().get_text() for cell in cells]
+        assert name in labels
+        assert meaning in labels
+        assert "Scenario proxy, not observed stockout" in _texts(figure)
+        for cell in cells:
+            box = cell.get_window_extent(renderer)
+            label = cell.get_text().get_window_extent(renderer)
+            assert box.x0 <= label.x0 <= label.x1 <= box.x1
+            assert box.y0 <= label.y0 <= label.y1 <= box.y1
+    finally:
+        cli._release_figure(figure)
+
+
 def test_pinned_source_tampering_blocks_loading(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, inputs: tuple[Any, ...]
 ) -> None:

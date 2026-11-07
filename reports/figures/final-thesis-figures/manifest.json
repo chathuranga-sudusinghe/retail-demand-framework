@@ -6,7 +6,7 @@
       "files": {
         "fig01_coverage_eligibility.json": "2ca96cf1f3f0be9eab447262730838475af0790be432d202dd2dbd967c6ecffe",
         "fig01_coverage_eligibility.png": "b109e2d4de594a3cf0fdf29d2f4af5d1ab964cab8729182181a55363bf2148f3",
-        "fig01_coverage_eligibility.svg": "efb1eb5db130ba1f0271a3d9b9d6c867549694352d947d53271fccef1a022d06"
+        "fig01_coverage_eligibility.svg": "a02a1587e3142e7578aa5f2ae3ae3bd9710210caa984ae4e1546f6918c31be8d"
       },
       "name": "fig01_coverage_eligibility",
       "png_dpi": 300,
@@ -22,7 +22,7 @@
       "files": {
         "fig02_proxy_crossings.json": "2763c45597d73f8b7e65c0f4229b6b1e69a5c3e5b564eed5f13787b546b2c4ea",
         "fig02_proxy_crossings.png": "d2a65daab66e69e8c68c86950fe84a58548bfaab0453fb5e66a0a02fd59229d4",
-        "fig02_proxy_crossings.svg": "131f94cc118ec048f9db22100c60092a9c5efe643f1df665fb45232c7006cea7"
+        "fig02_proxy_crossings.svg": "79f553345dcd1b48b07bbcc045736ee57615cc111d031ebb3294e7c0f0efbd3c"
       },
       "name": "fig02_proxy_crossings",
       "png_dpi": 300,
@@ -38,7 +38,7 @@
       "files": {
         "fig03_population_margins.json": "3494144efcaa3ad38e2bc40d403054ddfaa9bb6137131b28d556906abc940d8c",
         "fig03_population_margins.png": "d4391dc833546c765a143202e80af833db7152c5890e84ac315626834371ab23",
-        "fig03_population_margins.svg": "b9e20259fdc4aa2d9a0fb4a38e44d34c127ab19ae4f8191b16df65fc6a3e442c"
+        "fig03_population_margins.svg": "b91816e35a7900700c20c9b953f70b741ded4f205ee500a416628364dcf97373"
       },
       "name": "fig03_population_margins",
       "png_dpi": 300,
@@ -54,7 +54,7 @@
       "files": {
         "fig04_worked_forecast.json": "ddfc116f1ee7c7db8a7bd3f5efb74be5a7e78d29a38ad79c1fd8cc0c1294720f",
         "fig04_worked_forecast.png": "8b358ea24200de6b46c0b1a7038b7902dd10c148d37faa00378b5bafa4b470d8",
-        "fig04_worked_forecast.svg": "fefd189f95fcf9e0c951d9d1f83a01c713bddbb4dd87b11cf3836fc5c3b72b0a"
+        "fig04_worked_forecast.svg": "b7354ff54487a3731a093359d4ea1bb8d386b69d0da9859fd4e2f170cae6d0a7"
       },
       "name": "fig04_worked_forecast",
       "png_dpi": 300,
@@ -69,8 +69,8 @@
       "caption": "Predicted and retrospective margins for the same illustrative case. Negative margin is arithmetic scenario exposure, not observed stockout or physical negative inventory.",
       "files": {
         "fig05_worked_margins.json": "063f7a9f528646798f18eb1095abee07aa69f615af0fdbb286833d4c835c2863",
-        "fig05_worked_margins.png": "3f91f82aa6140500a321bb567adedc88331b970477e599587f35ff917bfe2db6",
-        "fig05_worked_margins.svg": "13bd4afcfdb62c607318dfe84ddb5f0b4e43b89bfe572528b1ec235a63361cfa"
+        "fig05_worked_margins.png": "f763129256632e9c34960e4e3b8e3c1e435572fca96e181c0ff070729b96984b",
+        "fig05_worked_margins.svg": "cd365498301410f4aa50cd497c5bdbc5608c9e50e7e16c77a199003c0c285e97"
       },
       "name": "fig05_worked_margins",
       "png_dpi": 300,
@@ -86,7 +86,7 @@
       "files": {
         "fig06_evidence_status.json": "1baf1eb5f34346413df7578bb6c35c64f90bfc82f28365e71b5e9d628bf02677",
         "fig06_evidence_status.png": "6df6d9b16056c403c655badbaf935aef2b1e4909e799d7e6270cf20b38e27cad",
-        "fig06_evidence_status.svg": "418274a7ef896d401830ff65f9455adae6a62f098648ec3e4712ed57e6f117ec"
+        "fig06_evidence_status.svg": "4164bc91b25e7f5d68c1cde938302acc4a55e0a07815268c79ff3cb2a1c1494d"
       },
       "name": "fig06_evidence_status",
       "png_dpi": 300,
@@ -102,7 +102,7 @@
       "files": {
         "fig07_transparency_checks.json": "2066c06ee60a9dcf566b9400553d44c1ac58901310520f9a51e3e8b777e990f7",
         "fig07_transparency_checks.png": "f45e5bbc0ca2dab992492b77e4466ae76b3b016fcc02110794703e575672a26c",
-        "fig07_transparency_checks.svg": "6b83393efb3b9d748737f130fb2457644b5e9c52bfb88e171cb8310a6e21d8ce"
+        "fig07_transparency_checks.svg": "e0c753b13dcbbd0585e738a9eef84cee7124b6bd32a5b34539526e5ce5440fe8"
       },
       "name": "fig07_transparency_checks",
       "png_dpi": 300,
@@ -118,7 +118,7 @@
       "files": {
         "fig08_forecasting_comparison.json": "03f8062180ed497dbf74c6310b458965c29c7ca4293ba44ca3f4a3ae26a7337c",
         "fig08_forecasting_comparison.png": "90a9aaad1a22ef934974434d09585b647f29bd4b5a46e1f3df74e8f0ff6aba48",
-        "fig08_forecasting_comparison.svg": "3717dabb3ae6206d483b7de48eb0323735ee4a67070a0117aa88c292f678c2c5"
+        "fig08_forecasting_comparison.svg": "7306d88171d3776fa1efd17e68121096cca983285f01acac2930789d0c23aca0"
       },
       "name": "fig08_forecasting_comparison",
       "png_dpi": 300,
@@ -136,9 +136,9 @@
       "inventory_views.py": "217cd576235b0cb7feeb72e7b7ebddd2b2de07d055ec6a39e347c4a2b42bff27",
       "render_issue_201_views.py": "ba6404919ceb225385958c029859f674e72d4a6300c85a9e2c687d72d917a39a",
       "thesis_evidence.py": "ec65b9d7e1d7bf643a9cd3cc2847a7a00f389a8b96317deca1217c3bebc58dbb",
-      "thesis_figures.py": "b04c3e8d49506f8497021938352eaef9a8af5c946dfdac76304d5baf1d572c3b"
+      "thesis_figures.py": "78407cb6417d19acd1e2369fe9ccb6efad52cee67ad51c13af04d2fb5760a6bd"
     },
-    "git_head": "15d114a5ad73f42f7caf65b4ca49e8dc1efd9355",
+    "git_head": "8edd436d3d41c05db83549d62b32f3cc41b8ff09",
     "git_working_tree_clean": false,
     "matplotlib": "3.11.2",
     "python": "3.12.3"

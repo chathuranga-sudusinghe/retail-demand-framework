@@ -508,10 +508,15 @@ def worked_margins(spec: FigureEvidence) -> Figure:
     states = [
         [
             f"h{r['prospective']['horizon']}",
-            r["evaluation_only"]["confusion_cell"],
             {
-                "FN": "Missed proxy crossing",
-                "TN": "Neither crosses",
+                "TN": "True negative (TN)",
+                "FN": "False negative (FN)",
+                "TP": "True positive (TP)",
+                "FP": "False positive (FP)",
+            }.get(r["evaluation_only"]["confusion_cell"], "Unavailable"),
+            {
+                "FN": "Proxy crosses; forecast misses",
+                "TN": "Neither forecast nor proxy crosses",
                 "TP": "Both cross",
                 "FP": "Forecast-only crossing",
             }.get(
@@ -524,7 +529,7 @@ def worked_margins(spec: FigureEvidence) -> Figure:
         figure.add_axes((0.07, 0.19, 0.88, 0.10)),
         ["Horizon", "Outcome", "Retrospective comparison"],
         states,
-        widths=(0.18, 0.18, 0.64),
+        widths=(0.14, 0.34, 0.52),
         size=8,
     )
     figure.text(
