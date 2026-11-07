@@ -157,6 +157,36 @@ before merge; author self-review and synthetic tests are not substitutes.
 
 ## Implementation validation record
 
+### W2 clarification follow-up — 7 November 2026
+
+[Dewmi's conditional W2 findings and the existing explanations](responsible-decision-support-evaluation.md#w2-findings-received--7-november-2026)
+are recorded in the existing responsible-use handoff. Figure 05's renderer now
+expands TN/FN and explains them in terms of forecast and retrospective proxy
+crossings. The table columns accommodate the full names; no retained values,
+confusion classifications or other figures' rendering logic change.
+
+Chathuranga manually regenerated the eight-figure bundle into the same stable
+directory on 7 November 2026. The manifest SHA-256 is
+`e95cbd33e5b708f3fe21458f570ecbcaafe81c1df5b9e3a1266dcb9d7f2f3ad1`;
+it records generation HEAD `8edd436d3d41c05db83549d62b32f3cc41b8ff09`
+with uncommitted changes. A subsequent local byte check matched all 24 output
+hashes, README, four renderer files and eight named source files. This is a local
+manifest match, not independent provenance verification. Codex inspected the
+actual Figure 05 PNG: expanded labels fit the table, with the h14 missed proxy
+crossing and physical-stock caveat retained. Give Dewmi the committed revision
+and this manifest identity for her affected-view recheck; final W2 acceptance
+remains pending.
+
+Validation on `fix/issue-182-figure-clarity`: 45 synthetic tests passed across
+`test_thesis_figures.py`, `test_render_issue_201_views.py` and
+`test_inventory_views.py`. The new checks cover expanded TN/FN meanings and
+table-cell text bounds. Ruff, format checks, MyPy for the four active
+visualization modules and `git diff --check` passed. These are implementation
+checks, separate from Dewmi's final presentation acceptance. After regeneration,
+plain `git diff --check` reports Matplotlib-generated trailing whitespace inside
+SVG path data. Source/document checks excluding generated SVGs pass; generated
+SVG bytes and the matching manifest hashes are preserved.
+
 Checks during implementation on 5 November 2026, branch
 `feature/issue-201-inventory-views`, HEAD
 `15d114a5ad73f42f7caf65b4ca49e8dc1efd9355` with uncommitted changes:

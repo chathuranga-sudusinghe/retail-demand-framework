@@ -296,6 +296,31 @@ Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh im
 
 ## 6. Deferred Checks and Completion Requirements
 
+### W2 findings received — 7 November 2026
+
+[Dewmi's eight-figure W2 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6702201368)
+supports content clarity and responsible interpretation subject to four
+clarifications. It does not verify source data/hashes, rendering implementation
+or other component acceptance. The comment does not identify the inspected Git
+revision or bundle hash; Dewmi should supply that reference with her final scoped
+decision. This records findings received, not final W2 acceptance.
+
+| Requested clarification | Existing evidence / bounded follow-up |
+|---|---|
+| Zero source-confirmed origin crossings do not establish snapshot availability | Figure 01 already states that its origin counts do not establish source snapshot availability. |
+| Define TN and FN in the worked inventory case | Figure 05 now spells out true negative (TN): neither forecast nor retrospective proxy crosses; false negative (FN): the proxy crosses but the forecast misses. Chathuranga regenerated the bundle on 7 November; Dewmi's affected-view recheck remains pending. These outcomes do not establish observed stockouts. |
+| Show missed-crossing rates alongside agreement | Figure 02 already contains both rates; its accompanying caption states that high agreement can coexist with missed proxy events. |
+| Do not reselect forecasting producers using final-origin results | Figure 08 already disclaims result-driven reselection; its accompanying caption states that designation was frozen before final results. |
+
+After human regeneration, record the delivered revision and bundle identity and
+ask Dewmi to recheck the affected Figure 05 and confirm the other three existing
+explanations. Preserve the original 20 records, 160 outcomes and historical
+manifests. Link the final scoped outcome from #201/#179 rather than duplicating
+the review. [PR #218](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/218)
+is Dewmi's separate group-report wording contribution. Its duplicated paragraph
+was corrected at `b02c41f`; Chathuranga confirmed approval and merge on 7 November.
+This follow-up does not rewrite that contribution or infer final W2 acceptance.
+
 **Delivery tracking — updated 25 October 2026:** [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197) delivered the source-bound retained roster/case API and synthetic checks, closing #183. [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani, continues the human-observed retained handoff, approved inventory views and component acceptance. Dewmi's interpretation/display handoff remains under [#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182); subsequent acceptance is recorded under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179). Tinosh retains his documented technical role and original implementation attribution. API code approval and automated serving evidence do not complete the rendered review below.
 
 | Check | Current status / evidence needed before completion | Owner / tracking issue |
