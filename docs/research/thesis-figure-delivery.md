@@ -1,6 +1,8 @@
 # Thesis and presentation figure delivery
 
-Related: #201, #179 and #182; existing PR #211.
+Related: completed #201/#182 and merged PR #211; final repository reconciliation under #179.
+
+**Current delivery — 9 November 2026:** The eight tracked figures in [final-thesis-figures](../../reports/figures/final-thesis-figures/README.md) are the current output. Manifest SHA-256: `e95cbd33e5b708f3fe21458f570ecbcaafe81c1df5b9e3a1266dcb9d7f2f3ad1`. [The current acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) links completed W2/technical reviews and the reported inventory acceptance with Chathuranga's 9 November clarification that the old pending figure items are resolved. Historical pending labels below describe their dated checkpoints, not today's W2 or technical status.
 
 On 5 November 2026, Chathuranga approved the six revised core figures and the
 two additional forecasting/transparency figures in the project working chat.
@@ -8,13 +10,10 @@ This explicitly extends this figure-delivery task beyond #201's inventory-only
 selection. It does not add a research method, change permanent member ownership,
 approve interpretations or complete component/code review.
 
-Chathuranga separately instructed removal of the entire original V11 delivery
-directory, including its PNGs and archives. That ignored directory was removed;
-the retained forecasts, inventory evaluation, assessments and worked trace were
-not changed. The default delivery now contains exactly eight PNGs, rather than
-hundreds of case-table pages. The unused table-rendering module and its dedicated
-tests were subsequently removed at Chathuranga's request. The active exporter,
-source validation and current figure tests remain in use.
+The current delivery contains exactly eight PNGs with matching SVGs and JSON
+evidence sidecars in one stable folder. The active exporter, source validation
+and current figure tests remain in use. Retained forecasts, inventory evaluation,
+assessments and the worked trace are unchanged.
 
 ## Purpose and selection
 
@@ -35,8 +34,10 @@ referenced evidence; the complete forecast export is not copied into reports.
 The margin sidecar is the complete case index: match a panel's horizon and
 confusion-cell marker to its retained cases. Overlapping points are not distinct
 visible observations; the graph is an overview, not a replacement for the index.
-Didilani must review this overview/index approach against the case-identity
-requirement in the [visual specification](inventory-risk-visual-evidence.md).
+The overview/index approach implements the case-identity requirement in the
+[visual specification](inventory-risk-visual-evidence.md). Its inventory acceptance
+is reported by Chathuranga; his 9 November clarification recorded above resolves
+the old pending figure items without requesting repeated confirmation.
 
 The figures use a 6.3-inch thesis width, minimum 8-point text, explicit units,
 zero-based magnitude bars, shared comparison scales and redundant colour/marker
@@ -157,6 +158,8 @@ before merge; author self-review and synthetic tests are not substitutes.
 
 ## Implementation validation record
 
+**Historical checkpoints:** The dated records below preserve generation identities, tests and observations. Later W2 and technical acceptance are linked in the current delivery notice above; pending labels and implementation-branch states at these checkpoints are not current assignments.
+
 ### W2 clarification follow-up — 7 November 2026
 
 [Dewmi's conditional W2 findings and the existing explanations](responsible-decision-support-evaluation.md#w2-findings-received--7-november-2026)
@@ -173,9 +176,9 @@ with uncommitted changes. A subsequent local byte check matched all 24 output
 hashes, README, four renderer files and eight named source files. This is a local
 manifest match, not independent provenance verification. Codex inspected the
 actual Figure 05 PNG: expanded labels fit the table, with the h14 missed proxy
-crossing and physical-stock caveat retained. Give Dewmi the committed revision
-and this manifest identity for her affected-view recheck; final W2 acceptance
-remains pending.
+crossing and physical-stock caveat retained. At this checkpoint, final W2 acceptance was pending. Dewmi subsequently
+recorded her affected-view recheck and final scoped acceptance, linked in the
+current delivery notice above; no repeated review is requested.
 
 Validation on `fix/issue-182-figure-clarity`: 45 synthetic tests passed across
 `test_thesis_figures.py`, `test_render_issue_201_views.py` and
@@ -249,9 +252,11 @@ inspected in the actual PNGs. Prior inspection of the six unchanged figure
 layouts remains applicable; no additional broad audit or research execution was
 performed. The rejected numbered folders are absent.
 
-These are local identity and technical visual checks, not independent reference
-provenance or component acceptance. Grayscale review, intended thesis/slide
-placement and human component/code acceptance remain pending. The full repository
+These were local identity and technical visual checks, not independent reference
+provenance or component acceptance. At that checkpoint, grayscale review, intended
+thesis/slide placement and human component/code acceptance were pending. Subsequent
+grayscale inspection is recorded below; later W2/technical acceptance is linked
+above. Final document/slide placement belongs to #204. The full repository
 test suite was not run; no training, inference, replay or research evaluation was
 executed by Codex.
 
@@ -286,7 +291,7 @@ This is screen-based technical inspection, not actual printer/projector testing,
 final slide/document placement, D2 or W2. No fitting, inference, scenario replay
 or research evaluation ran.
 
-### Completed runtime checks and remaining human reviews
+### Historical runtime checks and review handoff — 5 November 2026
 
 **Legacy cleanup — 5 November 2026:** At Chathuranga's request, the unused
 `src/visualization/inventory_rendering.py` and its dedicated
@@ -325,30 +330,17 @@ the file matches. D2, W2 and human code peer review must be recorded before the
 relevant completion/merge decision. No existing scoped approval is repeated or
 silently upgraded.
 
-Next action: inspect the generated eight outputs at their intended insertion
-size and arrange the scoped component and code reviews. Regeneration is needed
-only if an approved change is made. The PNG/SVG/JSON bundle is trackable without `.gitignore`
-changes. Keep any unrelated local modifications out of staging.
+### Current handoff — 9 November 2026
 
-After the outputs and changes have been reviewed, a suggested focused commit is
-`feat: add thesis-ready result figures`. Suggested commands, not executed:
+PR #211 and the follow-up clarifications in #218/#219 are merged. The historical
+commit/staging instructions for that delivery are retired; do not reuse the
+merged PR or stage source, tests or generated figures for this status correction.
+The 9 November documentation closeout PR records current delivery and carries
+`Closes #179`; issue closure takes effect on its human merge into `main`.
 
-```bash
-git add .github/workflows/ci-quality.yml \
-  docs/artifact-storage-policy.md \
-  docs/forecast-inference-api.md docs/integration-contract-readiness.md \
-  docs/group-report.md \
-  docs/research/inventory-risk-visual-evidence.md \
-  docs/research/thesis-figure-delivery.md reports/README.md \
-  src/visualization/render_issue_201_views.py \
-  src/visualization/thesis_evidence.py src/visualization/thesis_figures.py \
-  tests/test_render_issue_201_views.py tests/test_thesis_figures.py \
-  reports/figures/final-thesis-figures/
-git diff --cached --stat
-git commit -m "feat: add thesis-ready result figures"
-```
-
-Use existing PR #211 after an explicitly authorised human push; a second PR is
-not proposed. Its scope/description and review must reflect the added figures,
-preserve Didilani's authorship/contributions and link #201/#179/#182 accurately.
-No commit, push, merge, branch change or GitHub message was performed here.
+Reuse completed W2/technical acceptance, Chathuranga's reported inventory
+acceptance and his confirmation of #217 review completion. His 9 November
+clarification resolves the old pending figure items in the
+[current record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). Final insertion into thesis/slides
+belongs to #204 after repository closeout. Regenerate figures only for a later
+approved figure change, with the responsible human executing the command.

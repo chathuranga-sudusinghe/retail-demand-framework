@@ -1,6 +1,6 @@
 # Responsible Decision-Support Evaluation
 
-**Presentation status reconciled — 30 October 2026:** [The C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) records W1 interpretation/display acceptance and automatic-review-rule deferral as reported by Chathuranga on 29 October. Existing dated preparation/assessment evidence below remains unchanged. W2 actual-view semantic/readability review remains under #182 once #201 supplies a reviewable revision; the 160 record checks are not repeated or treated as managerial clearance.
+**Presentation status reconciled — 9 November 2026:** W1 and W2 are accepted within Dewmi's responsible-use scope, #182 is closed and [her #179 confirmation](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6724432473) records no remaining component blockers. The four clarification points were resolved in her [final W2 acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6704944020). [Current cross-component reconciliation](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) preserves separate inventory and technical decisions. Earlier dated records below are historical, not requests to repeat the 160 checks.
 
 **Status — 23 October 2026:** PR #175 merged and closed #164/#168 as delivered implementation/evidence milestones. Chathuranga confirmed all 160 record-level checks on the 20 inventory-linked records and manually generated the summaries. Prototype/presentation checks and final component acceptance remain separate. DR-012 group approval is recorded under [#177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177); historical record/manifest labels and forecast-only F01–F03 outcomes remain unchanged.
 
@@ -290,13 +290,15 @@ The requirements below restate existing methodology and record semantics for hum
 | Human review | Show `human_review_status` together with `human_review_reasons`. `not_assessed` means review has not been assessed; it is not clearance. `review_required` must retain its stated reason. Do not invent triggers or numerical thresholds. |
 | Twenty-eight-day downstream use | Retain approved forecast identity, but do not imply approval of 28-day inventory interpretation, replenishment or human-review triggers. Show the existing source reason with the accepted deferral context; any future inventory extension needs separate approval ([forecast contract §10](../forecast-api-contract.md#10-shared-forecasting-api-boundaries); [DR-011 component-review boundary](../decisions/DR-011-decision-support-output-structure.md#revised-forecasting-interface-and-component-review)). |
 
-**Current handoff status — reconciled 5 November 2026:** DR-011 explains unavailable information, while methodology §12.3 distinguishes an unperformed assessment. [Dewmi’s direct W1 acceptance on 1 November](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) accepts the documented interpretation/display baseline. The implemented preparation preserves source-specific reasons such as `no_agreed_method` in `unavailable_fields`; this accepted baseline does not require a new universal reason vocabulary. B9’s remaining presentation acceptance is the actual W2 review under #182/#201, not a repeat of W1 or the 160 record checks. Preserve the [forecast contract’s source meanings](../forecast-api-contract.md#9-retained-export-unavailable-and-lookup-behaviour).
+**Current handoff status — reconciled 9 November 2026:** DR-011 preserves unavailable information and methodology §12.3 distinguishes an unperformed assessment. Dewmi's W1 baseline and final W2 actual-view acceptance are recorded under completed #182. The implementation preserves source-specific reasons such as `no_agreed_method`; no new universal vocabulary or repeated assessment is required. Her acceptance does not approve an automatic managerial-review method. Preserve the [forecast contract's source meanings](../forecast-api-contract.md#9-retained-export-unavailable-and-lookup-behaviour).
 
 Dewmi owns responsible-use meaning and reviews the later presentation. Tinosh implements the reviewed technical presentation; Chathuranga and Didilani retain review of their respective upstream semantics.
 
 ## 6. Deferred Checks and Completion Requirements
 
 ### W2 findings received — 7 November 2026
+
+**Subsequent final outcome:** [Dewmi accepted all four clarification resolutions](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6704944020); #182 is closed. The receipt below preserves the earlier conditional-review context and is superseded for current acceptance status.
 
 [Dewmi's eight-figure W2 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6702201368)
 supports content clarity and responsible interpretation subject to four
@@ -308,22 +310,22 @@ decision. This records findings received, not final W2 acceptance.
 | Requested clarification | Existing evidence / bounded follow-up |
 |---|---|
 | Zero source-confirmed origin crossings do not establish snapshot availability | Figure 01 already states that its origin counts do not establish source snapshot availability. |
-| Define TN and FN in the worked inventory case | Figure 05 now spells out true negative (TN): neither forecast nor retrospective proxy crosses; false negative (FN): the proxy crosses but the forecast misses. Chathuranga regenerated the bundle on 7 November; Dewmi's affected-view recheck remains pending. These outcomes do not establish observed stockouts. |
+| Define TN and FN in the worked inventory case | Figure 05 now spells out true negative (TN): neither forecast nor retrospective proxy crosses; false negative (FN): the proxy crosses but the forecast misses. Chathuranga regenerated the bundle on 7 November; Dewmi's affected-view recheck and final scoped acceptance are now recorded at the link above. These outcomes do not establish observed stockouts. |
 | Show missed-crossing rates alongside agreement | Figure 02 already contains both rates; its accompanying caption states that high agreement can coexist with missed proxy events. |
 | Do not reselect forecasting producers using final-origin results | Figure 08 already disclaims result-driven reselection; its accompanying caption states that designation was frozen before final results. |
 
-After human regeneration, record the delivered revision and bundle identity and
-ask Dewmi to recheck the affected Figure 05 and confirm the other three existing
-explanations. Preserve the original 20 records, 160 outcomes and historical
+The subsequent final acceptance records the delivered revision/bundle and
+resolves Figure 05 plus the other three existing explanations. No repeated
+unchanged-view review is requested. Preserve the original 20 records, 160 outcomes and historical
 manifests. Link the final scoped outcome from #201/#179 rather than duplicating
 the review. [PR #218](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/218)
 is Dewmi's separate group-report wording contribution. Its duplicated paragraph
 was corrected at `b02c41f`; Chathuranga confirmed approval and merge on 7 November.
-This follow-up does not rewrite that contribution or infer final W2 acceptance.
+This follow-up preserves that contribution; final W2 acceptance is supplied by Dewmi's linked decision, not inferred from a code change.
 
-**Delivery tracking — updated 25 October 2026:** [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197) delivered the source-bound retained roster/case API and synthetic checks, closing #183. [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani, continues the human-observed retained handoff, approved inventory views and component acceptance. Dewmi's interpretation/display handoff remains under [#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182); subsequent acceptance is recorded under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179). Tinosh retains his documented technical role and original implementation attribution. API code approval and automated serving evidence do not complete the rendered review below.
+**Historical delivery baseline — 25 October 2026; superseded for current status by the completed #201/#182 records above:** [PR #197](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/197) delivered the source-bound retained roster/case API and synthetic checks, closing #183. [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani, continues the human-observed retained handoff, approved inventory views and component acceptance. Dewmi's interpretation/display handoff remains under [#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182); subsequent acceptance is recorded under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179). Tinosh retains his documented technical role and original implementation attribution. API code approval and automated serving evidence do not complete the rendered review below.
 
-| Check | Current status / evidence needed before completion | Owner / tracking issue |
+| Check | Historical baseline / evidence required at that checkpoint | Owner / tracking issue |
 |---|---|---|
 | Forecasting evidence access and acceptance | The merged retained API loads the exact assessed records and validates their forecast/inventory joins. Independently reviewed installed-source verification and actual producer/consumer acceptance remain separate; local existence and automated HTTP success do not establish them. Protected inputs remain outside Git under the [storage policy](../artifact-storage-policy.md). | Chathuranga supplies/reviews forecast meaning; Tinosh reviews technical consumption; Dewmi reviews assessment-source meaning; Didilani executes the bounded retained continuation — #201/#179. #132/#168 remain historical evidence references. |
 | Record-level transparency assessment | Completed for the 20 inventory-linked records: Chathuranga confirmed all 160 outcomes with case-specific evidence/reasons; identities, timing and provenance are retained in Section 3.1 and the completed checklist. This individual assessment is distinct from component/presentation acceptance. | Dewmi — [#168](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/168), using the criteria and implementation from #72/#73; recorded assessor: Chathuranga. |

@@ -43,7 +43,7 @@ The December 3–30 final interval had earlier December 3–16 validation and fu
 
 Use the unchanged DR-014 producer mapping. Forecast origin, target start/end, horizon, SKU/warehouse, model/configuration and provenance must remain distinguishable. Retrospective actuals/errors are evaluation evidence, not prospective decision inputs. No uncertainty method is currently supplied by this comparison.
 
-[Integration readiness](../integration-contract-readiness.md) identifies remaining prospective export/schema acceptance and inventory timing decisions. Didilani owns inventory-risk/replenishment interpretation; Dewmi owns responsible review/semantics; Tinosh implements approved contracts. Carrying 28-day records does not approve downstream 28-day use.
+[Integration readiness](../integration-contract-readiness.md) records completed prospective export/schema acceptance, reported consumer acceptance and the continuing unknown source inventory timing limitation. Didilani owns inventory-risk/replenishment interpretation; Dewmi owns responsible review/semantics; Tinosh implements approved contracts. Carrying 28-day records does not approve downstream 28-day use.
 
 ## Execution and review boundary
 

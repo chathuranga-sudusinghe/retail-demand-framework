@@ -1,29 +1,26 @@
 # Inventory-Risk Visual Evidence Specification and Interpretation
 
-**Figure-delivery continuation — 5 November 2026:** Chathuranga approved a compact
-eight-figure thesis/presentation selection, including two explicitly authorised
-forecasting/transparency additions. See the [figure delivery guide](thesis-figure-delivery.md)
-for purposes, source identities, the human-run export command and remaining
-component/readability reviews. This does not alter the analytical requirements
-below or claim final rendered acceptance.
+**Current figure delivery — reconciled 9 November 2026:** Chathuranga approved the compact eight-figure selection on 5 November, including the two forecasting/transparency additions. The eight PNG/SVG/JSON sets are delivered in `reports/figures/final-thesis-figures/`. The [figure delivery guide](thesis-figure-delivery.md) records source identities, generation and checks; the [current acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) links completed technical/W2 reviews and Chathuranga's reported inventory acceptance and clarification. No analytical requirement, retained value or method is changed.
 
-**Historical specification issue:** [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), closed. Current alignment: [#177](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/177); rendered visual work is scoped separately after refinement.
+**Historical specification issue:** [#85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), closed. Current delivery/acceptance is recorded under completed #201/#182 and [#179](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026); #177 remains the historical readiness baseline.
 
 **Responsible member:** Didilani Pathinayaka — inventory-risk analysis and interpretation
 
-**Status:** Analytical specification linked to the published constructed-origin evaluation. Visual rendering and Didilani's final interpretation/presentation review remain separate; no analysis is rerun by this update.
+**Status:** Analytical specification and interpretation linked to the published constructed-origin evaluation and the delivered eight figures. Completed scoped reviews are linked above; this update runs no analysis or renderer.
 
 **Method status:** [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) records approval of the 1/7/14-day method in the 12 October WhatsApp discussion, reported by Chathuranga on 23 October. Historical evidence retains its recorded proposed-status labels; source timing and h=28 inventory approval are separate.
 
 ## 1. Purpose and scope
 
-This document specifies the analytical meaning of inventory-risk visual evidence and records what the current project evidence can support. It prepares a report-ready interpretation and handoffs for Tinosh's later technical visualization work and Dewmi's responsible decision-support work.
+This document specifies the analytical meaning of inventory-risk visual evidence and records what the current project evidence can support. It prepares a report-ready interpretation and handoffs for Tinosh's technical visualization contribution and Dewmi's responsible decision-support work.
 
 The specification follows the historical [Issue #85](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/85), the merged [Issue #70 preparation and evaluation utilities](../../src/inventory_risk/input_preparation.py) and [evaluation utilities](../../src/inventory_risk/evaluation.py), and the method in [DR-012](../decisions/DR-012-inventory-risk-replenishment-methodology.md). The Issue #70 tests establish behavior on synthetic fixtures; they are not inventory-risk findings from the supplied dataset.
 
 This is an analysis and documentation deliverable. It does not add code, render charts, execute the evaluator, create new inventory-risk calculations, or settle a shared schema. A visual may communicate only evidence that is actually available and appropriately approved. A display must not silently turn an unresolved input or a method approval into proof of operational effectiveness.
 
 ## 2. Evidence register
+
+**Historical package inspection:** The received-package statuses and local byte checks below retain their original scope. They are not current acceptance status. The current producer/source, reported consumer and rendered acceptance is linked above; original package/provenance labels are unchanged.
 
 | Evidence item | Source identity and contents | Population / time identity | Integrity and review status | Inventory-risk use status |
 |---|---|---|---|---|
@@ -44,7 +41,7 @@ The historical local SHA-256 comparisons above identified the received bytes aga
 
 ### Supplied evidence versus inventory-risk results
 
-The supplied export is prospective forecast evidence at one fixed origin. The validated dataset is source data, including inventory variables and observations after that origin. Neither file alone is a completed inventory-risk output. The [published evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) now supplies constructed-scenario cases, counts, rates and margins. Visual rendering remains pending.
+The supplied export is prospective forecast evidence at one fixed origin. The validated dataset is source data, including inventory variables and observations after that origin. Neither file alone is a completed inventory-risk output. The [published evaluation](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) now supplies constructed-scenario cases, counts, rates and margins. The eight-figure rendering is delivered; completed scoped reviews are linked in the current acceptance record above.
 
 The Issue #70 evaluator accepts an `observed_target` for retrospective comparison, but the supplied forecast export does not contain one. Any retrospective target would have to be derived only from the corresponding later `Units_Sold` observations over the export's exact target window, kept separate from prospective information. No such join, target construction, or evaluation is performed by this document.
 
@@ -52,7 +49,7 @@ The Issue #70 evaluator accepts an `observed_target` for retrospective compariso
 
 - **Descriptive source observations:** [Temporal Demand and Inventory-Alignment Profiling](../../reports/temporal-demand-profile.md) reports historical dataset characteristics and inventory context. It is historical descriptive evidence, not forecast-to-inventory evaluation; no results were regenerated for this document.
 - **Synthetic/test evidence:** [Issue #70 tests](../../tests/test_inventory_risk_preparation.py) and [evaluation tests](../../tests/test_inventory_risk_evaluation.py) use controlled test records to check implementation behavior. Passing tests support code behavior only; they do not establish actual inventory effectiveness.
-- **Prospective forecast evidence:** The received export contains project-generated forecast values and producer context. It is not the source `Demand_Forecast` field and is not yet recorded as consumer-accepted.
+- **Prospective forecast evidence:** The received export contains project-generated forecast values and producer context. It is not the source `Demand_Forecast` field. Current producer/source and reported consumer acceptance are recorded in the linked closeout record; the original package labels remain historical.
 - **Retrospective proxy evidence:** Chathuranga manually executed the constructed-origin evaluation on 23 October. The [report](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) and [evaluation.json](../../reports/inventory-risk/issue-164/evaluation-v1/evaluation.json) retain 239 paired cases plus 11 separate scenario-at/below cases per 1/7/14-day horizon. These are simulated-data, hypothetical no-receipt proxy results, not stockout ground truth.
 
 ### Known limits and unavailable evidence
@@ -136,7 +133,7 @@ The fields named below refer to the existing internal Issue #70 case/summary out
 ### Supported findings
 
 - The received handoff identifies a project-generated forecast export at origin `2024-12-02`, with separate records for horizons 1, 7, 14, and 28 and producer/configuration context. These are supplied forecast records, not an inventory-risk result.
-- The validated dataset bundle passed its recorded shared-data validation/readback checks, and local payload hashes match the package manifest. Its provenance record remains `pending_human_review`; the export consumer acceptance remains pending.
+- The validated dataset bundle passed its recorded shared-data validation/readback checks, and local payload hashes match the package manifest. Its provenance record retains the historical `pending_human_review` label; later producer/source and reported export consumer acceptance are recorded separately in the linked current record.
 - The current Issue #70 implementation produces structured evidence and preserves unavailable reasons when called with appropriately mapped inputs. Its tests establish synthetic implementation behavior only.
 - The source is publisher-simulated. Existing descriptive dataset observations are available in the historical [temporal profile](../../reports/temporal-demand-profile.md), with its stated historical scope and limitations.
 
@@ -261,11 +258,13 @@ Visual implementation must not create a new exposure rule, subgroup aggregation 
 
 ## 9. Next analytical steps and unresolved dependencies
 
+**Status reconciliation — 9 November 2026:** The original handoff checklist below records the review dependencies at preparation. Existing source/consumer and technical/presentation decisions are now recorded in the current acceptance record above. Future methods still require separate approval; this is not a request to repeat completed reviews.
+
 1. Review/record exact-export producer and consumer acceptance without regenerating the forecasts or expected hashes.
 2. Review the completed constructed-origin evidence and its unknown source timing. Do not turn the hypothetical starting-balance assumption into verified source availability.
 3. Review the implemented mapping, exposure results and downstream record bridge, preserving identities, intervals, provenance and unavailable reasons.
-4. **Review status:** Didilani's [Issue #181 analytical review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/181#issuecomment-6380707367) passed and required no analytical documentation change. Her [PR #190 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/190#pullrequestreview-5637154678) was `COMMENTED` with `PASS WITH NON-BLOCKING NOTES`, not formal `APPROVED`. Tinosh's technical visual review, Dewmi's responsible-presentation review, Didilani's later D2 rendered-output review, and final team/report acceptance remain pending and are tracked under [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6382270737). Keep h=28 inventory gated.
+4. **Review status:** Didilani's [Issue #181 analytical review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/181#issuecomment-6380707367) passed and required no analytical documentation change. Her [PR #190 review](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/190#pullrequestreview-5637154678) was `COMMENTED` with `PASS WITH NON-BLOCKING NOTES`, not formal `APPROVED`. Tinosh's technical acceptance and Dewmi's W2 acceptance are recorded; Chathuranga's reported inventory/consumer acceptance and 9 November clarification resolve the old-page findings. The [current #179 record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) preserves exact attribution and review scopes. Keep h=28 inventory gated.
 5. **Report integration:** The inventory interpretation was integrated into Section 6 of the existing group report through merged PR #190. The retained [evaluation report](../../reports/inventory-risk/issue-164/evaluation-v1/report.md) and immutable evaluation bundle remain unchanged; do not create a second report path or alter the bundle.
 6. Scope any additional robustness or evaluation separately before a human executes it. Do not repeat completed forecasting or scenario evaluation merely to align documentation.
 
-The existing report supports conditional scenario interpretation. Technical visuals, final owner/consumer acceptance and managerial effectiveness remain separate. The next member tasks are scoped from the [Issue #177 readiness handoff](../integration-contract-readiness.md#13-remaining-work-handoff-after-issue-177).
+The existing report supports conditional scenario interpretation. Technical visuals, final owner/consumer acceptance and managerial effectiveness remain separate. The earlier [Issue #177 handoff](../integration-contract-readiness.md#13-remaining-work-handoff-after-issue-177) is historical planning; the [current acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) governs the delivered scope.

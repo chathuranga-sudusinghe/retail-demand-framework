@@ -157,11 +157,13 @@ These criteria are used to evaluate how clearly the prototype communicates its d
 
 ## Dependency Status
 
+**Subsequent delivery reconciliation — 9 November 2026:** The original dependency table below preserves its 23 October checkpoint and DR-011 remains accepted for structure only. The implemented record/API fields and completed scoped source, consumer and W2 acceptance are now recorded in the [current handoff record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). Numerical replenishment, prospective uncertainty and automatic review rules remain unavailable under accepted deferrals. This status note changes no decision content or original approval.
+
 **Current alignment — 23 October 2026, Issue #177:** The table reflects delivered implementation and evidence. DR-011 remains accepted for structure only; the separate [DR-012 approval record](DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) covers 1/7/14-day scenario exposure. Dated alternatives/rationale above retain their original decision context.
 
 Some parts of the output structure are already supported by approved project decisions, while others still depend on work being completed elsewhere in the project.
 
-| Field group | Source / owner | Current status |
+| Field group | Source / owner | Historical status — 23 October 2026 |
 |---|---|---|
 | Identity and forecast horizon | Forecasting | Structure approved; upstream 1/7/14/28 horizons human-approved, downstream 28-day use requires separate component-owner/human approval |
 | Forecast output | Forecasting | Completed research, retained export and request-time inference API implemented; final consumer acceptance remains separate |
@@ -178,7 +180,7 @@ This distinction allows the structure to be agreed without making decisions that
 
 ## Open Decisions and Out of Scope
 
-This Decision Record does not finalise every detail of the decision-support output. The following areas remain open for later project decisions:
+This Decision Record did not finalise every detail of the decision-support output. The following list preserves the original unresolved areas; the 9 November reconciliation above identifies completed delivery and accepted deferrals. It is not a current #179 implementation checklist:
 
 - final column names and data types;
 - final file or interchange format;
