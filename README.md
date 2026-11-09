@@ -18,7 +18,7 @@ The framework combines forecasting, conditional inventory exposure and responsib
 - **Forecasting:** a matched, chronologically evaluated comparison of XGBoost, LightGBM and CatBoost for next-day and cumulative 7-, 14- and 28-day demand. In the final evaluation, supportive Ridge achieved the lowest WAPE at 1/7 days and contextual Seasonal Naive at 14/28 days; no universal boosting superiority is claimed.
 - **Inventory exposure:** the group-approved [DR-012 method](docs/decisions/DR-012-inventory-risk-replenishment-methodology.md#group-approval-record) links forecasts to a fixed-origin, fixed-reorder-point, no-receipt scenario for 1/7/14 days. Its retrospective comparison uses a realised-demand proxy, rather than actual stockout labels.
 - **Responsible decision support:** 20 traceable advisory records with 160 human-entered transparency checks preserve assumptions, limitations, unavailable information and the distinction between transparency assessment and managerial review.
-- **Technical delivery:** a local FastAPI service provides request-time forecasts from supplied history and read-only access to retained decision-support cases. Rendered-view delivery is tracked separately near the end of this README.
+- **Technical delivery:** a local FastAPI service provides request-time forecasts from supplied history and read-only access to retained decision-support cases. Eight research figures with PNG/SVG outputs and evidence sidecars are delivered in [final-thesis-figures](reports/figures/final-thesis-figures/README.md).
 
 The designated producers were frozen before final evaluation and remain unchanged:
 
@@ -71,8 +71,6 @@ flowchart TB
 
 Both serving paths use the shared FastAPI application. Changing supplied history creates a new forecast; it does not recompute retained inventory or decision-support evidence. Multi-day forecasts are cumulative totals, not daily paths. Retrospective outcomes and metrics belong in separately labelled evaluation views and are excluded from prospective inputs.
 
-The diagram describes component flow, not completion or acceptance status. Current delivery is summarised in [Project status](#project-status).
-
 ## Scope and limitations
 
 - Conclusions describe a publisher-simulated dataset covering approximately one year; real-retailer effectiveness is not established.
@@ -102,9 +100,9 @@ Research preparation, training and evaluation remain specifically authorised hum
 ## Team contributions
 
 - **[Chathuranga Sudusinghe](docs/team/chathuranga/group-project-overview.md):** research-team coordination, forecasting methodology, model comparison/evaluation, output meaning and shared API architecture/review.
-- **[Didilani Pathinayaka](docs/team/didilani/group-project-overview.md):** inventory-risk/replenishment methodology, analytical visual requirements and business interpretation. The bounded retained-view implementation continuation is assigned to her under #201.
+- **[Didilani Pathinayaka](docs/team/didilani/group-project-overview.md):** inventory-risk/replenishment methodology, analytical visual requirements and business interpretation. Her implementation contributions include the retained-case interface and inventory views.
 - **[Dewmi Haputhanthrige](docs/team/dewmi/group-project-overview.md):** responsible decision-support semantics, transparency, governance, human oversight and presentation review.
-- **[Tinosh Gamage](docs/team/tinosh/group-project-overview.md):** technical integration, adapters, API/integration checks and prototype engineering; provides technical review/support for the #201 continuation.
+- **[Tinosh Gamage](docs/team/tinosh/group-project-overview.md):** technical integration, adapters, API/integration checks and prototype engineering.
 
 Chathuranga is the recorded executor of the retained inventory evaluation and assessor of the 160 record-level checks. That attribution does not transfer Didilani's inventory or Dewmi's responsible-use responsibilities. [Project boundaries](docs/project-boundaries.md) define the permanent roles.
 
@@ -119,7 +117,7 @@ retail-demand-framework/
 │   ├── inventory_risk/        # Scenario preparation, mapping and evaluation
 │   ├── decision_support/      # Advisory records, assessment and retained cases
 │   ├── api/                   # Shared FastAPI delivery
-│   └── visualization/         # Placeholder; rendered views tracked under #201
+│   └── visualization/         # Inventory views and eight-figure rendering
 ├── examples/forecast-api/     # Synthetic request-time input examples
 ├── capture_consumer_evidence.py # Existing request-time evidence helper
 ├── tests/                    # Implementation and regression checks
@@ -138,15 +136,9 @@ retail-demand-framework/
 
 Code is organised by component. The [storage policy](docs/artifact-storage-policy.md) identifies the exact trackable exceptions, including two synthetic request-time evidence files under `research-materials/issue-203/`; other local materials and dataset/model protections remain in force.
 
-## Project status
-
-**Updated: 30 October 2026.** Forecasting research and C1 descriptive conclusions are complete ([#191](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/191)); the request-time forecasting handoff is accepted ([#203](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203)). Retained-case views/runtime acceptance ([#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201)) and rendered responsible-use review ([#182](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182)) remain open. [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179) tracks repository completion; [#204](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/204) starts afterwards for final submission files.
-
-**Subsequent milestones — 5 November 2026:** Dewmi [accepted the W1 interpretation/display baseline on 1 November](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904); W2 remains a separate review. The [1/7/14/28-day worked scenario](docs/worked-example-scenario.md#9-recorded-human-execution--2-november-2026) records Chathuranga's 2 November execution and retrospective comparison, delivered through PR #215 without changing frozen producers or establishing managerial effectiveness. [PR #216](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/216) delivered the [dated meeting and discussion records](docs/meetings/README.md), including the attributed lecturer dataset-change clarification. These milestones do not establish final repository or component acceptance.
-
 ## Usage and permissions
 
-This repository is provided publicly for **academic and educational review**.
+This repository contains academic project materials for educational review.
 
 No open-source licence is granted for the original project materials in this repository. Unless explicit written permission is obtained from the project authors, the repository content must not be copied, modified, redistributed, commercially reused, or incorporated into another project beyond what is otherwise permitted by applicable law.
 

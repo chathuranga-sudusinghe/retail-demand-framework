@@ -84,7 +84,7 @@ The [retained human-run evaluation](../../reports/inventory-risk/issue-164/evalu
 
 ## 28-day compatibility review — downstream use deferred
 
-**Scope reconciled 30 October 2026:** The [C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) retains h28 inventory use, numerical replenishment and overstock as team-accepted disclosed limitations/deferred extensions, reported by Chathuranga on 29 October. They are not current requirements to add methods. Retained input/runtime acceptance and approved h1/h7/h14 views remain under #201, with Didilani as the bounded implementation executor and Tinosh providing technical review/support.
+**Scope reconciled 30 October 2026:** The [C1 decision/closeout record](../research-design.md#164-human-decisions-and-c1-closeout-record) retains h28 inventory use, numerical replenishment and overstock as team-accepted disclosed limitations/deferred extensions, reported by Chathuranga on 29 October. They are not current requirements to add methods. Retained delivery and approved h1/h7/h14 views are complete under closed #201. The [current acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) preserves Didilani's contributions, Chathuranga's reported inventory acceptance and clarification, Tinosh's technical acceptance and Dewmi's W2 acceptance.
 
 The approved upstream forecasting design supplies a direct cumulative 28-day quantity. Algebraically, the
 proposed comparison F(o,h) against the fixed origin buffer I(o) − R(o) accepts

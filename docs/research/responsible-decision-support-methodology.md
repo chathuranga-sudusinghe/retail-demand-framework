@@ -129,6 +129,8 @@ At this stage, the methodology should remain flexible rather than introducing fi
 
 ## 10. Decisions Still Requiring Group Approval
 
+**Subsequent status reconciliation — 9 November 2026:** The original proposal list below retains its preparation context. The implemented record/API structure, W1 handoff and W2 presentation are delivered and accepted at their scopes in the [current handoff record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). Prospective uncertainty, numerical replenishment and automatic review methods are accepted deferred extensions; no new threshold or research decision is introduced here.
+
 Some parts of the decision-support methodology still require agreement from the group before they can be treated as final. This is particularly important where the decision-support component depends on outputs from the forecasting and inventory-risk components. The following decisions should therefore remain open until the relevant evidence and group discussion are available.
 
 - The final set of fields that will appear in the management-facing decision-support output.
@@ -139,7 +141,7 @@ Some parts of the decision-support methodology still require agreement from the 
 
 ## 11. Current Decision Record and Provisional Contents
 
-[DR-011](../decisions/DR-011-decision-support-output-structure.md) defines the management-facing output structure and is accepted for structure only. DR-012 scenario exposure has separate group approval and retained evidence. Numerical replenishment, forecasting uncertainty, recommendation rules and human-review thresholds remain provisional; final interchange/presentation acceptance is separate from available internal records. This structural acceptance does not approve substantive downstream logic. No thresholds should be invented; unresolved thresholds remain open.
+[DR-011](../decisions/DR-011-decision-support-output-structure.md) defines the management-facing output structure and is accepted for structure only. DR-012 scenario exposure has separate group approval and retained evidence. Numerical replenishment, prospective uncertainty and automatic human-review rules remain unavailable under the accepted C1 deferrals; completed scoped interchange/presentation acceptance is recorded separately in the [current handoff record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). This structural acceptance does not approve substantive downstream logic. No thresholds should be invented; unresolved thresholds remain open.
 
 ## Revised forecasting interface and component review
 

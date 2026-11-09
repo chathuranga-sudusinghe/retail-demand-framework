@@ -1,11 +1,11 @@
 # Integration Contract Readiness — Component Handoff Map
 
 **Issue:** #87 — Docs: map component handoff contracts and integration blockers
-**Tracking — reconciled 30 October 2026:** [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179) tracks final repository delivery. [#203 closed on 29 October](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) for the accepted request-time forecast handoff; [#191 closed on 30 October](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/191#issuecomment-6515040267) for the team-accepted descriptive C1 scope. [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201), assigned to Didilani with Tinosh's technical review/support, covers retained runtime/source/component acceptance and approved inventory views. #182 retains W2 rendered review; W1 interpretation/display acceptance is recorded as reported by Chathuranga. Closed #177/#193/#195/#183/#197/#101 remain delivery history, not open assignments.
+**Tracking — reconciled 9 November 2026:** #191, #203, #201 and #182 are closed delivery/acceptance milestones. [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179) records repository completion through the documentation closeout PR; #204 covers later submission files. The [current delivery and acceptance record](#12-current-delivery-and-acceptance--9-november-2026) supersedes older open/pending summaries below.
 **Responsible member:** Tinosh Gamage — System Integration and Prototype Engineering
-**Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk / replenishment references), Dewmi (responsible decision-support references)
-**Updated:** 30 October 2026, documentation reconciliation at `a3f6368bbbec6cc7a2bfc67bd46e29202bef8b63`. Retained-API implementation baseline: `b6f196ad73d3a31017582f81dbc7f5183ef573df`; original #177 inspection baseline: `33b44928c12ccd0e0bf8154dec899be51fa39b5f`.
-**Status:** The retained exporter, request-time API, inventory mapping/runner, prospective record bridge and read-only retained roster/case API are merged. Constructed-origin inventory results and 160 checks on 20 records are published. The scoped request-time producer/source/consumer handoff is accepted under #203. DR-012 approval and the team-accepted deferrals are recorded separately from immutable historical labels. Source timing remains unknown; retained-export/component acceptance, rendered-view review and final integrated acceptance remain under #201/#182/#179. Human-observed retained startup/route checks and static-figure generation are recorded in the API and figure-delivery guides.
+**Reviewers:** Chathuranga (forecasting-facing accuracy), Didilani (inventory-risk interpretation), Dewmi (responsible-use meaning)
+**Updated:** 9 November 2026; inspected implementation baseline `e9aba1fc09558fac0f687d8fd79f5c2e0128103f`. Earlier revision references remain historical.
+**Status:** Retained-case routes, the separate request-time forecast path, four approved inventory questions and eight research figures are delivered. Scoped acceptances and the documentation closeout steps are listed below. Unknown inventory timing and accepted deferred methods remain unchanged.
 
 ---
 
@@ -41,6 +41,85 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 
 ---
 
+### 1.2 Current delivery and acceptance — 9 November 2026
+
+This record, including the subsequent human closeout clarification below, supersedes earlier current-facing statements that #201/#182 are open,
+that views are planned, or that W2/technical review has not happened. Dated
+observations below retain their original scope. This documentation correction
+records existing work; it does not create a human approval. The linked completion
+tracker is closed by the human-merged closeout PR, rather than by editing prose.
+
+**Closeout clarification — Chathuranga, 9 November 2026:** In the working
+conversation, Chathuranga confirmed that the old pending PNG items were addressed
+by the replacement eight-figure delivery already committed to the repository,
+and instructed that Didilani not be asked to confirm those same items again.
+He also reaffirmed that PR #217's review was completed and requested that this
+be recorded in the 9 November documentation closeout PR. Retain
+his previously reported inventory/consumer acceptance; this is his clarification,
+not a newly authored direct acceptance from Didilani or a fabricated GitHub review.
+The subsequent independent review identified documentation-only stale-status
+corrections, approved by Chathuranga; no implementation or existing review gap
+was identified as a blocker. The documentation closeout PR carries `Closes #179`;
+GitHub records closure when a human merges that PR into `main`. Reuse existing
+component reviews and preserve their attribution.
+
+The current delivery is the eight PNG/SVG/JSON figure sets, README and manifest
+in [final-thesis-figures](../reports/figures/final-thesis-figures/README.md),
+merged through PR #211 and subsequent clarifications through #218/#219.
+Manifest SHA-256: `e95cbd33e5b708f3fe21458f570ecbcaafe81c1df5b9e3a1266dcb9d7f2f3ad1`.
+The generation receipt's dirty HEAD is historical provenance, not the current
+checkout identity. No figure regeneration is needed for these status edits.
+
+| Scope | Recorded evidence and current disposition |
+|---|---|
+| Retained delivery / #201 | [Closed on 8 November](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201#issuecomment-6719061457), including the 5 November human route walkthrough and eight-figure delivery. |
+| Forecast producer/source | [Chathuranga confirmed completion](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6719032400), including applicable source verification. |
+| Inventory figures / retained consumer | Chathuranga reported Didilani's acceptance in the linked #179 confirmation and clarified on 9 November that the later old-page findings are addressed by the current eight figures. Her [last direct #179 outcome](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6730175531) was **pending final acceptance**, citing removed output pages and reviews now recorded. Inventory acceptance for the current delivery rests on Chathuranga's report and 9 November clarification, not a later direct statement from her. No repeated confirmation is requested. |
+| Responsible presentation / W2 | [Dewmi's final scoped W2 acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6704944020) resolved all four clarification points; #182 is closed. Her [overall component confirmation](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6724432473) records no responsible-use blockers. |
+| Technical integration / worked scenario | [Tinosh accepted T1–T4 at `e9aba1f`](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6723530741), reusing his #201/#211 and #215 reviews, 45 visualization tests and 104 synthetic worked-scenario tests. His #211/#215 reviews were recorded after merge; they are not pre-merge approvals. |
+| PR #217 review record | Chathuranga confirmed in the working conversation that the human review was completed and reaffirmed this on 9 November. [PR #217](https://github.com/chathuranga-sudusinghe/retail-demand-framework/pull/217) covers missing-runtime-package handling in `src/forecasting/metadata.py` and the associated synthetic tests, incorporated in baseline `e9aba1fc09558fac0f687d8fd79f5c2e0128103f`. This records his completion report; the reviewer's identity and original timing were not supplied, and no formal GitHub review submission or pre-merge timing is invented. No repeated review is requested. |
+| Overall completion / final files | Implementation and existing component reviews are complete under the recorded confirmations and Chathuranga's 9 November clarification. The documentation closeout PR records completion and carries `Closes #179`, with issue closure taking effect on human merge into `main`. #204 covers later final report/presentation files. Record the actual completion time; do not backdate to the internal 00:00 on 9 November target. |
+
+#### Reconciliation of Didilani's latest pending items
+
+| Item in the latest comment | Disposition for the current delivery |
+|---|---|
+| Metadata-page readability and spacing | Addressed by the replacement eight-figure delivery already committed to the repository, as clarified by Chathuranga on 9 November. Removed pages are outside the current deliverable; no restoration, repair or repeated D2 confirmation is requested. |
+| Dewmi's W2 review | Completed and accepted at the links above; reuse it for unchanged figures. |
+| Tinosh's technical/component review and API handoff | Completed within the recorded scope above; the separate #203 request-time handoff is accepted. PR #217 review completion is recorded as confirmed by Chathuranga; no repeat is requested. |
+| Report integration and overall acceptance | Inventory evidence is incorporated in group-report Section 6; Sections 7–8 link completed responsible-use and technical reviews. Retain the reported inventory acceptance and the 9 November clarification. Final submission-file assembly belongs to #204. |
+
+#### Retained-export identity check — 9 November 2026
+
+Before these documentation edits, Codex inspected the standard-library verifier
+and ran the narrow `dewmi` profile against the full `e9aba1f` baseline named in
+Tinosh's independent human technical review above. This was a read-only check
+of tracked Git content, the checksum reference and one installed export; no
+model deserialization, inference, replay, evaluation or full-bundle scan ran.
+
+```bash
+.venv/bin/python -B -m src.data.verify_checksums --profile dewmi --tracked-ref e9aba1fc09558fac0f687d8fd79f5c2e0128103f
+```
+
+```text
+OK  tracked Git content matches e9aba1fc09558fac0f687d8fd79f5c2e0128103f
+Reference: docs/checksums/2026-10-06.json
+Reference SHA-256: 381ed9607a9e3ec155ee3754d699d62873bfbff18f5e1f4edc31c407267ed7cc
+Repository HEAD: e9aba1fc09558fac0f687d8fd79f5c2e0128103f
+Reference revision: e9aba1fc09558fac0f687d8fd79f5c2e0128103f
+Reference status: matches the supplied reviewed commit bytes.
+OK  data/processed/forecasting/handoffs/final-20261003-02/issue-132-forecast-export-v1.json
+Files matched: 1/1
+```
+
+Exit status was 0, with no missing/changed selected files or warnings. Absolute
+local root lines are omitted above; the command ran at the existing repository
+root. Other ignored payloads were outside this profile. This new check does not
+upgrade earlier provisional checks retroactively or claim another member ran it.
+Tracked content matched before editing; this documentation change is outside
+that earlier clean-tree observation. File identity does not establish scientific
+correctness, source inventory timing or consumer acceptance.
+
 ## 2. Sources reviewed
 
 | Source | What it supplies for this map |
@@ -51,7 +130,7 @@ Governing rules: [AGENTS.md](../AGENTS.md) Sections 4, 9, 17 and 19; [System int
 | [src/forecasting/targets.py](../src/forecasting/targets.py) | Exact meaning of horizon targets and their row alignment |
 | [src/forecasting/experiment.py](../src/forecasting/experiment.py) | How origin and target dates are written for validation records |
 | [docs/forecasting-runner.md](forecasting-runner.md) | Run lifecycle, completion manifest, Issue #89 status |
-| [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Retained export contract and local/ignored derivative location; exporter exists, acceptance remains pending |
+| [Forecast API contract](forecast-api-contract.md), [storage policy](artifact-storage-policy.md) | Retained export contract and local/ignored derivative location; current acceptance and identity evidence are in Section 1.2 |
 | [Request-time forecast API](forecast-inference-api.md), [inference source](../src/forecasting/inference.py), [API source](../src/api/main.py) | Active serving behavior requested by Chathuranga; supplied-history request contract, four presentation examples and merged implementation; consumer acceptance remains separate |
 | [docs/workflows/shared-data-foundation.md](workflows/shared-data-foundation.md) | Forecast-to-inventory timing contract and open contract decisions |
 | [docs/workflows/system-integration-and-prototype.md](workflows/system-integration-and-prototype.md) | Integration rules and adapter boundaries |
@@ -162,7 +241,7 @@ Rules recorded in sources:
 - The retrospective margin is evaluation evidence and must not become a prospective review input (DR-012 §7).
 - The API must not use future outcome information in prospective views ([system integration workflow](workflows/system-integration-and-prototype.md)).
 
-**Current state — 30 October 2026:** The [retained-export contract](forecast-api-contract.md) applies to its fixed-origin artifact and separate retained acceptance. The merged [request-time API](forecast-inference-api.md) uses supplied history and the frozen saved producer. Section 6 of that contract preserves the 24 October manual observations and 28 October v2 capture; [Chathuranga's 29 October acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) separately reviewed the v2 capture at `20265aa0ecb7f5e6436e8aa29694a076fc643286` with installed-file verification at `7034d296f181564ecf575152f4ce5336ee00f6e4`, closing #203 (B2 live path). PR #197 delivered retained roster/case GET routes, closing #183. Those routes validate the retained export and inventory joins to the 20 assessed records; they do not recompute a retained case from live history. Retained handoff/views continue under #201, with B14 acceptance separate. Neither prospective path exposes retrospective outcomes.
+**Historical state — 30 October 2026; current acceptance is in Section 1.2:** The [retained-export contract](forecast-api-contract.md) applies to its fixed-origin artifact and separate retained acceptance. The merged [request-time API](forecast-inference-api.md) uses supplied history and the frozen saved producer. Section 6 of that contract preserves the 24 October manual observations and 28 October v2 capture; [Chathuranga's 29 October acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) separately reviewed the v2 capture at `20265aa0ecb7f5e6436e8aa29694a076fc643286` with installed-file verification at `7034d296f181564ecf575152f4ce5336ee00f6e4`, closing #203 (B2 live path). PR #197 delivered retained roster/case GET routes, closing #183. Those routes validate the retained export and inventory joins to the 20 assessed records; they do not recompute a retained case from live history. Retained handoff/views continue under #201, with B14 acceptance separate. Neither prospective path exposes retrospective outcomes.
 
 ---
 
@@ -238,6 +317,8 @@ Candidate field names in the [responsible decision-support workflow](workflows/r
 
 ## 8. Readiness summary by handoff
 
+**Status reconciliation — 9 November 2026:** The planning rows below preserve their earlier scope. [Section 1.2](#12-current-delivery-and-acceptance--9-november-2026) supersedes open/pending assignments resolved by #201/#182/#203 and records the documentation closeout steps. Do not repeat completed reviews from these historical rows.
+
 **Static figure implementation — 5 November 2026:** The four approved inventory
 questions now have a compact eight-figure delivery, including Chathuranga's
 explicitly approved forecasting/transparency additions. The
@@ -262,6 +343,8 @@ Completed retrospective evidence resolves the former absence-of-validation-evide
 
 ## 9. Blockers
 
+**Status reconciliation — 9 November 2026:** The planning rows below preserve their earlier scope. [Section 1.2](#12-current-delivery-and-acceptance--9-november-2026) supersedes open/pending assignments resolved by #201/#182/#203 and records the documentation closeout steps. Do not repeat completed reviews from these historical rows.
+
 B1 (retained forecasting evidence availability) is resolved by the completed validation/final evidence. Remaining blockers retain their existing owners and approval boundaries.
 
 **Checksum evidence (reported):** The latest successful Didilani-profile verification against reviewed reference `fd4debcac0719fca306c99d32dacfbe391230ec4` matched 5/5 files, including `data/processed/validated/supply-chain-dataset1-validated-v1/validated.parquet`. This is file identity/integrity evidence only; it does not establish producer acceptance, consumer acceptance, inventory-timing evidence, methodology approval, or evaluation authorization.
@@ -273,7 +356,7 @@ The decision rows below reconcile the historical Issue #164 milestone with curre
 | ID | Decision | Evidence and approval status | Required reviewers | Remaining action | Existing tracking issue / document | Separate issue? |
 |---|---|---|---|---|---|---|
 | B2 | **Forecasting API review and consumer handoff — live path accepted** | Request-time implementation and v2 serving evidence are delivered; [Chathuranga's separate 29 October producer/source acceptance](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406) reviewed the capture at `20265aa0ecb7f5e6436e8aa29694a076fc643286` together with reported 20/20 installed-file verification at `7034d296f181564ecf575152f4ce5336ee00f6e4`. #203 is closed. | Chathuranga and Tinosh for the live handoff; #201 executor/reviewers for retained delivery | Reuse accepted live evidence for unchanged behaviour. Continue retained runtime/component acceptance under #201/B14; it is not established by the live decision. | #203 acceptance; #193/#195 producer corrections; #180/#184 manual evidence; #183/#197 retained API; #201 continuation | No duplicate live acceptance task; retain #201/#179 for unfinished delivery. |
-| B14 | **Forecast export acceptance and provenance** | The retained export is identified as run `final-20261003-02`. The reported checksum result establishes identity/integrity only; producer and consumer acceptance remain unverified. | Chathuranga (producer); Didilani (consumer); Tinosh (technical representation) | Record producer-side review and consumer acceptance separately; retain provenance at its actual source scope. | #164; #132; #162; Issue #169; [checksum reference](checksums/2026-10-06.json); [protocol](research/inventory-risk-evaluation-protocol.md) | Possibly, if standalone and substantial; first check live GitHub for overlap. |
+| B14 | **Forecast export acceptance and provenance** | Run `final-20261003-02`; Chathuranga confirmed producer/source acceptance and reported Didilani's consumer acceptance. The 9 November reviewed-baseline export check matched 1/1; Section 1.2 records scope/output and his clarification resolving the old pending figure items. | Chathuranga (producer); Didilani (consumer); Tinosh (technical representation) | Reuse completed source verification and reported acceptance; no repeated component confirmation is requested. The documentation closeout PR records this correction; #179 closure takes effect on human merge into `main`. | [Current acceptance record](#12-current-delivery-and-acceptance--9-november-2026); #179; #201 closeout; [checksum reference](checksums/2026-10-06.json) | No replacement implementation or issue required. |
 | B3, B13 | **Origin inventory snapshot timing and availability** | Source timing remains unknown. The runner provides an explicit constructed-origin scenario with separate assumption, analysis-availability and scenario-state fields; it never changes unknown source timing to verified availability. `Order_Quantity` is not treated as receipts. | Didilani; relevant dataset/source owner if identifiable; Chathuranga for forecast-time alignment | Select and disclose the specific run's snapshot policy using [protocol §12.2](research/inventory-risk-evaluation-protocol.md#122-run-the-implemented-inventory-evaluation); retain unknown source timing and distinguish conditional scenario evidence from source-confirmed evidence. | #164; #162; #51; #70 / #85; [dataset](dataset.md); [protocol](research/inventory-risk-evaluation-protocol.md) | Existing implementation; source semantics remain distinct. |
 | B6 | **Forecast-to-inventory field mapping** | The exact retained-export mapping is implemented in `src/inventory_risk/forecast_handoff.py`: validated identity/timing, explicit status and source-forecast eligibility, source-bound primary role and provenance propagation. Snapshot availability remains an independent input. | Chathuranga, Didilani, and Tinosh jointly | Inspect the completed human-run evidence in [protocol §12.3](research/inventory-risk-evaluation-protocol.md#123-retained-human-run-evidence); record actual consumer acceptance and retain unknown snapshot timing rather than inferring it. | #164; #162; #70 / #85; shared-data foundation item 6; [protocol §4.1](research/inventory-risk-evaluation-protocol.md#41-implemented-forecast-to-inventory-mapping) | Existing implementation; no replacement issue created. |
 | B5 | **Problematic forecast handling** | Implemented validation rejects invalid source exports and retains finite negative values as unavailable inventory inputs; no rounding, clipping, substitution or row deletion. | Chathuranga and Didilani; Tinosh for technical error handling | Review the implemented distinctions between whole-input failure and retained-row unavailability in [protocol §6.1](research/inventory-risk-evaluation-protocol.md#61-implemented-validation-and-error-behaviour). | #164; #162; #70 / #85 | Existing implementation; no replacement issue created. |
@@ -288,9 +371,11 @@ The decision rows below reconcile the historical Issue #164 milestone with curre
 
 ## 10. Continuing integration work — available work and dependencies
 
+**Historical scoping guidance:** Current delivery is complete at the scope in Section 1.2. The rows below are retained for their original dependency logic and future-extension boundaries, not as unfinished #179 assignments.
+
 ### 10.1 Scope each continuation
 
-PR #197 delivered the retained API slice. Apply the following scoping guidance to extensions and the remaining #201/#179 acceptance work; it does not mean the merged implementation is still absent.
+PR #197 delivered the retained API slice; #201 subsequently completed its bounded continuation. The following original scoping guidance applies to separately approved future extensions. Existing scoped acceptance is recorded in Section 1.2; these rows are not current implementation assignments.
 
 - Narrow the next integration task to **one** reviewed handoff and a concrete, testable interface, using the reviewed readiness requirements.
 - Draft that narrowed interface as a proposal for the relevant owner's review (draft only; not a final schema).
@@ -299,7 +384,7 @@ PR #197 delivered the retained API slice. Apply the following scoping guidance t
 
 ### 10.2 Must wait
 
-Current delivery waits on retained/component and rendered acceptance. Deferred method extensions below describe approval boundaries; they are not automatically required for #179.
+The current delivery and scoped reviews are complete as recorded in Section 1.2. The dependency rows below preserve the original planning boundaries; they do not reopen completed acceptance. Deferred method extensions require separate approval and are not required additions to #179.
 
 | Work in the next integration task | Waits for |
 |---|---|
@@ -310,7 +395,7 @@ Current delivery waits on retained/component and rendered acceptance. Deferred m
 | New automatic human-review triggers | B10; existing not_assessed status and reasons can be rendered under reviewed record semantics |
 | Numerical uncertainty values | B11; an unavailable field with its existing reason can already be rendered |
 | Inventory-risk visual components | #201 implementation/runtime evidence using Didilani's existing approved specification; no repeat specification decision is needed |
-| Decision-support record presentation | Implement the W1 handoff accepted as reported by Chathuranga; actual rendered W2 review remains under #182/#201 (B7, B9) |
+| Decision-support record presentation | Implement the W1 handoff accepted as reported by Chathuranga; actual rendered W2 review was a dependency at this planning checkpoint and is now accepted under closed #182 (B7, B9) |
 | Any use of real run outputs | Stage-specific verified run_manifest.json and human acceptance of the exact handoff |
 
 ### 10.3 Start checklist for the next integration task
@@ -341,7 +426,7 @@ Current delivery waits on retained/component and rendered acceptance. Deferred m
 
 **Builds on:** Issue #87 (Sections 1–11 of this document). Issue #101 lists #98, #70 and #73 as completed inputs. This section uses their requirements only as they are already reflected in Sections 3–9 and in the merged component tests named below.
 
-**Status:** #101 delivered the scenario specification. Existing component coverage and the subsequently merged synthetic API/integration coverage are distinguished in Section 12.3. Human-observed retained runtime acceptance and rendered checks remain under #201/#179; the scenario specification and automated results do not establish those outcomes.
+**Status:** #101 delivered the scenario specification. Existing component coverage and the subsequently merged synthetic API/integration coverage are distinguished in Section 12.3. Completed human-observed runtime and scoped rendered reviews are linked in Section 1.2; the original scenario specification and automated results alone do not establish those outcomes.
 
 ### 12.1 Rules for this section
 
@@ -349,7 +434,7 @@ Current delivery waits on retained/component and rendered acceptance. Deferred m
 - **Real names only where they already exist.** Back-ticked forecasting names (`SKU_ID`, `Warehouse_ID`, `forecast_origin`, `horizon`, `target_start_date`, `target_end_date`, `prediction`, `observed_target`, `run_id`, `evaluation_stage`, `evidence_role`, `model`, `configuration_id`, `canonical_config_id`) are the implemented `predictions.csv` columns in [artifacts.py](../src/forecasting/artifacts.py). Downstream content in these original scenarios is described in plain words. The merged retained response schemas are documented in the [API contract](forecast-inference-api.md#51-retained-decision-support-cases); their existence does not settle every final consumer/encoding decision (B6, B7, B9).
 - **No new defaults.** Where a value is missing or unapproved, a scenario only requires that this is visible with a reason. It does not choose a fallback, clipping rule, uncertainty method or review threshold.
 - **Three kinds of evidence.** *Component unit coverage* checks behaviour inside one component. *Synthetic API/integration coverage* checks the implemented HTTP/adaptor path with disposable fixtures or model doubles. *Human runtime/rendered acceptance* records actual consumption and presentation review. Section 12.3 identifies existing automated coverage without marking an entire scenario or human acceptance complete.
-- **Issue references.** #132, #164, #168, #85, #145 and #153 are closed historical requirement/evidence references. #101/#157 delivered these scenarios; #177 records the earlier refined baseline. #193/#195 and #183/#197 delivered later implementation work; #179, #201 and #182 track continuing delivery/review. Closure does not replace missing acceptance evidence.
+- **Issue references.** #132, #164, #168, #85, #145 and #153 are closed historical requirement/evidence references. #101/#157 delivered these scenarios; #177 records the earlier refined baseline. #193/#195 and #183/#197 delivered later implementation work; #201 and #182 are completed milestones; #179 records repository closeout through the documentation PR. Closure does not replace missing acceptance evidence.
 - **Positive** examples show acceptable behaviour. **Negative** examples show behaviour a later integration must reject or never produce.
 
 ### 12.2 Acceptance matrix
@@ -551,7 +636,7 @@ does not show: observed demand, errors, metrics
 
 ### 12.5 Conceptual scenarios — unavailable information, advisory-only, not assessed
 
-These describe **behaviour only**. The implemented records/API retain `human_review_status=not_assessed` and source-specific unavailable reasons. Dewmi’s [accepted W1 interpretation/display baseline](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) supplies the semantic handoff; a new universal vocabulary or another W1 decision is not required. B9’s remaining work concerns actual component/presentation acceptance under #182/#201. Human-readable labels may explain existing codes without changing retained values. This reconciliation records the current state on 5 November 2026.
+These describe **behaviour only**. The implemented records/API retain `human_review_status=not_assessed` and source-specific unavailable reasons. Dewmi’s [accepted W1 interpretation/display baseline](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/182#issuecomment-6555332904) supplies the semantic handoff; a new universal vocabulary or another W1 decision is not required. At that checkpoint, B9 concerned actual component/presentation acceptance under #182/#201; both later completed scopes are linked in Section 1.2. Human-readable labels may explain existing codes without changing retained values. This reconciliation records the current state on 5 November 2026.
 
 #### Unavailable information (AS-07)
 
@@ -583,6 +668,8 @@ DR-011 separates three reasons: **no agreed method**, **does not apply**, and **
 | More than one reason kept when more than one applies | Not-assessed status with no reason |
 
 ### 12.6 Ready to specify now versus waiting on dependencies
+
+**Status reconciliation — 9 November 2026:** The planning rows below preserve their earlier scope. [Section 1.2](#12-current-delivery-and-acceptance--9-november-2026) supersedes open/pending assignments resolved by #201/#182/#203 and records the documentation closeout steps. Do not repeat completed reviews from these historical rows.
 
 **Specified requirements with existing component coverage** (frozen sources and component tests exist; no pending decision is needed to write the expected behaviour):
 
@@ -620,6 +707,8 @@ The historical closures of #164/#168 do not imply other acceptance. B4 approval 
 
 ## 13. Remaining-work handoff after Issue #177
 
+**Status reconciliation — 9 November 2026:** The planning rows below preserve their earlier scope. [Section 1.2](#12-current-delivery-and-acceptance--9-november-2026) supersedes open/pending assignments resolved by #201/#182/#203 and records the documentation closeout steps. Do not repeat completed reviews from these historical rows.
+
 The following handoff is reconciled on 30 October 2026 at `a3f6368bbbec6cc7a2bfc67bd46e29202bef8b63`, with the subsequent #191 closeout and #203 acceptance referenced above. The #201 retained implementation and #182 rendered-review scopes remain open. Reuse existing evidence and tasks; this table creates no new issue, assignment, ownership transfer or research approval.
 
 | Responsible member | Delivered starting point | Next focused scope and dependencies |
@@ -629,4 +718,4 @@ The following handoff is reconciled on 30 October 2026 at `a3f6368bbbec6cc7a2bfc
 | Dewmi | Populated records, 160 checks assessed by Chathuranga and W1 interpretation/display acceptance as reported by Chathuranga | Review actual #201 views under #182 W2 when a revision is reviewable. Reuse the accepted W1 interpretation and unchanged record assessments; preserve attribution. |
 | Tinosh | Accepted #203 live handoff; original PR #197 authorship; retained adapters, synthetic checks and AS-01–AS-10 specifications | Provide technical review/support for #201's implementation, affected CI and single integrated setup/report account. Reuse accepted live evidence. The bounded implementation assignment to Didilani preserves his permanent technical role and earlier contributions; keep live/retained paths distinct. |
 
-All members retain their component/repository reviews under #179. Final submission-file preparation, presentation preparation and individual reflections are outside #179. After #179 closes, #204 covers Chathuranga's preparation of the final report/presentation and his own reflective file if required; each member remains responsible for their own reflection. Official deadlines, formats and assessment-specific permissions still require actual source confirmation; C1's descriptive scope is closed under the recorded human decision. The five deferred extensions remain unavailable unless separately approved. Method approval and completed C1 do not establish significant managerial benefit or final prototype acceptance.
+All members retain their component/repository reviews under #179. Final submission-file preparation, presentation preparation and individual reflections are outside #179. Following #179 repository closeout, #204 covers Chathuranga's preparation of the final report/presentation and his own reflective file if required; each member remains responsible for their own reflection. Official deadlines, formats and assessment-specific permissions still require actual source confirmation; C1's descriptive scope is closed under the recorded human decision. The five deferred extensions remain unavailable unless separately approved. Method approval and completed C1 do not establish significant managerial benefit or final prototype acceptance.

@@ -21,11 +21,11 @@ Tinosh makes the reviewed forecasting, inventory-risk and responsible decision-s
 - Dewmi's reviewed responsible decision-support records, unavailable-state semantics, management-facing meaning and human-review criteria.
 - Agreed cross-component interchange contracts and explicit decisions about origin snapshot availability before any dependent integration.
 
-The final schemas remain open. A 28-day forecast can be represented without implying approval for 28-day inventory interpretation or human-review triggers.
+The implemented response schemas and scoped handoff acceptance are documented in the [current acceptance record](../../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026); future schema changes require review. A 28-day forecast can be represented without implying approval for 28-day inventory interpretation or human-review triggers.
 
 ## Current starting point
 
-The forecast API, retained mapping and prospective record bridge are merged. **Current handoff — 30 October 2026:** [#203's scoped request-time handoff is accepted](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406). [#201](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/201) assigns the bounded retained-view implementation to Didilani; Tinosh provides technical review/support for integration, affected checks, setup and the shared report account. This does not transfer his permanent technical responsibility or establish rendered acceptance. #101 supplied AS-01–AS-10 requirements, not a completed whole-suite pass. Keep the live request contract and fixed-origin retained evidence distinct; see [integration readiness](../../integration-contract-readiness.md).
+The forecast API, retained mapping and prospective record bridge are merged. **Current handoff — reconciled 9 November 2026:** [#203's scoped request-time handoff is accepted](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/203#issuecomment-6501737406). #201's bounded retained-view contribution is delivered. [Tinosh recorded T1–T4 technical acceptance at `e9aba1f` on 8 November](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179#issuecomment-6723530741), reusing his scoped integration, visual and worked-scenario reviews. His permanent technical responsibility and original contribution history are retained; responsible-presentation acceptance is Dewmi's separate scope. #101 supplied AS-01–AS-10 requirements, not a completed whole-suite pass. Keep the live request contract and fixed-origin retained evidence distinct; see [integration readiness](../../integration-contract-readiness.md).
 
 ## Responsibilities
 

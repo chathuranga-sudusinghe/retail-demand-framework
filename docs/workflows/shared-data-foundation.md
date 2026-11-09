@@ -34,7 +34,7 @@ Validation consumes its named validated projection, not optional model-ready exp
 
 Existing validators reject blocking source defects without repairing observations. A new repair, missing-period handling, identifier mapping or product exclusion requires human approval if proposed. Frozen forecasting eligibility and promotion exclusion remain unchanged.
 
-Still required: origin inventory snapshot within-day semantics and availability, final prospective forecast export/schema acceptance, forecasting-to-inventory and inventory-to-decision-support schemas, unavailable/problematic input behavior and component-owner approval for 28-day downstream use. [Integration readiness](../integration-contract-readiness.md) owns the current blocker map. No downstream decision is resolved by a schema default.
+The retained export, downstream adapters/schemas and unavailable/problematic-input handling are implemented; their scoped acceptance is recorded in the [current handoff record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). Source inventory within-day timing remains unknown and is disclosed under the constructed-origin scenario. Twenty-eight-day inventory use remains deferred and needs separate human approval before extension. No schema default resolves an unknown source fact or approves a future method.
 
 ## Output contracts
 
@@ -46,7 +46,7 @@ The [DR-012 approval record](../decisions/DR-012-inventory-risk-replenishment-me
 
 Join the same SKU-warehouse's `Inventory_Level` and `Reorder_Point` available at that origin, retain the snapshot date and availability assumption, and keep the threshold fixed within the scenario. Same-date availability does not establish before/after-sales semantics; document that interpretation before integration. Do not use future inventory or silently substitute a different snapshot when origin evidence is unavailable.
 
-The exposure scenario assumes no receipts, transfers, returns, losses or other adjustments. Origin-available lead time is context only. Order quantity is context only after its availability at the forecast origin is established; it must not be added as received inventory. Missing/invalid required evidence remains unavailable/not assessed with a reason. The retained-export mapping and problematic-forecast handling are implemented in [forecast_handoff.py](../../src/inventory_risk/forecast_handoff.py). Final consumer/API schema acceptance remains separate.
+The exposure scenario assumes no receipts, transfers, returns, losses or other adjustments. Origin-available lead time is context only. Order quantity is context only after its availability at the forecast origin is established; it must not be added as received inventory. Missing/invalid required evidence remains unavailable/not assessed with a reason. The retained-export mapping and problematic-forecast handling are implemented in [forecast_handoff.py](../../src/inventory_risk/forecast_handoff.py). Current scoped consumer/API acceptance is recorded separately in integration readiness; it does not establish source timing.
 
 Keep realised cumulative `Units_Sold`, retrospective exposure states and errors in a distinguishable evaluation view. They must not enter origin-time forecast or decision inputs. Preserve DR-011's source distinction and unavailable-information semantics in the downstream handoff.
 
@@ -54,7 +54,7 @@ Keep realised cumulative `Units_Sold`, retrospective exposure states and errors 
 
 [Dataset contract Sections 7/8](../dataset.md#7-shared-processed-dataset) own shared processed-view content and member-specific needs. [The feature contract](../forecasting-feature-engineering.md) owns model-input definitions; a raw field retained for downstream use does not automatically become a predictor. This workflow connects those representations to chronological preparation and storage without defining another field list.
 
-The final cross-component schemas must be documented before integration.
+The implemented cross-component contracts are documented in the retained-export contract, API guide and integration readiness record. Future contract changes need review before implementation.
 
 Chathuranga and Tinosh share API integration design and review, with Chathuranga responsible for forecasting-facing contract meaning. Tinosh implements agreed adapters and delivery schemas after review by the relevant component owner. These technical contracts must preserve provenance, origin, horizon and unavailable-state reasons; they must not settle the pending snapshot or methodological decisions by default.
 

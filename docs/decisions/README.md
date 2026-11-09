@@ -45,7 +45,7 @@ RQ2 subordinate hypotheses and interpretation are approved as comparative and de
 Remaining or future decisions include:
 
 - retained-model audit/retention exceptions, archival responsibilities and backup policy;
-- remaining retained input-contract/source-timing and component-acceptance details under #201;
+- any future attempt to establish source inventory timing beyond the accepted constructed-origin assumption; retained contract/component acceptance is recorded under closed #201 and the [#179 completion record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026);
 - any future demand-regime definition, controlled forecast-to-decision evaluation or extension of a deferred method, if explicitly proposed and approved.
 
 A future material methodology change needs the relevant human/component review and a decision recorded in the appropriate existing or new Decision Record. Preserve historical DR text, approval attribution and immutable evidence; the current scope record does not approve the deferred methods.

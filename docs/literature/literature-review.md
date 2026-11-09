@@ -193,7 +193,7 @@ The accepted forecasting feature/preprocessing contract, direct targets, horizon
 
 Forecasting validation and final evaluation are complete as confirmed by Chathuranga. [Final results](../forecasting-final-evaluation.md) owns interpretation, unchanged producer mapping and prior-exposure/simulation limitations. Literature motivation is distinct from evidence that a method worked on this dataset; simpler supportive/baseline performance remains visible.
 
-DR-012 group approval and implemented scenario evaluation are recorded separately from this synthesis. Still open: source origin semantics and consumer acceptance, numerical replenishment/overstock, uncertainty, human-review logic, 28-day inventory use and final cross-component/API contracts. [Integration readiness](../integration-contract-readiness.md) records their existing owners and boundaries. This literature alignment settles none of those methods.
+DR-012 group approval, implemented scenario evaluation and completed scoped consumer/API/presentation acceptance are recorded separately in the [current handoff record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). Source origin semantics remain unknown. Numerical replenishment, overstock, prospective uncertainty, automatic review rules and h28 inventory use are accepted limitations/deferred extensions under the C1 scope record, not unfinished implementation. Any future method requires separate human approval; this literature alignment adds none.
 
 ## 11. References
 
