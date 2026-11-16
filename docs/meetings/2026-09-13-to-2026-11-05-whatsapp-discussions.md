@@ -61,3 +61,16 @@ Tinosh was not in the original proposal group. The 30 September messages record 
 - **6 October participation:** Chathuranga reports all members initially logged in, weather disrupted participation, he and Tinosh continued, and the other members later called him for details. This supplements the chat's narrower participation snapshot; it is not fabricated contemporaneous attendance evidence.
 
 This log does not turn WhatsApp acknowledgments into specific methodological approvals, backdate later decisions, or establish that missing/unavailable fields have been resolved. Subsequent resolutions belong in dated decision, issue or PR records.
+
+## Further human clarifications recorded on 16 November
+
+These are Chathuranga's explicit retrospective accounts, not additions to the original 603-message export or new message identifiers:
+
+- **Membership and commencement:** The original proposal group reduced to three active members after Seekkuge Tharanga Jayalal left. The remaining members continued their existing areas, shared uncovered integration work, and exchanged ideas on 20 September. Chathuranga created the repository and explained the workflow; Didilani and Dewmi cloned it that day. The meeting ended at **10:30 PM**, with Chathuranga taking minutes; this corrects the older 9:30 PM metadata.
+- **21 September:** All three active members attended; Didilani took minutes and the meeting ended at **10:00 PM**. The unmapped export identifier is not independently assigned to a person. Dewmi's 10:54 PM acknowledgment was subsequent WhatsApp follow-up, not the live meeting end.
+- **Tinosh:** Onboarding is documented by **30 September** in the export. The existing three members' responsibility-allocation discussion took place through WhatsApp on **5 October afternoon/evening**, according to Chathuranga; see the [separate record](2026-10-05-responsibility-allocation-whatsapp-discussion.md).
+- **6–7 October:** The latest account says **Chathuranga and Tinosh only** attended the live 6 October discussion, ending at **10:00 PM**, with Chathuranga taking minutes. Didilani and Dewmi were affected by weather and received the update in a group call on **7 October**. This supersedes the 5 November account above that all four initially logged in. The 10:22/10:26 PM export messages are later follow-up, not independent call-end evidence.
+- **Lecturer session:** Chathuranga confirms **1:00–3:00 PM** on 20 September and Didilani as minute taker. He supplies membership-change context for the dataset request while retaining the original project goal. Oral permission to change source remains distinct from DR-001's replacement selection on 21 September and from approval of later methodology.
+- **Coordination and target:** Meetings were arranged according to progress/bottlenecks while WhatsApp discussion continued. The group used 8 November as an internal implementation target based on Chathuranga's reported lecture timetable; it was not a confirmed university submission deadline. See the [coordination clarification](README.md#coordination-and-internal-completion-target--clarified-16-november).
+
+The original export identities and dated message summaries remain unchanged. Current meeting records incorporate the attributed corrections; no new all-member file-verification pass, experiment permission or methodological approval is inferred.

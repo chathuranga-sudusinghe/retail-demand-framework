@@ -1,34 +1,42 @@
 # Project Progress Meeting
 
 **Meeting date:** 6 October 2026
-**Scheduled time:** 8:30–9:30 PM, Sri Lanka Standard Time (SLST); actual end not established
-**Format:** Microsoft Teams, WhatsApp coordination and later telephone follow-up
-**Prepared:** 5 November 2026
+**Time:** 8:30–10:00 PM, Sri Lanka Standard Time (SLST); end confirmed by Chathuranga on 16 November
+**Format:** Microsoft Teams, WhatsApp coordination and a group-call follow-up on 7 October
+**Prepared:** 5 November 2026; attendance/time/follow-up clarification recorded 16 November
 **Purpose:** Discuss progress and help members continue component work.
+**Minutes taken by:** Chathuranga Sudusinghe (confirmed 16 November)
+**Live participants:** Chathuranga and Tinosh
+**Apologies / participation difficulties:** Didilani and Dewmi could not take part in the live discussion because of weather/connectivity, according to Chathuranga. An advance-apology message is not inferred.
 
-## Attendance and connectivity
+## Attendance correction and source limits
 
-**Chathuranga's clarification on 5 November:** All four members—Chathuranga, Didilani, Dewmi and Tinosh—initially logged in. Rain and bad weather disrupted participation. Chathuranga and Tinosh continued; the other members later called Chathuranga to obtain the details. Exact attendance durations and telephone-call times are not established.
+**Latest account — 16 November:** Chathuranga confirms that only he and Tinosh attended the live discussion, which ended at 10:00 PM. On **7 October**, he updated Didilani and Dewmi through a group call. No exact follow-up call time is supplied.
 
-**Contemporaneous WhatsApp evidence:** Chathuranga proposed the meeting at 3:45 PM; Dewmi and Tinosh acknowledged, followed by a Teams invitation (M0314–M0317). At 9:03 PM, Dewmi reported heavy rain and signal problems, followed by a message saying she had been trying to log in (M0318–M0319). At 10:22 PM, Chathuranga reported only himself and Tinosh present; Tinosh thanked him for the explanation at 10:26 PM (M0320–M0321).
+**Superseded account — recorded 5 November:** The earlier retrospective note said that all four members initially logged in, weather disrupted participation, Chathuranga and Tinosh continued, and the others later called him. The 16 November clarification above replaces that attendance description and identifies the next-day group call. The earlier statement is preserved here for traceability, not as the current attendance finding.
 
-The later clarification supplies the wider attendance sequence. The 10:22 PM message does not prove that only two people participated at any point. Dewmi's messages establish connectivity difficulty, not her precise connection history. Telephone follow-up is recorded from Chathuranga's account, not retained call records.
+**WhatsApp evidence:** Chathuranga proposed the meeting at 3:45 PM; Dewmi and Tinosh acknowledged, followed by the Teams invitation (M0314–M0317). At 9:03 PM Dewmi reported heavy rain/signal trouble, followed by difficulty logging in (M0318–M0319). The 10:22 PM message reports Chathuranga and Tinosh present, and Tinosh thanked him at 10:26 PM (M0320–M0321). Those later messages are follow-up, not independent proof of the live meeting's end time. The earlier scheduled 9:30 PM end and previously unknown actual end are superseded by Chathuranga's confirmed 10:00 PM end.
 
-## Topics supported by the evidence
+## Progress and handoff support
 
-Progress discussion was the stated purpose (M0314). Earlier that day, Chathuranga distributed component handoff packages and explained extraction, checksum checks and installation paths (M0301–M0311). This is same-day handoff context; the detailed spoken agenda cannot be reconstructed from chat alone. Later messages support that an explanation took place, not every topic, decision or approval during the call.
+Progress discussion was the stated purpose (M0314). Earlier that day, Chathuranga distributed member handoff packages and explained extraction, checksum checks and installation paths (M0301–M0311). The members were to follow their own package instructions, preserve the supplied directory structure and place the assigned files in the specified repository-relative locations while keeping data/models local. This same-day guidance supplies context; it is not a complete spoken transcript or evidence that every receiving member passed verification.
+
+The resulting responsibility split is documented in the [5 October coordination record](2026-10-05-responsibility-allocation-whatsapp-discussion.md) and current member/workflow sources. Tinosh's scope is technical integration, agreed adapters/contracts, API/prototype engineering and related tests; component members retain analytical ownership. Assigned issue tracking remains in GitHub rather than a reconstructed spoken issue checklist.
+
+The versioned verification instructions were shared **later, on 16 October** (M0419). The [current verification guide](../checksums/README.md) describes Dewmi's forecast export, Didilani's export/validated-data bundle and Tinosh's saved-model/metadata bundle. It keeps original ZIPs and extracted HANDOFF folders under ignored `research-materials/`. These later commands are not backdated as the commands used in the 6 October call. Distribution, installation, byte verification and component acceptance remain distinct.
 
 ## Actions and follow-up
 
 | Action/context | Responsibility | Timing | Recorded status |
 |---|---|---|---|
-| Read handoff instructions and check/install assigned files | Receiving members | Same-day guidance; no separate deadline recorded | Instructions distributed; not evidence all checks passed |
-| Continue assigned component issues | Relevant members | Ongoing at the time | Requested; exact meeting-specific task list not retained |
-| Obtain details missed during disruption | Other members with Chathuranga | Later calls; times not recorded | Reported by Chathuranga on 5 November |
+| Follow package instructions and check/install assigned files | Receiving members | Same-day guidance and subsequent setup | Instructions distributed; not an all-member verification-pass claim |
+| Continue assigned component issues and preserve agreed interfaces | Relevant component members | Ongoing | Progress/support requested; GitHub issues retain individual task tracking |
+| Update the members affected by weather | Chathuranga with Didilani and Dewmi | Group call on 7 October | Confirmed by Chathuranga on 16 November |
 
-Weather-related connectivity was the meeting blocker. No methodological approval, complete spoken minutes, next meeting date or new deadline is inferred.
+Weather/connectivity was the live-meeting blocker. No next formal date was fixed at meeting close; further calls/WhatsApp discussion followed project flow and bottlenecks. This record creates no new methodology, experiment authorisation or university deadline.
 
 ## Related evidence
 
 - [WhatsApp source and message references](2026-09-13-to-2026-11-05-whatsapp-discussions.md#source-and-reading-conventions).
-- [Local file verification guide](../checksums/README.md): later versioned checks, not proof every check ran during the meeting.
+- Chathuranga's explicit attendance, time, minute-taker and next-day follow-up clarification in the project working conversation on 16 November 2026.
+- [Coordination and internal target](README.md#coordination-and-internal-completion-target--clarified-16-november).

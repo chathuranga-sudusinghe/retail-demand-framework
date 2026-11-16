@@ -49,11 +49,22 @@ data/processed/*
 *.pickle
 *.pkl
 
+# Microsoft Word documents and templates stay local (case-insensitive extensions)
+*.[dD][oO][cC]
+*.[dD][oO][cC][xX]
+*.[dD][oO][cC][mM]
+*.[dD][oO][tT]
+*.[dD][oO][tT][xX]
+*.[dD][oO][tT][mM]
+
 # Local experiment outputs
 artifacts/
 outputs/
 models/
 reports/forecasting/drafts/
+
+# Local group and individual submission files, including all nested contents
+/reports/for_submision/
 
 # Local university and research reference materials
 research-materials/*

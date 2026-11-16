@@ -1,14 +1,16 @@
 # Project Finalisation Meeting
 
 **Meeting date:** Sunday, 8 November 2026
-**Start time:** 8:30 PM, Sri Lanka Standard Time (SLST, UTC+05:30); end time not recorded
+**Time:** 8:30–9:45 PM, Sri Lanka Standard Time (SLST, UTC+05:30); end confirmed by Chathuranga on 16 November
 **Format:** Microsoft Teams
 **Prepared:** 16 November 2026, retrospectively from Chathuranga's account
 **Purpose:** Finalise the group repository work and identify the remaining closeout step under Issue #179.
+**Minutes taken by:** Dewmi Pramodya (confirmed 16 November)
+**Apologies:** None; all four members participated.
 
 ## Attendance and source
 
-Chathuranga confirmed on 16 November that all four members—Chathuranga, Didilani, Dewmi and Tinosh—participated and contributed. He supplied the meeting date, start time and completion context in the project working conversation. These details are attributed to his retrospective account; the supplied WhatsApp screenshots are coordination evidence, not a Teams attendance report or a transcript. The minute taker, apologies and individual attendance durations were not recorded in the supplied account.
+Chathuranga confirmed on 16 November that all four members—Chathuranga, Didilani, Dewmi and Tinosh—participated and contributed. He supplied the meeting date, 8:30–9:45 PM time, Dewmi as minute taker and completion context in the project working conversation. These details are attributed to his retrospective account; the supplied WhatsApp screenshots are coordination evidence, not a Teams attendance report or a transcript. His subsequent clarification on the same date filled the earlier missing end-time/minute-taker/apologies fields. Individual connection durations are not asserted.
 
 ## Discussion and outcome
 
@@ -23,7 +25,7 @@ The detailed spoken agenda, individual member updates and questions were not sup
 | Finalise repository closeout and close #179 | Chathuranga | After the meeting; no separate meeting-agreed deadline supplied | GitHub records closure on 9 November at 10:19:50 AM SLST |
 | Inform the WhatsApp group of official completion | Chathuranga | Following finalisation | Reported by Chathuranga as sent on the morning of 9 November; see the discussion continuation below |
 
-No additional meeting-specific blocker or next meeting date was supplied. Unknown fields remain unrecorded rather than being reconstructed from later work.
+No additional meeting-specific blocker was supplied. No next date was fixed: the group arranged meetings according to project flow and bottlenecks while continuing WhatsApp coordination. This is its clarified working practice, not a missing date to invent.
 
 ## Verified later closure and submission boundary
 
@@ -36,3 +38,9 @@ GitHub's #179 record was checked on 16 November: `state: closed`, `state_reason:
 - [WhatsApp finalisation discussion continuation](2026-11-05-to-2026-11-09-whatsapp-finalisation-discussions.md).
 - [Current repository delivery and acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026).
 - [Meeting-record and submission-template guidance](README.md).
+
+## Internal target and review closeout — clarification recorded 16 November
+
+Chathuranga explains that the university submission deadline was not confirmed at project start. He reports that the second-semester lecture timetable ended on **8 November**, so the group adopted that date as an **internal implementation completion target**. This records his timetable account and the group's planning assumption, not independent timetable verification or an official university coursework deadline. The original date on which the target was adopted is not inferred.
+
+He confirms that implementation/component completion was established at the 8 November evening meeting, followed by the remaining member-review/confirmation and repository closeout work. #179 closed on **9 November at 10:19:50 AM SLST**. The [current acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) preserves each review's exact scope and attribution, including Chathuranga's reported inventory acceptance; this account does not turn every confirmation into a direct approval from each member or backdate later reviews into the meeting. Final thesis/report and presentation preparation remain separate #204 work.
