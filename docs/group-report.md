@@ -1,6 +1,7 @@
 # A Data-Driven Decision Support Framework for Retail Demand Forecasting and Inventory Risk Analysis
 
 **Module:** COMP1884 Group Project, MSc Data Science, University of Greenwich.
+**Group No.:** 02
 **Document status:** Shared report draft for human review, prepared 24 October 2026 (Asia/Colombo) under [Issue #187](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/187), C3 of [#179](https://github.com/chathuranga-sudusinghe/retail-demand-framework/issues/179).
 **Status reconciliation — 9 November 2026:** #201 and #182 are closed. [The current acceptance record](integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026) links completed technical and responsible-use confirmations, Chathuranga's producer/source and reported inventory acceptance, and Chathuranga's 9 November clarification that the old pending figure items are resolved. #179 records repository completion through the documentation closeout PR (`Closes #179` on merge); #204 is later submission-file preparation.
 **Source baselines:** Original shared draft: `c279e272942a53cc02dcd5ea4581c7c275e3438a`; inventory integration: `766c102480afe6121e0e3d05a912ae6cfab23cba` (merged PR #188).

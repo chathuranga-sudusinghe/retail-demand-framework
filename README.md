@@ -3,6 +3,7 @@
 **University:** University of Greenwich<br>
 **Programme:** MSc Data Science and Its Applications<br>
 **Module:** COMP1884 Group Project<br>
+**Group No.:** 02<br>
 **Research type:** Group research project
 
 ## Research problem and aim

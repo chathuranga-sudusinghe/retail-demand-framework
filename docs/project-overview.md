@@ -7,6 +7,7 @@
 **Research subtitle:** A Comparative Study of Gradient-Boosted Decision Trees
 
 **Module:** COMP1884 Group Project  
+**Group No.:** 02<br>
 **Programme:** MSc Data Science, University of Greenwich
 
 This is one integrated group project. Each active member owns a distinct contribution that connects to the shared final framework.
