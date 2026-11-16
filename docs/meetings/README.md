@@ -65,10 +65,12 @@ The notes should record what was actually discussed at the meeting. Record lectu
 | 21 September 2026 | [Setup and dataset handoff](2026-09-21-project-setup-and-dataset-handoff.md) | Teams and WhatsApp follow-up |
 | 6 October 2026 | [Progress meeting](2026-10-06-project-progress-meeting.md) | Teams, connectivity disruption and telephone follow-up |
 | 13 September–5 November 2026 | [WhatsApp discussion log](2026-09-13-to-2026-11-05-whatsapp-discussions.md) | Selected substantive asynchronous discussions |
+| 8 November 2026 | [Project finalisation meeting](2026-11-08-project-finalisation-meeting.md) | Teams; retrospective account and verified later repository closure |
+| 5–9 November 2026 | [WhatsApp finalisation discussions](2026-11-05-to-2026-11-09-whatsapp-finalisation-discussions.md) | Screenshot-based continuation and separately attributed completion chronology |
 
 Chathuranga explained on 5 November that members' employment and weekend lectures made common meeting times difficult, so much coordination took place asynchronously. The discussion log records this work without treating every message as a formal meeting.
 
-The new summaries were prepared retrospectively on 5 November 2026. Distinguish discussion dates, later clarification dates and sources. Historical actions/statuses describe the discussion at that time, not current issue readiness. Do not infer approval from silence or a general acknowledgment. These Markdown records support submission preparation; they are not a completed meeting-minutes submission PDF. Original chat exports remain local; public summaries omit contact identifiers and meeting access details.
+The original summaries were prepared retrospectively on 5 November 2026; the finalisation meeting and WhatsApp continuation were prepared on 16 November. Distinguish discussion dates, later clarification dates and sources. Historical actions/statuses describe the discussion at that time, not current issue readiness. Do not infer approval from silence or a general acknowledgment. These Markdown records support submission preparation; they are not a completed meeting-minutes submission PDF. Original chat exports and screenshots remain local; public summaries omit contact identifiers and meeting access details.
 
 
 ## Supplied 2026/27 meeting template
