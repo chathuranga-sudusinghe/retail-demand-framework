@@ -36,7 +36,7 @@ The two other supplied images (`whatsapp-finalisation-14.png` and `whatsapp-fina
 
 ## Chronology and completion scope
 
-Chathuranga confirmed on 16 November that the Teams meeting was **Sunday, 8 November at 8:30 PM**, all four members contributed, and their component work was complete. His remaining task was finalisation/#179 closure, followed by the **9 November morning** completion announcement. This retrospective account is distinct from the screenshot evidence.
+Chathuranga confirmed on 16 November that the Teams meeting was **Sunday, 8 November, 8:30–9:45 PM**, all four members contributed, Dewmi took minutes, and their component work was complete. His remaining task was finalisation/#179 closure, followed by the **9 November morning** completion announcement. This retrospective account is distinct from the screenshot evidence.
 
 The announcement screenshot shows an edited **10:20 AM** message saying the project was officially completed, followed by member responses. It includes a link to a different repository; that link is not evidence for this retail repository's identity. Surrounding screenshots contain a 9 November date separator and later-day follow-ups, so the exact day boundary around the announcement cannot be independently reconstructed from those crops. Its 9 November date is taken from Chathuranga's explicit clarification; retail repository closure is verified directly from GitHub.
 
@@ -53,3 +53,9 @@ Completion here means the repository implementation and technical/research docum
 | Prepare thesis/report, presentation and collated meeting-minutes materials under #204 | Chathuranga for initial preparation, with relevant group review | Start stated as 16 November; final files/submission are not claimed complete |
 
 Outstanding reviews and confirmations were the coordination blockers shown in the historical messages. Later acceptance belongs in GitHub and the [current acceptance summary](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026). No new methodology, research execution, university deadline or lecturer approval is inferred. Individual messages are not counted as formal meetings.
+
+## Planning and meeting-practice clarification — 16 November
+
+Chathuranga explains that the university deadline had not been confirmed when work started. He reports that lectures ended on 8 November and the group used that date as an internal implementation target. Component implementation was confirmed complete at the evening meeting; recorded scoped reviews/confirmations and the remaining closeout led to #179 closure on 9 November. Review scope/attribution remains in the [current acceptance record](../integration-contract-readiness.md#12-current-delivery-and-acceptance--9-november-2026), not inferred from WhatsApp acknowledgments. The internal target does not establish an official university submission deadline.
+
+Next meetings were generally arranged according to project flow and bottlenecks rather than booked at every meeting close; asynchronous WhatsApp discussion continued between calls. See the [meeting index](README.md#coordination-and-internal-completion-target--clarified-16-november) for the confirmed times/minute takers and the distinction between live meetings and supporting discussion records.
