@@ -141,6 +141,6 @@ Code is organised by component. The [storage policy](docs/artifact-storage-polic
 
 This repository contains academic project materials for educational review.
 
-No open-source licence is granted for the original project materials in this repository. Unless explicit written permission is obtained from the project authors, the repository content must not be copied, modified, redistributed, commercially reused, or incorporated into another project beyond what is otherwise permitted by applicable law.
+See the [Copyright and Permissions Notice](LICENSE.md). No open-source licence is granted for the original project materials in this repository. Except as permitted by applicable law, GitHub's Terms of Service, or a separate written agreement, copying, modification, redistribution, commercial reuse or incorporation into another project requires prior written permission from the relevant copyright holders. Public availability and forking do not transfer ownership of the original materials.
 
 Third-party datasets, software libraries, frameworks, and other external materials referenced by this project remain subject to their own licences, terms, and conditions. The project dataset is not distributed in this repository and is not covered by this repository notice.
