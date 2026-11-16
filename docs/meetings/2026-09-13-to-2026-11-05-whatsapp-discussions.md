@@ -4,6 +4,8 @@
 **Prepared:** 5 November 2026
 **Format:** Retrospective summaries of selected substantive asynchronous discussions, with separate live-meeting references.
 
+**Continuation added 16 November:** See [5–9 November finalisation discussions](2026-11-05-to-2026-11-09-whatsapp-finalisation-discussions.md) and the [8 November Teams meeting](2026-11-08-project-finalisation-meeting.md). The original export, period and message identifiers below remain unchanged.
+
 ## Source and reading conventions
 
 The local source is `research-materials/meetings/whatsapp/Project MSc DS - Group members.zip`, containing `chat.txt` and `chat.md`. This log uses `chat.txt` only, avoiding duplicate counting. The export contains 603 timestamped messages from 8 August through 5 November; the August messages are not treated as project meetings here. Dates are interpreted as month/day/year. Times below reproduce export timestamps; no independent timezone conversion was performed.
