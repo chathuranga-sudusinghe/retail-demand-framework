@@ -482,7 +482,7 @@ Do not label results produced before the approved feature set is frozen as final
 
 ## 19. Human review and approval authority
 
-This project uses AI assistants such as ChatGPT and Codex only as supporting tools.
+This project uses AI assistants such as ChatGPT, Claude and Codex only as supporting tools.
 
 AI assistants do not have authority to make final research, methodological, experimental, implementation, interpretation, or repository-governance decisions.
 
@@ -509,7 +509,9 @@ ChatGPT may support planning, research synthesis, review, explanation, and draft
 
 Codex may support code implementation, documentation, tests, and repository inspection.
 
-Neither ChatGPT nor Codex may treat its own proposal, generated output, analysis, or implementation as approved simply because it created it.
+Claude provides independent AI-assisted review of proposed changes and outputs. AI-assisted review does not replace human peer review or approval; the human team retains final decision-making authority.
+
+No AI assistant may treat its own proposal, generated output, analysis, or implementation as approved simply because it created it.
 
 A proposal becomes a project decision only after explicit human review and approval.
 
